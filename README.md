@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Garaj
 
-## Getting Started
+Shop-management app for independent car repair shops: appointments → work orders (estimates) → invoices → payments → reminders.
+Romanian UI, local-first (data lives on the device), works on the web and as a native iPhone app from the same code.
 
-First, run the development server:
+- Plan, business rules, edge cases, reviews: [`docs/PLAN.md`](docs/PLAN.md)
+- Design system: [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md) · live at `/design/`
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000 — first load seeds a demo shop
+npm test             # business-rule unit tests (node:test)
+npm run lint
+npm run build        # static export → out/ (the website and the iOS bundle)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## iPhone
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Requirements: Xcode, an Apple ID signed in to Xcode (the free Personal Team works), iPhone connected and trusted, Developer Mode on.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run ios:device   # build → sync → sign → install → launch on the connected iPhone
+npm run ios:open     # open the Xcode project
+```
 
-## Learn More
+Live reload on the phone while developing:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev:lan                                          # serves on your Mac's LAN IP
+CAP_SERVER_URL=http://<mac-ip>:3000 npm run ios:device   # app loads from the dev server
+npm run ios:device                                       # back to the bundled, offline build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Free Personal Team limits: the app expires after 7 days (run `npm run ios:device` again), max 3 such apps on the phone.
+First install: on the iPhone, Settings → General → VPN & Device Management → trust the developer.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Structure
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/domain/          business rules — pure JS, unit-tested (money, VAT, invoices, work orders, reminders, reports)
+src/lib/store/       local-first store: memory + IndexedDB, atomic numbering, tab sync, demo seed, actions
+src/components/ui/   shadcn primitives, restyled by the design tokens
+src/components/ds/   design-system components (Page, Card, Stat, Money, Plate, Sheet, DataList…)
+src/components/shell/ sidebar · rail · top bar · tab bar · ⌘K search · quick create
+src/features/        one folder per module (calendar, work-orders, invoices, customers, vehicles…)
+src/app/             routes (static export; detail pages use ?id=)
+ios/                 Capacitor 8 project (SPM) with a static-export router and a native print plugin
+```

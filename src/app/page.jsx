@@ -1,12 +1,5 @@
-import HomeCalendar from "@/components/home/calendar";
+import { DashboardPage } from "@/features/dashboard/dashboard-page";
 
-
-export default function Home() {
-  return (
-    <section> 
-      <div className="xl:px-32">
-        <div className=""><HomeCalendar/></div>
-      </div>
-    </section>
-  );
+export default function Page() {
+	return <DashboardPage />;
 }
