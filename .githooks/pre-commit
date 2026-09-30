@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Refuses commits that add private keys or credential files.
+# Enabled per clone by `npm install` (prepare script) or: git config core.hooksPath .githooks
+
+KEY_PATTERN='-----BEGIN ((RSA|DSA|EC|OPENSSH|ENCRYPTED|PGP) )?PRIVATE KEY( BLOCK)?-----'
+NAME_PATTERN='(^|/)(id_(rsa|dsa|ecdsa|ed25519)|[^/]*\.(pem|key|p12|pfx|keystore)|eval [^/]*)$'
+
+blocked=""
+while IFS= read -r -d '' file; do
+	if [[ "$file" =~ $NAME_PATTERN ]] || git show ":$file" 2>/dev/null | grep -Eq -- "$KEY_PATTERN"; then
+		blocked+="   $file"$'\n'
+	fi
+done < <(git diff --cached --name-only --diff-filter=ACMR -z)
+
+if [[ -n "$blocked" ]]; then
+	echo "✋ Commit blocked — this looks like a private key or credential file:" >&2
+	printf '%s' "$blocked" >&2
+	echo "   Keep keys in ~/.ssh, never in the repo. Unstage with: git restore --staged <file>" >&2
+	exit 1
+fi

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Refuses to push commits that contain a private key (second line of defense
+# after pre-commit, e.g. for commits made with --no-verify or on another machine).
+
+KEY_PATTERN='-----BEGIN ((RSA|DSA|EC|OPENSSH|ENCRYPTED|PGP) )?PRIVATE KEY( BLOCK)?-----'
+
+found=""
+while read -r local_ref local_sha remote_ref remote_sha; do
+	[[ "$local_sha" =~ ^0+$ ]] && continue # deleting a remote branch
+	for commit in $(git rev-list "$local_sha" --not --remotes); do
+		while IFS= read -r -d '' file; do
+			if git cat-file -p "$commit:$file" 2>/dev/null | grep -Eq -- "$KEY_PATTERN"; then
+				found+="   ${commit:0:7} $file"$'\n'
+			fi
+		done < <(git diff-tree -r --root --no-commit-id --name-only --diff-filter=AM -z "$commit")
+	done
+done
+
+if [[ -n "$found" ]]; then
+	echo "✋ Push blocked — these commits contain a private key:" >&2
+	printf '%s' "$found" >&2
+	echo "   Remove it from history before pushing, and revoke the key." >&2
+	exit 1
+fi

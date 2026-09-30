@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# credentials: never commit (also enforced by .githooks/pre-commit and pre-push)
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.key
+*.p12
+*.pfx
+*.keystore
+eval *
