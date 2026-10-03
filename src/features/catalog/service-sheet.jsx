@@ -10,6 +10,7 @@ import { Sheet } from "@/components/ds/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { laborPrice } from "@/domain/lines";
 import { SERVICE_CATEGORIES } from "@/lib/labels";
 import { deleteCatalogItem, saveService } from "@/lib/store/actions";
 import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
@@ -26,7 +27,7 @@ export default function ServiceSheet({ open, onOpenChange, id }) {
 	const [form, setForm] = useState(() => ({ ...EMPTY, ...existing }));
 	const [touched, setTouched] = useState(false);
 	const set = (patch) => setForm((f) => ({ ...f, ...patch }));
-	const suggested = Math.round((Number(form.hours) || 0) * settings.laborRate);
+	const suggested = laborPrice(form.hours, settings.laborRate);
 	const packageValue = form.parts.reduce((sum, p) => sum + (parts[p.partId]?.price ?? 0) * p.qty, 0);
 
 	const submit = (event) => {

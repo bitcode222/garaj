@@ -77,6 +77,11 @@ export function lineIssues(line) {
 	return issues;
 }
 
+/** Suggested labor price (bani) for `hours` at an hourly `rate` (bani). */
+export function laborPrice(hours, rate) {
+	return Math.round((Number(hours) || 0) * rate);
+}
+
 /** Unit price from cost and markup, rounded to whole lei like a price list. */
 export function priceFromCost(cost, markupPct) {
 	const raw = Number(divRound(BigInt(cost) * BigInt(Math.round(10000 + markupPct * 100)), 10000n));

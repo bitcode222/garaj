@@ -27,6 +27,7 @@ import { deleteCustomer } from "@/lib/store/actions";
 import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { cn } from "@/lib/utils";
 import { selectInvoiceStates, selectInvoicesByCustomer, selectVehiclesByCustomer, selectWorkOrdersByCustomer } from "@/lib/store/selectors";
+import { tone } from "@/lib/tones";
 
 export function CustomerDetail() {
 	const id = useQueryId();
@@ -237,7 +238,7 @@ function Customer({ customer, embedded = false }) {
 								{company && (
 									<>
 										<KeyValue label="CUI" mono>
-											{customer.cui || "—"} {customer.cui && !isValidCUI(customer.cui) && <span className="text-xs text-amber-600">(verifică)</span>}
+											{customer.cui || "—"} {customer.cui && !isValidCUI(customer.cui) && <span className={cn("text-xs", tone("yellow").text)}>(verifică)</span>}
 										</KeyValue>
 										<KeyValue label="Reg. Com.">{customer.regCom || "—"}</KeyValue>
 										<KeyValue label="Persoană de contact">{customer.contactName || "—"}</KeyValue>

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { monthKey } from "@/domain/dates";
 import { formatInvoiceNumber } from "@/domain/invoice";
 import { computeTotals } from "@/domain/lines";
+import { formatMoney } from "@/domain/money";
 import { fold, matchesTokens, queryTokens } from "@/domain/search";
 import { fmtDate, fmtRelativeTo, plural } from "@/lib/format";
 import { useOpenDetail } from "@/lib/detail-mode";
@@ -165,6 +166,7 @@ export function InvoicesPage() {
 function InvoiceRow({ row, today, onOpen }) {
 	const { invoice, state, balance, totals, customerName, plate, number } = row;
 	const draft = invoice.status === "draft";
+	const { currency } = useSettings();
 	return (
 		<ListRow onClick={onOpen} className="md:grid md:grid-cols-[140px_minmax(0,1fr)_150px_130px_130px] md:gap-3">
 			{/* phone */}
@@ -176,7 +178,7 @@ function InvoiceRow({ row, today, onOpen }) {
 				<div className="mt-1 flex items-center justify-between gap-3">
 					<p className="truncate text-xs text-muted-foreground">
 						<span className="font-mono">{draft ? "Ciornă" : number}</span> · {fmtDate(invoice.issueDate, "d MMM")}
-						{balance > 0 && balance < totals.gross ? ` · rest ${Math.round(balance / 100)} lei` : ""}
+						{balance > 0 && balance < totals.gross ? ` · rest ${formatMoney(balance, currency, { decimals: 0 })}` : ""}
 					</p>
 					<StatusBadge map={INVOICE_STATE} value={state} size="sm" />
 				</div>

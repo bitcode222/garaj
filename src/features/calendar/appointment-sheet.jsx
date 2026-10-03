@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { findConflicts } from "@/domain/appointment";
-import { combineDateTime, dayOfInstant, pad2, todayISO } from "@/domain/dates";
+import { combineDateTime, dayOfInstant, minutesBetween, pad2, todayISO } from "@/domain/dates";
 import { fmtTime } from "@/lib/format";
 import { APPOINTMENT_STATUS } from "@/lib/labels";
 import { navigateFromSheet, openSheet } from "@/lib/sheets";
@@ -23,6 +23,8 @@ import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
 import { selectActive, selectAppointmentsByDay } from "@/lib/store/selectors";
 import { ServicesField } from "@/features/common/services-field";
 import { CustomerPicker, VehiclePicker } from "@/features/pickers/entity-pickers";
+import { tone } from "@/lib/tones";
+import { cn } from "@/lib/utils";
 
 const DURATIONS = [30, 60, 90, 120, 180, 240, 480];
 const durationLabel = (m) => (m === 480 ? "Toată ziua (8 h)" : m < 60 ? `${m} min` : `${m / 60} h`.replace(".", ","));
@@ -51,7 +53,7 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 	const [form, setForm] = useState(() => {
 		const base = existing ?? {};
 		const startISO = base.start ?? start ?? null;
-		const duration = base.start ? Math.round((new Date(base.end) - new Date(base.start)) / 60000) : settings.calendar.defaultDuration;
+		const duration = base.start ? minutesBetween(base.start, base.end) : settings.calendar.defaultDuration;
 		return {
 			customerId: base.customerId ?? vehicles[vehicleId]?.customerId ?? null,
 			vehicleId: base.vehicleId ?? vehicleId ?? null,
@@ -270,7 +272,7 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 					</Field>
 				</div>
 				{conflicts.length > 0 && (
-					<div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-200">
+					<div className={cn("flex items-start gap-2 rounded-lg border p-3 text-sm", tone("yellow").chip)}>
 						<TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
 						<div>
 							<p className="font-medium">Suprapunere</p>

@@ -258,11 +258,11 @@ export function CalendarPage() {
 								</ToneBadge>
 							</div>
 							<div className="flex items-center gap-1.5">
-								<Button variant="outline" size="icon" className="size-7" onClick={() => setDate(navigate(view, date, "prev"))} aria-label="Înapoi">
+								<Button variant="outline" size="icon" className="size-11 md:size-7" onClick={() => setDate(navigate(view, date, "prev"))} aria-label="Înapoi">
 									<ChevronLeft />
 								</Button>
 								<span className="min-w-0 truncate text-sm text-muted-foreground first-letter:uppercase">{rangeLabel(view === "agenda" ? "month" : view, date)}</span>
-								<Button variant="outline" size="icon" className="size-7" onClick={() => setDate(navigate(view, date, "next"))} aria-label="Înainte">
+								<Button variant="outline" size="icon" className="size-11 md:size-7" onClick={() => setDate(navigate(view, date, "next"))} aria-label="Înainte">
 									<ChevronRight />
 								</Button>
 							</div>

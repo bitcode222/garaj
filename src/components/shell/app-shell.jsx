@@ -15,6 +15,7 @@ import { NAV, TABS, isActive } from "./nav";
 import { QuickCreate } from "./quick-create";
 import { openCommandMenu } from "./command-state";
 import { ThemeToggle } from "./theme-toggle";
+import { tone } from "@/lib/tones";
 
 const CommandMenu = dynamic(() => import("./command-menu").then((m) => m.CommandMenu), { ssr: false });
 const GlobalSheets = dynamic(() => import("./global-sheets").then((m) => m.GlobalSheets), { ssr: false });
@@ -105,7 +106,7 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 			</nav>
 			<div className="flex items-center gap-1 border-t px-3 py-3">
 				{demo && (
-					<Link href="/settings/#date" className="mr-auto rounded-md border border-amber-200 bg-amber-50 px-2 py-1 text-2xs font-medium text-amber-800 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
+					<Link href="/settings/#date" className={cn("mr-auto rounded-md border px-2 py-1 text-2xs font-medium", tone("yellow").chip)}>
 						Date demo
 					</Link>
 				)}
