@@ -4,16 +4,19 @@ import { useRouter } from "next/navigation";
 import { CalendarCheck, CarFront, UserRound, Wrench } from "lucide-react";
 import { ContactActions } from "@/components/ds/contact";
 import { DetailSheet } from "@/components/ds/detail-sheet";
-import { KeyValue, KeyValueGrid } from "@/components/ds/data";
+import { KeyValue, KeyValueGrid, Money } from "@/components/ds/data";
 import { PlateTag, VehicleLabel } from "@/components/ds/make-logo";
 import { StatusMenu, useStatusChange } from "@/components/ds/status-menu";
+import { StatusBadge, ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import { findConflicts, quickAppointmentMoves } from "@/domain/appointment";
 import { dayOfInstant, minutesBetween } from "@/domain/dates";
-import { fmtDate, fmtTime } from "@/lib/format";
-import { APPOINTMENT_STATUS } from "@/lib/labels";
+import { computeTotals } from "@/domain/lines";
+import { deadline, lastReading } from "@/domain/vehicle";
+import { fmtDate, fmtKm, fmtTime, fmtWorkOrder } from "@/lib/format";
+import { APPOINTMENT_STATUS, DEADLINE_STATUS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { navigateFromSheet, openSheet } from "@/lib/sheets";
-import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
+import { useCollection, useEntity, useSettings, useToday } from "@/lib/store/hooks";
 import { selectAppointmentsByDay } from "@/lib/store/selectors";
 import { APPOINTMENT_ACTIONS, quickMoveAppointment } from "./status";
 
@@ -23,11 +26,16 @@ const durationLabel = (m) => (m < 60 ? `${m} min` : `${(m / 60).toLocaleString("
 export default function AppointmentView({ open, onOpenChange, id }) {
 	const router = useRouter();
 	const settings = useSettings();
+	const today = useToday();
 	const a = useEntity("appointments", id);
 	const customer = useEntity("customers", a?.customerId);
 	const vehicle = useEntity("vehicles", a?.vehicleId);
 	const mechanic = useEntity("staff", a?.staffId);
 	const bay = useEntity("bays", a?.bayId);
+	const order = useEntity("workOrders", a?.workOrderId);
+	const last = vehicle ? lastReading(vehicle) : null;
+	const itp = vehicle && today ? deadline(vehicle.itpExpiry, today) : null;
+	const rca = vehicle && today ? deadline(vehicle.rcaExpiry, today) : null;
 	const services = useCollection("services");
 	// Only the appointment's own day, and only while it is shown.
 	const byDay = selectAppointmentsByDay(useCollection("appointments"));
@@ -97,6 +105,7 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 								<span className="min-w-0">
 									<span className="block text-xs text-muted-foreground">Client</span>
 									<span className="block truncate text-sm font-medium">{customer.name}</span>
+									{(customer.phone || customer.email) && <span className="block truncate text-xs text-muted-foreground">{[customer.phone, customer.email].filter(Boolean).join(" · ")}</span>}
 								</span>
 							</button>
 						)}
@@ -105,10 +114,27 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 								<span className="flex min-w-0 flex-col gap-1">
 									<VehicleLabel vehicle={vehicle} nameClassName="text-sm font-medium" />
 									<PlateTag value={vehicle.plate} className="self-start" />
+									<span className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+										{last && <span>{fmtKm(last.km)}</span>}
+										{itp && vehicle.itpExpiry && <ToneBadge tone={DEADLINE_STATUS[itp.status].tone} size="sm">ITP {fmtDate(vehicle.itpExpiry, "dd.MM.yy")}</ToneBadge>}
+										{rca && vehicle.rcaExpiry && <ToneBadge tone={DEADLINE_STATUS[rca.status].tone} size="sm">RCA {fmtDate(vehicle.rcaExpiry, "dd.MM.yy")}</ToneBadge>}
+									</span>
 								</span>
 							</button>
 						)}
 					</div>
+
+					{order && (
+						<button type="button" onClick={() => openSheet("work-order-view", { id: order.id })} className="flex min-h-14 w-full items-center gap-3 rounded-md border p-3 text-left transition-colors hover:bg-accent/50">
+							<Wrench className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+							<span className="min-w-0 flex-1">
+								<span className="block text-xs text-muted-foreground">Lucrare</span>
+								<span className="block truncate font-mono text-sm font-medium">{fmtWorkOrder(order.number)}</span>
+							</span>
+							<StatusBadge map={WORK_ORDER_STATUS} value={order.status} size="sm" />
+							<Money value={computeTotals(order.lines, { vatPayer: settings.invoicing.vatPayer }).gross} decimals={0} className="text-sm font-semibold" />
+						</button>
+					)}
 
 					<KeyValueGrid className="sm:grid-cols-2">
 						<KeyValue label="Servicii" className="col-span-2 [&_dd]:whitespace-normal">
@@ -116,6 +142,8 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 						</KeyValue>
 						<KeyValue label="Mecanic">{mechanic?.name}</KeyValue>
 						<KeyValue label="Elevator">{bay?.name}</KeyValue>
+						<KeyValue label="Creată">{fmtDate(a.createdAt, "d MMM yyyy, HH:mm")}</KeyValue>
+						<KeyValue label="Modificată">{fmtDate(a.updatedAt, "d MMM yyyy, HH:mm")}</KeyValue>
 					</KeyValueGrid>
 
 					{a.notes && <p className="rounded-lg bg-muted p-3 text-sm whitespace-pre-line">{a.notes}</p>}
