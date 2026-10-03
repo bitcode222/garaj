@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { navigateFromSheet, openSheet } from "@/lib/sheets";
 
-// How a record opens from a list: a side sheet (default) or its full page.
-// A per-device preference (a phone and a desk PC can differ), kept in localStorage.
+// How a record opens from a list. On a phone it is always the real page (it
+// pushes in from the right, like any native screen); there is no preview. From md
+// up it is a side sheet (default) or the full page, a per-device preference.
 
 export const DETAIL_MODE_KEY = "garaj.detailMode";
 export const DETAIL_MODES = ["sheet", "page"];
@@ -36,7 +37,7 @@ export function useOpenDetail() {
 	const router = useRouter();
 	return useCallback(
 		(type, id) => {
-			const sheet = getDetailMode() === "sheet";
+			const sheet = getDetailMode() === "sheet" && window.matchMedia("(min-width: 768px)").matches;
 			if (type === "appointment") openSheet(sheet ? "appointment-view" : "appointment", { id });
 			else if (sheet) openSheet(`${type}-view`, { id });
 			else navigateFromSheet(router, detailHref(type, id));

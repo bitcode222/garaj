@@ -138,8 +138,8 @@ The app is installed, so it should behave like one. All of this lives in shared 
 
 | Behaviour | Where | Notes |
 |---|---|---|
+| **Screens, not previews** | `Sheet`, `useOpenDetail`, `PageTransition` | On a phone a record opens its real page (customer, car, job, invoice), pushed in from the right; there is no preview overlay. Forms and the appointment panel are full-height `Sheet`s that slide in from the right with a back button; swipe right or the system edge-swipe closes them. From `md` up, sheets are side panels and the per-device "side panel / full page" setting applies. Bottom sheets are only for choices (action sheets, below) |
 | **Action sheets** | `DropdownMenuContent`, `SelectContent`, `PopoverContent` carry `data-sheet-menu` | Below `md` they open as a bottom sheet (full width, 48 px rows, dimmed page, safe-area aware); from `md` they stay anchored popovers. The only dimmed scrim in the system: it marks a transient choice, not a surface. Pinned by CSS in `globals.css` |
-| **Swipe to dismiss** | `Sheet` (grabber + header) | Drag down 110 px or flick; snaps back otherwise. Buttons in the header keep working; the scrolling body never starts a drag |
 | **Keyboard** | `useKeyboardInset` sets `--kb` / `--vvh` | Sheets and action sheets lift above the keyboard (`bottom: var(--kb)`) and cap their height, so footer buttons stay visible while typing |
 | **Haptics** | `src/lib/haptics.js` (native `NativeHaptics` plugin in `AppDelegate.swift`) | Selection on tab, menu and select picks; tap/warning on confirmations; success/error/warning through `@/lib/toast` (import `toast` from there, never from `sonner`). No-ops outside the iOS app |
 | **Pressed states** | `ListRow`, tab bar, buttons | `hover:` only exists for pointers, so touch gets `active:` feedback |
@@ -147,7 +147,7 @@ The app is installed, so it should behave like one. All of this lives in shared 
 | **No zoom** | `viewport` in `layout.jsx` | Scale locked to 1. Inputs are 16 px so iOS never zooms on focus; a wide element can no longer shrink the whole UI |
 | **Swipe actions** | `SwipeRow` (`ds/swipe-row.jsx`), actions in `features/common/swipe-actions.js` | Work orders, invoices, customers, vehicles. Swipe right = reach the person (call, SMS); swipe left = the one next step (move the job forward, take a payment, WhatsApp, check in). A full swipe fires the outermost action; destructive or status steps still go through the normal confirmation. Touch only; the first row nudges once on first use. A row that contains a Radix trigger (`StatusMenu`) opens it on tap, not on pointer-down, so a swipe can start on it |
 | **Calendar touch drag** | `TimeGrid` | Press and hold an appointment (~0.4 s, haptic) to lift it, then drag to move or, from its bottom edge, resize. 15-minute snap with a tick per slot, auto-scroll near the top and bottom edge. A quick swipe over an appointment still scrolls |
-| **Page transitions** | `PageTransition` (`shell/`) | Incoming page fades in (200 ms) on route changes, never on first load. Opacity only: a transform would re-anchor the fixed bars inside pages |
+| **Page transitions** | `PageTransition` (`shell/`) | Going deeper (list → detail) the page slides in from the right; tabs, up and Back cross-fade; never on first load. Uses `left` and opacity, not `transform`, which would re-anchor the fixed bars inside pages |
 | **Tab bar** | `app-shell.jsx` | Re-tapping the current tab scrolls to top |
 
 Rules of thumb: a row that is wider than the screen scrolls inside its own container (`min-w-0` / `max-w-full`), never the page; a choice with more than two options is an action sheet, not a popover; the one-handed reach zone is the bottom third.

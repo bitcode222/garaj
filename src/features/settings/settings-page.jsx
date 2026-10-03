@@ -365,7 +365,7 @@ function Settings({ settings }) {
 					</p>
 				</Section>
 
-				<Section id="deschidere" icon={PanelRight} title="Deschiderea detaliilor" description="Cum se deschide o programare, un client, o mașină, o lucrare sau o factură din liste. Se păstrează pe acest dispozitiv.">
+				<Section id="deschidere" icon={PanelRight} title="Deschiderea detaliilor" description="Cum se deschide o programare, un client, o mașină, o lucrare sau o factură din liste, pe ecrane late. Pe telefon se deschide mereu pagina completă." className="max-md:hidden">
 					<Segmented
 						value={detailMode}
 						onValueChange={setDetailMode}

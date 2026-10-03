@@ -179,6 +179,7 @@
 		@apply bg-background text-foreground;
 		font-feature-settings: "ss01", "cv11";
 		overscroll-behavior-y: none;
+		overflow-x: clip; /* a page pushing in must not add a horizontal scrollbar */
 	}
 	button:not(:disabled),
 	[role="button"]:not([aria-disabled="true"]) {
@@ -337,6 +338,18 @@
 /* Route change: the incoming page fades in (opacity only, see PageTransition). */
 .page-enter {
 	animation: page-in 200ms ease-out;
+}
+/* Going deeper: the page slides in from the right. `left` on a relatively positioned
+   box moves the content without becoming the containing block of fixed children. */
+.page-push {
+	position: relative;
+	animation: page-push 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes page-push {
+	from {
+		opacity: 0;
+		left: 36px;
+	}
 }
 @keyframes page-in {
 	from {
