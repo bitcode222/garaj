@@ -20,8 +20,11 @@ import { fmtDate, fmtRelativeTo, plural } from "@/lib/format";
 import { useOpenDetail } from "@/lib/detail-mode";
 import { INVOICE_STATE } from "@/lib/labels";
 import { createInvoiceDraft } from "@/lib/store/actions";
-import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
+import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { selectInvoiceStates, selectInvoicesSorted } from "@/lib/store/selectors";
+import { SwipeRow } from "@/components/ds/swipe-row";
+import { contactSwipeActions } from "@/features/common/swipe-actions";
+import { openSheet } from "@/lib/sheets";
 
 const FILTERS = [
 	{ value: "all", label: "Toate" },
@@ -157,17 +160,21 @@ export function InvoicesPage() {
 						<span className="text-right">Total</span>
 					</ListHeader>
 				}
-				renderRow={(row) => <InvoiceRow row={row} today={today} onOpen={() => openDetail("invoice", row.invoice.id)} />}
+				renderRow={(row, index) => <InvoiceRow row={row} first={index === 0} today={today} onOpen={() => openDetail("invoice", row.invoice.id)} />}
 			/>
 		</Page>
 	);
 }
 
-function InvoiceRow({ row, today, onOpen }) {
+function InvoiceRow({ row, first, today, onOpen }) {
 	const { invoice, state, balance, totals, customerName, plate, number } = row;
 	const draft = invoice.status === "draft";
 	const { currency } = useSettings();
+	const customer = useEntity("customers", invoice.customerId);
+	const owes = balance > 0 && invoice.status === "issued" && !invoice.stornoOf;
+	const trailing = owes ? [{ key: "pay", label: "Încasează", icon: Banknote, tone: "green", onSelect: () => openSheet("payment", { invoiceId: invoice.id }) }] : [];
 	return (
+		<SwipeRow leading={contactSwipeActions(customer?.phone)} trailing={trailing} peek={first}>
 		<ListRow onClick={onOpen} className="md:grid md:grid-cols-[140px_minmax(0,1fr)_150px_130px_130px] md:gap-3">
 			{/* phone */}
 			<div className="min-w-0 flex-1 md:hidden">
@@ -207,5 +214,6 @@ function InvoiceRow({ row, today, onOpen }) {
 				)}
 			</div>
 		</ListRow>
+		</SwipeRow>
 	);
 }

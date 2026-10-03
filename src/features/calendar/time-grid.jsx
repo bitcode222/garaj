@@ -5,11 +5,18 @@ import { Initials } from "@/components/ds/data";
 import { PlateTag } from "@/components/ds/make-logo";
 import { ToneDot } from "@/components/ds/tone";
 import { fmtTime } from "@/lib/format";
+import { haptics } from "@/lib/haptics";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 import { HOUR_PX, PX_PER_MIN, SNAP_MIN, atMinute, hhmm, hourLabel, layoutEvents, minuteOfDay } from "./utils";
 
 const snap = (minutes, step = SNAP_MIN) => Math.round(minutes / step) * step;
+
+const HOLD_MS = 380; // press-and-hold before a touch drag lifts the appointment
+const HOLD_SLOP = 8; // px of finger movement that turns the hold into a scroll
+const RESIZE_ZONE = 18; // px at the bottom of a block that resize instead of move
+const EDGE = 70; // px from the scroller edge where dragging auto-scrolls
+const MAX_SCROLL = 14; // px per frame
 
 function useNowMinute() {
 	const [now, setNow] = useState(null);
@@ -28,12 +35,19 @@ function useNowMinute() {
 /**
  * Day / week grid. Hour lines are a CSS background (no per-slot elements);
  * a click on empty space creates at that time; mouse drag moves, the bottom
- * edge resizes. Touch: tap to open (scrolling stays smooth).
+ * edge resizes. Touch: tap opens, scrolling stays smooth; press and hold lifts
+ * the appointment (haptic) so it can be dragged (move) or, from its bottom
+ * edge, stretched (resize). Dragging near the top or bottom auto-scrolls.
  */
 export function TimeGrid({ columns, eventsByColumn, bounds, toneOf, badge, lookups, onCreate, onOpen, onMove, minColumn = 120, overlap = "split" }) {
 	const scrollerRef = useRef(null);
 	const suppressClick = useRef(false);
 	const [drag, setDrag] = useState(null);
+	const hold = useRef(null); // pending press-and-hold: { x, y, timer }
+	const touching = useRef(false); // a touch drag is live: stop the page from scrolling
+	const pointer = useRef({ x: 0, y: 0 });
+	const edgeSpeed = useRef(0);
+	const edgeFrame = useRef(0);
 	const now = useNowMinute();
 	const height = (bounds.end - bounds.start) * PX_PER_MIN;
 	const hours = [];
@@ -48,49 +62,162 @@ export function TimeGrid({ columns, eventsByColumn, bounds, toneOf, badge, looku
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bounds.start, bounds.end]);
 
+	// Once a hold has lifted an appointment, the finger drags it instead of scrolling.
+	useEffect(() => {
+		const el = scrollerRef.current;
+		if (!el) return;
+		const block = (event) => {
+			if (touching.current) event.preventDefault();
+		};
+		el.addEventListener("touchmove", block, { passive: false });
+		return () => el.removeEventListener("touchmove", block);
+	}, []);
+
+	// A tick every time the dragged appointment snaps to a new slot or column.
+	const slot = drag?.lifted ? `${drag.previewStart}|${drag.previewEnd}|${drag.previewColumn}` : null;
+	const lastSlot = useRef(null);
+	useEffect(() => {
+		if (slot && lastSlot.current && slot !== lastSlot.current) haptics.selection();
+		lastSlot.current = slot;
+	}, [slot]);
+
 	const minuteAt = (clientY, rect) => bounds.start + (clientY - rect.top) / PX_PER_MIN;
 
-	const beginDrag = (event, appointment, mode) => {
-		if (event.pointerType !== "mouse" || event.button !== 0) return;
-		event.stopPropagation();
-		event.currentTarget.setPointerCapture(event.pointerId);
+	const startDrag = (pointerId, target, originY, appointment, mode, touch) => {
+		target.setPointerCapture(pointerId);
+		const start = minuteOfDay(appointment.start);
+		const end = minuteOfDay(appointment.end) || 24 * 60;
+		const column = columns.find((c) => eventsByColumn[c.key]?.some((e) => e.id === appointment.id))?.key;
 		setDrag({
 			id: appointment.id,
 			mode,
-			originY: event.clientY,
-			start: minuteOfDay(appointment.start),
-			end: minuteOfDay(appointment.end) || 24 * 60,
-			column: columns.find((c) => eventsByColumn[c.key]?.some((e) => e.id === appointment.id))?.key,
-			previewStart: null,
-			previewEnd: null,
-			previewColumn: null,
+			originY,
+			originScroll: scrollerRef.current?.scrollTop ?? 0,
+			start,
+			end,
+			column,
+			// A lifted (touch) block shows immediately, before the finger has moved.
+			lifted: touch,
+			previewStart: touch ? start : null,
+			previewEnd: touch ? end : null,
+			previewColumn: touch ? column : null,
 			moved: false,
 			appointment,
 		});
 	};
 
+	const beginDrag = (event, appointment, mode) => {
+		if (event.pointerType !== "mouse" || event.button !== 0) return;
+		event.stopPropagation();
+		startDrag(event.pointerId, event.currentTarget, event.clientY, appointment, mode, false);
+	};
+
+	const cancelHold = () => {
+		if (hold.current) clearTimeout(hold.current.timer);
+		hold.current = null;
+	};
+
+	/** Touch: arm a press-and-hold; moving more than a few px means the user is scrolling. */
+	const beginHold = (event, appointment) => {
+		if (event.pointerType === "mouse") return;
+		cancelHold();
+		const target = event.currentTarget;
+		const { pointerId, clientX, clientY } = event;
+		const rect = target.getBoundingClientRect();
+		const mode = rect.height >= 40 && clientY > rect.bottom - RESIZE_ZONE ? "resize" : "move";
+		pointer.current = { x: clientX, y: clientY };
+		hold.current = {
+			x: clientX,
+			y: clientY,
+			timer: setTimeout(() => {
+				hold.current = null;
+				touching.current = true;
+				suppressClick.current = true;
+				haptics.thud();
+				startDrag(pointerId, target, clientY, appointment, mode, true);
+			}, HOLD_MS),
+		};
+	};
+
+	/** Recomputes the preview from the finger/mouse position and the current scroll. */
+	const applyPointer = (clientX, clientY) => {
+		const scroller = scrollerRef.current;
+		setDrag((d) => {
+			if (!d) return d;
+			const dy = clientY - d.originY + ((scroller?.scrollTop ?? 0) - d.originScroll);
+			const delta = snap(dy / PX_PER_MIN);
+			let previewColumn = d.column;
+			if (d.mode === "move") {
+				const under = document.elementFromPoint(clientX, clientY)?.closest("[data-col]");
+				if (under) previewColumn = under.dataset.col;
+			}
+			const duration = d.end - d.start;
+			const previewStart = d.mode === "move" ? Math.min(Math.max(bounds.start, d.start + delta), bounds.end - SNAP_MIN) : d.start;
+			const previewEnd = d.mode === "move" ? previewStart + duration : Math.min(bounds.end, Math.max(d.start + SNAP_MIN, d.end + delta));
+			return { ...d, previewStart, previewEnd, previewColumn, moved: d.moved || Math.abs(dy) >= 4 || previewColumn !== d.column };
+		});
+	};
+
+	/** Near the top or bottom edge the grid scrolls by itself while a drag is live. */
+	const edgeScroll = () => {
+		const scroller = scrollerRef.current;
+		if (!scroller || edgeFrame.current) return;
+		const step = () => {
+			if (!edgeSpeed.current) {
+				edgeFrame.current = 0;
+				return;
+			}
+			scroller.scrollTop += edgeSpeed.current;
+			applyPointer(pointer.current.x, pointer.current.y);
+			edgeFrame.current = requestAnimationFrame(step);
+		};
+		edgeFrame.current = requestAnimationFrame(step);
+	};
+
 	const moveDrag = (event) => {
+		const h = hold.current;
+		if (h && Math.hypot(event.clientX - h.x, event.clientY - h.y) > HOLD_SLOP) cancelHold();
 		if (!drag) return;
-		const dy = event.clientY - drag.originY;
-		const delta = snap(dy / PX_PER_MIN);
-		let previewColumn = drag.column;
-		if (drag.mode === "move") {
-			const under = document.elementFromPoint(event.clientX, event.clientY)?.closest("[data-col]");
-			if (under) previewColumn = under.dataset.col;
+		pointer.current = { x: event.clientX, y: event.clientY };
+		applyPointer(event.clientX, event.clientY);
+		if (event.pointerType !== "mouse" || drag.lifted) {
+			const rect = scrollerRef.current.getBoundingClientRect();
+			const top = event.clientY - (rect.top + 44); // 44 = sticky column header
+			const bottom = rect.bottom - event.clientY;
+			// Only toward the edge the finger is heading to, so a drag that starts near an edge does not run away.
+			const towardTop = event.clientY < drag.originY - 4;
+			const towardBottom = event.clientY > drag.originY + 4;
+			edgeSpeed.current =
+				towardTop && top < EDGE ? -Math.round(MAX_SCROLL * (1 - Math.max(top, 0) / EDGE)) : towardBottom && bottom < EDGE ? Math.round(MAX_SCROLL * (1 - Math.max(bottom, 0) / EDGE)) : 0;
+			if (edgeSpeed.current) edgeScroll();
 		}
-		const duration = drag.end - drag.start;
-		const previewStart = drag.mode === "move" ? Math.min(Math.max(bounds.start, drag.start + delta), bounds.end - SNAP_MIN) : drag.start;
-		const previewEnd = drag.mode === "move" ? previewStart + duration : Math.max(drag.start + SNAP_MIN, drag.end + delta);
-		setDrag((d) => ({ ...d, previewStart, previewEnd, previewColumn, moved: d.moved || Math.abs(dy) >= 4 || previewColumn !== d.column }));
+	};
+
+	const stopTouch = () => {
+		cancelHold();
+		touching.current = false;
+		edgeSpeed.current = 0;
+		cancelAnimationFrame(edgeFrame.current);
+		edgeFrame.current = 0;
+	};
+
+	const cancelDrag = () => {
+		stopTouch();
+		setDrag(null);
+		setTimeout(() => (suppressClick.current = false), 350);
 	};
 
 	const endDrag = () => {
+		stopTouch();
 		if (!drag) return;
-		const { moved, appointment, previewStart, previewEnd, previewColumn, column } = drag;
+		const { moved, appointment, previewStart, previewEnd, previewColumn, column, lifted } = drag;
 		setDrag(null);
+		// A lifted block that was released in place must not open the appointment as well.
+		if (lifted) setTimeout(() => (suppressClick.current = false), 350);
 		// A plain click falls through to the button's onClick; a drag must not also open it.
 		if (!moved || previewStart == null) return;
 		suppressClick.current = true;
+		haptics.tap();
 		const target = columns.find((c) => c.key === (previewColumn ?? column));
 		onMove(appointment, {
 			start: atMinute(target.date, previewStart),
@@ -143,7 +270,7 @@ export function TimeGrid({ columns, eventsByColumn, bounds, toneOf, badge, looku
 							}}
 						>
 							{placed.map(({ event, lane, lanes }) => {
-								const isDragged = drag?.id === event.id && drag.moved;
+								const isDragged = drag?.id === event.id && (drag.moved || drag.lifted);
 								// Dragged to another column: keep this node (it holds the pointer capture) but hide it.
 								const ghost = isDragged && drag.previewColumn && drag.previewColumn !== column.key;
 								const start = isDragged ? drag.previewStart : Math.max(minuteOfDay(event.start), bounds.start);
@@ -168,10 +295,14 @@ export function TimeGrid({ columns, eventsByColumn, bounds, toneOf, badge, looku
 										dragging={isDragged && !ghost}
 										hidden={ghost}
 										timeLabel={isDragged ? `${hhmm(start)}–${hhmm(end)}` : null}
-										onPointerDown={(e) => beginDrag(e, event, "move")}
+										onPointerDown={(e) => {
+											beginDrag(e, event, "move");
+											beginHold(e, event);
+										}}
 										onResizeDown={(e) => beginDrag(e, event, "resize")}
 										onPointerMove={moveDrag}
 										onPointerUp={endDrag}
+										onPointerCancel={cancelDrag}
 										onOpen={() => {
 											if (suppressClick.current) {
 												suppressClick.current = false;
@@ -182,7 +313,7 @@ export function TimeGrid({ columns, eventsByColumn, bounds, toneOf, badge, looku
 									/>
 								);
 							})}
-							{drag?.moved && drag.previewColumn === column.key && !placed.some((p) => p.event.id === drag.id) && (
+							{(drag?.moved || drag?.lifted) && drag.previewColumn === column.key && !placed.some((p) => p.event.id === drag.id) && (
 								<EventBlock
 									appointment={drag.appointment}
 									top={(drag.previewStart - bounds.start) * PX_PER_MIN}
@@ -208,7 +339,7 @@ export function TimeGrid({ columns, eventsByColumn, bounds, toneOf, badge, looku
 	);
 }
 
-function EventBlock({ appointment: a, top, height, left, width, layer = 0, toneName, badge, lookups, dragging, hidden, timeLabel, onPointerDown, onResizeDown, onPointerMove, onPointerUp, onOpen }) {
+function EventBlock({ appointment: a, top, height, left, width, layer = 0, toneName, badge, lookups, dragging, hidden, timeLabel, onPointerDown, onResizeDown, onPointerMove, onPointerUp, onPointerCancel, onOpen }) {
 	const vehicle = a.vehicleId ? lookups.vehicles[a.vehicleId] : null;
 	const customer = lookups.customers[a.customerId];
 	const mechanic = a.staffId ? lookups.staff[a.staffId] : null;
@@ -220,6 +351,7 @@ function EventBlock({ appointment: a, top, height, left, width, layer = 0, toneN
 			style={{ top, height, left: `${left}%`, width: `${width}%`, zIndex: dragging ? 30 : 10 + layer }}
 			onPointerMove={onPointerMove}
 			onPointerUp={onPointerUp}
+			onPointerCancel={onPointerCancel}
 		>
 			<button
 				type="button"

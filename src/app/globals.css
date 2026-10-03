@@ -334,6 +334,15 @@
 		transform: translateY(105%);
 	}
 }
+/* Route change: the incoming page fades in (opacity only, see PageTransition). */
+.page-enter {
+	animation: page-in 200ms ease-out;
+}
+@keyframes page-in {
+	from {
+		opacity: 0;
+	}
+}
 @keyframes sheet-fade {
 	from {
 		opacity: 0;

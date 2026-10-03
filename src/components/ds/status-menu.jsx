@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, Undo2 } from "lucide-react";
+import { useRef, useState } from "react";
 import { useConfirm } from "@/components/ds/confirm";
 import { StatusBadge, ToneDot } from "@/components/ds/tone";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -71,6 +72,8 @@ export function StatusMoveItems({ map, value, moves, onPick, actions = {}, destr
  */
 export function StatusMenu({ map, value, moves = [], onMove, subject, actions = {}, destructive = [], isBackward, size, icon, label = "Schimbă starea", className }) {
 	const request = useStatusChange({ map, value, subject, onMove, actions, destructive, isBackward });
+	const [open, setOpen] = useState(false);
+	const touchDown = useRef(false);
 	if (!moves.length) return <StatusBadge map={map} value={value} size={size} icon={icon} className={className} />;
 	return (
 		<span
@@ -80,9 +83,20 @@ export function StatusMenu({ map, value, moves = [], onMove, subject, actions = 
 				event.stopPropagation();
 			}}
 		>
-			<DropdownMenu>
+			<DropdownMenu open={open} onOpenChange={setOpen}>
 				<DropdownMenuTrigger
 					aria-label={`${label}: ${map[value]?.label ?? value}`}
+					// Radix opens on pointerdown for every pointer type, which would pop the menu
+					// when a swipe (SwipeRow) or a scroll starts on the badge. Touch opens on tap instead.
+					onPointerDown={(event) => {
+						touchDown.current = event.pointerType !== "mouse";
+						if (touchDown.current) event.preventDefault();
+					}}
+					onClick={(event) => {
+						// detail 0 = not from a pointer (assistive technology): treat as a tap too.
+						if (touchDown.current || event.detail === 0) setOpen((value) => !value);
+						touchDown.current = false;
+					}}
 					// Visual badge stays compact; the invisible ::before grows the touch target to ~44 px.
 					className={cn("relative inline-flex cursor-pointer items-center gap-0.5 rounded-md outline-none before:absolute before:-inset-x-1 before:-inset-y-3 focus-visible:ring-2 focus-visible:ring-ring active:scale-95", className)}
 				>

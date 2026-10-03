@@ -13,7 +13,7 @@ import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
 import { fold, matchesTokens, queryTokens } from "./search.js";
 import { addReading, formatPlate, serviceDue, vinIssue } from "./vehicle.js";
-import { canTransition, isBackwardMove, transition } from "./work-order.js";
+import { WO_NEXT, canTransition, isBackwardMove, transition } from "./work-order.js";
 
 const settings = {
 	currency: "RON",
@@ -348,5 +348,15 @@ describe("labor price and invoice counts", () => {
 		);
 		assert.equal(rows[0].net, 0);
 		assert.equal(rows[0].count, 0);
+	});
+});
+
+describe("work order next step", () => {
+	test("every suggested next step is a legal, forward move", () => {
+		for (const [from, to] of Object.entries(WO_NEXT)) {
+			assert.ok(canTransition(from, to), `${from} → ${to}`);
+		}
+		assert.equal(WO_NEXT.delivered, undefined);
+		assert.equal(WO_NEXT.cancelled, undefined);
 	});
 });

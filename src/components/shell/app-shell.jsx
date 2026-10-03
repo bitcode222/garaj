@@ -12,6 +12,7 @@ import { OPEN_STATUSES } from "@/domain/work-order";
 import { haptics } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "./logo";
+import { PageTransition } from "./page-transition";
 import { NAV, TABS, isActive } from "./nav";
 import { QuickCreate } from "./quick-create";
 import { openCommandMenu } from "./command-state";
@@ -247,7 +248,7 @@ export function AppShell({ children }) {
 				id="main"
 				className="min-h-dvh pt-[calc(3.5rem+var(--safe-top))] pb-[calc(var(--tabbar-h)+var(--safe-bottom))] md:pt-0 md:pb-0 md:pl-16 lg:pl-60"
 			>
-				{children}
+				<PageTransition>{children}</PageTransition>
 			</main>
 			<TabBar pathname={pathname} badges={badges} />
 			<CommandMenu />
