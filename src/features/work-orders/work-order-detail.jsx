@@ -46,7 +46,7 @@ import { todayISO } from "@/domain/dates";
 import { buildSnapshot, formatInvoiceNumber } from "@/domain/invoice";
 import { computeTotals } from "@/domain/lines";
 import { vehicleName } from "@/domain/vehicle";
-import { WO_TRANSITIONS, estimateMessage, inspectionSummary, isOpen } from "@/domain/work-order";
+import { WO_TRANSITIONS, estimateMessage, inspectionSummary, isBackwardMove, isOpen } from "@/domain/work-order";
 import { fmtDate, fmtHours, fmtKm, fmtWorkOrder } from "@/lib/format";
 import { printPage, shareText, useDraft, useQueryId } from "@/lib/hooks";
 import { FUEL_LEVELS, INVOICE_STATE, WORK_ORDER_ACTIONS, WORK_ORDER_STATUS } from "@/lib/labels";
@@ -57,8 +57,9 @@ import { InvoiceDocument } from "@/features/invoices/invoice-document";
 import { LinesEditor } from "@/features/lines/lines-editor";
 import { TotalsBlock } from "@/features/lines/totals-block";
 import { InspectionChecklist } from "./inspection";
-import { useStatusChange } from "@/components/ds/status-menu";
+import { StatusMoveItems, useStatusChange } from "@/components/ds/status-menu";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
+import { closeSheet, navigateFromSheet } from "@/lib/sheets";
 import { StatusStepper } from "./status-stepper";
 
 const NEXT_STEP = {
@@ -95,7 +96,12 @@ export function WorkOrderDetail() {
 	return <WorkOrder key={order.id} order={order} />;
 }
 
-function WorkOrder({ order }) {
+/** The whole work order (lines, inspection, activity, estimate…) for the overlay. */
+export function WorkOrderEmbedded({ order }) {
+	return <WorkOrder order={order} embedded />;
+}
+
+function WorkOrder({ order, embedded = false }) {
 	const router = useRouter();
 	const confirm = useConfirm();
 	const today = useToday();
@@ -153,13 +159,15 @@ function WorkOrder({ order }) {
 		onMove: move,
 		actions: WORK_ORDER_ACTIONS,
 		destructive: ["cancelled"],
+		isBackward: isBackwardMove,
 	});
 
 	const openInvoice = () => {
 		flush();
 		try {
 			const inv = invoiceForWorkOrder(order.id);
-			router.push(`/invoices/detail/?id=${inv.id}`);
+			if (embedded) navigateFromSheet(router, `/invoices/detail/?id=${inv.id}`);
+			else router.push(`/invoices/detail/?id=${inv.id}`);
 		} catch (error) {
 			toast.error(error.message);
 		}
@@ -170,7 +178,8 @@ function WorkOrder({ order }) {
 		try {
 			deleteWorkOrder(order.id);
 			toast.success("Lucrare ștearsă.");
-			router.replace("/work-orders/");
+			if (embedded) closeSheet();
+			else router.replace("/work-orders/");
 		} catch (error) {
 			toast.error(error.message);
 		}
@@ -198,8 +207,9 @@ function WorkOrder({ order }) {
 	];
 
 	return (
-		<Page width="wide">
+		<Page width="wide" embedded={embedded}>
 			<PageHeader
+				embedded={embedded}
 				back={{ href: "/work-orders/", label: "Lucrări" }}
 				title={`Lucrarea ${fmtWorkOrder(order.number)}`}
 				meta={
@@ -258,12 +268,7 @@ function WorkOrder({ order }) {
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end" className="w-56">
-									<DropdownMenuLabel className="text-xs text-muted-foreground">Mută în…</DropdownMenuLabel>
-									{WO_TRANSITIONS[order.status].map((to) => (
-										<DropdownMenuItem key={to} variant={to === "cancelled" ? "destructive" : "default"} onSelect={() => change(to)}>
-											<ToneDot tone={WORK_ORDER_STATUS[to].tone} /> {WORK_ORDER_ACTIONS[to]}
-										</DropdownMenuItem>
-									))}
+									<StatusMoveItems map={WORK_ORDER_STATUS} value={order.status} moves={WO_TRANSITIONS[order.status]} onPick={change} actions={WORK_ORDER_ACTIONS} destructive={["cancelled"]} isBackward={isBackwardMove} />
 									{order.status === "estimate" && !order.invoiceId && (
 										<>
 											<DropdownMenuSeparator />
@@ -280,6 +285,7 @@ function WorkOrder({ order }) {
 			/>
 
 			<SplitView
+				stacked={embedded}
 				main={
 					<>
 						<Card>
@@ -472,7 +478,7 @@ function WorkOrder({ order }) {
 			/>
 
 			{next && (
-				<StickyBar className="md:hidden">
+				<StickyBar inline={embedded} className="md:hidden">
 					<Button className="h-11 flex-1" onClick={() => change(next)}>
 						{NEXT_LABEL[order.status]}
 					</Button>

@@ -1,27 +1,63 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Undo2 } from "lucide-react";
 import { useConfirm } from "@/components/ds/confirm";
 import { StatusBadge, ToneDot } from "@/components/ds/tone";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 /**
  * Every status change asks first. Returns `request(to)`; `onMove(to)` runs only
  * after the admin confirms. `subject` names the record ("#1877", "Verificare ITP").
  */
-export function useStatusChange({ map, value, subject, onMove, actions = {}, destructive = [] }) {
+export function useStatusChange({ map, value, subject, onMove, actions = {}, destructive = [], isBackward }) {
 	const confirm = useConfirm();
 	return async (to) => {
 		const target = map[to]?.label ?? to;
+		const back = isBackward?.(value, to);
 		const ok = await confirm({
-			title: `Schimbi starea în „${target}”?`,
+			title: back ? `Revii la „${target}”?` : `Schimbi starea în „${target}”?`,
 			description: `${subject ? `${subject}: ` : ""}${map[value]?.label ?? value} → ${target}`,
-			confirmLabel: actions[to] ?? target,
+			confirmLabel: back ? `Înapoi la ${target}` : (actions[to] ?? target),
 			destructive: destructive.includes(to),
 		});
 		if (ok) onMove(to);
 	};
+}
+
+/**
+ * The items of a status menu, in three groups: forward moves, "Înapoi la…"
+ * (earlier stages, undo icon) and destructive ones (red). Used by StatusMenu and
+ * by detail-page menus so they always look the same.
+ */
+export function StatusMoveItems({ map, value, moves, onPick, actions = {}, destructive = [], isBackward }) {
+	const back = moves.filter((to) => !destructive.includes(to) && isBackward?.(value, to));
+	const forward = moves.filter((to) => !destructive.includes(to) && !back.includes(to));
+	const danger = moves.filter((to) => destructive.includes(to));
+	const item = (to, label, extra) => (
+		<DropdownMenuItem key={to} variant={destructive.includes(to) ? "destructive" : "default"} className="max-md:min-h-11" onSelect={() => onPick(to)}>
+			{extra ?? <ToneDot tone={map[to]?.tone} />} {label}
+		</DropdownMenuItem>
+	);
+	return (
+		<>
+			{forward.length > 0 && <DropdownMenuLabel className="text-xs text-muted-foreground">Mută în…</DropdownMenuLabel>}
+			{forward.map((to) => item(to, actions[to] ?? map[to]?.label ?? to))}
+			{back.length > 0 && (
+				<>
+					{forward.length > 0 && <DropdownMenuSeparator />}
+					<DropdownMenuLabel className="text-xs text-muted-foreground">Înapoi la…</DropdownMenuLabel>
+					{back.map((to) => item(to, map[to]?.label ?? to, <Undo2 className="size-3.5 text-muted-foreground" aria-hidden />))}
+				</>
+			)}
+			{danger.length > 0 && (
+				<>
+					<DropdownMenuSeparator />
+					{danger.map((to) => item(to, actions[to] ?? map[to]?.label ?? to))}
+				</>
+			)}
+		</>
+	);
 }
 
 /**
@@ -33,8 +69,8 @@ export function useStatusChange({ map, value, subject, onMove, actions = {}, des
  * `actions` overrides item labels (verbs: "Confirmă"); `destructive` lists the
  * targets drawn in red.
  */
-export function StatusMenu({ map, value, moves = [], onMove, subject, actions = {}, destructive = [], size, icon, label = "Schimbă starea", className }) {
-	const request = useStatusChange({ map, value, subject, onMove, actions, destructive });
+export function StatusMenu({ map, value, moves = [], onMove, subject, actions = {}, destructive = [], isBackward, size, icon, label = "Schimbă starea", className }) {
+	const request = useStatusChange({ map, value, subject, onMove, actions, destructive, isBackward });
 	if (!moves.length) return <StatusBadge map={map} value={value} size={size} icon={icon} className={className} />;
 	return (
 		<span
@@ -54,12 +90,7 @@ export function StatusMenu({ map, value, moves = [], onMove, subject, actions = 
 					<ChevronDown className="-ml-0.5 size-3 text-muted-foreground" aria-hidden />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end" className="min-w-44">
-					<DropdownMenuLabel className="text-xs text-muted-foreground">Mută în…</DropdownMenuLabel>
-					{moves.map((to) => (
-						<DropdownMenuItem key={to} variant={destructive.includes(to) ? "destructive" : "default"} className="max-md:min-h-11" onSelect={() => request(to)}>
-							<ToneDot tone={map[to]?.tone} /> {actions[to] ?? map[to]?.label ?? to}
-						</DropdownMenuItem>
-					))}
+					<StatusMoveItems map={map} value={value} moves={moves} onPick={request} actions={actions} destructive={destructive} isBackward={isBackward} />
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</span>

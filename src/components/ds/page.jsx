@@ -9,7 +9,9 @@ const WIDTHS = {
 };
 
 /** Page gutters and max width. Every route renders inside one Page. */
-export function Page({ width = "default", className, children }) {
+export function Page({ width = "default", embedded = false, className, children }) {
+	// Embedded: rendered inside a sheet, which already provides gutters and scrolling.
+	if (embedded) return <div className={cn("space-y-5", className)}>{children}</div>;
 	return (
 		<div className={cn("mx-auto w-full px-4 pt-4 pb-10 md:px-6 md:pt-6 lg:px-8 lg:pt-8", WIDTHS[width], className)}>
 			{children}
@@ -18,7 +20,16 @@ export function Page({ width = "default", className, children }) {
 }
 
 /** Title block: optional back link, title, description, actions, extra meta row. */
-export function PageHeader({ title, description, back, actions, meta, className }) {
+export function PageHeader({ title, description, back, actions, meta, embedded = false, className }) {
+	// Embedded: the sheet's own header carries the title and back/close controls.
+	if (embedded) {
+		return (
+			<header className={cn("flex flex-col gap-3", className)}>
+				{meta}
+				{actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+			</header>
+		);
+	}
 	return (
 		<header className={cn("mb-5 flex flex-col gap-3 md:mb-6", className)}>
 			{back && (
@@ -64,7 +75,15 @@ export function Toolbar({ className, children }) {
 }
 
 /** Detail layout: content + a sticky summary column from xl up. */
-export function SplitView({ main, aside, className }) {
+export function SplitView({ main, aside, stacked = false, className }) {
+	if (stacked) {
+		return (
+			<div className={cn("space-y-6", className)}>
+				{main}
+				{aside}
+			</div>
+		);
+	}
 	return (
 		<div className={cn("grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]", className)}>
 			<div className="min-w-0 space-y-6">{main}</div>
@@ -78,7 +97,8 @@ export function Overline({ className, children }) {
 }
 
 /** Bottom action bar on phones (above the tab bar); inline from md up. */
-export function StickyBar({ className, children }) {
+export function StickyBar({ inline = false, className, children }) {
+	if (inline) return <div className={cn("flex gap-2", className)}>{children}</div>;
 	return (
 		<div
 			data-print="hide"

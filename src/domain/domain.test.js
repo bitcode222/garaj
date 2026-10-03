@@ -13,7 +13,7 @@ import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
 import { fold, matchesTokens, queryTokens } from "./search.js";
 import { addReading, formatPlate, serviceDue, vinIssue } from "./vehicle.js";
-import { canTransition, transition } from "./work-order.js";
+import { canTransition, isBackwardMove, transition } from "./work-order.js";
 
 const settings = {
 	currency: "RON",
@@ -179,6 +179,12 @@ describe("work orders", () => {
 		assert.ok(canTransition("estimate", "in_progress"));
 		assert.ok(canTransition("ready", "in_progress"));
 		assert.ok(!canTransition("delivered", "in_progress"));
+		assert.ok(canTransition("ready", "estimate"));
+		assert.ok(canTransition("in_progress", "approved"));
+		assert.ok(!canTransition("cancelled", "estimate"));
+		assert.ok(isBackwardMove("ready", "estimate"));
+		assert.ok(!isBackwardMove("in_progress", "waiting_parts"));
+		assert.ok(!isBackwardMove("estimate", "approved"));
 		const o = transition({ status: "estimate", dates: {}, activity: [] }, "approved", { now: "t" });
 		assert.equal(o.status, "approved");
 		assert.equal(o.dates.approved, "t");
