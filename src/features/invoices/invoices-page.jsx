@@ -7,7 +7,7 @@ import { Money, Stat, EmptyState } from "@/components/ds/data";
 import { FilterChips, SearchInput } from "@/components/ds/inputs";
 import { DataList, ListHeader, ListRow } from "@/components/ds/list";
 import { Page, PageHeader, Toolbar } from "@/components/ds/page";
-import { Plate } from "@/components/ds/plate";
+import { PlateTag } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { StatusBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { formatInvoiceNumber } from "@/domain/invoice";
 import { computeTotals } from "@/domain/lines";
 import { fold, matchesTokens, queryTokens } from "@/domain/search";
 import { fmtDate, fmtRelativeTo, plural } from "@/lib/format";
+import { useOpenDetail } from "@/lib/detail-mode";
 import { INVOICE_STATE } from "@/lib/labels";
 import { createInvoiceDraft } from "@/lib/store/actions";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
@@ -33,6 +34,7 @@ const FILTERS = [
 export function InvoicesPage() {
 	const ready = useIsReady();
 	const router = useRouter();
+	const openDetail = useOpenDetail();
 	const today = useToday();
 	const settings = useSettings();
 	const invoices = useCollection("invoices");
@@ -154,17 +156,17 @@ export function InvoicesPage() {
 						<span className="text-right">Total</span>
 					</ListHeader>
 				}
-				renderRow={(row) => <InvoiceRow row={row} today={today} />}
+				renderRow={(row) => <InvoiceRow row={row} today={today} onOpen={() => openDetail("invoice", row.invoice.id)} />}
 			/>
 		</Page>
 	);
 }
 
-function InvoiceRow({ row, today }) {
+function InvoiceRow({ row, today, onOpen }) {
 	const { invoice, state, balance, totals, customerName, plate, number } = row;
 	const draft = invoice.status === "draft";
 	return (
-		<ListRow href={`/invoices/detail/?id=${invoice.id}`} className="md:grid md:grid-cols-[140px_minmax(0,1fr)_150px_130px_130px] md:gap-3">
+		<ListRow onClick={onOpen} className="md:grid md:grid-cols-[140px_minmax(0,1fr)_150px_130px_130px] md:gap-3">
 			{/* phone */}
 			<div className="min-w-0 flex-1 md:hidden">
 				<div className="flex items-baseline justify-between gap-3">
@@ -186,7 +188,7 @@ function InvoiceRow({ row, today }) {
 			</div>
 			<div className="hidden min-w-0 items-center gap-2.5 md:flex">
 				<span className="truncate text-sm font-medium">{customerName}</span>
-				{plate && <Plate value={plate} size="sm" />}
+				{plate && <PlateTag value={plate} />}
 			</div>
 			<div className="hidden md:block">
 				<StatusBadge map={INVOICE_STATE} value={state} />

@@ -33,6 +33,7 @@ import {
 import { dayOfInstant, minutesBetween, parseISODate } from "@/domain/dates";
 import { fmtDate, fmtTime, plural } from "@/lib/format";
 import { APPOINTMENT_STATUS } from "@/lib/labels";
+import { useOpenDetail } from "@/lib/detail-mode";
 import { openSheet } from "@/lib/sheets";
 import { moveAppointment, saveAppointment, updateSettings } from "@/lib/store/actions";
 import { useLocalPreference } from "@/lib/hooks";
@@ -71,6 +72,7 @@ export function CalendarPage() {
 	const ready = useIsReady();
 	const today = useToday();
 	const confirm = useConfirm();
+	const openDetail = useOpenDetail();
 	const settings = useSettings();
 	const prefs = settings.calendar;
 	const appointments = useCollection("appointments");
@@ -121,7 +123,7 @@ export function CalendarPage() {
 	}).length;
 
 	const create = ({ start, staffId } = {}) => openSheet("appointment", { start, staffId });
-	const open = (a) => openSheet("appointment-view", { id: a.id });
+	const open = (a) => openDetail("appointment", a.id);
 
 	const move = async (a, { start, end, staffId }) => {
 		const previous = { start: a.start, end: a.end, staffId: a.staffId };

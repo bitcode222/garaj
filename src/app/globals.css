@@ -243,29 +243,21 @@
 }
 
 /* ── Scrim ───────────────────────────────────────────────────────────────────
-   The one backdrop behind every sheet, dialog and palette. 10% white + a small
-   blur. Only opacity animates (compositor-only): animating the blur radius
-   would re-blur the whole screen every frame, which janks on iOS WebKit. */
+   The one backdrop behind every sheet, dialog and palette: a flat 10% white
+   tint, no blur. Only opacity animates (compositor-only). */
 @utility scrim {
 	position: fixed;
 	inset: 0;
 	z-index: 50;
 	background: var(--scrim);
-	-webkit-backdrop-filter: blur(4px);
-	backdrop-filter: blur(4px);
 	&[data-state="open"] {
 		animation: scrim-in 200ms var(--ease-soft) both;
 	}
 	&[data-state="closed"] {
 		animation: scrim-out 150ms ease-in both;
 	}
-	@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-		background: color-mix(in oklab, var(--background) 60%, transparent);
-	}
 	@media (prefers-reduced-transparency: reduce) {
 		background: color-mix(in oklab, var(--background) 70%, transparent);
-		-webkit-backdrop-filter: none;
-		backdrop-filter: none;
 	}
 }
 @keyframes scrim-in {

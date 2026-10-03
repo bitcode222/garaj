@@ -1,16 +1,17 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CalendarPlus, Pencil, Shield, ShieldCheck, Wrench } from "lucide-react";
+import { CalendarPlus, Shield, ShieldCheck, Wrench } from "lucide-react";
 import { DetailSheet } from "@/components/ds/detail-sheet";
 import { KeyValue, KeyValueGrid, Money } from "@/components/ds/data";
-import { Plate } from "@/components/ds/plate";
+import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { StatusBadge, ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import { computeTotals } from "@/domain/lines";
 import { deadline, lastReading, serviceDue, vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtKm, fmtRelativeTo, fmtWorkOrder } from "@/lib/format";
 import { DEADLINE_STATUS, FUELS, WORK_ORDER_STATUS } from "@/lib/labels";
+import { detailHref } from "@/lib/detail-mode";
 import { navigateFromSheet, openSheet } from "@/lib/sheets";
 import { useCollection, useEntity, useSettings, useToday } from "@/lib/store/hooks";
 import { selectWorkOrdersByVehicle } from "@/lib/store/selectors";
@@ -18,7 +19,7 @@ import { selectWorkOrdersByVehicle } from "@/lib/store/selectors";
 function Deadline({ icon: Icon, title, info, date, today }) {
 	const meta = DEADLINE_STATUS[info.status];
 	return (
-		<div className="min-w-0 rounded-xl border p-3">
+		<div className="min-w-0 rounded-md border p-3">
 			<div className="flex items-center justify-between gap-2">
 				<span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
 					<Icon className="size-3.5" aria-hidden /> {title}
@@ -57,13 +58,11 @@ export default function VehicleView({ open, onOpenChange, id }) {
 			missing="Mașina a fost ștearsă."
 			title={vehicle ? vehicleName(vehicle) || "Mașină" : "Mașină"}
 			description={vehicle ? [vehicle.year, vehicle.engine, FUELS[vehicle.fuel], vehicle.color].filter(Boolean).join(" · ") || undefined : undefined}
-			fullPage={vehicle && `/vehicles/detail/?id=${vehicle.id}`}
+			fullPage={vehicle && detailHref("vehicle", vehicle.id)}
+			onEdit={() => openSheet("vehicle", { id: vehicle.id })}
 			footer={
 				vehicle && (
 					<>
-						<Button variant="outline" className="max-md:h-11" onClick={() => openSheet("vehicle", { id: vehicle.id })}>
-							<Pencil /> Editează
-						</Button>
 						<Button variant="outline" className="max-md:h-11" onClick={() => openSheet("appointment", { vehicleId: vehicle.id })}>
 							<CalendarPlus /> Programează
 						</Button>
@@ -79,7 +78,8 @@ export default function VehicleView({ open, onOpenChange, id }) {
 			{vehicle && (
 				<div className="space-y-5">
 					<div className="flex flex-wrap items-center gap-2">
-						<Plate value={vehicle.plate} size="lg" />
+						<MakeLogo make={vehicle.make} className="size-8" />
+						<PlateTag value={vehicle.plate} />
 						{inShop && (
 							<button type="button" onClick={() => navigateFromSheet(router, `/work-orders/detail/?id=${inShop.id}`)}>
 								<ToneBadge tone="orange" icon={Wrench}>
@@ -93,7 +93,7 @@ export default function VehicleView({ open, onOpenChange, id }) {
 						<Deadline icon={ShieldCheck} title="ITP" info={itp} date={vehicle.itpExpiry} today={today} />
 						<Deadline icon={Shield} title="RCA" info={rca} date={vehicle.rcaExpiry} today={today} />
 					</div>
-					<div className="flex items-center justify-between gap-2 rounded-xl border p-3">
+					<div className="flex items-center justify-between gap-2 rounded-md border p-3">
 						<span className="flex items-center gap-1.5 text-sm font-medium">
 							<Wrench className="size-4 text-muted-foreground" aria-hidden /> Revizie
 						</span>
@@ -121,7 +121,7 @@ export default function VehicleView({ open, onOpenChange, id }) {
 					<section className="space-y-2">
 						<h3 className="text-sm font-semibold">Istoric service ({orders.length})</h3>
 						{orders.length ? (
-							<ul className="divide-y rounded-xl border">
+							<ul className="divide-y rounded-md border">
 								{orders.slice(0, 5).map((o) => (
 									<li key={o.id}>
 										<button type="button" onClick={() => navigateFromSheet(router, `/work-orders/detail/?id=${o.id}`)} className="flex min-h-14 w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-accent/50">

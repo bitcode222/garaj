@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { ContactActions } from "@/components/ds/contact";
 import { Banner, EmptyState, Initials, Meter, Money, Stat } from "@/components/ds/data";
 import { Page } from "@/components/ds/page";
-import { Plate } from "@/components/ds/plate";
+import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge, ToneDot } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
@@ -236,10 +236,11 @@ export function DashboardPage() {
 										return (
 											<div key={order.id} className={cn("flex flex-wrap items-center gap-3 rounded-lg border p-3", tone("green").soft)}>
 												<Link href={`/work-orders/detail/?id=${order.id}`} className="flex min-w-0 flex-1 items-center gap-3">
-													{vehicle && <Plate value={vehicle.plate} size="sm" />}
+													{vehicle && <MakeLogo make={vehicle.make} className="size-6" />}
 													<div className="min-w-0">
 														<p className="truncate text-sm font-medium">{vehicleName(vehicle)}</p>
-														<p className="truncate text-xs text-muted-foreground">
+														<p className="flex items-center gap-1.5 truncate text-xs text-muted-foreground">
+															{vehicle && <PlateTag value={vehicle.plate} />}
 															{customer?.name} · <Money value={computeTotals(order.lines, { vatPayer: settings.invoicing.vatPayer }).gross} decimals={0} />
 														</p>
 													</div>

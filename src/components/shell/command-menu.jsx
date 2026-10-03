@@ -12,7 +12,7 @@ import {
 	CommandList,
 	CommandSeparator,
 } from "@/components/ui/command";
-import { Plate } from "@/components/ds/plate";
+import { PlateTag } from "@/components/ds/make-logo";
 import { StatusBadge } from "@/components/ds/tone";
 import { matchesTokens, queryTokens } from "@/domain/search";
 import { WORK_ORDER_STATUS } from "@/lib/labels";
@@ -100,7 +100,7 @@ export function CommandMenu() {
 						<CommandGroup key={group.type} heading={group.heading}>
 							{results[group.type].map((item) => (
 								<CommandItem key={item.id} value={`${item.type}-${item.id}`} onSelect={() => go(group.href(item.id))} className="gap-3 py-2.5">
-									{item.type === "vehicle" ? <Plate value={item.plate} size="sm" /> : <group.icon />}
+									{item.type === "vehicle" ? <PlateTag value={item.plate} /> : <group.icon />}
 									<span className="min-w-0 flex-1">
 										<span className="block truncate font-medium">{item.type === "vehicle" ? item.subtitle : item.title}</span>
 										{item.type !== "vehicle" && item.subtitle && <span className="block truncate text-xs text-muted-foreground">{item.subtitle}</span>}

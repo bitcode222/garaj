@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Initials } from "@/components/ds/data";
-import { Plate } from "@/components/ds/plate";
+import { PlateTag } from "@/components/ds/make-logo";
 import { ToneDot } from "@/components/ds/tone";
 import { fmtTime } from "@/lib/format";
 import { tone } from "@/lib/tones";
@@ -246,7 +246,7 @@ function EventBlock({ appointment: a, top, height, left, width, layer = 0, toneN
 				)}
 				{height > 64 && (
 					<span className="mt-auto flex items-center gap-1.5 pt-1">
-						{vehicle && <Plate value={vehicle.plate} size="sm" />}
+						{vehicle && <PlateTag value={vehicle.plate} className="h-4 px-1 text-[10px]" />}
 						{mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="ml-auto size-5" />}
 					</span>
 				)}

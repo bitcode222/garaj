@@ -1,19 +1,23 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { ExternalLink } from "lucide-react";
+import { Maximize2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { Sheet } from "@/components/ds/sheet";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { navigateFromSheet } from "@/lib/sheets";
 import { useIsReady } from "@/lib/store/hooks";
 
 /**
- * Read-only detail overlay (appointment, customer, vehicle). Same panel as
- * `Sheet`, plus the three states every detail needs: loading skeleton,
- * entity deleted while open (closes itself), and an "open full page" link.
+ * Detail overlay (appointment, customer, vehicle, work order, invoice). The
+ * controls live in the top bar: open the full page, edit, close. Also handles
+ * the three states every detail needs: loading skeleton, record deleted while
+ * open (closes itself), and the footer for primary actions.
  */
-export function DetailSheet({ open, onOpenChange, title, description, entity, missing = "Elementul a fost șters.", fullPage, footer, children }) {
+export function DetailSheet({ open, onOpenChange, title, description, entity, missing = "Elementul a fost șters.", fullPage, onEdit, editLabel = "Editează", footer, children }) {
+	const router = useRouter();
 	const ready = useIsReady();
 	const gone = ready && !entity;
 	useEffect(() => {
@@ -30,32 +34,31 @@ export function DetailSheet({ open, onOpenChange, title, description, entity, mi
 			title={title}
 			description={description}
 			size="lg"
-			footer={
-				footer || fullPage ? (
+			headerActions={
+				entity && (
 					<>
-						{fullPage && (
-							<Link
-								href={fullPage}
-								prefetch={false}
-								onClick={() => onOpenChange(false)}
-								aria-label="Pagina completă"
-								className="mr-auto inline-flex h-11 items-center justify-center gap-1.5 rounded-md px-2 text-sm text-muted-foreground transition-colors hover:text-foreground max-md:w-11 max-md:flex-none! md:h-9"
-							>
-								<ExternalLink className="size-4" aria-hidden /> <span className="max-md:sr-only">Pagina completă</span>
-							</Link>
+						{onEdit && (
+							<Button variant="ghost" size="icon" className="size-10 text-muted-foreground md:size-9" onClick={onEdit} aria-label={editLabel} title={editLabel}>
+								<Pencil />
+							</Button>
 						)}
-						{footer}
+						{fullPage && (
+							<Button variant="ghost" size="icon" className="size-10 text-muted-foreground md:size-9" onClick={() => navigateFromSheet(router, fullPage)} aria-label="Deschide pagina completă" title="Pagina completă">
+								<Maximize2 />
+							</Button>
+						)}
 					</>
-				) : undefined
+				)
 			}
+			footer={footer}
 		>
 			{ready && entity ? (
 				children
 			) : (
 				<div className="space-y-3 pt-2">
-					<Skeleton className="h-14 w-full rounded-xl" />
-					<Skeleton className="h-32 w-full rounded-xl" />
-					<Skeleton className="h-24 w-full rounded-xl" />
+					<Skeleton className="h-14 w-full rounded-md" />
+					<Skeleton className="h-32 w-full rounded-md" />
+					<Skeleton className="h-24 w-full rounded-md" />
 				</div>
 			)}
 		</Sheet>

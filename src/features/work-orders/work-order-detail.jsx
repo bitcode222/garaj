@@ -57,6 +57,8 @@ import { InvoiceDocument } from "@/features/invoices/invoice-document";
 import { LinesEditor } from "@/features/lines/lines-editor";
 import { TotalsBlock } from "@/features/lines/totals-block";
 import { InspectionChecklist } from "./inspection";
+import { useStatusChange } from "@/components/ds/status-menu";
+import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { StatusStepper } from "./status-stepper";
 
 const NEXT_STEP = {
@@ -136,10 +138,6 @@ function WorkOrder({ order }) {
 			});
 			if (!ok) return;
 		}
-		if (to === "cancelled") {
-			const ok = await confirm({ title: `Anulezi lucrarea #${order.number}?`, confirmLabel: "Anulează lucrarea", destructive: true });
-			if (!ok) return;
-		}
 		try {
 			setWorkOrderStatus(order.id, to);
 			toast.success(`${WORK_ORDER_STATUS[to].label}`);
@@ -147,6 +145,15 @@ function WorkOrder({ order }) {
 			toast.error(error.message);
 		}
 	};
+
+	const change = useStatusChange({
+		map: WORK_ORDER_STATUS,
+		value: order.status,
+		subject: fmtWorkOrder(order.number),
+		onMove: move,
+		actions: WORK_ORDER_ACTIONS,
+		destructive: ["cancelled"],
+	});
 
 	const openInvoice = () => {
 		flush();
@@ -201,13 +208,13 @@ function WorkOrder({ order }) {
 							<StatusBadge map={WORK_ORDER_STATUS} value={order.status} />
 							<span>deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}</span>
 						</div>
-						<StatusStepper status={order.status} className="max-w-2xl" />
+						<StatusStepper status={order.status} onMove={locked ? undefined : change} className="max-w-2xl" />
 					</div>
 				}
 				actions={
 					<>
 						{next && (
-							<Button onClick={() => move(next)} className="max-md:hidden">
+							<Button onClick={() => change(next)} className="max-md:hidden">
 								{NEXT_LABEL[order.status]}
 							</Button>
 						)}
@@ -253,7 +260,7 @@ function WorkOrder({ order }) {
 								<DropdownMenuContent align="end" className="w-56">
 									<DropdownMenuLabel className="text-xs text-muted-foreground">Mută în…</DropdownMenuLabel>
 									{WO_TRANSITIONS[order.status].map((to) => (
-										<DropdownMenuItem key={to} variant={to === "cancelled" ? "destructive" : "default"} onSelect={() => move(to)}>
+										<DropdownMenuItem key={to} variant={to === "cancelled" ? "destructive" : "default"} onSelect={() => change(to)}>
 											<ToneDot tone={WORK_ORDER_STATUS[to].tone} /> {WORK_ORDER_ACTIONS[to]}
 										</DropdownMenuItem>
 									))}
@@ -279,10 +286,10 @@ function WorkOrder({ order }) {
 							<CardContent className="space-y-5">
 								<div className="flex flex-wrap items-start justify-between gap-4">
 									<Link href={vehicle ? `/vehicles/detail/?id=${vehicle.id}` : "#"} className="flex min-w-0 items-center gap-3">
-										{vehicle && <Plate value={vehicle.plate} size="lg" />}
+										{vehicle && <MakeLogo make={vehicle.make} className="size-9" />}
 										<div className="min-w-0">
 											<p className="truncate font-semibold">{vehicleName(vehicle) || "Mașină"}</p>
-											<p className="truncate font-mono text-xs text-muted-foreground">{vehicle?.vin || "VIN necompletat"}</p>
+											<p className="flex items-center gap-2 truncate font-mono text-xs text-muted-foreground">{vehicle && <PlateTag value={vehicle.plate} />}{vehicle?.vin || "VIN necompletat"}</p>
 										</div>
 									</Link>
 									{customer && (
@@ -425,7 +432,7 @@ function WorkOrder({ order }) {
 									</div>
 								</div>
 								{next && (
-									<Button className="w-full max-md:hidden" onClick={() => move(next)}>
+									<Button className="w-full max-md:hidden" onClick={() => change(next)}>
 										{NEXT_LABEL[order.status]}
 									</Button>
 								)}
@@ -466,7 +473,7 @@ function WorkOrder({ order }) {
 
 			{next && (
 				<StickyBar className="md:hidden">
-					<Button className="h-11 flex-1" onClick={() => move(next)}>
+					<Button className="h-11 flex-1" onClick={() => change(next)}>
 						{NEXT_LABEL[order.status]}
 					</Button>
 					<Button variant="outline" className="h-11" onClick={openInvoice} disabled={!draft.lines.length} aria-label="Factură">

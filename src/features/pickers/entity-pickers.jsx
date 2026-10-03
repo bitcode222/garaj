@@ -4,7 +4,7 @@ import { useDeferredValue, useState } from "react";
 import { CarFront, ChevronsUpDown, Plus, User } from "lucide-react";
 import { toast } from "sonner";
 import { Field, SearchInput } from "@/components/ds/inputs";
-import { Plate } from "@/components/ds/plate";
+import { MakeLogo, PlateTag, VehicleLabel } from "@/components/ds/make-logo";
 import { Sheet } from "@/components/ds/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -174,8 +174,8 @@ export function VehiclePicker({ value, onChange, customerId, invalid }) {
 			<PickerTrigger onClick={() => setOpen(true)} icon={CarFront} placeholder="Alege mașina (nr. înmatriculare)" invalid={invalid}>
 				{current && (
 					<span className="flex min-w-0 flex-1 items-center gap-2.5">
-						<Plate value={current.plate} size="sm" />
-						<span className="truncate">{vehicleName(current)}</span>
+						<VehicleLabel vehicle={current} className="min-w-0" />
+						<PlateTag value={current.plate} className="ml-auto" />
 					</span>
 				)}
 			</PickerTrigger>
@@ -266,11 +266,12 @@ export function VehiclePicker({ value, onChange, customerId, invalid }) {
 										onClick={() => choose(vehicle)}
 										className={cn("flex min-h-14 w-full items-center gap-3 px-3 py-2 text-left hover:bg-accent/60", vehicle.id === value && "bg-accent")}
 									>
-										<Plate value={vehicle.plate} size="sm" />
+										<MakeLogo make={vehicle.make} className="size-6" />
 										<span className="min-w-0 flex-1">
 											<span className="block truncate text-sm font-medium">{vehicleName(vehicle) || "Mașină"}</span>
 											<span className="block truncate text-xs text-muted-foreground">{customers[vehicle.customerId]?.name}</span>
 										</span>
+										<PlateTag value={vehicle.plate} />
 									</button>
 								</li>
 							))}
