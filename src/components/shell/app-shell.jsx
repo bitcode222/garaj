@@ -9,8 +9,10 @@ import { Kbd } from "@/components/ds/data";
 import { useCollection, useSettings, useStoreValue, useToday } from "@/lib/store/hooks";
 import { selectReminders } from "@/lib/store/selectors";
 import { OPEN_STATUSES } from "@/domain/work-order";
+import { haptics } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
 import { LogoMark } from "./logo";
+import { PageTransition } from "./page-transition";
 import { NAV, TABS, isActive } from "./nav";
 import { QuickCreate } from "./quick-create";
 import { openCommandMenu } from "./command-state";
@@ -200,8 +202,16 @@ function TabBar({ pathname, badges }) {
 							<Link
 								href={item.href}
 								aria-current={active ? "page" : undefined}
+								onClick={(event) => {
+									haptics.selection();
+									// Like a native tab bar: tapping the current tab goes back to the top.
+									if (active && pathname.replace(/\/$/, "") === item.href.replace(/\/$/, "")) {
+										event.preventDefault();
+										window.scrollTo({ top: 0, behavior: "smooth" });
+									}
+								}}
 								className={cn(
-									"touch-none-callout relative flex h-full flex-col items-center justify-center gap-1 text-[10px] font-medium transition-colors",
+									"touch-none-callout relative flex h-full flex-col items-center justify-center gap-1 text-[10px] font-medium transition-[color,transform,opacity] duration-100 active:scale-90 active:opacity-60",
 									active ? "text-foreground" : "text-muted-foreground",
 								)}
 							>
@@ -238,7 +248,7 @@ export function AppShell({ children }) {
 				id="main"
 				className="min-h-dvh pt-[calc(3.5rem+var(--safe-top))] pb-[calc(var(--tabbar-h)+var(--safe-bottom))] md:pt-0 md:pb-0 md:pl-16 lg:pl-60"
 			>
-				{children}
+				<PageTransition>{children}</PageTransition>
 			</main>
 			<TabBar pathname={pathname} badges={badges} />
 			<CommandMenu />

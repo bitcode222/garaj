@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { APPOINTMENT_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
 import { saveAppointment, setAppointmentStatus } from "@/lib/store/actions";

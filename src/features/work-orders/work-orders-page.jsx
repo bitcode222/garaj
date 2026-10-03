@@ -9,13 +9,13 @@ import { DataList, ListHeader, ListRow } from "@/components/ds/list";
 import { Page, PageHeader, Toolbar } from "@/components/ds/page";
 import { PlateTag, VehicleLabel } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
-import { StatusMenu } from "@/components/ds/status-menu";
+import { StatusMenu, useStatusChange } from "@/components/ds/status-menu";
 import { Button } from "@/components/ui/button";
 import { dayOfInstant, diffDaysISO } from "@/domain/dates";
 import { computeTotals } from "@/domain/lines";
 import { fold, matchesTokens, queryTokens } from "@/domain/search";
 import { vehicleName } from "@/domain/vehicle";
-import { OPEN_STATUSES, WO_TRANSITIONS, isBackwardMove } from "@/domain/work-order";
+import { OPEN_STATUSES, WO_NEXT, WO_TRANSITIONS, isBackwardMove } from "@/domain/work-order";
 import { fmtDate, fmtDays, fmtWorkOrder, plural } from "@/lib/format";
 import { WORK_ORDER_ACTIONS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { useOpenDetail } from "@/lib/detail-mode";
@@ -25,6 +25,8 @@ import { selectWorkOrdersSorted } from "@/lib/store/selectors";
 import { cn } from "@/lib/utils";
 import { moveWorkOrder } from "./status";
 import { tone } from "@/lib/tones";
+import { SwipeRow } from "@/components/ds/swipe-row";
+import { contactSwipeActions } from "@/features/common/swipe-actions";
 
 const LIST_FILTERS = [
 	{ value: "open", label: "Deschise", statuses: OPEN_STATUSES },
@@ -111,14 +113,24 @@ export function WorkOrdersPage() {
 						<span className="text-right">Total</span>
 					</ListHeader>
 				}
-				renderRow={(row) => <OrderRow row={row} today={today} onOpen={() => openDetail("work-order", row.order.id)} />}
+				renderRow={(row, index) => <OrderRow row={row} first={index === 0} today={today} onOpen={() => openDetail("work-order", row.order.id)} />}
 			/>
 		</Page>
 	);
 }
 
-function OrderRow({ row, today, onOpen }) {
+function OrderRow({ row, first, today, onOpen }) {
 	const { order, vehicle, customer, totals } = row;
+	const requestMove = useStatusChange({
+		map: WORK_ORDER_STATUS,
+		value: order.status,
+		subject: fmtWorkOrder(order.number),
+		onMove: (to) => moveWorkOrder(order, to),
+		actions: WORK_ORDER_ACTIONS,
+		isBackward: isBackwardMove,
+	});
+	const next = WO_NEXT[order.status];
+	const trailing = next ? [{ key: "next", label: WORK_ORDER_STATUS[next].label, icon: WORK_ORDER_STATUS[next].icon, tone: WORK_ORDER_STATUS[next].tone, onSelect: () => requestMove(next) }] : [];
 	const age = diffDaysISO(dayOfInstant(order.dates?.[order.status] ?? order.createdAt), today);
 	const stale = (order.status === "ready" && age >= 2) || (order.status === "waiting_parts" && age >= 3);
 	const status = (
@@ -135,6 +147,7 @@ function OrderRow({ row, today, onOpen }) {
 		/>
 	);
 	return (
+		<SwipeRow leading={contactSwipeActions(customer?.phone)} trailing={trailing} peek={first}>
 		<ListRow onClick={onOpen} nested className="md:grid md:grid-cols-[88px_minmax(0,1.2fr)_minmax(0,1fr)_170px_120px_120px] md:gap-3">
 			<div className="min-w-0 flex-1 md:hidden">
 				<div className="flex items-center justify-between gap-3">
@@ -161,5 +174,6 @@ function OrderRow({ row, today, onOpen }) {
 			</span>
 			<Money value={totals.gross} className="hidden text-right text-sm font-semibold md:block" />
 		</ListRow>
+		</SwipeRow>
 	);
 }

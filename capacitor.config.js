@@ -10,6 +10,7 @@ const config = {
     contentInset: "never",
     scheme: "Garaj",
     limitsNavigationsToAppBoundDomains: false,
+    allowsLinkPreview: false,
   },
   plugins: {
     StatusBar: { overlaysWebView: true },

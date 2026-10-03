@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { CarFront, Plus } from "lucide-react";
+import { CarFront, Plus, Wrench } from "lucide-react";
 import { EmptyState } from "@/components/ds/data";
 import { MakeLogo } from "@/components/ds/make-logo";
 import { FilterChips, SearchInput } from "@/components/ds/inputs";
@@ -20,6 +20,8 @@ import { DEADLINE_STATUS, FUELS } from "@/lib/labels";
 import { useOpenDetail } from "@/lib/detail-mode";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useToday } from "@/lib/store/hooks";
+import { SwipeRow } from "@/components/ds/swipe-row";
+import { contactSwipeActions } from "@/features/common/swipe-actions";
 
 const FILTERS = [
 	{ value: "all", label: "Toate" },
@@ -116,7 +118,12 @@ export function VehiclesPage() {
 						<span>Termene</span>
 					</ListHeader>
 				}
-				renderRow={(r) => (
+				renderRow={(r, index) => (
+					<SwipeRow
+						leading={contactSwipeActions(r.owner?.phone)}
+						trailing={[{ key: "checkin", label: "Primire", icon: Wrench, tone: "orange", onSelect: () => openSheet("checkin", { vehicleId: r.vehicle.id }) }]}
+						peek={index === 0}
+					>
 					<ListRow onClick={() => openDetail("vehicle", r.vehicle.id)} className="md:grid md:grid-cols-[minmax(0,1.2fr)_120px_minmax(0,1fr)_110px_minmax(0,1fr)] md:gap-3">
 						<div className="flex min-w-0 flex-1 items-center gap-3">
 							<MakeLogo make={r.vehicle.make} className="size-7 max-md:hidden" />
@@ -143,6 +150,7 @@ export function VehiclesPage() {
 							<DeadlineChip label="RCA" info={r.rca} />
 						</span>
 					</ListRow>
+					</SwipeRow>
 				)}
 			/>
 		</Page>

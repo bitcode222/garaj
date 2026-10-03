@@ -28,6 +28,15 @@ const WO_RANK = { estimate: 0, approved: 1, in_progress: 2, waiting_parts: 2, re
 /** True when `to` is an earlier stage than `from` ("in progress" ⇄ "waiting for parts" is sideways, not back). */
 export const isBackwardMove = (from, to) => (WO_RANK[to] ?? Infinity) < (WO_RANK[from] ?? -Infinity);
 
+/** The one-tap "next step" of a job (swipe action); closed jobs have none. */
+export const WO_NEXT = {
+	estimate: "approved",
+	approved: "in_progress",
+	in_progress: "ready",
+	waiting_parts: "in_progress",
+	ready: "delivered",
+};
+
 export const OPEN_STATUSES = ["estimate", "approved", "in_progress", "waiting_parts", "ready"];
 
 export const isOpen = (order) => OPEN_STATUSES.includes(order.status);

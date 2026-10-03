@@ -177,7 +177,7 @@ export function Segmented({ value, onValueChange, options, collapse = false, cla
 /** Horizontally scrolling single-select pills with counts. */
 export function FilterChips({ value, onChange, options, className }) {
 	return (
-		<div className={cn("no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0", className)}>
+		<div className={cn("no-scrollbar -mx-4 flex max-w-[calc(100%+2rem)] gap-2 overflow-x-auto overscroll-x-contain px-4 md:mx-0 md:max-w-full md:flex-wrap md:px-0", className)}>
 			{options.map((option) => {
 				const active = option.value === value;
 				return (

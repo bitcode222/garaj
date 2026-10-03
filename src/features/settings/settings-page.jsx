@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { Building2, CalendarClock, Database, Download, FlaskConical, ImagePlus, Monitor, PanelRight, FileText, Moon, Palette, Percent, Plus, ReceiptText, RotateCcw, Sun, Upload, Users, Warehouse } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
 import { Banner, Initials } from "@/components/ds/data";
@@ -365,7 +365,7 @@ function Settings({ settings }) {
 					</p>
 				</Section>
 
-				<Section id="deschidere" icon={PanelRight} title="Deschiderea detaliilor" description="Cum se deschide o programare, un client, o mașină, o lucrare sau o factură din liste. Se păstrează pe acest dispozitiv.">
+				<Section id="deschidere" icon={PanelRight} title="Deschiderea detaliilor" description="Cum se deschide o programare, un client, o mașină, o lucrare sau o factură din liste, pe ecrane late. Pe telefon se deschide mereu pagina completă." className="max-md:hidden">
 					<Segmented
 						value={detailMode}
 						onValueChange={setDetailMode}

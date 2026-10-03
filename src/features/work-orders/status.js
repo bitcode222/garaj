@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { WORK_ORDER_STATUS } from "@/lib/labels";
 import { setWorkOrderStatus } from "@/lib/store/actions";
 import { fmtWorkOrder } from "@/lib/format";

@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useState } from "react";
 import { CarFront, ChevronsUpDown, Plus, User } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Field, SearchInput } from "@/components/ds/inputs";
 import { MakeLogo, PlateTag, VehicleLabel } from "@/components/ds/make-logo";
 import { Sheet } from "@/components/ds/sheet";

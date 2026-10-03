@@ -2,9 +2,10 @@
 
 import { ThemeProvider, useTheme } from "next-themes";
 import { useEffect } from "react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { ConfirmProvider } from "@/components/ds/confirm";
 import { Toaster } from "@/components/ui/sonner";
+import { useKeyboardInset } from "@/lib/keyboard";
 import { initStore } from "@/lib/store/store";
 import { useStoreValue } from "@/lib/store/hooks";
 
@@ -13,6 +14,7 @@ const isNative = () => typeof window !== "undefined" && Boolean(window.Capacitor
 function StoreBoot() {
 	const { resolvedTheme } = useTheme();
 	const saveError = useStoreValue("saveError");
+	useKeyboardInset();
 
 	useEffect(() => {
 		initStore();

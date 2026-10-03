@@ -20,6 +20,8 @@ import { useCollection, useIsReady, useToday } from "@/lib/store/hooks";
 import { selectCustomerBalances, selectCustomersSorted, selectVehiclesByCustomer, selectWorkOrdersByCustomer } from "@/lib/store/selectors";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
+import { SwipeRow } from "@/components/ds/swipe-row";
+import { contactSwipeActions, whatsappSwipeAction } from "@/features/common/swipe-actions";
 
 const FILTERS = [
 	{ value: "all", label: "Toți" },
@@ -122,7 +124,8 @@ export function CustomersPage() {
 						<span className="text-right">Sold</span>
 					</ListHeader>
 				}
-				renderRow={({ customer, cars, lastVisit, balance, visits }) => (
+				renderRow={({ customer, cars, lastVisit, balance, visits }, index) => (
+					<SwipeRow leading={contactSwipeActions(customer.phone)} trailing={whatsappSwipeAction(customer.phone)} peek={index === 0}>
 					<ListRow onClick={() => openDetail("customer", customer.id)} className="md:grid md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_120px_120px] md:gap-3">
 						<div className="flex min-w-0 flex-1 items-center gap-3">
 							<Initials name={customer.name} tone={customer.type === "company" ? "purple" : "blue"} />
@@ -148,6 +151,7 @@ export function CustomersPage() {
 						<span className="hidden text-sm text-muted-foreground md:block">{lastVisit ? fmtDate(lastVisit) : "—"}</span>
 						<span className="hidden text-right md:block">{balance > 0 ? <Money value={balance} className={cn("text-sm font-semibold", tone("red").text)} /> : <span className="text-sm text-muted-foreground">—</span>}</span>
 					</ListRow>
+					</SwipeRow>
 				)}
 			/>
 		</Page>

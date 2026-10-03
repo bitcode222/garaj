@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Field, NumberInput } from "@/components/ds/inputs";
 import { Plate } from "@/components/ds/plate";
 import { Sheet } from "@/components/ds/sheet";

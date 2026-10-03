@@ -51,6 +51,7 @@ class MainViewController: CAPBridgeViewController {
         // Edge swipe goes back through the web history (Next.js client navigation).
         webView?.allowsBackForwardNavigationGestures = true
         bridge?.registerPluginInstance(PrinterPlugin())
+        bridge?.registerPluginInstance(HapticsPlugin())
     }
 }
 
@@ -92,6 +93,54 @@ public class PrinterPlugin: CAPPlugin, CAPBridgedPlugin {
             } else {
                 controller.present(animated: true, completionHandler: completion)
             }
+        }
+    }
+}
+
+/// Taptic Engine feedback for JavaScript: `NativeHaptics.impact({ style })`,
+/// `.selection()` and `.notify({ type })`. Generators are reused so the first tap
+/// is not delayed, and `prepare()` is called again after each use.
+@objc(HapticsPlugin)
+public class HapticsPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "HapticsPlugin"
+    public let jsName = "NativeHaptics"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "impact", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "selection", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "notify", returnType: CAPPluginReturnPromise),
+    ]
+
+    private let light = UIImpactFeedbackGenerator(style: .light)
+    private let medium = UIImpactFeedbackGenerator(style: .medium)
+    private let heavy = UIImpactFeedbackGenerator(style: .heavy)
+    private let selector = UISelectionFeedbackGenerator()
+    private let notifier = UINotificationFeedbackGenerator()
+
+    @objc func impact(_ call: CAPPluginCall) {
+        let style = call.getString("style") ?? "light"
+        DispatchQueue.main.async {
+            let generator = style == "heavy" ? self.heavy : style == "medium" ? self.medium : self.light
+            generator.impactOccurred()
+            generator.prepare()
+            call.resolve()
+        }
+    }
+
+    @objc func selection(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            self.selector.selectionChanged()
+            self.selector.prepare()
+            call.resolve()
+        }
+    }
+
+    @objc func notify(_ call: CAPPluginCall) {
+        let type = call.getString("type") ?? "success"
+        DispatchQueue.main.async {
+            let feedback: UINotificationFeedbackGenerator.FeedbackType = type == "error" ? .error : type == "warning" ? .warning : .success
+            self.notifier.notificationOccurred(feedback)
+            self.notifier.prepare()
+            call.resolve()
         }
     }
 }
