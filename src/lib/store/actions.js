@@ -321,7 +321,7 @@ export function setAppointmentStatus(id, status) {
 
 export function deleteAppointment(id) {
 	const appointment = mustGet("appointments", id, "Programarea");
-	if (appointment.workOrderId) throw new DomainError("in_use", "Programarea are o lucrare deschisă. Anuleaz-o în loc să o ștergi.");
+	if (appointment.workOrderId) throw new DomainError("in_use", "Programarea are o lucrare deschisă. Anulează-o în loc să o ștergi.");
 	commit({ appointments: { del: [id] } });
 }
 

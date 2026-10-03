@@ -16,7 +16,7 @@ export const INITIAL_STATE = Object.freeze({
 	persistence: "idb", // idb · memory
 	demo: false,
 	settings: DEFAULT_SETTINGS,
-	counters: { invoices: {}, workOrders: 0 },
+	counters: { invoices: {}, workOrders: 1 },
 	...Object.fromEntries(COLLECTIONS.map((name) => [name, EMPTY])),
 });
 
@@ -100,6 +100,18 @@ function queuePersist(changes) {
 	flushTimer = setTimeout(flush, FLUSH_DELAY);
 }
 
+/** Puts a failed batch back in front of newer writes so the next flush retries it. */
+function requeue(batch) {
+	const next = queue ?? { stores: new Map(), meta: new Map() };
+	for (const [name, entries] of batch.stores) {
+		const merged = new Map(entries);
+		for (const [id, entity] of next.stores.get(name) ?? []) merged.set(id, entity);
+		next.stores.set(name, merged);
+	}
+	for (const [key, value] of batch.meta) if (!next.meta.has(key)) next.meta.set(key, value);
+	queue = next;
+}
+
 export async function flush() {
 	clearTimeout(flushTimer);
 	flushTimer = null;
@@ -111,6 +123,7 @@ export async function flush() {
 		broadcast([...batch.stores.keys()], [...batch.meta.keys()]);
 	} catch (error) {
 		console.error("[garaj] save failed", error);
+		requeue(batch);
 		setFlags({ saveError: String(error?.message ?? error) });
 	}
 }

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { todayISO } from "@/domain/dates";
 import { formatInvoiceNumber, invoiceBalance } from "@/domain/invoice";
+import { formatMoney } from "@/domain/money";
 import { PAYMENT_METHODS } from "@/lib/labels";
 import { recordPayment } from "@/lib/store/actions";
 import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
@@ -44,7 +45,7 @@ export default function PaymentSheet({ open, onOpenChange, invoiceId }) {
 			open={open}
 			onOpenChange={onOpenChange}
 			title="Înregistrează plata"
-			description={`Factura ${formatInvoiceNumber(invoice.series, invoice.number)} · rest ${new Intl.NumberFormat("ro-RO", { minimumFractionDigits: 2 }).format(balance / 100)} lei`}
+			description={`Factura ${formatInvoiceNumber(invoice.series, invoice.number)} · rest ${formatMoney(balance, settings.currency)}`}
 			footer={
 				<>
 					<Button variant="outline" className="max-md:h-11" onClick={() => onOpenChange(false)}>

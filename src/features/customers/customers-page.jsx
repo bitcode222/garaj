@@ -18,6 +18,8 @@ import { useOpenDetail } from "@/lib/detail-mode";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useToday } from "@/lib/store/hooks";
 import { selectCustomerBalances, selectCustomersSorted, selectVehiclesByCustomer, selectWorkOrdersByCustomer } from "@/lib/store/selectors";
+import { tone } from "@/lib/tones";
+import { cn } from "@/lib/utils";
 
 const FILTERS = [
 	{ value: "all", label: "Toți" },
@@ -144,7 +146,7 @@ export function CustomersPage() {
 							{cars.length > 2 && <span className="text-xs text-muted-foreground">+{cars.length - 2}</span>}
 						</span>
 						<span className="hidden text-sm text-muted-foreground md:block">{lastVisit ? fmtDate(lastVisit) : "—"}</span>
-						<span className="hidden text-right md:block">{balance > 0 ? <Money value={balance} className="text-sm font-semibold text-red-600 dark:text-red-400" /> : <span className="text-sm text-muted-foreground">—</span>}</span>
+						<span className="hidden text-right md:block">{balance > 0 ? <Money value={balance} className={cn("text-sm font-semibold", tone("red").text)} /> : <span className="text-sm text-muted-foreground">—</span>}</span>
 					</ListRow>
 				)}
 			/>

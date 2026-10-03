@@ -24,7 +24,7 @@ export function revenueByMonth(invoices, months) {
 		row.parts += invoice.totals.parts;
 		row.fees += invoice.totals.fees;
 		row.net += invoice.totals.net;
-		if (!invoice.stornoOf) row.count += 1;
+		if (!invoice.stornoOf && invoice.status !== "cancelled") row.count += 1;
 	}
 	return rows;
 }
@@ -42,7 +42,7 @@ export function revenueByDay(invoices, days) {
 		row.parts += invoice.totals.parts;
 		row.fees += invoice.totals.fees;
 		row.net += invoice.totals.net;
-		if (!invoice.stornoOf) row.count += 1;
+		if (!invoice.stornoOf && invoice.status !== "cancelled") row.count += 1;
 	}
 	return rows;
 }

@@ -24,6 +24,7 @@ import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/ho
 import { selectWorkOrdersSorted } from "@/lib/store/selectors";
 import { cn } from "@/lib/utils";
 import { moveWorkOrder } from "./status";
+import { tone } from "@/lib/tones";
 
 const LIST_FILTERS = [
 	{ value: "open", label: "Deschise", statuses: OPEN_STATUSES },
@@ -141,7 +142,7 @@ function OrderRow({ row, today, onOpen }) {
 					<Money value={totals.gross} className="text-sm font-semibold" />
 				</div>
 				<div className="mt-1 flex items-center justify-between gap-3">
-					<span className={cn("flex min-w-0 items-center gap-1.5 truncate text-xs", stale ? "font-medium text-red-600 dark:text-red-400" : "text-muted-foreground")}>
+					<span className={cn("flex min-w-0 items-center gap-1.5 truncate text-xs", stale ? cn("font-medium", tone("red").text) : "text-muted-foreground")}>
 						{vehicle && <PlateTag value={vehicle.plate} />}
 						{fmtWorkOrder(order.number)} · {customer?.name} · {stale ? (age === 0 ? "azi" : fmtDays(-age)) : fmtDate(order.createdAt, "d MMM")}
 					</span>
@@ -155,7 +156,7 @@ function OrderRow({ row, today, onOpen }) {
 			</span>
 			<span className="hidden truncate text-sm md:block">{customer?.name}</span>
 			<span className="hidden md:block">{status}</span>
-			<span className={cn("hidden text-sm md:block", stale ? "font-medium text-red-600 dark:text-red-400" : "text-muted-foreground")}>
+			<span className={cn("hidden text-sm md:block", stale ? cn("font-medium", tone("red").text) : "text-muted-foreground")}>
 				{stale ? (age === 0 ? "azi" : fmtDays(-age)) : fmtDate(order.createdAt)}
 			</span>
 			<Money value={totals.gross} className="hidden text-right text-sm font-semibold md:block" />

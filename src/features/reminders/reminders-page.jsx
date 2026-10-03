@@ -23,6 +23,7 @@ import { logContact } from "@/lib/store/actions";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { selectReminders } from "@/lib/store/selectors";
 import { cn } from "@/lib/utils";
+import { tone } from "@/lib/tones";
 
 // Marketing-style reminders need consent (GDPR); money and pickup notices are service messages.
 const NEEDS_CONSENT = new Set(["itp", "rca", "service"]);
@@ -139,7 +140,7 @@ export function RemindersPage() {
 								</button>
 								{open === r.key && <p className="mt-2 rounded-lg bg-muted p-3 text-sm whitespace-pre-line">{message}</p>}
 								{blocked && (
-									<p className="mt-2 text-xs text-amber-700 dark:text-amber-400">
+									<p className={cn("mt-2 text-xs", tone("yellow").text)}>
 										Clientul nu și-a dat acordul pentru mesaje de reamintire — doar apel telefonic.
 									</p>
 								)}

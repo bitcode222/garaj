@@ -61,6 +61,8 @@ import { LinesEditor } from "@/features/lines/lines-editor";
 import { TotalsBlock } from "@/features/lines/totals-block";
 import { CustomerPicker, VehiclePicker } from "@/features/pickers/entity-pickers";
 import { InvoiceDocument } from "./invoice-document";
+import { tone } from "@/lib/tones";
+import { cn } from "@/lib/utils";
 
 export function InvoiceDetail() {
 	const id = useQueryId();
@@ -451,7 +453,7 @@ function IssuedInvoice({ invoice, embedded = false }) {
 										<Money value={payable ? balance : invoice.totals.gross} />
 									</p>
 									{payable && dueDays != null && (
-										<p className={dueDays < 0 ? "mt-1 text-sm font-medium text-red-600 dark:text-red-400" : "mt-1 text-sm text-muted-foreground"}>
+										<p className={dueDays < 0 ? cn("mt-1 text-sm font-medium", tone("red").text) : "mt-1 text-sm text-muted-foreground"}>
 											{dueDays < 0 ? `Restantă de ${Math.abs(dueDays)} ${Math.abs(dueDays) === 1 ? "zi" : "zile"}` : `Scadentă ${fmtDays(dueDays)}`}
 										</p>
 									)}

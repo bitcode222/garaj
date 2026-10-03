@@ -18,6 +18,8 @@ import { selectActive } from "@/lib/store/selectors";
 import { ServicesField } from "@/features/common/services-field";
 import { CustomerPicker, VehiclePicker } from "@/features/pickers/entity-pickers";
 import { navigateFromSheet } from "@/lib/sheets";
+import { tone } from "@/lib/tones";
+import { cn } from "@/lib/utils";
 
 /** "Primire mașină": the 30-second check-in that opens a work order. */
 export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicleId }) {
@@ -107,7 +109,7 @@ export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicl
 					</Field>
 				</div>
 				{lowKm && (
-					<p className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
+					<p className={cn("flex items-start gap-2 rounded-lg border p-2.5 text-xs", tone("yellow").chip)}>
 						<TriangleAlert className="mt-0.5 size-3.5 shrink-0" aria-hidden />
 						Kilometrajul este mai mic decât ultima citire ({fmtKm(last.km)}). Verifică sau continuă dacă ceasul a fost înlocuit.
 					</p>

@@ -19,6 +19,8 @@ import { navigateFromSheet, openSheet } from "@/lib/sheets";
 import { useCollection, useEntity, useSettings, useToday } from "@/lib/store/hooks";
 import { selectAppointmentsByDay } from "@/lib/store/selectors";
 import { APPOINTMENT_ACTIONS, quickMoveAppointment } from "./status";
+import { tone } from "@/lib/tones";
+import { cn } from "@/lib/utils";
 
 const durationLabel = (m) => (m < 60 ? `${m} min` : `${(m / 60).toLocaleString("ro-RO", { maximumFractionDigits: 1 })} h`);
 
@@ -95,7 +97,7 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 					</div>
 
 					{conflicts.length > 0 && (
-						<p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-800 dark:text-amber-300">Se suprapune cu altă programare (același mecanic sau elevator).</p>
+						<p className={cn("rounded-lg border p-3 text-sm", tone("yellow").chip)}>Se suprapune cu altă programare (același mecanic sau elevator).</p>
 					)}
 
 					<div className="grid gap-2 sm:grid-cols-2">
