@@ -9,6 +9,13 @@ export const APPOINTMENT_TRANSITIONS = {
 	cancelled: ["scheduled"],
 };
 
+/**
+ * Moves offered by a one-tap status menu. "done" is set by finishing the work
+ * order, and "arrived" is only a legal quick move because the UI routes it
+ * through check-in (which opens the work order) instead of writing the status.
+ */
+export const quickAppointmentMoves = (status) => (APPOINTMENT_TRANSITIONS[status] ?? []).filter((to) => to !== "done");
+
 export const isActiveAppointment = (a) => a.status !== "cancelled" && a.status !== "no_show";
 
 export function canMoveAppointment(from, to) {

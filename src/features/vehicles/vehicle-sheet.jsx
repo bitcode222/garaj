@@ -17,6 +17,7 @@ import { FUELS } from "@/lib/labels";
 import { recordMileage, saveVehicle } from "@/lib/store/actions";
 import { useEntity } from "@/lib/store/hooks";
 import { CustomerPicker } from "@/features/pickers/entity-pickers";
+import { navigateFromSheet } from "@/lib/sheets";
 
 const EMPTY = {
 	plate: "",
@@ -66,8 +67,8 @@ export default function VehicleSheet({ open, onOpenChange, id, customerId, navig
 				if (warning) toast.warning(warning);
 			}
 			toast.success(existing ? "Mașină actualizată." : "Mașină adăugată.");
-			onOpenChange(false);
-			if (!existing && navigate) router.push(`/vehicles/detail/?id=${saved.id}`);
+			if (!existing && navigate) navigateFromSheet(router, `/vehicles/detail/?id=${saved.id}`);
+			else onOpenChange(false);
 		} catch (error) {
 			toast.error(error.message);
 		}

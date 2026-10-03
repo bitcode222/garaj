@@ -3,14 +3,17 @@
 import { CarFront } from "lucide-react";
 import { Initials } from "@/components/ds/data";
 import { Plate } from "@/components/ds/plate";
-import { StatusBadge, ToneDot } from "@/components/ds/tone";
+import { StatusMenu } from "@/components/ds/status-menu";
+import { ToneDot } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
+import { quickAppointmentMoves } from "@/domain/appointment";
 import { vehicleName } from "@/domain/vehicle";
 import { fmtTime } from "@/lib/format";
 import { APPOINTMENT_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
+import { APPOINTMENT_ACTIONS, quickMoveAppointment } from "./status";
 
 /** The calendar's tinted event badge at list scale: time rail, plate, title, customer, status, mechanic. */
 export function AppointmentCard({ appointment: a, vehicle, customer, mechanic, toneName, badge = "colored", checkIn = true, dimPast = false }) {
@@ -31,7 +34,7 @@ export function AppointmentCard({ appointment: a, vehicle, customer, mechanic, t
 				<span className="text-sm font-semibold tabular-nums">{fmtTime(a.start)}</span>
 				<span className="text-2xs tabular-nums opacity-70">{fmtTime(a.end)}</span>
 			</div>
-			<button type="button" onClick={() => openSheet("appointment", { id: a.id })} className="flex min-w-0 flex-1 flex-col items-start justify-center gap-1 text-left">
+			<button type="button" onClick={() => openSheet("appointment-view", { id: a.id })} className="flex min-w-0 flex-1 flex-col items-start justify-center gap-1 text-left">
 				<span className="flex w-full items-center gap-2">
 					{badge === "dot" && <ToneDot tone={t} />}
 					{vehicle && <Plate value={vehicle.plate} size="sm" />}
@@ -43,7 +46,16 @@ export function AppointmentCard({ appointment: a, vehicle, customer, mechanic, t
 				</span>
 			</button>
 			<div className="flex shrink-0 flex-col items-end justify-between gap-1">
-				<StatusBadge map={APPOINTMENT_STATUS} value={a.status} size="sm" icon={false} className={badge === "dot" ? undefined : "bg-card/70"} />
+				<StatusMenu
+					map={APPOINTMENT_STATUS}
+					value={a.status}
+					moves={quickAppointmentMoves(a.status)}
+					onMove={(to) => quickMoveAppointment(a, to)}
+					actions={APPOINTMENT_ACTIONS}
+					destructive={["cancelled", "no_show"]}
+					size="sm"
+					icon={false}
+				/>
 				{mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" />}
 			</div>
 			{canCheckIn && (

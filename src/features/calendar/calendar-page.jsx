@@ -121,7 +121,7 @@ export function CalendarPage() {
 	}).length;
 
 	const create = ({ start, staffId } = {}) => openSheet("appointment", { start, staffId });
-	const open = (a) => openSheet("appointment", { id: a.id });
+	const open = (a) => openSheet("appointment-view", { id: a.id });
 
 	const move = async (a, { start, end, staffId }) => {
 		const previous = { start: a.start, end: a.end, staffId: a.staffId };

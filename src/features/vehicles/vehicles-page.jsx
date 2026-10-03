@@ -114,7 +114,7 @@ export function VehiclesPage() {
 					</ListHeader>
 				}
 				renderRow={(r) => (
-					<ListRow href={`/vehicles/detail/?id=${r.vehicle.id}`} className="md:grid md:grid-cols-[120px_minmax(0,1.2fr)_minmax(0,1fr)_110px_minmax(0,1fr)] md:gap-3">
+					<ListRow onClick={() => openSheet("vehicle-view", { id: r.vehicle.id })} className="md:grid md:grid-cols-[120px_minmax(0,1.2fr)_minmax(0,1fr)_110px_minmax(0,1fr)] md:gap-3">
 						<Plate value={r.vehicle.plate} />
 						<div className="min-w-0 flex-1">
 							<p className="truncate text-[15px] font-medium md:text-sm">

@@ -13,6 +13,7 @@ import { isValidCUI, isValidEmail, normalizePhone } from "@/domain/customer";
 import { CUSTOMER_TYPES } from "@/lib/labels";
 import { saveCustomer } from "@/lib/store/actions";
 import { useEntity } from "@/lib/store/hooks";
+import { navigateFromSheet } from "@/lib/sheets";
 
 const EMPTY = { type: "person", name: "", phone: "", email: "", cui: "", regCom: "", contactName: "", address: "", city: "", county: "", notes: "", marketingConsent: true };
 
@@ -38,8 +39,8 @@ export default function CustomerSheet({ open, onOpenChange, id, navigate = true 
 		try {
 			const saved = saveCustomer(form);
 			toast.success(existing ? "Client actualizat." : "Client adăugat.");
-			onOpenChange(false);
-			if (!existing && navigate) router.push(`/customers/detail/?id=${saved.id}`);
+			if (!existing && navigate) navigateFromSheet(router, `/customers/detail/?id=${saved.id}`);
+			else onOpenChange(false);
 		} catch (error) {
 			toast.error(error.message);
 		}

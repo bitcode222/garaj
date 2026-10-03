@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 
-import { findConflicts } from "./appointment.js";
+import { APPOINTMENT_TRANSITIONS, findConflicts, quickAppointmentMoves } from "./appointment.js";
 import { isValidCUI, isValidIBAN, normalizePhone, smsHref, whatsappHref } from "./customer.js";
 import { addMonthsISO, diffDaysISO, isISODate } from "./dates.js";
 import { reservedByPart, stockDelta, stockLevel } from "./inventory.js";
@@ -255,6 +255,19 @@ describe("appointments", () => {
 			{ id: "e", status: "scheduled", start: "2026-09-30T09:00:00.000Z", end: "2026-09-30T10:00:00.000Z", staffId: "m1", bayId: "b1" },
 		];
 		assert.deepEqual(findConflicts(a, others).map((x) => x.id), ["b"]);
+	});
+});
+
+describe("appointment quick status moves", () => {
+	test("only legal moves, never done", () => {
+		for (const status of Object.keys(APPOINTMENT_TRANSITIONS)) {
+			const moves = quickAppointmentMoves(status);
+			assert.ok(moves.every((to) => APPOINTMENT_TRANSITIONS[status].includes(to)));
+			assert.ok(!moves.includes("done"));
+		}
+		assert.deepEqual(quickAppointmentMoves("scheduled"), ["confirmed", "arrived", "no_show", "cancelled"]);
+		assert.deepEqual(quickAppointmentMoves("cancelled"), ["scheduled"]);
+		assert.deepEqual(quickAppointmentMoves("arrived"), []);
 	});
 });
 
