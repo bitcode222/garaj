@@ -2,8 +2,11 @@
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
-import { useRef } from "react";
+import { createContext, useContext, useRef } from "react";
 import { cn } from "@/lib/utils";
+
+/** Position in the global sheet stack. A sheet above another reuses the scrim below it. */
+export const SheetDepth = createContext(0);
 
 /**
  * Create/edit surface: a bottom sheet on phones, a right-hand panel from md up.
@@ -12,10 +15,11 @@ import { cn } from "@/lib/utils";
  */
 export function Sheet({ open, onOpenChange, title, description, footer, size = "md", className, children }) {
 	const contentRef = useRef(null);
+	const depth = useContext(SheetDepth);
 	return (
 		<DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
 			<DialogPrimitive.Portal>
-				<DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/40 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+				{depth === 0 && <DialogPrimitive.Overlay className="scrim" />}
 				<DialogPrimitive.Content
 					ref={contentRef}
 					tabIndex={-1}
@@ -30,6 +34,7 @@ export function Sheet({ open, onOpenChange, title, description, footer, size = "
 						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:rounded-none md:rounded-l-2xl md:border-t-0 md:border-l",
 						"md:data-[state=closed]:animate-out md:data-[state=closed]:slide-out-to-right md:data-[state=open]:animate-in md:data-[state=open]:slide-in-from-right",
 						size === "lg" ? "md:max-w-2xl" : "md:max-w-md",
+						depth > 0 && "shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.25)]",
 						className,
 					)}
 				>

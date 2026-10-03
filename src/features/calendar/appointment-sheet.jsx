@@ -17,7 +17,7 @@ import { findConflicts } from "@/domain/appointment";
 import { combineDateTime, dayOfInstant, pad2, todayISO } from "@/domain/dates";
 import { fmtTime } from "@/lib/format";
 import { APPOINTMENT_STATUS } from "@/lib/labels";
-import { openSheet } from "@/lib/sheets";
+import { navigateFromSheet, openSheet } from "@/lib/sheets";
 import { deleteAppointment, saveAppointment, setAppointmentStatus } from "@/lib/store/actions";
 import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
 import { selectActive, selectAppointmentsByDay } from "@/lib/store/selectors";
@@ -164,8 +164,7 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 							<Button
 								size="sm"
 								onClick={() => {
-									onOpenChange(false);
-									router.push(`/work-orders/detail/?id=${existing.workOrderId}`);
+									navigateFromSheet(router, `/work-orders/detail/?id=${existing.workOrderId}`);
 								}}
 							>
 								<Wrench /> Deschide lucrarea
@@ -173,10 +172,7 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 						) : canCheckIn ? (
 							<Button
 								size="sm"
-								onClick={() => {
-									onOpenChange(false);
-									setTimeout(() => openSheet("checkin", { appointmentId: existing.id }), 330);
-								}}
+								onClick={() => openSheet("checkin", { appointmentId: existing.id })}
 							>
 								<CarFront /> A sosit — primire
 							</Button>

@@ -99,7 +99,7 @@ Reminder → booking conversion · estimate approval rate · average ticket · l
 |---|---|---|
 | Azi (dashboard) | `/` | KPIs, today's timeline, jobs by status, to-contact list, low stock, mechanic load |
 | Programări | `/calendar/` | Day (per-mechanic columns) / Week / Month / Year heatmap / Agenda; create, move (drag), resize, status actions, check-in |
-| Lucrări | `/work-orders/`, `/work-orders/detail/?id=` | Board + list; detail with status stepper, lines editor, inspection, activity; create invoice; share estimate |
+| Lucrări | `/work-orders/`, `/work-orders/detail/?id=` | List with one-tap status menu; detail with status stepper, lines editor, inspection, activity; create invoice; share estimate |
 | Facturi | `/invoices/`, `/invoices/detail/?id=` | List + filters; **document view** (the reference page); issue, record payment, storno, print/PDF, share |
 | Clienți | `/customers/`, `…/detail/?id=` | Individuals + companies (CUI), vehicles, history, balance, consent |
 | Mașini | `/vehicles/`, `…/detail/?id=` | Plate hero, ITP / RCA / service cards, mileage history, service timeline |

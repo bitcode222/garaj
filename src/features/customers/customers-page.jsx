@@ -119,7 +119,7 @@ export function CustomersPage() {
 					</ListHeader>
 				}
 				renderRow={({ customer, cars, lastVisit, balance, visits }) => (
-					<ListRow href={`/customers/detail/?id=${customer.id}`} className="md:grid md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_120px_120px] md:gap-3">
+					<ListRow onClick={() => openSheet("customer-view", { id: customer.id })} className="md:grid md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_120px_120px] md:gap-3">
 						<div className="flex min-w-0 flex-1 items-center gap-3">
 							<Initials name={customer.name} tone={customer.type === "company" ? "purple" : "blue"} />
 							<div className="min-w-0 flex-1">

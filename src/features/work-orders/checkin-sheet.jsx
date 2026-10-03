@@ -17,6 +17,7 @@ import { useCollection, useEntity } from "@/lib/store/hooks";
 import { selectActive } from "@/lib/store/selectors";
 import { ServicesField } from "@/features/common/services-field";
 import { CustomerPicker, VehiclePicker } from "@/features/pickers/entity-pickers";
+import { navigateFromSheet } from "@/lib/sheets";
 
 /** "Primire mașină": the 30-second check-in that opens a work order. */
 export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicleId }) {
@@ -55,8 +56,7 @@ export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicl
 				: await createWorkOrder(payload);
 			if (warning) toast.warning(warning);
 			toast.success(`Lucrarea #${order.number} a fost deschisă.`);
-			onOpenChange(false);
-			router.push(`/work-orders/detail/?id=${order.id}`);
+			navigateFromSheet(router, `/work-orders/detail/?id=${order.id}`);
 		} catch (error) {
 			toast.error(error.message);
 		} finally {
