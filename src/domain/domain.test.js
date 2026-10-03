@@ -7,7 +7,7 @@ import { addMonthsISO, diffDaysISO, isISODate } from "./dates.js";
 import { deadline, estimateKm } from "./vehicle.js";
 import { reservedByPart, stockDelta, stockLevel } from "./inventory.js";
 import { buildStorno, invoiceState, issueInvoice, issueProblems, paymentProblem } from "./invoice.js";
-import { computeTotals, lineNet } from "./lines.js";
+import { computeTotals, laborPrice, lineNet } from "./lines.js";
 import { divRound, formatMoney, parseMoney, parseQuantity, percentOf, toInputAmount } from "./money.js";
 import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
@@ -328,5 +328,25 @@ describe("search", () => {
 		const hay = fold("Ștefan Ionescu B 123 ABC B123ABC");
 		assert.ok(matchesTokens(hay, queryTokens("stefan b123")));
 		assert.ok(!matchesTokens(hay, queryTokens("maria")));
+	});
+});
+
+describe("labor price and invoice counts", () => {
+	test("laborPrice rounds to whole bani and tolerates empty hours", () => {
+		assert.equal(laborPrice(1.5, 15000), 22500);
+		assert.equal(laborPrice("", 15000), 0);
+	});
+
+	test("a cancelled original is not counted as an invoice", () => {
+		const base = { status: "issued", number: 1, issueDate: "2026-09-10", totals: { labor: 100, parts: 0, fees: 0, net: 100 } };
+		const rows = revenueByMonth(
+			[
+				{ ...base, status: "cancelled" },
+				{ ...base, number: 2, stornoOf: "x", totals: { labor: -100, parts: 0, fees: 0, net: -100 } },
+			],
+			["2026-09"],
+		);
+		assert.equal(rows[0].net, 0);
+		assert.equal(rows[0].count, 0);
 	});
 });
