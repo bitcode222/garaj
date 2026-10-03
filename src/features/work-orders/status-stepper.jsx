@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { canTransition } from "@/domain/work-order";
+import { canTransition, isBackwardMove } from "@/domain/work-order";
 import { WORK_ORDER_STATUS } from "@/lib/labels";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
@@ -16,7 +16,7 @@ export function StatusStepper({ status, onMove, className }) {
 	const current = status === "waiting_parts" ? "in_progress" : status;
 	const index = STEPS.indexOf(current);
 	return (
-		<ol className={cn("flex items-center gap-1.5", className)} aria-label="Etapele lucrării">
+		<ol className={cn("flex items-center gap-3", className)} aria-label="Etapele lucrării">
 			{STEPS.map((step, i) => {
 				const done = i < index || status === "delivered";
 				const active = i === index && status !== "delivered";
@@ -28,10 +28,13 @@ export function StatusStepper({ status, onMove, className }) {
 						<Tag
 							type={target ? "button" : undefined}
 							onClick={target ? () => onMove(target) : undefined}
-							aria-label={target ? `Mută în ${meta.label}` : undefined}
+							aria-label={target ? `${isBackwardMove(status, target) ? "Înapoi la" : "Mută în"} ${meta.label}` : undefined}
+							title={target && isBackwardMove(status, target) ? `Înapoi la ${meta.label}` : undefined}
+							// Same box for every step (padding balanced by negative margins), so the hover
+							// pill has even padding on all sides and the bars stay aligned.
 							className={cn(
-								"flex min-w-0 flex-col gap-1.5 text-left",
-								target && "-my-2 cursor-pointer rounded-md py-2 transition-colors hover:bg-accent/60 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+								"-mx-1.5 -my-1.5 flex min-w-0 flex-col gap-1.5 rounded-lg px-1.5 py-1.5 text-left",
+								target && "cursor-pointer transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
 							)}
 						>
 						<span className={cn("h-1.5 rounded-full", done ? "bg-foreground/80" : active ? tone(meta.tone).bar : "bg-muted")} />

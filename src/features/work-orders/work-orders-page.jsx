@@ -15,7 +15,7 @@ import { dayOfInstant, diffDaysISO } from "@/domain/dates";
 import { computeTotals } from "@/domain/lines";
 import { fold, matchesTokens, queryTokens } from "@/domain/search";
 import { vehicleName } from "@/domain/vehicle";
-import { OPEN_STATUSES, WO_TRANSITIONS } from "@/domain/work-order";
+import { OPEN_STATUSES, WO_TRANSITIONS, isBackwardMove } from "@/domain/work-order";
 import { fmtDate, fmtDays, fmtWorkOrder, plural } from "@/lib/format";
 import { WORK_ORDER_ACTIONS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { useOpenDetail } from "@/lib/detail-mode";
@@ -129,6 +129,7 @@ function OrderRow({ row, today, onOpen }) {
 			subject={fmtWorkOrder(order.number)}
 			actions={WORK_ORDER_ACTIONS}
 			destructive={["cancelled"]}
+			isBackward={isBackwardMove}
 			size="sm"
 		/>
 	);

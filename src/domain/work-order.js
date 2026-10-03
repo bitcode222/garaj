@@ -10,15 +10,23 @@ import { formatPlate, vehicleName } from "./vehicle.js";
 // Small jobs may skip approval (estimate → in_progress); ready → in_progress is rework.
 export const WO_FLOW = ["estimate", "approved", "in_progress", "waiting_parts", "ready", "delivered"];
 
+// Any open job can also step back to an earlier stage (a job marked "ready" too
+// early goes back to "in progress", a wrongly approved one back to the estimate).
+// Delivered and cancelled jobs are closed.
 export const WO_TRANSITIONS = {
 	estimate: ["approved", "in_progress", "cancelled"],
 	approved: ["in_progress", "estimate", "cancelled"],
-	in_progress: ["waiting_parts", "ready", "cancelled"],
-	waiting_parts: ["in_progress", "cancelled"],
-	ready: ["delivered", "in_progress"],
+	in_progress: ["waiting_parts", "ready", "approved", "estimate", "cancelled"],
+	waiting_parts: ["in_progress", "approved", "estimate", "cancelled"],
+	ready: ["delivered", "in_progress", "approved", "estimate"],
 	delivered: [],
 	cancelled: [],
 };
+
+const WO_RANK = { estimate: 0, approved: 1, in_progress: 2, waiting_parts: 2, ready: 3, delivered: 4 };
+
+/** True when `to` is an earlier stage than `from` ("in progress" ⇄ "waiting for parts" is sideways, not back). */
+export const isBackwardMove = (from, to) => (WO_RANK[to] ?? Infinity) < (WO_RANK[from] ?? -Infinity);
 
 export const OPEN_STATUSES = ["estimate", "approved", "in_progress", "waiting_parts", "ready"];
 

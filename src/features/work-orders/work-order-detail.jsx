@@ -46,7 +46,7 @@ import { todayISO } from "@/domain/dates";
 import { buildSnapshot, formatInvoiceNumber } from "@/domain/invoice";
 import { computeTotals } from "@/domain/lines";
 import { vehicleName } from "@/domain/vehicle";
-import { WO_TRANSITIONS, estimateMessage, inspectionSummary, isOpen } from "@/domain/work-order";
+import { WO_TRANSITIONS, estimateMessage, inspectionSummary, isBackwardMove, isOpen } from "@/domain/work-order";
 import { fmtDate, fmtHours, fmtKm, fmtWorkOrder } from "@/lib/format";
 import { printPage, shareText, useDraft, useQueryId } from "@/lib/hooks";
 import { FUEL_LEVELS, INVOICE_STATE, WORK_ORDER_ACTIONS, WORK_ORDER_STATUS } from "@/lib/labels";
@@ -57,7 +57,7 @@ import { InvoiceDocument } from "@/features/invoices/invoice-document";
 import { LinesEditor } from "@/features/lines/lines-editor";
 import { TotalsBlock } from "@/features/lines/totals-block";
 import { InspectionChecklist } from "./inspection";
-import { useStatusChange } from "@/components/ds/status-menu";
+import { StatusMoveItems, useStatusChange } from "@/components/ds/status-menu";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { closeSheet, navigateFromSheet } from "@/lib/sheets";
 import { StatusStepper } from "./status-stepper";
@@ -159,6 +159,7 @@ function WorkOrder({ order, embedded = false }) {
 		onMove: move,
 		actions: WORK_ORDER_ACTIONS,
 		destructive: ["cancelled"],
+		isBackward: isBackwardMove,
 	});
 
 	const openInvoice = () => {
@@ -267,12 +268,7 @@ function WorkOrder({ order, embedded = false }) {
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end" className="w-56">
-									<DropdownMenuLabel className="text-xs text-muted-foreground">Mută în…</DropdownMenuLabel>
-									{WO_TRANSITIONS[order.status].map((to) => (
-										<DropdownMenuItem key={to} variant={to === "cancelled" ? "destructive" : "default"} onSelect={() => change(to)}>
-											<ToneDot tone={WORK_ORDER_STATUS[to].tone} /> {WORK_ORDER_ACTIONS[to]}
-										</DropdownMenuItem>
-									))}
+									<StatusMoveItems map={WORK_ORDER_STATUS} value={order.status} moves={WO_TRANSITIONS[order.status]} onPick={change} actions={WORK_ORDER_ACTIONS} destructive={["cancelled"]} isBackward={isBackwardMove} />
 									{order.status === "estimate" && !order.invoiceId && (
 										<>
 											<DropdownMenuSeparator />
