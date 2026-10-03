@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Trash2, X } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { useConfirm } from "@/components/ds/confirm";
 import { Money } from "@/components/ds/data";
 import { Field, MoneyInput, NumberInput } from "@/components/ds/inputs";

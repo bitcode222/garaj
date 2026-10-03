@@ -29,6 +29,11 @@ export const viewport = {
 	width: "device-width",
 	initialScale: 1,
 	viewportFit: "cover",
+	// An installed app, not a page: no pinch-zoom or zoom-out, which also keeps a
+	// stray overflowing element from shrinking the whole UI.
+	minimumScale: 1,
+	maximumScale: 1,
+	userScalable: false,
 	themeColor: [
 		{ media: "(prefers-color-scheme: light)", color: "#fafafa" },
 		{ media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },

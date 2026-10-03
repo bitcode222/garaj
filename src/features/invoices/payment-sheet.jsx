@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Money } from "@/components/ds/data";
 import { Field, MoneyInput, Segmented } from "@/components/ds/inputs";
 import { Sheet } from "@/components/ds/sheet";

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { BellRing, Check, ChevronDown, Clock3 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { ContactActions } from "@/components/ds/contact";
 import { EmptyState } from "@/components/ds/data";
 import { FilterChips } from "@/components/ds/inputs";

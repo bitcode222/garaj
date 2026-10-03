@@ -21,7 +21,7 @@ import {
 	User,
 	Wrench,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
 import { Banner, EmptyState, Meter, Money, Timeline } from "@/components/ds/data";

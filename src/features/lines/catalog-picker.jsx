@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useState } from "react";
 import { Check, Package, Plus, Wrench } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Money } from "@/components/ds/data";
 import { SearchInput } from "@/components/ds/inputs";
 import { Sheet } from "@/components/ds/sheet";

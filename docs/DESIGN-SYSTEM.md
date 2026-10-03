@@ -132,6 +132,23 @@ Signature pieces:
 
 ---
 
+## 3b. Native behaviour (phone)
+
+The app is installed, so it should behave like one. All of this lives in shared primitives; features get it for free.
+
+| Behaviour | Where | Notes |
+|---|---|---|
+| **Action sheets** | `DropdownMenuContent`, `SelectContent`, `PopoverContent` carry `data-sheet-menu` | Below `md` they open as a bottom sheet (full width, 48 px rows, dimmed page, safe-area aware); from `md` they stay anchored popovers. The only dimmed scrim in the system: it marks a transient choice, not a surface. Pinned by CSS in `globals.css` |
+| **Swipe to dismiss** | `Sheet` (grabber + header) | Drag down 110 px or flick; snaps back otherwise. Buttons in the header keep working; the scrolling body never starts a drag |
+| **Keyboard** | `useKeyboardInset` sets `--kb` / `--vvh` | Sheets and action sheets lift above the keyboard (`bottom: var(--kb)`) and cap their height, so footer buttons stay visible while typing |
+| **Haptics** | `src/lib/haptics.js` (native `NativeHaptics` plugin in `AppDelegate.swift`) | Selection on tab, menu and select picks; tap/warning on confirmations; success/error/warning through `@/lib/toast` (import `toast` from there, never from `sonner`). No-ops outside the iOS app |
+| **Pressed states** | `ListRow`, tab bar, buttons | `hover:` only exists for pointers, so touch gets `active:` feedback |
+| **Chrome is not text** | `globals.css` | No long-press callout or selection on buttons, links, nav; fields stay selectable; opt in with `.selectable` for values worth copying. `touch-action: manipulation` removes the double-tap delay. Link previews are off (`allowsLinkPreview`) |
+| **No zoom** | `viewport` in `layout.jsx` | Scale locked to 1. Inputs are 16 px so iOS never zooms on focus; a wide element can no longer shrink the whole UI |
+| **Tab bar** | `app-shell.jsx` | Re-tapping the current tab scrolls to top |
+
+Rules of thumb: a row that is wider than the screen scrolls inside its own container (`min-w-0` / `max-w-full`), never the page; a choice with more than two options is an action sheet, not a popover; the one-handed reach zone is the bottom third.
+
 ## 4. Data visualization
 
 - Categorical slots in fixed order, never cycled: `--viz-1` blue `#2a78d6` / dark `#3987e5`, `--viz-2` orange `#eb6834` / `#d95926`, `--viz-3` aqua `#1baf7a` / `#199e70` (scoped under `.viz`). Validated with the dataviz palette checker against the card surface: CVD ΔE ≥ 9.2 (light) / 9.4 (dark); aqua is 2.8:1 on white, so it always ships with visible labels or a table view.

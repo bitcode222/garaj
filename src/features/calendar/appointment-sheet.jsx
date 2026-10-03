@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CalendarCheck, CarFront, CircleX, Trash2, TriangleAlert, UserX, Wrench } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { useConfirm } from "@/components/ds/confirm";
 import { ContactActions } from "@/components/ds/contact";
 import { Field } from "@/components/ds/inputs";

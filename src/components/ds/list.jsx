@@ -60,7 +60,7 @@ export function DataList({ items, renderRow, getKey = (item) => item.id, header,
  */
 export function ListRow({ href, onClick, nested = false, className, children, ...props }) {
 	const cls = cn(
-		"flex min-h-[60px] w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-accent/60 focus-visible:bg-accent/60 focus-visible:outline-none md:min-h-12",
+		"flex min-h-[60px] w-full items-center gap-3 px-4 py-2.5 text-left transition-colors duration-100 hover:bg-accent/60 active:bg-accent focus-visible:bg-accent/60 focus-visible:outline-none md:min-h-12",
 		className,
 	);
 	if (href) {

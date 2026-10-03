@@ -11,6 +11,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { buttonVariants } from "@/components/ui/button";
+import { haptics } from "@/lib/haptics";
 
 export default function ConfirmDialog({ request, open, onSettle }) {
 	return (
@@ -26,7 +27,11 @@ export default function ConfirmDialog({ request, open, onSettle }) {
 					</AlertDialogCancel>
 					<AlertDialogAction
 						className={buttonVariants({ variant: request.destructive ? "destructive" : "default", className: "max-md:h-11" })}
-						onClick={() => onSettle(true)}
+						onClick={() => {
+							if (request.destructive) haptics.warning();
+							else haptics.tap();
+							onSettle(true);
+						}}
 					>
 						{request.confirmLabel ?? "Continuă"}
 					</AlertDialogAction>
