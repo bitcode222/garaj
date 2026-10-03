@@ -47,7 +47,7 @@ import { computeTotals } from "@/domain/lines";
 import { fmtDate, fmtDays, fmtWorkOrder } from "@/lib/format";
 import { printPage, shareText, useDraft, useQueryId } from "@/lib/hooks";
 import { INVOICE_STATE, PAYMENT_METHODS } from "@/lib/labels";
-import { openSheet } from "@/lib/sheets";
+import { closeSheet, openSheet } from "@/lib/sheets";
 import {
 	deleteInvoiceDraft,
 	deletePayment,
@@ -78,9 +78,14 @@ export function InvoiceDetail() {
 	return invoice.status === "draft" ? <DraftInvoice key={invoice.id} invoice={invoice} /> : <IssuedInvoice invoice={invoice} />;
 }
 
+/** The whole invoice page (draft editor or issued view), for the overlay. */
+export function InvoiceEmbedded({ invoice }) {
+	return invoice.status === "draft" ? <DraftInvoice key={invoice.id} invoice={invoice} embedded /> : <IssuedInvoice invoice={invoice} embedded />;
+}
+
 // ── draft ────────────────────────────────────────────────────────────────────
 
-function DraftInvoice({ invoice }) {
+function DraftInvoice({ invoice, embedded = false }) {
 	const router = useRouter();
 	const confirm = useConfirm();
 	const settings = useSettings();
@@ -134,14 +139,16 @@ function DraftInvoice({ invoice }) {
 		if (!(await confirm({ title: "Ștergi ciorna?", description: "Ciorna nu are număr, deci se poate șterge fără urme.", confirmLabel: "Șterge", destructive: true }))) return;
 		deleteInvoiceDraft(invoice.id);
 		toast.success("Ciorna a fost ștearsă.");
-		router.replace("/invoices/");
+		if (embedded) closeSheet();
+		else router.replace("/invoices/");
 	};
 
 	const snapshot = buildSnapshot({ settings, customer, vehicle, mileage: draft.mileage });
 
 	return (
-		<Page width="wide">
+		<Page width="wide" embedded={embedded}>
 			<PageHeader
+				embedded={embedded}
 				back={{ href: "/invoices/", label: "Facturi" }}
 				title="Factură nouă"
 				description={`Seria ${draft.series} · numărul se alocă la emitere`}
@@ -248,7 +255,7 @@ function DraftInvoice({ invoice }) {
 				</div>
 			</div>
 
-			<StickyBar className="md:hidden">
+			<StickyBar inline={embedded} className="md:hidden">
 				<Button className="h-11 flex-1" onClick={issue} disabled={issuing}>
 					<FileCheck2 /> Emite factura · <Money value={totals.gross} decimals={0} />
 				</Button>
@@ -268,7 +275,7 @@ const ACTIVITY = {
 	cancelled: { title: "Factură stornată", icon: Undo2, tone: "neutral" },
 };
 
-function IssuedInvoice({ invoice }) {
+function IssuedInvoice({ invoice, embedded = false }) {
 	const confirm = useConfirm();
 	const router = useRouter();
 	const settings = useSettings();
@@ -304,7 +311,8 @@ function IssuedInvoice({ invoice }) {
 		try {
 			const { storno: created } = await stornoInvoiceById(invoice.id);
 			toast.success(`Stornare emisă: ${formatInvoiceNumber(created.series, created.number)}`);
-			router.push(`/invoices/detail/?id=${created.id}`);
+			if (embedded) openSheet("invoice-view", { id: created.id });
+			else router.push(`/invoices/detail/?id=${created.id}`);
 		} catch (error) {
 			toast.error(error.message);
 		}
@@ -389,8 +397,9 @@ function IssuedInvoice({ invoice }) {
 	);
 
 	return (
-		<Page width="wide">
+		<Page width="wide" embedded={embedded}>
 			<PageHeader
+				embedded={embedded}
 				back={{ href: "/invoices/", label: "Facturi" }}
 				title={invoice.stornoOf ? `Stornare ${number}` : `Factura ${number}`}
 				meta={
@@ -430,6 +439,7 @@ function IssuedInvoice({ invoice }) {
 			)}
 
 			<SplitView
+				stacked={embedded}
 				main={<InvoiceDocument invoice={invoice} snapshot={invoice.snapshot} totals={invoice.totals} currency={settings.currency} />}
 				aside={
 					<>
@@ -538,7 +548,7 @@ function IssuedInvoice({ invoice }) {
 			/>
 
 			{payable && (
-				<StickyBar className="md:hidden">
+				<StickyBar inline={embedded} className="md:hidden">
 					<Button className="h-11 flex-1" onClick={() => openSheet("payment", { invoiceId: invoice.id })}>
 						<Banknote /> Încasează · <Money value={balance} decimals={0} />
 					</Button>

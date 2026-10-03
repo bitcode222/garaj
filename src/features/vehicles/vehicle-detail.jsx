@@ -22,7 +22,7 @@ import { deadline, estimateKm, kmPerDay, lastReading, serviceDue, vehicleName } 
 import { fmtDate, fmtKm, fmtRelativeTo, fmtWorkOrder } from "@/lib/format";
 import { useQueryId } from "@/lib/hooks";
 import { DEADLINE_STATUS, FUELS, WORK_ORDER_STATUS } from "@/lib/labels";
-import { openSheet } from "@/lib/sheets";
+import { closeSheet, openSheet } from "@/lib/sheets";
 import { tone } from "@/lib/tones";
 import { deleteVehicle, recordMileage } from "@/lib/store/actions";
 import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
@@ -121,7 +121,12 @@ function DeadlineCard({ icon: Icon, title, info, date, detail, action }) {
 	);
 }
 
-function Vehicle({ vehicle }) {
+/** The whole vehicle page, for the overlay. */
+export function VehicleEmbedded({ vehicle }) {
+	return <Vehicle vehicle={vehicle} embedded />;
+}
+
+function Vehicle({ vehicle, embedded = false }) {
 	const router = useRouter();
 	const confirm = useConfirm();
 	const today = useToday();
@@ -162,7 +167,8 @@ function Vehicle({ vehicle }) {
 		try {
 			deleteVehicle(vehicle.id);
 			toast.success("Mașină ștearsă.");
-			router.replace("/vehicles/");
+			if (embedded) closeSheet();
+			else router.replace("/vehicles/");
 		} catch (error) {
 			toast.error(error.message);
 		}
@@ -188,8 +194,9 @@ function Vehicle({ vehicle }) {
 	}));
 
 	return (
-		<Page width="wide">
+		<Page width="wide" embedded={embedded}>
 			<PageHeader
+				embedded={embedded}
 				back={{ href: "/vehicles/", label: "Mașini" }}
 				title={
 					<span className="flex flex-wrap items-center gap-3">
@@ -261,6 +268,7 @@ function Vehicle({ vehicle }) {
 			</div>
 
 			<SplitView
+				stacked={embedded}
 				main={
 					<Card>
 						<CardHeader title="Istoric service" icon={Wrench} description={`${orders.length} vizite`} />

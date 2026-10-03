@@ -22,9 +22,10 @@ import { deadline, vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtWorkOrder, plural } from "@/lib/format";
 import { useQueryId } from "@/lib/hooks";
 import { CUSTOMER_TYPES, DEADLINE_STATUS, INVOICE_STATE, WORK_ORDER_STATUS } from "@/lib/labels";
-import { openSheet } from "@/lib/sheets";
+import { closeSheet, openSheet } from "@/lib/sheets";
 import { deleteCustomer } from "@/lib/store/actions";
 import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
+import { cn } from "@/lib/utils";
 import { selectInvoiceStates, selectInvoicesByCustomer, selectVehiclesByCustomer, selectWorkOrdersByCustomer } from "@/lib/store/selectors";
 
 export function CustomerDetail() {
@@ -43,7 +44,12 @@ export function CustomerDetail() {
 	return <Customer customer={customer} />;
 }
 
-function Customer({ customer }) {
+/** The whole customer page, for the overlay. */
+export function CustomerEmbedded({ customer }) {
+	return <Customer customer={customer} embedded />;
+}
+
+function Customer({ customer, embedded = false }) {
 	const router = useRouter();
 	const confirm = useConfirm();
 	const today = useToday();
@@ -65,15 +71,17 @@ function Customer({ customer }) {
 		try {
 			deleteCustomer(customer.id);
 			toast.success("Client șters.");
-			router.replace("/customers/");
+			if (embedded) closeSheet();
+			else router.replace("/customers/");
 		} catch (error) {
 			toast.error(error.message);
 		}
 	};
 
 	return (
-		<Page width="wide">
+		<Page width="wide" embedded={embedded}>
 			<PageHeader
+				embedded={embedded}
 				back={{ href: "/customers/", label: "Clienți" }}
 				title={customer.name}
 				meta={
@@ -109,7 +117,7 @@ function Customer({ customer }) {
 				}
 			/>
 
-			<div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+			<div className={cn("mb-6 grid grid-cols-2 gap-3", !embedded && "lg:grid-cols-4")}>
 				<Stat label="Vizite" value={orders.length} hint={orders[0] ? `ultima ${fmtDate(orders[0].createdAt)}` : "nicio vizită"} icon={Wrench} />
 				<Stat label="Total facturat" value={<Money value={spent} decimals={0} />} hint={plural(docs.filter((d) => d.status !== "draft").length, "factură", "facturi")} icon={ReceiptText} />
 				<Stat label="Sold de plată" value={<Money value={balance} decimals={0} />} icon={ReceiptText} tone={balance > 0 ? "red" : "green"} />
@@ -117,6 +125,7 @@ function Customer({ customer }) {
 			</div>
 
 			<SplitView
+				stacked={embedded}
 				main={
 					<>
 						<Card>
