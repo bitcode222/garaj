@@ -112,7 +112,6 @@
 	--safe-bottom: env(safe-area-inset-bottom, 0px);
 	--safe-left: env(safe-area-inset-left, 0px);
 	--safe-right: env(safe-area-inset-right, 0px);
-	--scrim: oklch(1 0 0 / 10%);
 	--topbar-h: 3.5rem;
 	--tabbar-h: 3.5rem;
 	color-scheme: light;
@@ -243,34 +242,12 @@
 }
 
 /* ── Scrim ───────────────────────────────────────────────────────────────────
-   The one backdrop behind every sheet, dialog and palette: a flat 10% white
-   tint, no blur. Only opacity animates (compositor-only). */
+   The one backdrop behind every sheet, dialog and palette. Deliberately
+   invisible (no tint, no blur): it only catches taps outside the panel. */
 @utility scrim {
 	position: fixed;
 	inset: 0;
 	z-index: 50;
-	background: var(--scrim);
-	&[data-state="open"] {
-		animation: scrim-in 200ms var(--ease-soft) both;
-	}
-	&[data-state="closed"] {
-		animation: scrim-out 150ms ease-in both;
-	}
-	@media (prefers-reduced-transparency: reduce) {
-		background: color-mix(in oklab, var(--background) 70%, transparent);
-	}
-}
-@keyframes scrim-in {
-	from {
-		opacity: 0;
-		will-change: opacity;
-	}
-}
-@keyframes scrim-out {
-	to {
-		opacity: 0;
-		will-change: opacity;
-	}
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,7 +1,7 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { XIcon } from "lucide-react";
+import { ArrowLeftIcon, XIcon } from "lucide-react";
 import { createContext, useContext, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -33,30 +33,41 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 						"max-md:data-[state=closed]:animate-out max-md:data-[state=closed]:slide-out-to-bottom max-md:data-[state=open]:animate-in max-md:data-[state=open]:slide-in-from-bottom",
 						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:border-t-0 md:border-l",
 						"md:data-[state=closed]:animate-out md:data-[state=closed]:slide-out-to-right md:data-[state=open]:animate-in md:data-[state=open]:slide-in-from-right",
-						size === "lg" ? "md:max-w-2xl" : "md:max-w-md",
+						size === "xl" ? "md:max-w-4xl" : size === "lg" ? "md:max-w-2xl" : "md:max-w-md",
 						depth > 0 && "shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.25)]",
 						className,
 					)}
 				>
 					<div className="mx-auto mt-2 h-1 w-10 shrink-0 bg-border md:hidden" aria-hidden />
-					<div className="flex shrink-0 items-start justify-between gap-4 px-4 pt-3 pb-3 md:px-6 md:pt-6">
-						<div className="min-w-0">
-							<DialogPrimitive.Title className="text-heading">{title}</DialogPrimitive.Title>
-							<DialogPrimitive.Description className={description ? "mt-0.5 text-sm text-muted-foreground" : "sr-only"}>
-								{description ?? title}
-							</DialogPrimitive.Description>
-						</div>
-						<div className="-mt-1 -mr-2 flex shrink-0 items-center gap-0.5">
+					<div className="shrink-0 px-4 pt-3 pb-3 md:px-6 md:pt-5">
+						{/* Top bar: back (when stacked) and the sheet's controls on the left, close on the right. */}
+						<div className="-mx-2 flex min-h-10 items-center gap-0.5 md:min-h-9">
+							{depth > 0 && (
+								<button
+									type="button"
+									onClick={() => onOpenChange(false)}
+									className="flex h-10 items-center gap-1 rounded-md pr-3 pl-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:h-9"
+									aria-label="Înapoi"
+								>
+									<ArrowLeftIcon className="size-4" /> Înapoi
+								</button>
+							)}
 							{headerActions}
 							<DialogPrimitive.Close
-								className="flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:size-9"
+								className="ml-auto flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:size-9"
 								aria-label="Închide"
 							>
 								<XIcon className="size-4" />
 							</DialogPrimitive.Close>
 						</div>
+						<div className="mt-1 min-w-0">
+							<DialogPrimitive.Title className="text-heading">{title}</DialogPrimitive.Title>
+							<DialogPrimitive.Description className={description ? "mt-0.5 text-sm text-muted-foreground" : "sr-only"}>
+								{description ?? title}
+							</DialogPrimitive.Description>
+						</div>
 					</div>
-					<div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-5 md:px-6">{children}</div>
+					<div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-5 md:px-6"><SheetDepth.Provider value={depth + 1}>{children}</SheetDepth.Provider></div>
 					{footer && (
 						<div className="flex shrink-0 flex-wrap justify-end gap-2 border-t bg-card px-4 pt-3 pb-[calc(0.75rem+var(--safe-bottom))] md:px-6 md:pb-5 [&>*]:max-md:flex-1">
 							{footer}

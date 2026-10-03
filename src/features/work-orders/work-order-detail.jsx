@@ -59,6 +59,7 @@ import { TotalsBlock } from "@/features/lines/totals-block";
 import { InspectionChecklist } from "./inspection";
 import { useStatusChange } from "@/components/ds/status-menu";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
+import { closeSheet, navigateFromSheet } from "@/lib/sheets";
 import { StatusStepper } from "./status-stepper";
 
 const NEXT_STEP = {
@@ -95,7 +96,12 @@ export function WorkOrderDetail() {
 	return <WorkOrder key={order.id} order={order} />;
 }
 
-function WorkOrder({ order }) {
+/** The whole work order (lines, inspection, activity, estimate…) for the overlay. */
+export function WorkOrderEmbedded({ order }) {
+	return <WorkOrder order={order} embedded />;
+}
+
+function WorkOrder({ order, embedded = false }) {
 	const router = useRouter();
 	const confirm = useConfirm();
 	const today = useToday();
@@ -159,7 +165,8 @@ function WorkOrder({ order }) {
 		flush();
 		try {
 			const inv = invoiceForWorkOrder(order.id);
-			router.push(`/invoices/detail/?id=${inv.id}`);
+			if (embedded) navigateFromSheet(router, `/invoices/detail/?id=${inv.id}`);
+			else router.push(`/invoices/detail/?id=${inv.id}`);
 		} catch (error) {
 			toast.error(error.message);
 		}
@@ -170,7 +177,8 @@ function WorkOrder({ order }) {
 		try {
 			deleteWorkOrder(order.id);
 			toast.success("Lucrare ștearsă.");
-			router.replace("/work-orders/");
+			if (embedded) closeSheet();
+			else router.replace("/work-orders/");
 		} catch (error) {
 			toast.error(error.message);
 		}
@@ -198,8 +206,9 @@ function WorkOrder({ order }) {
 	];
 
 	return (
-		<Page width="wide">
+		<Page width="wide" embedded={embedded}>
 			<PageHeader
+				embedded={embedded}
 				back={{ href: "/work-orders/", label: "Lucrări" }}
 				title={`Lucrarea ${fmtWorkOrder(order.number)}`}
 				meta={
@@ -280,6 +289,7 @@ function WorkOrder({ order }) {
 			/>
 
 			<SplitView
+				stacked={embedded}
 				main={
 					<>
 						<Card>
@@ -472,7 +482,7 @@ function WorkOrder({ order }) {
 			/>
 
 			{next && (
-				<StickyBar className="md:hidden">
+				<StickyBar inline={embedded} className="md:hidden">
 					<Button className="h-11 flex-1" onClick={() => change(next)}>
 						{NEXT_LABEL[order.status]}
 					</Button>

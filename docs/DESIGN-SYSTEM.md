@@ -90,7 +90,7 @@ Numbers: `tabular-nums` where numbers align in columns (tables, lists, axis tick
 | Elevation | e0 border only (cards) · e1 `shadow-xs` (controls) · e2 `shadow-paper` (documents) · e3 `shadow-lg` (popovers, sheets) |
 | Motion | 120 ms press/hover · 200 ms popover/dialog · 280 ms sheet · ease `cubic-bezier(.2,.8,.2,1)` · disabled under `prefers-reduced-motion` |
 | Layers | sticky 20 · top bar 30 · nav 40 · overlay 50 · toast 60 |
-| Scrim | One `scrim` utility (globals.css) behind every sheet, dialog and the palette: a flat 10 % white tint (`--scrim`), **no blur**. Only its opacity animates (200 ms in / 150 ms out). Solid tint under `prefers-reduced-transparency` |
+| Scrim | One `scrim` utility (globals.css) behind every sheet, dialog and the palette. Invisible on purpose (no tint, no blur): it only catches taps outside the panel |
 | Shell | sidebar 240 · rail 64 · top bar 56 + safe area · tab bar 56 + safe area |
 | Breakpoints | `md` 768 → rail · `lg` 1024 → sidebar · `xl` 1280 → detail aside |
 
@@ -148,7 +148,7 @@ Signature pieces:
 | **Document** | Paper centered (max 794 px) · header (shop + doc number) · parties · lines table · `TotalsBlock` · payment info · footer. Print CSS hides everything else |
 | **Create / edit** | `Sheet` with sticky footer (Cancel · Save). Enter submits, Esc closes. Validation inline under the field |
 | **Destructive** | `useConfirm` with a specific verb ("Anulează factura") and the consequence in one sentence |
-| **Detail overlay** | Appointments, customers, vehicles, work orders and invoices open as a square `DetailSheet` over the list (nothing reflows); the top bar has Edit · Open full page · Close. Settings → "Deschiderea detaliilor" switches the default to the full page (per device). An overlay can open one edit form on top (max 2 deep). The stack owns one history entry, so Back closes the top sheet |
+| **Detail overlay** | Appointments, customers, vehicles, work orders and invoices open as a square `DetailSheet` over the list (nothing reflows); the top bar has Back (when stacked) · Edit · Open full page on the left and Close on the right. Settings → "Deschiderea detaliilor" switches the default to the full page (per device). An overlay can open one edit form on top (max 2 deep). The stack owns one history entry, so Back closes the top sheet |
 | **Status change** | `StatusMenu` (tap the badge → "Mută în…") on work-order rows, appointment cards and the appointment overlay, each change confirmed first, with an undo toast for appointments; the clickable `StatusStepper` on work-order detail and overlay |
 | **Contact** | `ContactActions` (Sună · SMS · WhatsApp) next to every customer phone |
 | **Empty** | Icon · one sentence · one action |
