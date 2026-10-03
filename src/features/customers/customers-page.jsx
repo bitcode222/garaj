@@ -7,13 +7,14 @@ import { EmptyState, Initials, Money } from "@/components/ds/data";
 import { FilterChips, SearchInput } from "@/components/ds/inputs";
 import { DataList, ListHeader, ListRow } from "@/components/ds/list";
 import { Page, PageHeader, Toolbar } from "@/components/ds/page";
-import { Plate } from "@/components/ds/plate";
+import { MakeLogo } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import { formatPhone } from "@/domain/customer";
 import { fold, matchesTokens, queryTokens } from "@/domain/search";
 import { fmtDate, plural } from "@/lib/format";
+import { useOpenDetail } from "@/lib/detail-mode";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useToday } from "@/lib/store/hooks";
 import { selectCustomerBalances, selectCustomersSorted, selectVehiclesByCustomer, selectWorkOrdersByCustomer } from "@/lib/store/selectors";
@@ -28,6 +29,7 @@ const FILTERS = [
 export function CustomersPage() {
 	const ready = useIsReady();
 	const router = useRouter();
+	const openDetail = useOpenDetail();
 	const today = useToday();
 	const customers = useCollection("customers");
 	const vehicles = useCollection("vehicles");
@@ -119,7 +121,7 @@ export function CustomersPage() {
 					</ListHeader>
 				}
 				renderRow={({ customer, cars, lastVisit, balance, visits }) => (
-					<ListRow onClick={() => openSheet("customer-view", { id: customer.id })} className="md:grid md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_120px_120px] md:gap-3">
+					<ListRow onClick={() => openDetail("customer", customer.id)} className="md:grid md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_120px_120px] md:gap-3">
 						<div className="flex min-w-0 flex-1 items-center gap-3">
 							<Initials name={customer.name} tone={customer.type === "company" ? "purple" : "blue"} />
 							<div className="min-w-0 flex-1">
@@ -134,7 +136,10 @@ export function CustomersPage() {
 						<span className="hidden truncate text-sm text-muted-foreground md:block">{formatPhone(customer.phone) || "—"}</span>
 						<span className="hidden min-w-0 items-center gap-1.5 md:flex">
 							{cars.slice(0, 2).map((c) => (
-								<Plate key={c.id} value={c.plate} size="sm" />
+								<span key={c.id} className="flex min-w-0 items-center gap-1.5 text-sm">
+									<MakeLogo make={c.make} className="size-4" />
+									<span className="truncate">{c.make}</span>
+								</span>
 							))}
 							{cars.length > 2 && <span className="text-xs text-muted-foreground">+{cars.length - 2}</span>}
 						</span>

@@ -8,7 +8,7 @@ import { ContactActions } from "@/components/ds/contact";
 import { EmptyState } from "@/components/ds/data";
 import { FilterChips } from "@/components/ds/inputs";
 import { Page, PageHeader } from "@/components/ds/page";
-import { Plate } from "@/components/ds/plate";
+import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
@@ -121,8 +121,9 @@ export function RemindersPage() {
 									</div>
 									{vehicle && (
 										<Link href={`/vehicles/detail/?id=${vehicle.id}`} className="flex items-center gap-2 text-sm">
-											<Plate value={vehicle.plate} size="sm" />
+											<MakeLogo make={vehicle.make} className="size-4" />
 											<span className="text-muted-foreground max-sm:hidden">{vehicleName(vehicle)}</span>
+											<PlateTag value={vehicle.plate} />
 										</Link>
 									)}
 								</div>

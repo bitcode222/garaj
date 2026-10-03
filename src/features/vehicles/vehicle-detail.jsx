@@ -11,7 +11,7 @@ import { ContactActions } from "@/components/ds/contact";
 import { EmptyState, KeyValue, KeyValueGrid, Money, Timeline } from "@/components/ds/data";
 import { NumberInput } from "@/components/ds/inputs";
 import { Page, PageHeader, SplitView } from "@/components/ds/page";
-import { Plate } from "@/components/ds/plate";
+import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { DetailPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
@@ -193,12 +193,13 @@ function Vehicle({ vehicle }) {
 				back={{ href: "/vehicles/", label: "Mașini" }}
 				title={
 					<span className="flex flex-wrap items-center gap-3">
-						<Plate value={vehicle.plate} size="lg" />
+						<MakeLogo make={vehicle.make} className="size-9" />
 						<span>{vehicleName(vehicle) || "Mașină"}</span>
 					</span>
 				}
 				meta={
 					<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+						<PlateTag value={vehicle.plate} />
 						{[vehicle.year, vehicle.engine, FUELS[vehicle.fuel], vehicle.color].filter(Boolean).join(" · ")}
 						{owner && (
 							<>

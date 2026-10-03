@@ -10,7 +10,7 @@ import { ContactActions } from "@/components/ds/contact";
 import { EmptyState, Initials, KeyValue, KeyValueGrid, Money, Stat } from "@/components/ds/data";
 import { ListRow } from "@/components/ds/list";
 import { Page, PageHeader, SplitView } from "@/components/ds/page";
-import { Plate } from "@/components/ds/plate";
+import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { DetailPageSkeleton } from "@/components/ds/skeletons";
 import { StatusBadge, ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
@@ -139,11 +139,14 @@ function Customer({ customer }) {
 												<li key={car.id}>
 													<Link href={`/vehicles/detail/?id=${car.id}`} className="block rounded-xl border p-3 transition-colors hover:bg-accent/50">
 														<div className="flex items-center justify-between gap-2">
-															<Plate value={car.plate} />
+															<span className="flex min-w-0 items-center gap-2">
+																<MakeLogo make={car.make} />
+																<span className="truncate text-sm font-medium">{vehicleName(car)}</span>
+															</span>
 															<span className="text-xs text-muted-foreground">{car.year}</span>
 														</div>
-														<p className="mt-2 truncate text-sm font-medium">{vehicleName(car)}</p>
-														<div className="mt-2 flex gap-1.5">
+														<div className="mt-2 flex flex-wrap items-center gap-1.5">
+															<PlateTag value={car.plate} />
 															<ToneBadge tone={DEADLINE_STATUS[itp.status].tone} size="sm">ITP {car.itpExpiry ? fmtDate(car.itpExpiry, "dd.MM.yy") : "—"}</ToneBadge>
 															<ToneBadge tone={DEADLINE_STATUS[rca.status].tone} size="sm">RCA {car.rcaExpiry ? fmtDate(car.rcaExpiry, "dd.MM.yy") : "—"}</ToneBadge>
 														</div>

@@ -4,6 +4,7 @@ import { describe, test } from "node:test";
 import { APPOINTMENT_TRANSITIONS, findConflicts, quickAppointmentMoves } from "./appointment.js";
 import { isValidCUI, isValidIBAN, normalizePhone, smsHref, whatsappHref } from "./customer.js";
 import { addMonthsISO, diffDaysISO, isISODate } from "./dates.js";
+import { deadline, estimateKm } from "./vehicle.js";
 import { reservedByPart, stockDelta, stockLevel } from "./inventory.js";
 import { buildStorno, invoiceState, issueInvoice, issueProblems, paymentProblem } from "./invoice.js";
 import { computeTotals, lineNet } from "./lines.js";
@@ -255,6 +256,14 @@ describe("appointments", () => {
 			{ id: "e", status: "scheduled", start: "2026-09-30T09:00:00.000Z", end: "2026-09-30T10:00:00.000Z", staffId: "m1", bayId: "b1" },
 		];
 		assert.deepEqual(findConflicts(a, others).map((x) => x.id), ["b"]);
+	});
+});
+
+describe("vehicle dates without a known today", () => {
+	test("estimateKm and deadline degrade instead of throwing", () => {
+		const vehicle = { mileage: [{ date: "2026-01-01", km: 1000 }, { date: "2026-06-01", km: 5000 }] };
+		assert.equal(estimateKm(vehicle, null), 5000);
+		assert.deepEqual(deadline("2026-12-01", null), { status: "unknown", days: null });
 	});
 });
 

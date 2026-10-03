@@ -4,10 +4,11 @@ import { useRouter } from "next/navigation";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { CarFront, Plus } from "lucide-react";
 import { EmptyState } from "@/components/ds/data";
+import { MakeLogo } from "@/components/ds/make-logo";
 import { FilterChips, SearchInput } from "@/components/ds/inputs";
 import { DataList, ListHeader, ListRow } from "@/components/ds/list";
 import { Page, PageHeader, Toolbar } from "@/components/ds/page";
-import { Plate } from "@/components/ds/plate";
+import { PlateTag, VehicleLabel } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import { deadline, lastReading, normalizePlate, serviceDue, vehicleName } from "
 import { OPEN_STATUSES } from "@/domain/work-order";
 import { fmtKm, plural } from "@/lib/format";
 import { DEADLINE_STATUS, FUELS } from "@/lib/labels";
+import { useOpenDetail } from "@/lib/detail-mode";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useToday } from "@/lib/store/hooks";
 
@@ -40,6 +42,7 @@ function DeadlineChip({ label, info }) {
 export function VehiclesPage() {
 	const ready = useIsReady();
 	const router = useRouter();
+	const openDetail = useOpenDetail();
 	const today = useToday();
 	const vehicles = useCollection("vehicles");
 	const customers = useCollection("customers");
@@ -105,26 +108,34 @@ export function VehiclesPage() {
 				getKey={(r) => r.vehicle.id}
 				empty={<EmptyState icon={CarFront} title="Nicio mașină pentru filtrul ales" action={<Button onClick={() => openSheet("vehicle")}>Adaugă mașină</Button>} />}
 				header={
-					<ListHeader cols="md:grid-cols-[120px_minmax(0,1.2fr)_minmax(0,1fr)_110px_minmax(0,1fr)]">
-						<span>Nr.</span>
+					<ListHeader cols="md:grid-cols-[minmax(0,1.2fr)_120px_minmax(0,1fr)_110px_minmax(0,1fr)]">
 						<span>Mașină</span>
+						<span>Nr.</span>
 						<span>Proprietar</span>
 						<span className="text-right">Kilometraj</span>
 						<span>Termene</span>
 					</ListHeader>
 				}
 				renderRow={(r) => (
-					<ListRow onClick={() => openSheet("vehicle-view", { id: r.vehicle.id })} className="md:grid md:grid-cols-[120px_minmax(0,1.2fr)_minmax(0,1fr)_110px_minmax(0,1fr)] md:gap-3">
-						<Plate value={r.vehicle.plate} />
-						<div className="min-w-0 flex-1">
-							<p className="truncate text-[15px] font-medium md:text-sm">
-								{vehicleName(r.vehicle) || "Mașină"} {r.inShop && <ToneBadge tone="orange" size="sm" className="ml-1 align-middle">în service</ToneBadge>}
-							</p>
-							<p className="truncate text-xs text-muted-foreground">
-								{[r.vehicle.year, r.vehicle.engine, FUELS[r.vehicle.fuel]].filter(Boolean).join(" · ")}
-								<span className="md:hidden"> · {r.owner?.name}</span>
-							</p>
+					<ListRow onClick={() => openDetail("vehicle", r.vehicle.id)} className="md:grid md:grid-cols-[minmax(0,1.2fr)_120px_minmax(0,1fr)_110px_minmax(0,1fr)] md:gap-3">
+						<div className="flex min-w-0 flex-1 items-center gap-3">
+							<MakeLogo make={r.vehicle.make} className="size-7 max-md:hidden" />
+							<div className="min-w-0 flex-1">
+								<p className="flex items-center gap-2 text-[15px] font-medium md:text-sm">
+									<MakeLogo make={r.vehicle.make} className="md:hidden" />
+									<span className="truncate">{vehicleName(r.vehicle) || "Mașină"}</span>
+									{r.inShop && <ToneBadge tone="orange" size="sm">în service</ToneBadge>}
+								</p>
+								<p className="truncate text-xs text-muted-foreground">
+									{[r.vehicle.year, r.vehicle.engine, FUELS[r.vehicle.fuel]].filter(Boolean).join(" · ")}
+									<span className="md:hidden"> · {r.owner?.name}</span>
+								</p>
+							</div>
+							<PlateTag value={r.vehicle.plate} className="md:hidden" />
 						</div>
+						<span className="hidden md:block">
+							<PlateTag value={r.vehicle.plate} />
+						</span>
 						<span className="hidden truncate text-sm md:block">{r.owner?.name}</span>
 						<span className="hidden text-right text-sm text-muted-foreground tabular-nums md:block">{fmtKm(r.km)}</span>
 						<span className="hidden flex-wrap gap-1 md:flex">

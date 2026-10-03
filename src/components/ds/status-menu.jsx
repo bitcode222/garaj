@@ -1,9 +1,28 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
+import { useConfirm } from "@/components/ds/confirm";
 import { StatusBadge, ToneDot } from "@/components/ds/tone";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+
+/**
+ * Every status change asks first. Returns `request(to)`; `onMove(to)` runs only
+ * after the admin confirms. `subject` names the record ("#1877", "Verificare ITP").
+ */
+export function useStatusChange({ map, value, subject, onMove, actions = {}, destructive = [] }) {
+	const confirm = useConfirm();
+	return async (to) => {
+		const target = map[to]?.label ?? to;
+		const ok = await confirm({
+			title: `Schimbi starea în „${target}”?`,
+			description: `${subject ? `${subject}: ` : ""}${map[value]?.label ?? value} → ${target}`,
+			confirmLabel: actions[to] ?? target,
+			destructive: destructive.includes(to),
+		});
+		if (ok) onMove(to);
+	};
+}
 
 /**
  * A status badge that is also the quickest way to change it: tap the badge, pick
@@ -14,7 +33,8 @@ import { cn } from "@/lib/utils";
  * `actions` overrides item labels (verbs: "Confirmă"); `destructive` lists the
  * targets drawn in red.
  */
-export function StatusMenu({ map, value, moves = [], onMove, actions = {}, destructive = [], size, icon, label = "Schimbă starea", className }) {
+export function StatusMenu({ map, value, moves = [], onMove, subject, actions = {}, destructive = [], size, icon, label = "Schimbă starea", className }) {
+	const request = useStatusChange({ map, value, subject, onMove, actions, destructive });
 	if (!moves.length) return <StatusBadge map={map} value={value} size={size} icon={icon} className={className} />;
 	return (
 		<span
@@ -36,7 +56,7 @@ export function StatusMenu({ map, value, moves = [], onMove, actions = {}, destr
 				<DropdownMenuContent align="end" className="min-w-44">
 					<DropdownMenuLabel className="text-xs text-muted-foreground">Mută în…</DropdownMenuLabel>
 					{moves.map((to) => (
-						<DropdownMenuItem key={to} variant={destructive.includes(to) ? "destructive" : "default"} className="max-md:min-h-11" onSelect={() => onMove(to)}>
+						<DropdownMenuItem key={to} variant={destructive.includes(to) ? "destructive" : "default"} className="max-md:min-h-11" onSelect={() => request(to)}>
 							<ToneDot tone={map[to]?.tone} /> {actions[to] ?? map[to]?.label ?? to}
 						</DropdownMenuItem>
 					))}

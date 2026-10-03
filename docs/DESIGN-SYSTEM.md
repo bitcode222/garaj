@@ -90,7 +90,7 @@ Numbers: `tabular-nums` where numbers align in columns (tables, lists, axis tick
 | Elevation | e0 border only (cards) · e1 `shadow-xs` (controls) · e2 `shadow-paper` (documents) · e3 `shadow-lg` (popovers, sheets) |
 | Motion | 120 ms press/hover · 200 ms popover/dialog · 280 ms sheet · ease `cubic-bezier(.2,.8,.2,1)` · disabled under `prefers-reduced-motion` |
 | Layers | sticky 20 · top bar 30 · nav 40 · overlay 50 · toast 60 |
-| Scrim | One `scrim` utility (globals.css) behind every sheet, dialog and the palette: 10 % white (`--scrim`) + 4 px backdrop blur. Only its opacity animates (200 ms in / 150 ms out); the blur radius never does, because that re-blurs the screen each frame on iOS. Falls back to a plain tint without `backdrop-filter`, and to a solid tint under `prefers-reduced-transparency` |
+| Scrim | One `scrim` utility (globals.css) behind every sheet, dialog and the palette: a flat 10 % white tint (`--scrim`), **no blur**. Only its opacity animates (200 ms in / 150 ms out). Solid tint under `prefers-reduced-transparency` |
 | Shell | sidebar 240 · rail 64 · top bar 56 + safe area · tab bar 56 + safe area |
 | Breakpoints | `md` 768 → rail · `lg` 1024 → sidebar · `xl` 1280 → detail aside |
 
@@ -114,8 +114,9 @@ Button · Input · Textarea · Select · Switch · Tabs · Dialog · AlertDialog
 | `inputs.jsx` | `Field`, `MoneyInput`, `NumberInput`, `SearchInput`, `Segmented`, `FilterChips` | Forms and filters (16 px, 44 px on phones) |
 | `list.jsx` | `DataList`, `ListRow`, `ListHeader`, `useProgressive` | Long lists: progressive rendering, `cv-row` |
 | `sheet.jsx` | `Sheet` | Create/edit: bottom sheet on phones, right panel from md |
-| `detail-sheet.jsx` | `DetailSheet` | Read-only detail overlay (appointment, customer, vehicle): skeleton, self-closing when the record is deleted, "Pagina completă" link |
-| `status-menu.jsx` | `StatusMenu` | A status badge that is a one-tap menu of legal next states (safe inside links) |
+| `detail-sheet.jsx` | `DetailSheet` | Read-only detail overlay: top-bar controls (edit, full page), skeleton, self-closing when the record is deleted |
+| `make-logo.jsx` | `MakeLogo`, `VehicleLabel`, `PlateTag` | Vehicles are labelled by logo + make/model; the plate is secondary text (`PlateTag`). The `Plate` graphic is only for the vehicle page, documents and the plate field |
+| `status-menu.jsx` | `StatusMenu`, `useStatusChange` | A status badge that is a menu of legal next states (safe inside links). Every status change asks for confirmation first |
 | `confirm.jsx` | `ConfirmProvider`, `useConfirm` | One lazy-loaded confirmation dialog |
 | `contact.jsx` | `ContactActions` | Call · SMS · WhatsApp with a prefilled message |
 | `plate.jsx` | `Plate` | Romanian number plate |
@@ -147,8 +148,8 @@ Signature pieces:
 | **Document** | Paper centered (max 794 px) · header (shop + doc number) · parties · lines table · `TotalsBlock` · payment info · footer. Print CSS hides everything else |
 | **Create / edit** | `Sheet` with sticky footer (Cancel · Save). Enter submits, Esc closes. Validation inline under the field |
 | **Destructive** | `useConfirm` with a specific verb ("Anulează factura") and the consequence in one sentence |
-| **Detail overlay** | Customers, vehicles and appointments open as a `DetailSheet` over the list (nothing reflows); "Pagina completă" opens the route. An overlay can open one edit form on top (max 2 deep). The stack owns one history entry, so Back closes the top sheet |
-| **Status change** | `StatusMenu` (tap the badge → "Mută în…") on work-order rows, appointment cards and the appointment overlay, with an undo toast; `StatusStepper` on work-order detail |
+| **Detail overlay** | Appointments, customers, vehicles, work orders and invoices open as a square `DetailSheet` over the list (nothing reflows); the top bar has Edit · Open full page · Close. Settings → "Deschiderea detaliilor" switches the default to the full page (per device). An overlay can open one edit form on top (max 2 deep). The stack owns one history entry, so Back closes the top sheet |
+| **Status change** | `StatusMenu` (tap the badge → "Mută în…") on work-order rows, appointment cards and the appointment overlay, each change confirmed first, with an undo toast for appointments; the clickable `StatusStepper` on work-order detail and overlay |
 | **Contact** | `ContactActions` (Sună · SMS · WhatsApp) next to every customer phone |
 | **Empty** | Icon · one sentence · one action |
 | **Loading** | Skeleton with the final geometry. Never spinners for local data |

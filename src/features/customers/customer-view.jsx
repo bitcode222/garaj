@@ -1,18 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CalendarPlus, CarFront, Pencil, Plus, ReceiptText, Wrench } from "lucide-react";
+import { CalendarPlus, CarFront, Plus, ReceiptText, Wrench } from "lucide-react";
 import { ContactActions } from "@/components/ds/contact";
 import { DetailSheet } from "@/components/ds/detail-sheet";
 import { Initials, KeyValue, KeyValueGrid, Money, Stat } from "@/components/ds/data";
-import { Plate } from "@/components/ds/plate";
+import { PlateTag, VehicleLabel } from "@/components/ds/make-logo";
 import { StatusBadge, ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import { formatIBAN, formatPhone, isValidCUI, joinAddress } from "@/domain/customer";
 import { computeTotals } from "@/domain/lines";
-import { vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtWorkOrder, plural } from "@/lib/format";
 import { CUSTOMER_TYPES, WORK_ORDER_STATUS } from "@/lib/labels";
+import { detailHref } from "@/lib/detail-mode";
 import { navigateFromSheet, openSheet } from "@/lib/sheets";
 import { useCollection, useEntity, useSettings, useToday } from "@/lib/store/hooks";
 import { selectInvoiceStates, selectInvoicesByCustomer, selectVehiclesByCustomer, selectWorkOrdersByCustomer } from "@/lib/store/selectors";
@@ -44,13 +44,11 @@ export default function CustomerView({ open, onOpenChange, id }) {
 			missing="Clientul a fost șters."
 			title={customer?.name ?? "Client"}
 			description={customer ? `${CUSTOMER_TYPES[customer.type] ?? CUSTOMER_TYPES.person} · client din ${fmtDate(customer.createdAt, "MMMM yyyy")}` : undefined}
-			fullPage={customer && `/customers/detail/?id=${customer.id}`}
+			fullPage={customer && detailHref("customer", customer.id)}
+			onEdit={() => openSheet("customer", { id: customer.id })}
 			footer={
 				customer && (
 					<>
-						<Button variant="outline" className="max-md:h-11" onClick={() => openSheet("customer", { id: customer.id })}>
-							<Pencil /> Editează
-						</Button>
 						<Button className="max-md:h-11" onClick={() => openSheet("appointment", { customerId: customer.id, vehicleId: cars[0]?.id })}>
 							<CalendarPlus /> Programează
 						</Button>
@@ -108,9 +106,9 @@ export default function CustomerView({ open, onOpenChange, id }) {
 							<ul className="grid gap-2 sm:grid-cols-2">
 								{cars.map((car) => (
 									<li key={car.id}>
-										<button type="button" onClick={() => openSheet("vehicle-view", { id: car.id })} className="flex min-h-14 w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors hover:bg-accent/50">
-											<Plate value={car.plate} size="sm" />
-											<span className="min-w-0 flex-1 truncate text-sm">{vehicleName(car)}</span>
+										<button type="button" onClick={() => openSheet("vehicle-view", { id: car.id })} className="flex min-h-14 w-full items-center gap-3 rounded-md border p-3 text-left transition-colors hover:bg-accent/50">
+											<VehicleLabel vehicle={car} className="flex-1" nameClassName="text-sm" />
+											<PlateTag value={car.plate} />
 										</button>
 									</li>
 								))}
@@ -125,7 +123,7 @@ export default function CustomerView({ open, onOpenChange, id }) {
 					<section className="space-y-2">
 						<h3 className="text-sm font-semibold">Ultimele lucrări</h3>
 						{orders.length ? (
-							<ul className="divide-y rounded-xl border">
+							<ul className="divide-y rounded-md border">
 								{orders.slice(0, 5).map((o) => (
 									<li key={o.id}>
 										<button type="button" onClick={() => goto(`/work-orders/detail/?id=${o.id}`)} className="flex min-h-14 w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-accent/50">

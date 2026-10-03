@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
-import { Building2, CalendarClock, Database, Download, FlaskConical, ImagePlus, Monitor, Moon, Palette, Percent, Plus, ReceiptText, RotateCcw, Sun, Upload, Users, Warehouse } from "lucide-react";
+import { Building2, CalendarClock, Database, Download, FlaskConical, ImagePlus, Monitor, PanelRight, FileText, Moon, Palette, Percent, Plus, ReceiptText, RotateCcw, Sun, Upload, Users, Warehouse } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -19,7 +19,8 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { isValidCUI, isValidIBAN } from "@/domain/customer";
 import { todayISO } from "@/domain/dates";
-import { useDraft, useHydrated } from "@/lib/hooks";
+import { DETAIL_MODES, DETAIL_MODE_KEY } from "@/lib/detail-mode";
+import { useDraft, useHydrated, useLocalPreference } from "@/lib/hooks";
 import { BAY_KINDS, STAFF_ROLES } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
 import { addStressInvoices, exportBackup, importBackup, resetToDemo, setNextInvoiceNumber, startFresh, updateSettings } from "@/lib/store/actions";
@@ -98,6 +99,7 @@ export function SettingsPage() {
 function Settings({ settings }) {
 	const confirm = useConfirm();
 	const { theme, setTheme } = useTheme();
+	const [detailMode, setDetailMode] = useLocalPreference(DETAIL_MODE_KEY, "sheet", DETAIL_MODES);
 	const persistence = useStoreValue("persistence");
 	const demo = useStoreValue("demo");
 	const counters = useStoreValue("counters");
@@ -361,6 +363,19 @@ function Settings({ settings }) {
 						</Link>
 						.
 					</p>
+				</Section>
+
+				<Section id="deschidere" icon={PanelRight} title="Deschiderea detaliilor" description="Cum se deschide o programare, un client, o mașină, o lucrare sau o factură din liste. Se păstrează pe acest dispozitiv.">
+					<Segmented
+						value={detailMode}
+						onValueChange={setDetailMode}
+						options={[
+							{ value: "sheet", label: "Panou lateral", icon: PanelRight },
+							{ value: "page", label: "Pagină completă", icon: FileText },
+						]}
+						className="max-sm:w-full max-sm:[&>button]:flex-1"
+					/>
+					<p className="mt-3 text-sm text-muted-foreground">Din panou poți oricând deschide pagina completă (butonul din colțul de sus).</p>
 				</Section>
 
 				<Section id="date" icon={Database} title="Date" description="Totul stă pe acest dispozitiv — fără cont, fără internet.">

@@ -20,6 +20,8 @@ const loaders = {
 	"appointment-view": () => import("@/features/calendar/appointment-view"),
 	"customer-view": () => import("@/features/customers/customer-view"),
 	"vehicle-view": () => import("@/features/vehicles/vehicle-view"),
+	"work-order-view": () => import("@/features/work-orders/work-order-view"),
+	"invoice-view": () => import("@/features/invoices/invoice-view"),
 };
 
 const SHEETS = Object.fromEntries(Object.entries(loaders).map(([type, load]) => [type, dynamic(load, { ssr: false })]));

@@ -3,12 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Wrench } from "lucide-react";
-import { toast } from "sonner";
 import { EmptyState, Money } from "@/components/ds/data";
 import { FilterChips, SearchInput } from "@/components/ds/inputs";
 import { DataList, ListHeader, ListRow } from "@/components/ds/list";
 import { Page, PageHeader, Toolbar } from "@/components/ds/page";
-import { Plate } from "@/components/ds/plate";
+import { PlateTag, VehicleLabel } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { StatusMenu } from "@/components/ds/status-menu";
 import { Button } from "@/components/ui/button";
@@ -19,11 +18,12 @@ import { vehicleName } from "@/domain/vehicle";
 import { OPEN_STATUSES, WO_TRANSITIONS } from "@/domain/work-order";
 import { fmtDate, fmtDays, fmtWorkOrder, plural } from "@/lib/format";
 import { WORK_ORDER_ACTIONS, WORK_ORDER_STATUS } from "@/lib/labels";
+import { useOpenDetail } from "@/lib/detail-mode";
 import { openSheet } from "@/lib/sheets";
-import { setWorkOrderStatus } from "@/lib/store/actions";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { selectWorkOrdersSorted } from "@/lib/store/selectors";
 import { cn } from "@/lib/utils";
+import { moveWorkOrder } from "./status";
 
 const LIST_FILTERS = [
 	{ value: "open", label: "Deschise", statuses: OPEN_STATUSES },
@@ -32,18 +32,10 @@ const LIST_FILTERS = [
 	{ value: "cancelled", label: "Anulate", statuses: ["cancelled"], tone: "red" },
 ];
 
-function moveTo(order, to) {
-	try {
-		setWorkOrderStatus(order.id, to);
-		toast.success(`#${order.number} → ${WORK_ORDER_STATUS[to].label}`);
-	} catch (error) {
-		toast.error(error.message);
-	}
-}
-
 export function WorkOrdersPage() {
 	const ready = useIsReady();
 	const router = useRouter();
+	const openDetail = useOpenDetail();
 	const today = useToday();
 	const settings = useSettings();
 	const workOrders = useCollection("workOrders");
@@ -118,13 +110,13 @@ export function WorkOrdersPage() {
 						<span className="text-right">Total</span>
 					</ListHeader>
 				}
-				renderRow={(row) => <OrderRow row={row} today={today} />}
+				renderRow={(row) => <OrderRow row={row} today={today} onOpen={() => openDetail("work-order", row.order.id)} />}
 			/>
 		</Page>
 	);
 }
 
-function OrderRow({ row, today }) {
+function OrderRow({ row, today, onOpen }) {
 	const { order, vehicle, customer, totals } = row;
 	const age = diffDaysISO(dayOfInstant(order.dates?.[order.status] ?? order.createdAt), today);
 	const stale = (order.status === "ready" && age >= 2) || (order.status === "waiting_parts" && age >= 3);
@@ -133,24 +125,23 @@ function OrderRow({ row, today }) {
 			map={WORK_ORDER_STATUS}
 			value={order.status}
 			moves={WO_TRANSITIONS[order.status]}
-			onMove={(to) => moveTo(order, to)}
+			onMove={(to) => moveWorkOrder(order, to)}
+			subject={fmtWorkOrder(order.number)}
 			actions={WORK_ORDER_ACTIONS}
 			destructive={["cancelled"]}
 			size="sm"
 		/>
 	);
 	return (
-		<ListRow href={`/work-orders/detail/?id=${order.id}`} className="md:grid md:grid-cols-[88px_minmax(0,1.2fr)_minmax(0,1fr)_170px_120px_120px] md:gap-3">
+		<ListRow onClick={onOpen} nested className="md:grid md:grid-cols-[88px_minmax(0,1.2fr)_minmax(0,1fr)_170px_120px_120px] md:gap-3">
 			<div className="min-w-0 flex-1 md:hidden">
 				<div className="flex items-center justify-between gap-3">
-					<div className="flex min-w-0 items-center gap-2">
-						{vehicle && <Plate value={vehicle.plate} size="sm" />}
-						<span className="truncate text-[15px] font-medium">{vehicleName(vehicle)}</span>
-					</div>
+					<VehicleLabel vehicle={vehicle} nameClassName="text-[15px] font-medium" />
 					<Money value={totals.gross} className="text-sm font-semibold" />
 				</div>
 				<div className="mt-1 flex items-center justify-between gap-3">
-					<span className={cn("truncate text-xs", stale ? "font-medium text-red-600 dark:text-red-400" : "text-muted-foreground")}>
+					<span className={cn("flex min-w-0 items-center gap-1.5 truncate text-xs", stale ? "font-medium text-red-600 dark:text-red-400" : "text-muted-foreground")}>
+						{vehicle && <PlateTag value={vehicle.plate} />}
 						{fmtWorkOrder(order.number)} · {customer?.name} · {stale ? (age === 0 ? "azi" : fmtDays(-age)) : fmtDate(order.createdAt, "d MMM")}
 					</span>
 					{status}
@@ -158,8 +149,8 @@ function OrderRow({ row, today }) {
 			</div>
 			<span className="hidden font-mono text-[13px] font-medium md:block">{fmtWorkOrder(order.number)}</span>
 			<span className="hidden min-w-0 items-center gap-2 md:flex">
-				{vehicle && <Plate value={vehicle.plate} size="sm" />}
-				<span className="truncate text-sm">{vehicleName(vehicle)}</span>
+				<VehicleLabel vehicle={vehicle} nameClassName="text-sm" />
+				{vehicle && <PlateTag value={vehicle.plate} />}
 			</span>
 			<span className="hidden truncate text-sm md:block">{customer?.name}</span>
 			<span className="hidden md:block">{status}</span>

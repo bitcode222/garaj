@@ -1,16 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CalendarCheck, CarFront, Pencil, UserRound, Wrench } from "lucide-react";
+import { CalendarCheck, CarFront, UserRound, Wrench } from "lucide-react";
 import { ContactActions } from "@/components/ds/contact";
 import { DetailSheet } from "@/components/ds/detail-sheet";
 import { KeyValue, KeyValueGrid } from "@/components/ds/data";
-import { Plate } from "@/components/ds/plate";
-import { StatusMenu } from "@/components/ds/status-menu";
+import { PlateTag, VehicleLabel } from "@/components/ds/make-logo";
+import { StatusMenu, useStatusChange } from "@/components/ds/status-menu";
 import { Button } from "@/components/ui/button";
 import { findConflicts, quickAppointmentMoves } from "@/domain/appointment";
 import { dayOfInstant, minutesBetween } from "@/domain/dates";
-import { vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtTime } from "@/lib/format";
 import { APPOINTMENT_STATUS } from "@/lib/labels";
 import { navigateFromSheet, openSheet } from "@/lib/sheets";
@@ -34,6 +33,14 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 	const byDay = selectAppointmentsByDay(useCollection("appointments"));
 	const conflicts = a && open ? findConflicts(a, byDay.get(dayOfInstant(a.start)) ?? []) : [];
 
+	const change = useStatusChange({
+		map: APPOINTMENT_STATUS,
+		value: a?.status,
+		subject: a?.title || "Programare",
+		onMove: (to) => quickMoveAppointment(a, to),
+		actions: APPOINTMENT_ACTIONS,
+		destructive: ["cancelled", "no_show"],
+	});
 	const canCheckIn = a && ["scheduled", "confirmed"].includes(a.status);
 	const serviceNames = a?.serviceIds?.map((sid) => services[sid]?.name).filter(Boolean);
 
@@ -45,28 +52,23 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 			missing="Programarea a fost ștearsă."
 			title={a?.title || "Programare"}
 			description={a ? `${fmtDate(a.start, "EEEE, d MMMM")} · ${fmtTime(a.start)}–${fmtTime(a.end)} (${durationLabel(minutesBetween(a.start, a.end))})` : undefined}
-			footer={
-				a && (
-					<Button variant="outline" className="max-md:h-11" onClick={() => openSheet("appointment", { id: a.id })}>
-						<Pencil /> Editează
-					</Button>
-				)
-			}
+			onEdit={() => openSheet("appointment", { id: a.id })}
 		>
 			{a && (
 				<div className="space-y-5">
-					<div className="flex flex-wrap items-center gap-2 rounded-xl border bg-muted/40 p-3">
+					<div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/40 p-3">
 						<StatusMenu
 							map={APPOINTMENT_STATUS}
 							value={a.status}
 							moves={quickAppointmentMoves(a.status)}
 							onMove={(to) => quickMoveAppointment(a, to)}
+							subject={a.title || "Programare"}
 							actions={APPOINTMENT_ACTIONS}
 							destructive={["cancelled", "no_show"]}
 						/>
 						<div className="ml-auto flex flex-wrap gap-2">
 							{a.status === "scheduled" && (
-								<Button size="sm" variant="outline" className="max-md:h-11" onClick={() => quickMoveAppointment(a, "confirmed")}>
+								<Button size="sm" variant="outline" className="max-md:h-11" onClick={() => change("confirmed")}>
 									<CalendarCheck /> Confirmă
 								</Button>
 							)}
@@ -90,7 +92,7 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 
 					<div className="grid gap-2 sm:grid-cols-2">
 						{customer && (
-							<button type="button" onClick={() => openSheet("customer-view", { id: customer.id })} className="flex min-h-14 items-center gap-3 rounded-xl border p-3 text-left transition-colors hover:bg-accent/50">
+							<button type="button" onClick={() => openSheet("customer-view", { id: customer.id })} className="flex min-h-14 items-center gap-3 rounded-md border p-3 text-left transition-colors hover:bg-accent/50">
 								<UserRound className="size-4 shrink-0 text-muted-foreground" aria-hidden />
 								<span className="min-w-0">
 									<span className="block text-xs text-muted-foreground">Client</span>
@@ -99,11 +101,10 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 							</button>
 						)}
 						{vehicle && (
-							<button type="button" onClick={() => openSheet("vehicle-view", { id: vehicle.id })} className="flex min-h-14 items-center gap-3 rounded-xl border p-3 text-left transition-colors hover:bg-accent/50">
-								<Plate value={vehicle.plate} size="sm" />
-								<span className="min-w-0">
-									<span className="block text-xs text-muted-foreground">Mașină</span>
-									<span className="block truncate text-sm font-medium">{vehicleName(vehicle)}</span>
+							<button type="button" onClick={() => openSheet("vehicle-view", { id: vehicle.id })} className="flex min-h-14 items-center gap-3 rounded-md border p-3 text-left transition-colors hover:bg-accent/50">
+								<span className="flex min-w-0 flex-col gap-1">
+									<VehicleLabel vehicle={vehicle} nameClassName="text-sm font-medium" />
+									<PlateTag value={vehicle.plate} className="self-start" />
 								</span>
 							</button>
 						)}

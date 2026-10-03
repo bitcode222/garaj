@@ -65,13 +65,14 @@ export function kmPerDay(log) {
 export function estimateKm(vehicle, today) {
 	const last = lastReading(vehicle);
 	if (!last) return null;
+	if (!today) return last.km; // "today" is unknown during the first client render
 	const perDay = kmPerDay(vehicle.mileage) ?? DEFAULT_KM_PER_DAY;
 	return Math.round(last.km + perDay * Math.max(0, diffDaysISO(last.date, today)));
 }
 
 /** Status of a deadline: ok · soon (≤ soonDays) · expired · unknown. */
 export function deadline(dateISO, today, soonDays = 30) {
-	if (!dateISO) return { status: "unknown", days: null };
+	if (!dateISO || !today) return { status: "unknown", days: null };
 	const days = diffDaysISO(today, dateISO);
 	return { status: days < 0 ? "expired" : days <= soonDays ? "soon" : "ok", days };
 }
