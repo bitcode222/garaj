@@ -149,6 +149,20 @@
 	color-scheme: dark;
 }
 
+/* Web only: a softer dark (the native app keeps the deeper one, see data-native
+   in StoreBoot). Same neutral ramp, lifted so surfaces separate without glare. */
+.dark:not([data-native]) {
+	--background: oklch(0.205 0 0);
+	--card: oklch(0.25 0 0);
+	--popover: oklch(0.27 0 0);
+	--secondary: oklch(0.31 0 0);
+	--muted: oklch(0.3 0 0);
+	--accent: oklch(0.32 0 0);
+	--subtle-foreground: oklch(0.62 0 0);
+	--border: oklch(1 0 0 / 11%);
+	--input: oklch(1 0 0 / 16%);
+}
+
 /* The document stays paper-white in dark mode, like a PDF preview. */
 .paper {
 	--background: oklch(1 0 0);

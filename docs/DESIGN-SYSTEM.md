@@ -36,6 +36,8 @@ The system is distilled from the two reference screens of the product.
 | `brand` | `oklch(0.646 0.222 41.1)` | `oklch(0.705 0.213 47.6)` | Logo, active nav marker, "now" line, key highlights. Never body text |
 | `destructive` | `oklch(0.577 0.245 27.3)` | `oklch(0.704 0.191 22.2)` | Destructive actions only |
 
+**Web dark is softer than native dark.** In the browser (`html:not([data-native])`) the dark ramp is lifted: `background` 0.205, `card` 0.25, `popover` 0.27, `secondary` 0.31, `muted` 0.30, `accent` 0.32, `border` 11 %, `input` 16 %. The iOS app keeps the values in the table. Light mode is the same everywhere.
+
 ### Color: tones (status and category)
 Defined once in `src/lib/tones.js` as static Tailwind classes (safe for purging). Names match the original calendar colors.
 
