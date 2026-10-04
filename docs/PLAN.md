@@ -80,6 +80,7 @@ Status legend: ✅ done in this MVP · 🟡 partial / stubbed · ⏭ later
 - **Mileage** — logged at each check-in. Lower than the last reading → warning, still allowed (cluster replaced / typo), kept in history.
 - **Service due** — next due = last service + interval (months) **or** + interval (km), whichever comes first. Km is estimated from the average daily km of the mileage history.
 - **Deletion** — anything referenced by an issued invoice cannot be deleted (fiscal record). Unreferenced customers / vehicles / catalog items can be deleted after confirmation. Documents keep snapshots, so later catalog edits never change old documents.
+- **Archive** *(proposed, see [`UX-REDESIGN.md`](UX-REDESIGN.md) D8)* — customers, vehicles, services and parts that cannot be deleted get a reversible `archivedAt`: hidden from lists, pickers, search and reminders, shown under the **Arhivate** filter. Never for invoices. A vehicle currently in the shop cannot be archived. `canDelete` / `canArchive` return the reasons so the UI can explain them.
 
 ### What proves value to the shop owner (instrument later)
 Reminder → booking conversion · estimate approval rate · average ticket · labor/parts mix · parts margin · days-to-pay · overdue amount · lift utilization.
