@@ -1,0 +1,13 @@
+.git
+.github
+.githooks
+node_modules
+.next
+out
+ios
+docs
+*.md
+.DS_Store
+npm-debug.log*
+Dockerfile
+docker-compose.yml

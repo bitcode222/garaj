@@ -48,6 +48,10 @@ A launchd agent (macOS; a crontab entry on Linux) runs `scripts/auto-pull.sh`, w
 
 It pulls the code only; to put a new build on the phone, run `npm run ios:device` as usual.
 
+## CI/CD and containers
+
+Every PR is tested on GitHub (`.github/workflows/ci.yml`); every merge to `main` is built into an nginx container and deployed on the Mac by a self-hosted runner. Setup and rollback: [`docs/DEPLOY.md`](docs/DEPLOY.md). Locally: `npm run docker:up` (production image on :8080) or `npm run docker:dev`.
+
 ## Structure
 
 ```
