@@ -12,7 +12,10 @@
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"src/domain/*.test.js\"",
     "ios:sync": "next build && cap sync ios",
     "ios:open": "cap open ios",
-    "ios:device": "bash scripts/ios-device.sh"
+    "ios:device": "bash scripts/ios-device.sh",
+    "autopull": "bash scripts/auto-pull.sh",
+    "autopull:install": "bash scripts/install-auto-pull.sh",
+    "autopull:uninstall": "bash scripts/install-auto-pull.sh uninstall"
   },
   "dependencies": {
     "@capacitor/core": "^8.5.2",

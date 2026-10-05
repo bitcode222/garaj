@@ -36,6 +36,18 @@ npm run ios:device                                       # back to the bundled, 
 Free Personal Team limits: the app expires after 7 days (run `npm run ios:device` again), max 3 such apps on the phone.
 First install: on the iPhone, Settings → General → VPN & Device Management → trust the developer.
 
+## Keep a Mac on the latest `main`
+
+```bash
+npm run autopull:install     # once: checks origin/main every 2 min and at login
+npm run autopull:uninstall   # remove it
+npm run autopull             # one manual pass
+```
+
+A launchd agent (macOS; a crontab entry on Linux) runs `scripts/auto-pull.sh`, which only ever **fast-forwards** and stays out of the way: it does nothing while you are on another branch, have uncommitted changes, or have local commits that are not on `origin/main`. When `package.json` / `package-lock.json` change it runs `npm ci`, and it shows a macOS notification after an update. Log: `~/.garaj-auto-pull.log`. Change the interval with `INTERVAL=300 npm run autopull:install`.
+
+It pulls the code only; to put a new build on the phone, run `npm run ios:device` as usual.
+
 ## Structure
 
 ```
