@@ -4,9 +4,12 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch: # "Run workflow" button: redeploy + reinstall on the iPhone
+  schedule:
+    - cron: "30 17 * * *" # daily 17:30 UTC: keeps the free-team iPhone build from expiring (7 days)
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -15,6 +18,7 @@ permissions:
 jobs:
   # Runs on GitHub's own machines, for every PR and push. Fork PRs never reach the Mac.
   check:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -30,6 +34,7 @@ jobs:
 
   # Builds the production image and smoke-tests it (health + a deep link).
   image:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -73,3 +78,40 @@ jobs:
           docker images garaj-web --format '{{.CreatedAt}}|{{.Tag}}' | sort -r | awk -F'|' '{print $2}' \
             | grep -vE '^(latest|ci)$' | tail -n +6 | xargs -I{} docker rmi "garaj-web:{}" || true
           docker image prune -f
+
+  # Builds the iPhone app and installs it, when a paired iPhone is reachable.
+  # No phone connected = skipped (green), never a failed pipeline. Only from main.
+  ios:
+    needs: [check]
+    if: >-
+      ${{ !cancelled() && (needs.check.result == 'success' || needs.check.result == 'skipped')
+      && github.ref == 'refs/heads/main'
+      && (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 30
+    concurrency:
+      group: ios-device
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Look for the iPhone
+        id: device
+        run: |
+          set +e
+          bash scripts/ios-device.sh --check
+          code=$?
+          if [ "$code" -eq 0 ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          elif [ "$code" -eq 3 ]; then
+            echo "::notice::No iPhone reachable (cable or Wi-Fi, unlocked, trusted). Skipping the iOS install."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          else
+            exit "$code"
+          fi
+      - name: Build and install on the iPhone
+        if: steps.device.outputs.found == 'true'
+        env:
+          IOS_LAUNCH: "0"
+        run: |
+          npm ci --no-audit --no-fund
+          bash scripts/ios-device.sh

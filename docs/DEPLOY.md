@@ -51,9 +51,25 @@ GARAJ_TAG=<old-sha> docker compose up -d web
 
 Settings → Branches → add a rule for `main` → *Require status checks to pass* → select **check** and **image**. Then also enable *Settings → General → Allow auto-merge*; pull requests can be set to auto-merge and GitHub merges them the moment the checks are green.
 
+## The iPhone app builds automatically too
+
+The `ios` job (same runner, after `check` passes) runs `scripts/ios-device.sh`: build → sync → sign → install on your iPhone. It runs on every merge to `main`, **daily at 17:30 UTC**, and from *Actions → CI/CD → Run workflow*.
+
+- **No phone, no problem:** if no paired iPhone is reachable, the job is skipped (green), not failed.
+- **Installs only, never opens the app**, so a merge doesn't kick you out of Garaj. Your data stays (same app, updated in place).
+- **The daily run matters:** with a free Apple team the app expires after 7 days; the daily install renews it whenever the phone is reachable.
+
+One-time phone setup:
+1. Plug the iPhone in once, unlock it, tap **Trust**. Settings → Privacy & Security → **Developer Mode** on.
+2. Xcode → Window → Devices and Simulators → select the phone → tick **Connect via network**. (Then it works over Wi‑Fi with no cable, if both are on the same network and the phone is awake.)
+3. The first automatic build may show a macOS prompt "codesign wants to access key…". Click **Always Allow** once.
+4. The Mac must be logged in (the runner is a user service) and Xcode signed in to your Apple ID, as for `npm run ios:device`.
+
+Not verified in the sandbox this was written in (no Xcode there); the first real run is on your Mac. If the `ios` job fails, open its log; the failing step and message are all that's needed.
+
 ## Things to know
 
-- **Not containerized: the iPhone build.** `npm run ios:device` needs Xcode and the phone, so it stays native on the Mac. The container only serves the web build.
+- **Not containerized: the iPhone build.** It needs Xcode and the phone, so it runs natively on the Mac (see above). The container only serves the web build.
 - **The Mac must be awake and Docker running** for deploys to land (System Settings → Battery/Energy → prevent sleep when plugged in; a missed deploy just waits for the Mac to come back).
 - **Per-browser data.** The site at `http://<mac>:8080` is a different origin from `localhost:3000`, so it has its own empty data. Browsers also treat plain `http://` on a LAN IP as an insecure context: storage works, but clipboard/share APIs may not. Use `localhost` on the Mac itself, or put HTTPS in front (Tailscale or Caddy) if you need those on other devices.
 - **Self-hosted runners and public repos.** Keep this repository private, or leave the default setting that requires approval for fork pull requests; never make the `deploy` job run for `pull_request` events.
