@@ -1,0 +1,39 @@
+# docker compose up -d --build            production build on http://localhost:8080
+# docker compose --profile dev up dev     hot-reloading dev server on http://localhost:3000
+name: garaj
+
+services:
+  web:
+    build:
+      context: .
+      target: runtime
+    image: garaj-web:${GARAJ_TAG:-latest}
+    container_name: garaj-web
+    ports:
+      - "${GARAJ_PORT:-8080}:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  dev:
+    profiles: ["dev"]
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm ci --no-audit --no-fund && npx next dev -H 0.0.0.0"
+    environment:
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "true" # file events do not cross the Mac → VM bind mount
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - dev_node_modules:/app/node_modules # keep the Mac's node_modules untouched
+      - dev_next:/app/.next
+
+volumes:
+  dev_node_modules:
+  dev_next:

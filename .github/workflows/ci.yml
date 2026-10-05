@@ -1,0 +1,75 @@
+name: CI/CD
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # Runs on GitHub's own machines, for every PR and push. Fork PRs never reach the Mac.
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+      - run: npm run lint
+      - run: npm run build
+
+  # Builds the production image and smoke-tests it (health + a deep link).
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build --target runtime -t garaj-web:ci .
+      - name: Smoke test
+        run: |
+          docker run -d --name smoke -p 8080:80 garaj-web:ci
+          for i in $(seq 1 20); do curl -fsS http://localhost:8080/healthz && break; sleep 1; done
+          curl -fsS http://localhost:8080/ | grep -qi "<html"
+          curl -fsS "http://localhost:8080/customers/detail/?id=x" | grep -qi "<html"
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/does-not-exist/)
+          test "$code" = "404"
+          docker rm -f smoke
+
+  # Only on pushes to main, only on the self-hosted Mac (see docs/DEPLOY.md).
+  deploy:
+    needs: [check, image]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, macOS, garaj]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy container
+        env:
+          GARAJ_TAG: ${{ github.sha }}
+        run: |
+          export GARAJ_TAG="${GARAJ_TAG:0:7}"
+          docker compose build web
+          docker tag "garaj-web:${GARAJ_TAG}" garaj-web:latest
+          docker compose up -d --remove-orphans web
+          for i in $(seq 1 30); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' garaj-web 2>/dev/null || echo starting)
+            [ "$status" = "healthy" ] && break
+            sleep 2
+          done
+          echo "health: $status"
+          test "$status" = "healthy"
+          # keep the five newest images for quick rollback
+          docker images garaj-web --format '{{.CreatedAt}}|{{.Tag}}' | sort -r | awk -F'|' '{print $2}' \
+            | grep -vE '^(latest|ci)$' | tail -n +6 | xargs -I{} docker rmi "garaj-web:{}" || true
+          docker image prune -f

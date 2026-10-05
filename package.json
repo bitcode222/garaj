@@ -15,7 +15,12 @@
     "ios:device": "bash scripts/ios-device.sh",
     "autopull": "bash scripts/auto-pull.sh",
     "autopull:install": "bash scripts/install-auto-pull.sh",
-    "autopull:uninstall": "bash scripts/install-auto-pull.sh uninstall"
+    "autopull:uninstall": "bash scripts/install-auto-pull.sh uninstall",
+    "runner:install": "bash scripts/setup-mac-runner.sh install",
+    "runner:uninstall": "bash scripts/setup-mac-runner.sh uninstall",
+    "docker:up": "docker compose up -d --build web",
+    "docker:dev": "docker compose --profile dev up dev",
+    "docker:down": "docker compose down"
   },
   "dependencies": {
     "@capacitor/core": "^8.5.2",
