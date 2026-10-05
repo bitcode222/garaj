@@ -14,3 +14,4 @@ Read [`docs/PLAN.md`](docs/PLAN.md) before changing business rules and [`docs/DE
 - Detail routes take `?id=` (static export) and are wrapped in `<Suspense>`.
 - Before calling work done: `npm test && npm run lint && npm run build`; on the iPhone: `npm run ios:device`.
 - Delivery: work on the session branch and open a pull request into `main` (`base: main`). If the previous PR was already merged, restart the branch from `origin/main` first (`git fetch origin main && git checkout -B <branch> origin/main`) so the new PR carries only new work. Fetch and rebase before pushing, since `main` moves.
+- Merging: the owner wants every pull request merged automatically. After `npm test && npm run lint && npm run build` pass and the PR is open and mergeable, merge it into `main` (merge commit) without asking. GitHub auto-merge is not enabled on the repo, so merge directly; if CI or review checks are ever configured, wait for them to pass first.
