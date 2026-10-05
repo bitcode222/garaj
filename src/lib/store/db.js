@@ -33,6 +33,31 @@ const done = (tx) =>
 		tx.onabort = () => reject(tx.error ?? new Error("Transaction aborted"));
 	});
 
+const hasAllStores = (db) => [...COLLECTIONS, "meta"].every((name) => db.objectStoreNames.contains(name));
+
+/**
+ * The browser may already hold a NEWER "garaj" database than this build knows
+ * (a later version of the app, run from the same origin). Opening with a lower
+ * version throws VersionError, so open whatever version exists and use it when
+ * it has every store we need. Never deletes or downgrades anything.
+ */
+function openExisting() {
+	return new Promise((resolve, reject) => {
+		const req = indexedDB.open(DB_NAME);
+		req.onsuccess = () => {
+			const db = req.result;
+			if (!hasAllStores(db)) {
+				db.close();
+				reject(new Error(`A different "${DB_NAME}" database (version ${db.version}) exists in this browser. Clear this site's data to use the app.`));
+				return;
+			}
+			db.onversionchange = () => db.close();
+			resolve(db);
+		};
+		req.onerror = () => reject(req.error);
+	});
+}
+
 export function openDB() {
 	if (typeof indexedDB === "undefined") return Promise.reject(new Error("IndexedDB unavailable"));
 	dbPromise ??= new Promise((resolve, reject) => {
@@ -49,7 +74,14 @@ export function openDB() {
 			db.onversionchange = () => db.close();
 			resolve(db);
 		};
-		req.onerror = () => reject(req.error);
+		req.onerror = (event) => {
+			if (req.error?.name === "VersionError") {
+				event.preventDefault(); // handled below, not an unhandled error
+				openExisting().then(resolve, reject);
+				return;
+			}
+			reject(req.error);
+		};
 		req.onblocked = () => reject(new Error("IndexedDB blocked by another tab"));
 	}).catch((error) => {
 		dbPromise = null;

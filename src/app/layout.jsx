@@ -40,10 +40,12 @@ export const viewport = {
 	],
 };
 
+// <body suppressHydrationWarning>: browser extensions (e.g. ColorZilla's cz-shortcut-listen)
+// add attributes to <body> before React hydrates, which is harmless.
 export default function RootLayout({ children }) {
 	return (
 		<html lang="ro" suppressHydrationWarning>
-			<body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+			<body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
 				<Providers>
 					<AppShell>{children}</AppShell>
 				</Providers>
