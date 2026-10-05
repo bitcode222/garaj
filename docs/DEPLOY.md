@@ -23,6 +23,13 @@
    ```
 4. Under *Settings → Actions → Runners* it should show **Idle**. The next merge to `main` deploys.
 
+**Registered the runner by hand instead** (the commands GitHub shows on the "New self-hosted runner" page)? That works too; the workflow only needs the default `self-hosted` + `macOS` labels. Two things the script does for you that you then need to do yourself, from the runner folder:
+
+```bash
+echo "$PATH" > .path          # so the background service can find docker (run this in a terminal where `docker` works)
+./svc.sh install && ./svc.sh start   # run as a service instead of ./run.sh, so it survives closing the terminal and reboots
+```
+
 Open `http://localhost:8080` (or `http://<mac-ip>:8080` from the phone/other devices on the same Wi‑Fi). Change the port with `GARAJ_PORT=9000` in a `.env` file next to `docker-compose.yml`.
 
 ## Everyday commands
