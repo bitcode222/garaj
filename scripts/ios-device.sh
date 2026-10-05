@@ -2,6 +2,8 @@
 # Build Garaj and install it on the connected iPhone.
 #   npm run ios:device                                   -> bundled, works offline
 #   CAP_SERVER_URL=http://<mac-ip>:3000 npm run ios:device -> live reload from `npm run dev -- -H 0.0.0.0`
+#   bash scripts/ios-device.sh --check                   -> exit 0 if a paired iPhone is found, 3 if none (used by CI)
+#   IOS_LAUNCH=0 …                                       -> install only, do not open the app (used by CI)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -21,8 +23,13 @@ if [ -z "${DEVICE_ID:-}" ]; then
   ' "$tmp")"
   rm -f "$tmp"
 fi
-[ -n "$DEVICE_ID" ] || { echo "No paired iPhone found (check cable, unlock, trust this Mac)."; exit 1; }
+if [ -z "$DEVICE_ID" ]; then
+  echo "No paired iPhone found (check cable, unlock, trust this Mac)."
+  [ "${1:-}" = "--check" ] && exit 3
+  exit 1
+fi
 echo "→ Device $DEVICE_ID"
+[ "${1:-}" = "--check" ] && exit 0
 
 if [ -z "${CAP_SERVER_URL:-}" ]; then
   echo "→ Building static site"
@@ -41,6 +48,10 @@ xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \
 APP="$DERIVED/Build/Products/Debug-iphoneos/App.app"
 echo "→ Installing"
 xcrun devicectl device install app --device "$DEVICE_ID" "$APP" >/dev/null
+if [ "${IOS_LAUNCH:-1}" = "0" ]; then
+  echo "✓ Installed (not launched)."
+  exit 0
+fi
 echo "→ Launching"
 if xcrun devicectl device process launch --device "$DEVICE_ID" --terminate-existing "$BUNDLE_ID" >/dev/null 2>&1; then
   echo "✓ Garaj is running on the iPhone"

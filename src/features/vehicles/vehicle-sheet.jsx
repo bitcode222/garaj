@@ -79,7 +79,6 @@ export default function VehicleSheet({ open, onOpenChange, id, customerId, navig
 			open={open}
 			onOpenChange={onOpenChange}
 			title={existing ? "Editează mașina" : "Mașină nouă"}
-			size="lg"
 			footer={
 				<>
 					<Button variant="outline" className="max-md:h-11" onClick={() => onOpenChange(false)}>

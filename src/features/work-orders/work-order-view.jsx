@@ -18,7 +18,6 @@ export default function WorkOrderView({ open, onOpenChange, id }) {
 			missing="Lucrarea a fost ștearsă."
 			title={order ? `Lucrarea ${fmtWorkOrder(order.number)}` : "Lucrare"}
 			fullPage={order && detailHref("work-order", order.id)}
-			size="xl"
 		>
 			{order && (
 				<EmbeddedLinks>

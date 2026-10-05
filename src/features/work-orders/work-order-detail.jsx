@@ -492,7 +492,6 @@ function WorkOrder({ order, embedded = false }) {
 				open={estimateOpen}
 				onOpenChange={setEstimateOpen}
 				title={`Deviz #${order.number}`}
-				size="lg"
 				footer={
 					<Button onClick={() => printPage(`Deviz ${order.number}`)} className="max-md:h-11">
 						<Printer /> Tipărește / PDF

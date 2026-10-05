@@ -22,7 +22,6 @@ export default function VehicleView({ open, onOpenChange, id }) {
 			description={vehicle ? [vehicle.year, vehicle.engine, FUELS[vehicle.fuel], vehicle.color].filter(Boolean).join(" · ") || undefined : undefined}
 			fullPage={vehicle && detailHref("vehicle", vehicle.id)}
 			onEdit={() => openSheet("vehicle", { id: vehicle.id })}
-			size="xl"
 		>
 			{vehicle && (
 				<EmbeddedLinks>
