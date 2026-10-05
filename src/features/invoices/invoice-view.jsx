@@ -19,7 +19,6 @@ export default function InvoiceView({ open, onOpenChange, id }) {
 			missing="Factura a fost ștearsă."
 			title={invoice ? (draft ? "Ciornă" : formatInvoiceNumber(invoice.series, invoice.number)) : "Factură"}
 			fullPage={invoice && detailHref("invoice", invoice.id)}
-			size="xl"
 		>
 			{invoice && (
 				<EmbeddedLinks>

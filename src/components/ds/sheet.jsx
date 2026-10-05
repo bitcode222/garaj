@@ -99,7 +99,7 @@ function useSwipeDismiss(open, onOpenChange) {
  * Focus moves to the panel, not the first input, so the iOS keyboard does not
  * pop up before the user chooses a field.
  */
-export function Sheet({ open, onOpenChange, title, description, headerActions, footer, size = "md", className, children }) {
+export function Sheet({ open, onOpenChange, title, description, headerActions, footer, className, children }) {
 	const contentRef = useRef(null);
 	const depth = useContext(SheetDepth);
 	const swipe = useSwipeDismiss(open, onOpenChange);
@@ -123,7 +123,8 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 						"data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
 						// md and up: a side panel.
 						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:border-l",
-						size === "xl" ? "md:max-w-4xl" : size === "lg" ? "md:max-w-2xl" : "md:max-w-md",
+						// One width for every sheet on the web (md and up), so stacked sheets line up exactly.
+						"md:max-w-3xl",
 						depth > 0 && "shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.25)]",
 						className,
 					)}

@@ -19,7 +19,6 @@ export default function CustomerView({ open, onOpenChange, id }) {
 			title={customer?.name ?? "Client"}
 			fullPage={customer && detailHref("customer", customer.id)}
 			onEdit={() => openSheet("customer", { id: customer.id })}
-			size="xl"
 		>
 			{customer && (
 				<EmbeddedLinks>

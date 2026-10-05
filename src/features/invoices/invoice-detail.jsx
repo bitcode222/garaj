@@ -263,7 +263,7 @@ function DraftInvoice({ invoice, embedded = false }) {
 				</Button>
 			</StickyBar>
 
-			<Sheet open={preview} onOpenChange={setPreview} title="Previzualizare factură" size="lg">
+			<Sheet open={preview} onOpenChange={setPreview} title="Previzualizare factură">
 				<InvoiceDocument invoice={draft} snapshot={snapshot} totals={totals} currency={settings.currency} draft />
 			</Sheet>
 		</Page>
