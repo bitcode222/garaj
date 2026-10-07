@@ -70,9 +70,9 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 			</div>
 			<nav className="mt-4 flex-1 overflow-y-auto px-3 pb-4" aria-label="Navigare principală">
 				{groups.map((group, index) => (
-					<div key={group} className={cn(index > 0 && "mt-4 border-t pt-4")}>
+					<div key={group} className={cn(index > 0 && "mt-3 border-t pt-3")}>
 						{/* The first group has no heading; later ones are set off by a divider and a quiet title. */}
-						{index > 0 && <p className="px-3 pb-2 text-sm font-semibold text-muted-foreground">{group}</p>}
+						{index > 0 && <p className="px-2.5 pb-1.5 text-xs font-semibold text-muted-foreground">{group}</p>}
 						<ul className="space-y-0.5">
 							{NAV.filter((item) => item.group === group).map((item) => {
 								const active = isActive(item, pathname);
@@ -83,23 +83,23 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 											href={item.href}
 											aria-current={active ? "page" : undefined}
 											className={cn(
-												"flex h-11 items-center gap-3 rounded-lg px-3 text-[15px] transition-colors",
+												"flex h-9 items-center gap-2.5 rounded-md px-2.5 text-[13px] transition-colors",
 												active ? tone("blue").nav : "text-foreground hover:bg-accent",
 											)}
 										>
-											<item.icon className="size-5 shrink-0" strokeWidth={1.75} aria-hidden />
+											<item.icon className="size-4 shrink-0" aria-hidden />
 											<span className="flex-1 truncate">{item.label}</span>
 											{count > 0 && (
-												<span className={cn("min-w-6 rounded-md border px-1.5 text-center text-2xs leading-5 font-semibold tabular-nums", tone("purple").chip)}>
+												<span className={cn("min-w-5 rounded-md border px-1 text-center text-2xs leading-4 font-semibold tabular-nums", tone("purple").chip)}>
 													{count > 99 ? "99+" : count}
 												</span>
 											)}
 										</Link>
 										{active && item.children && (
-											<ul className="my-1 ml-[21px] space-y-0.5 border-l-2">
+											<ul className="my-0.5 ml-[18px] space-y-0.5 border-l">
 												{item.children.map((child) => (
 													<li key={child.href}>
-														<Link href={child.href} className="flex h-10 items-center rounded-r-lg pl-[21px] text-[15px] text-foreground transition-colors hover:bg-accent">
+														<Link href={child.href} className="flex h-8 items-center rounded-r-md pl-[19px] text-[13px] text-foreground transition-colors hover:bg-accent">
 															{child.label}
 														</Link>
 													</li>
