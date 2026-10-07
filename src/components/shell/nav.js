@@ -22,7 +22,20 @@ export const NAV = [
 	{ href: "/reminders/", label: "De contactat", icon: BellRing, group: "Relații", badge: "reminders" },
 	{ href: "/catalog/", label: "Catalog", icon: Boxes, group: "Administrare" },
 	{ href: "/reports/", label: "Rapoarte", icon: ChartColumn, group: "Administrare" },
-	{ href: "/settings/", label: "Setări", icon: Settings, group: "Administrare" },
+	{
+		href: "/settings/",
+		label: "Setări",
+		icon: Settings,
+		group: "Administrare",
+		// Sub-items: shown under the item while its page is open, jump to a section.
+		children: [
+			{ href: "/settings/#service", label: "Service" },
+			{ href: "/settings/#facturare", label: "Facturare" },
+			{ href: "/settings/#echipa", label: "Echipă" },
+			{ href: "/settings/#aspect", label: "Aspect" },
+			{ href: "/settings/#date", label: "Date" },
+		],
+	},
 ];
 
 export const TABS = [

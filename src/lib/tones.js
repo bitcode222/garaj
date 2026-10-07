@@ -19,6 +19,8 @@ export const TONES = {
 		block: "border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-200 dark:hover:bg-blue-950",
 		solid: "bg-blue-500",
 		text: "text-blue-700 dark:text-blue-300",
+		// Selected navigation row: solid light-blue pill, no border.
+		nav: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
 		soft: "bg-blue-50/70 dark:bg-blue-950/30",
 		border: "border-blue-300 dark:border-blue-700",
 		bar: "bg-blue-500",
