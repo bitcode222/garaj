@@ -43,6 +43,17 @@ export function MakeLogo({ make, className }) {
 	);
 }
 
+/** The brand mark as a big, faint backdrop (hero cards). A generic car when the make has no logo. */
+export function MakeWatermark({ make, className }) {
+	const key = logoKey(make);
+	if (!key) return <CarFront aria-hidden strokeWidth={1.25} className={cn("pointer-events-none absolute text-white opacity-[0.14]", className)} />;
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden className={cn("pointer-events-none absolute fill-white opacity-[0.14]", className)}>
+			<path d={LOGO_PATHS[key]} />
+		</svg>
+	);
+}
+
 /** Logo + "Make Model" — the vehicle's primary label. */
 export function VehicleLabel({ vehicle, className, nameClassName }) {
 	if (!vehicle) return null;

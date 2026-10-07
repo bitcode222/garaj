@@ -19,6 +19,36 @@ export function useHydrated() {
 	);
 }
 
+// One shared minute ticker for every "time in shop" clock on screen.
+const clockListeners = new Set();
+let clockMinute = null;
+let clockTimer = null;
+const readMinute = () => Math.floor(Date.now() / 60_000);
+
+function subscribeClock(listener) {
+	clockListeners.add(listener);
+	clockMinute = readMinute();
+	if (!clockTimer) {
+		clockTimer = setInterval(() => {
+			clockMinute = readMinute();
+			clockListeners.forEach((l) => l());
+		}, 15_000);
+	}
+	return () => {
+		clockListeners.delete(listener);
+		if (!clockListeners.size) {
+			clearInterval(clockTimer);
+			clockTimer = null;
+		}
+	};
+}
+
+/** Current time as an ISO instant, refreshed every minute. Null during server render. */
+export function useMinuteClock() {
+	const minute = useSyncExternalStore(subscribeClock, () => clockMinute ?? readMinute(), () => null);
+	return minute == null ? null : new Date(minute * 60_000).toISOString();
+}
+
 const preferenceListeners = new Set();
 
 /**

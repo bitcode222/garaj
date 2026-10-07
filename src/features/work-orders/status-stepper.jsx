@@ -9,9 +9,9 @@ const STEPS = ["estimate", "approved", "in_progress", "ready", "delivered"];
 /**
  * Where the job is in the flow. "Waiting for parts" shows as a paused "in progress".
  * With `onMove`, every step the job can legally move to is a button (the caller
- * asks for confirmation).
+ * asks for confirmation). `onHero`: drawn in white for use on a HeroCard.
  */
-export function StatusStepper({ status, onMove, className }) {
+export function StatusStepper({ status, onMove, onHero = false, className }) {
 	if (status === "cancelled") return null;
 	const current = status === "waiting_parts" ? "in_progress" : status;
 	const index = STEPS.indexOf(current);
@@ -34,14 +34,14 @@ export function StatusStepper({ status, onMove, className }) {
 							// pill has even padding on all sides and the bars stay aligned.
 							className={cn(
 								"-mx-1.5 -my-1.5 flex min-w-0 flex-col gap-1.5 rounded-lg px-1.5 py-1.5 text-left",
-								target && "cursor-pointer transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+								target && (onHero ? "cursor-pointer transition-colors hover:bg-white/15 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none" : "cursor-pointer transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"),
 							)}
 						>
-						<span className={cn("h-1.5 rounded-full", done ? "bg-foreground/80" : active ? tone(meta.tone).bar : "bg-muted")} />
+						<span className={cn("h-1.5 rounded-full", onHero ? (done ? "bg-white/70" : active ? "bg-white" : "bg-white/25") : done ? "bg-foreground/80" : active ? tone(meta.tone).bar : "bg-muted")} />
 						<span
 							className={cn(
 								"flex items-center gap-1 truncate text-2xs font-medium md:text-xs",
-								active ? tone(meta.tone).text : done ? "text-foreground" : "text-muted-foreground",
+								onHero ? (active ? "font-semibold text-white" : done ? "text-white/85" : "text-white/60") : active ? tone(meta.tone).text : done ? "text-foreground" : "text-muted-foreground",
 							)}
 						>
 							{done && <Check className="size-3 shrink-0" aria-hidden />}

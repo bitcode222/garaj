@@ -79,6 +79,15 @@ export function fmtDays(days) {
 
 export const fmtRelativeTo = (dateISO, today) => (dateISO && today ? fmtDays(diffDaysISO(today, dateISO)) : "");
 
+/** Time in the shop as a compact clock: "35 min" · "5 h 12 m" · "2 z 4 h". */
+export function fmtDuration(minutes) {
+	const m = Math.max(0, Math.round(minutes ?? 0));
+	if (m < 60) return `${m} min`;
+	const hours = Math.floor(m / 60);
+	if (hours < 24) return `${hours} h ${String(m % 60).padStart(2, "0")} m`;
+	return `${Math.floor(hours / 24)} z ${hours % 24} h`;
+}
+
 const kmFormat = new Intl.NumberFormat("ro-RO", { maximumFractionDigits: 0 });
 export const fmtKm = (km) => (km == null ? "—" : `${kmFormat.format(km)} km`);
 
