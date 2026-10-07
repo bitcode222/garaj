@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
 	ArrowRight,
 	BellRing,
@@ -16,15 +16,18 @@ import {
 	Banknote,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
+import { ContactActions } from "@/components/ds/contact";
 import { Banner, EmptyState, Initials, Meter, Money, Stat } from "@/components/ds/data";
 import { Page } from "@/components/ds/page";
+import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge, ToneDot } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import { minutesBetween } from "@/domain/dates";
 import { stockLevel } from "@/domain/inventory";
-import { formatPlate } from "@/domain/vehicle";
-import { OPEN_STATUSES, byAttention } from "@/domain/work-order";
+import { computeTotals } from "@/domain/lines";
+import { formatPlate, vehicleName } from "@/domain/vehicle";
+import { OPEN_STATUSES } from "@/domain/work-order";
 import { fmtDate, fmtTime, plural } from "@/lib/format";
 import { REMINDER_TYPES, WORK_ORDER_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
@@ -37,13 +40,8 @@ import {
 	selectReminders,
 	selectReserved,
 } from "@/lib/store/selectors";
+import { cn } from "@/lib/utils";
 import { AppointmentCard } from "@/features/calendar/appointment-card";
-import { ShopCard } from "@/features/work-orders/shop-card";
-import { useOpenDetail } from "@/lib/detail-mode";
-import { useMinuteClock } from "@/lib/hooks";
-
-// Cars shown before "show all": enough to cover everything late or waiting on us, without a wall of cards.
-const SHOP_PREVIEW = 6;
 
 function greeting() {
 	const h = new Date().getHours();
@@ -74,9 +72,6 @@ export function DashboardPage() {
 	const parts = useCollection("parts");
 	const staffMap = useCollection("staff");
 	const staff = selectActive(staffMap);
-	const openDetail = useOpenDetail();
-	const now = useMinuteClock();
-	const [showAll, setShowAll] = useState(false);
 
 	const reminders = selectReminders(today, vehicles, customers, invoices, payments, workOrders, appointments, contacts);
 
@@ -85,7 +80,6 @@ export function DashboardPage() {
 		const todays = (selectAppointmentsByDay(appointments).get(today) ?? []).filter((a) => a.status !== "cancelled");
 		const open = Object.values(workOrders).filter((o) => OPEN_STATUSES.includes(o.status));
 		const byStatus = Object.fromEntries(OPEN_STATUSES.map((s) => [s, open.filter((o) => o.status === s)]));
-		const shop = [...open].sort(byAttention(today));
 		const states = selectInvoiceStates(invoices, payments, today);
 		let outstanding = 0;
 		let overdue = 0;
@@ -111,7 +105,7 @@ export function DashboardPage() {
 			minutes: todays.filter((a) => a.staffId === s.id && a.status !== "no_show").reduce((sum, a) => sum + minutesBetween(a.start, a.end), 0),
 		}));
 		const upcoming = todays.find((a) => ["scheduled", "confirmed"].includes(a.status) && a.start >= new Date().toISOString());
-		return { todays, open, shop, byStatus, outstanding, overdue, issuedToday, collectedToday, lowStock, capacity, load, upcoming };
+		return { todays, open, byStatus, outstanding, overdue, issuedToday, collectedToday, lowStock, capacity, load, upcoming };
 	}, [today, appointments, workOrders, invoices, payments, parts, staff, settings.hours]);
 
 	if (!ready || !data) return <ListPageSkeleton stats rows={6} />;
@@ -213,7 +207,7 @@ export function DashboardPage() {
 							action={
 								<Button asChild variant="ghost" size="sm">
 									<Link href="/work-orders/">
-										Toate <ArrowRight />
+										Tablou <ArrowRight />
 									</Link>
 								</Button>
 							}
@@ -233,26 +227,35 @@ export function DashboardPage() {
 									</span>
 								))}
 							</div>
-							{/* Every car in the shop, most urgent first (see byAttention in the domain). */}
-							<div className="grid gap-3 sm:grid-cols-2">
-								{(showAll ? data.shop : data.shop.slice(0, SHOP_PREVIEW)).map((order) => (
-									<ShopCard
-										key={order.id}
-										order={order}
-										vehicle={vehicles[order.vehicleId]}
-										customer={customers[order.customerId]}
-										mechanic={staffMap[order.staffId]}
-										settings={settings}
-										today={today}
-										now={now}
-										onOpen={() => openDetail("work-order", order.id)}
-									/>
-								))}
-							</div>
-							{data.shop.length > SHOP_PREVIEW && (
-								<Button variant="outline" className="w-full" onClick={() => setShowAll((v) => !v)}>
-									{showAll ? "Arată doar cele urgente" : `Arată toate cele ${data.shop.length} lucrări`}
-								</Button>
+							{data.byStatus.ready.length > 0 && (
+								<div className="space-y-2">
+									<p className="text-2xs font-medium tracking-wider text-muted-foreground uppercase">Gata de predare</p>
+									{data.byStatus.ready.map((order) => {
+										const vehicle = vehicles[order.vehicleId];
+										const customer = customers[order.customerId];
+										return (
+											<div key={order.id} className={cn("flex flex-wrap items-center gap-3 rounded-lg border p-3", tone("green").soft)}>
+												<Link href={`/work-orders/detail/?id=${order.id}`} className="flex min-w-0 flex-1 items-center gap-3">
+													{vehicle && <MakeLogo make={vehicle.make} className="size-6" />}
+													<div className="min-w-0">
+														<p className="truncate text-sm font-medium">{vehicleName(vehicle)}</p>
+														<p className="flex items-center gap-1.5 truncate text-xs text-muted-foreground">
+															{vehicle && <PlateTag value={vehicle.plate} />}
+															{customer?.name} · <Money value={computeTotals(order.lines, { vatPayer: settings.invoicing.vatPayer }).gross} decimals={0} />
+														</p>
+													</div>
+												</Link>
+												{customer?.phone && (
+													<ContactActions
+														phone={customer.phone}
+														labels={false}
+														message={`Bună ziua! ${vehicleName(vehicle)} (${formatPlate(vehicle?.plate)}) este gata de ridicare. Program: ${settings.hours.open}–${settings.hours.close}. ${settings.shop.name}`}
+													/>
+												)}
+											</div>
+										);
+									})}
+								</div>
 							)}
 						</CardContent>
 					</Card>
