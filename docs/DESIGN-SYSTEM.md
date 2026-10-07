@@ -92,7 +92,7 @@ Numbers: `tabular-nums` where numbers align in columns (tables, lists, axis tick
 | Layers | sticky 20 · top bar 30 · nav 40 · overlay 50 · toast 60 |
 | Scrim | One `scrim` utility (globals.css) behind every sheet, dialog and the palette. Invisible on purpose (no tint, no blur): it only catches taps outside the panel |
 | Shell | sidebar 240 · rail 64 · top bar 56 + safe area · tab bar 56 + safe area |
-| Sidebar (lg+) | Under the search bar and **Nou**: 44 px rows, 20 px icons, ink-coloured labels. The open page is a light-blue pill (`tone("blue").nav`). The first group has no title; later groups sit under a divider with a quiet semibold title. Counts are small purple pills. An item can have `children` (see `nav.js`, used by Setări) that show under it while its page is open, beside a thin vertical line |
+| Sidebar (lg+) | Under the search bar and **Nou**: 36 px rows, 16 px icons, 13 px ink-coloured labels. The open page is a light-blue pill (`tone("blue").nav`). The first group has no title; later groups sit under a divider with a quiet semibold title. Counts are small purple pills. An item can have `children` (see `nav.js`, used by Setări) that show under it while its page is open, beside a thin vertical line |
 | Breakpoints | `md` 768 → rail · `lg` 1024 → sidebar · `xl` 1280 → detail aside |
 
 ---
