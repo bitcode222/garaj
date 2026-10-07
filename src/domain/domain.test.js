@@ -13,7 +13,7 @@ import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
 import { fold, matchesTokens, queryTokens } from "./search.js";
 import { addReading, formatPlate, serviceDue, vinIssue } from "./vehicle.js";
-import { WO_NEXT, canTransition, isBackwardMove, transition } from "./work-order.js";
+import { WO_NEXT, byAttention, canTransition, daysInStatus, isBackwardMove, isStale, minutesInShop, transition } from "./work-order.js";
 
 const settings = {
 	currency: "RON",
@@ -189,6 +189,39 @@ describe("work orders", () => {
 		assert.equal(o.status, "approved");
 		assert.equal(o.dates.approved, "t");
 		assert.throws(() => transition(o, "delivered"));
+	});
+});
+
+describe("shop floor attention", () => {
+	const today = "2026-10-10";
+	const job = (id, status, since) => ({ id, status, createdAt: "2026-10-01T08:00:00.000Z", dates: { [status]: `${since}T09:00:00.000Z` } });
+
+	test("late jobs are only pickup (2 d) and parts (3 d) waits", () => {
+		assert.ok(isStale(job("a", "ready", "2026-10-08"), today));
+		assert.ok(!isStale(job("b", "ready", "2026-10-09"), today));
+		assert.ok(isStale(job("c", "waiting_parts", "2026-10-07"), today));
+		assert.ok(!isStale(job("d", "waiting_parts", "2026-10-08"), today));
+		assert.ok(!isStale(job("e", "in_progress", "2026-10-01"), today)); // old, but not waiting on anyone
+		assert.equal(daysInStatus(job("a", "ready", "2026-10-08"), today), 2);
+	});
+
+	test("sorted: late first, then by who it waits on, then longest waiting", () => {
+		const jobs = [
+			job("progress", "in_progress", "2026-10-09"),
+			job("ready-new", "ready", "2026-10-10"),
+			job("estimate", "estimate", "2026-10-09"),
+			job("parts-late", "waiting_parts", "2026-10-05"),
+			job("ready-late", "ready", "2026-10-07"),
+			job("approved", "approved", "2026-10-09"),
+			job("estimate-old", "estimate", "2026-10-06"),
+		];
+		const order = [...jobs].sort(byAttention(today)).map((j) => j.id);
+		assert.deepEqual(order, ["ready-late", "parts-late", "ready-new", "estimate-old", "estimate", "approved", "progress"]);
+	});
+
+	test("minutes in shop", () => {
+		assert.equal(minutesInShop({ createdAt: "2026-10-01T08:00:00.000Z" }, "2026-10-01T10:30:00.000Z"), 150);
+		assert.equal(minutesInShop({ createdAt: "2026-10-01T08:00:00.000Z" }, "2026-10-01T07:00:00.000Z"), 0);
 	});
 });
 

@@ -36,7 +36,29 @@ The system is distilled from the two reference screens of the product.
 | `brand` | `oklch(0.646 0.222 41.1)` | `oklch(0.705 0.213 47.6)` | Logo, active nav marker, "now" line, key highlights. Never body text |
 | `destructive` | `oklch(0.577 0.245 27.3)` | `oklch(0.704 0.191 22.2)` | Destructive actions only |
 
-### Color: tones (status and category)
+#### Hero cards: the cars in the shop
+
+`HeroCard` (`ds/hero-card.jsx`) is a banner: a saturated gradient in the colour of the work-order status (`tone().banner`, white text, 700 → 500 so it always reads), the make's logo as a faint watermark, and `HeroChip` pills. It is used twice, so a car looks the same on the dashboard and in its sheet.
+
+**Which cars come first** (`byAttention` in `src/domain/work-order.js`, tested): the question is "who is the job waiting on?"
+1. *Late* jobs (pickup waiting 2+ days, parts waiting 3+ days) before everything else.
+2. `ready`: the customer's car is done, hand it over and collect the money.
+3. `waiting_parts`: blocked on us, chase the supplier.
+4. `estimate`: blocked on the customer, chase the approval.
+5. `approved`: can start, needs a mechanic and a bay.
+6. `in_progress`: already being worked on, nothing to do but watch.
+Within a group the longest-waiting job is first. The dashboard shows the first 6 and a "show all" button.
+
+**Reading order inside a card** (top to bottom = most to least important): status colour + chip (what state) → late chip and clock (does it need me, how long has it been here) → make/model, plate, owner (which car, who is on it) → complaint, or what the status waits for → open, call (ready only), total.
+
+**Reading order inside a work-order sheet**: hero (state, urgency, car, owner, mechanic, price, and the stepper that moves the job) → action row (next step, invoice, estimate) → then the cards, ordered by what the viewer needs first:
+- default: contact and assignment → complaint and diagnosis → the work and price → billing → inspection → internal notes → history.
+- `estimate` (waiting on the customer's yes): the price comes before the diagnosis.
+- `waiting_parts`: the lines (where the parts are) come right after the contact.
+- `ready` (hand-over): contact, then invoice and total, before the work itself.
+History is always last: it is only read when something went wrong.
+
+## Color: tones (status and category)
 Defined once in `src/lib/tones.js` as static Tailwind classes (safe for purging). Names match the original calendar colors.
 
 | Tone | Palette | Chip (light) | Chip (dark) | Meaning |

@@ -1,4 +1,4 @@
-import { addDaysISO } from "./dates.js";
+import { addDaysISO, dayOfInstant, diffDaysISO } from "./dates.js";
 import { DomainError } from "./errors.js";
 import { uid } from "./ids.js";
 import { computeTotals } from "./lines.js";
@@ -40,6 +40,48 @@ export const WO_NEXT = {
 export const OPEN_STATUSES = ["estimate", "approved", "in_progress", "waiting_parts", "ready"];
 
 export const isOpen = (order) => OPEN_STATUSES.includes(order.status);
+
+// ── shop floor: what needs attention first ──────────────────────────────────
+
+/** Days a job may sit in a status before it is "late". Only states that wait on someone: pickup, parts. */
+export const STALE_AFTER_DAYS = { ready: 2, waiting_parts: 3 };
+
+/**
+ * Attention order of open jobs (lower = look at it sooner). The question each
+ * answers is "who is the job waiting on?":
+ *   ready          the customer's car is done: hand it over, collect the money
+ *   waiting_parts  blocked on us: chase the supplier
+ *   estimate       blocked on the customer: chase the approval
+ *   approved       can start: needs a mechanic and a bay
+ *   in_progress    already being worked on: nothing to do but watch
+ */
+export const ATTENTION_RANK = { ready: 0, waiting_parts: 1, estimate: 2, approved: 3, in_progress: 4 };
+
+/** Calendar days the job has been in its current status. */
+export function daysInStatus(order, today) {
+	return diffDaysISO(dayOfInstant(order.dates?.[order.status] ?? order.createdAt), today);
+}
+
+export function isStale(order, today) {
+	const limit = STALE_AFTER_DAYS[order.status];
+	return limit != null && daysInStatus(order, today) >= limit;
+}
+
+/** Whole minutes since the car was received. */
+export function minutesInShop(order, nowISO) {
+	return Math.max(0, Math.floor((new Date(nowISO).getTime() - new Date(order.createdAt).getTime()) / 60_000));
+}
+
+/** Sort comparator: late jobs first, then by who the job waits on, then the longest-waiting first. */
+export function byAttention(today) {
+	return (a, b) => {
+		const late = Number(isStale(b, today)) - Number(isStale(a, today));
+		if (late) return late;
+		const rank = (ATTENTION_RANK[a.status] ?? 9) - (ATTENTION_RANK[b.status] ?? 9);
+		if (rank) return rank;
+		return daysInStatus(b, today) - daysInStatus(a, today);
+	};
+}
 
 export function canTransition(from, to) {
 	return WO_TRANSITIONS[from]?.includes(to) ?? false;
