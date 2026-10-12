@@ -57,6 +57,7 @@ Each tone exposes `chip` (tinted), `solid` (dot / bar), `text`, `soft` (row acce
 |---|---|
 | Appointment | scheduled → blue · confirmed → purple · arrived → orange · done → green · no_show → red · cancelled → neutral |
 | Work order | estimate → blue · approved → purple · in_progress → orange · waiting_parts → yellow · ready → green · delivered → neutral · cancelled → red |
+| Visit (dashboard calendar, `VISIT_STAGE`) | scheduled → **outline** (dashed block, hollow dot, hatched bar segment: booked, not here yet) · then the work-order tones (estimate … ready) · delivered → neutral, dimmed · no_show → red, struck through |
 | Invoice | draft → neutral · issued → blue · partial → yellow · paid → green · overdue → red · cancelled → neutral |
 | Due dates (ITP, RCA, service) | > 30 d → green · ≤ 30 d → yellow · expired → red |
 | Stock | ok → green · low → yellow · out / negative → red |
@@ -90,7 +91,7 @@ Numbers: `tabular-nums` where numbers align in columns (tables, lists, axis tick
 | Elevation | e0 border only (cards) · e1 `shadow-xs` (controls) · e2 `shadow-paper` (documents) · e3 `shadow-lg` (popovers, sheets) |
 | Motion | 120 ms press/hover · 200 ms popover/dialog · 280 ms sheet · ease `cubic-bezier(.2,.8,.2,1)` · disabled under `prefers-reduced-motion` |
 | Layers | sticky 20 · top bar 30 · nav 40 · overlay 50 · toast 60 |
-| Scrim | One `scrim` utility (globals.css) behind every sheet, dialog and the palette. Invisible on purpose (no tint, no blur): it only catches taps outside the panel |
+| Scrim | One `scrim` utility (globals.css) behind every sheet, dialog and the palette. Faint `white/10` tint on the first sheet only (no blur); stacked sheets get an untinted one, because Radix mounts the scroll lock in the overlay. It catches taps outside the panel |
 | Shell | sidebar 240 · rail 64 · top bar 56 + safe area · tab bar 56 + safe area |
 | Sidebar (lg+) | Under the search bar and **Nou**: 36 px rows, 16 px icons, 13 px ink-coloured labels. The open page is a light-blue pill (`tone("blue").nav`). The first group has no title; later groups sit under a divider with a quiet semibold title. Counts are small purple pills. An item can have `children` (see `nav.js`, used by Setări) that show under it while its page is open, beside a thin vertical line |
 | Breakpoints | `md` 768 → rail · `lg` 1024 → sidebar · `xl` 1280 → detail aside |
@@ -123,7 +124,7 @@ Button · Input · Textarea · Select · Switch · Tabs · Dialog · AlertDialog
 | `plate.jsx` | `Plate` | Romanian number plate |
 | `skeletons.jsx` | `ListPageSkeleton`, `DetailPageSkeleton` | Loading states with final geometry |
 
-Domain UI built from these (in `src/features/`): `LinesEditor`, `CatalogPicker`, `TotalsBlock`, `InvoiceDocument`, `StatusStepper`, `InspectionChecklist`, `AppointmentCard`, `TimeGrid`, `CustomerPicker`, `VehiclePicker`, charts in `features/reports/charts.jsx`.
+Domain UI built from these (in `src/features/`): `LinesEditor`, `CatalogPicker`, `TotalsBlock`, `InvoiceDocument`, `StatusStepper`, `InspectionChecklist`, `AppointmentCard`, `TimeGrid`, `DashboardCalendar` (`DayTimeline`, `WeekStrip`), `CustomerPicker`, `VehiclePicker`, charts in `features/reports/charts.jsx`.
 
 Signature pieces:
 - **`DateTile`** (from the calendar's Today button): month strip plus big day number. Used in appointment rows and document dates.
@@ -171,6 +172,8 @@ Rules of thumb: a row that is wider than the screen scrolls inside its own conta
 | **Destructive** | `useConfirm` with a specific verb ("Anulează factura") and the consequence in one sentence |
 | **Detail overlay** | Appointments, customers, vehicles, work orders and invoices open as a square `DetailSheet` over the list (nothing reflows); the top bar has Back (when stacked) · Edit · Open full page on the left and Close on the right. Settings → "Deschiderea detaliilor" switches the default to the full page (per device). An overlay can open one edit form on top (max 2 deep). The stack owns one history entry, so Back closes the top sheet |
 | **Status change** | `StatusMenu` (tap the badge → "Mută în…") on work-order rows, appointment cards and the appointment overlay, each change confirmed first, with an undo toast for appointments; the clickable `StatusStepper` on work-order detail and overlay |
+| **Dashboard calendar** | First thing on Azi, full width (`features/dashboard/dashboard-calendar.jsx`, `visit-timeline.jsx`). Header: ‹ › · title · Azi (only when away from today) · `Segmented` Zi / Săptămână · link to the calendar. Opens on Zi when something is booked today, otherwise on Săptămână; decided once per day, never while the user is looking. **Status line** = one bar split by visit stage + a legend with counts; it counts exactly what is shown below and it is the filter: tap a colour (bar or legend) to keep one stage, tap it again (the chosen chip shows ✕) to clear; stages at 0 are not listed, except the chosen one. **Deja în service** = open jobs without a booking in the shown range (the "all-day" row), so the counts equal the open jobs. **Zi** = time runs left to right, a row per mechanic (+ Nealocat), a line at now, elapsed time shaded; tap a block to open it, tap free time to book there; overlaps stack. **Săptămână** = a column per day, today marked, 5 bookings then "+N încă"; the day header opens that day. Read-only (moving and resizing stay in the calendar). On a phone both scroll sideways inside the card: the timeline opens at the current time, the week with today at the left. Empty range → one sentence, "Adaugă programare" and a jump to the next booking; a filter with no match → "Arată tot" |
+| **Operations field** | `ServicesField` (`src/features/common/services-field.jsx`) in the check-in and appointment sheets: one full-width row per operation (name · time · price, tap to expand, X removes), an inline editor (name, time, price, internal cost, VAT total, margin) with "back to catalog values", then "+ Operațiune" on its own line at the left. The button opens an inline full-width search with a close button top right; it stays open for several picks and closes only on an outside tap or the close button. Typing a name that is not in the catalog offers it as a new operation. Margin and VAT come from `src/domain/lines.js` |
 | **Contact** | `ContactActions` (Sună · SMS · WhatsApp) next to every customer phone |
 | **Empty** | Icon · one sentence · one action |
 | **Loading** | Skeleton with the final geometry. Never spinners for local data |

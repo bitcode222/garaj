@@ -26,6 +26,7 @@ export function computeTotals(lines, { vatPayer = true } = {}) {
 	let parts = 0;
 	let fees = 0;
 	let cost = 0;
+	let laborCost = 0;
 	let hours = 0;
 
 	for (const line of lines ?? []) {
@@ -34,6 +35,7 @@ export function computeTotals(lines, { vatPayer = true } = {}) {
 		if (line.kind === "labor") {
 			labor += amount;
 			hours += Number(line.qty) || 0;
+			if (line.cost) laborCost += Math.round((Number(line.qty) || 0) * line.cost);
 		} else if (line.kind === "part") {
 			parts += amount;
 			if (line.cost) cost += Math.round((Number(line.qty) || 0) * line.cost);
@@ -59,6 +61,8 @@ export function computeTotals(lines, { vatPayer = true } = {}) {
 		fees,
 		cost,
 		partsMargin: parts - cost,
+		laborCost,
+		laborMargin: labor - laborCost,
 		hours: Math.round(hours * 100) / 100,
 	};
 }
@@ -86,4 +90,49 @@ export function laborPrice(hours, rate) {
 export function priceFromCost(cost, markupPct) {
 	const raw = Number(divRound(BigInt(cost) * BigInt(Math.round(10000 + markupPct * 100)), 10000n));
 	return Math.max(100, Math.round(raw / 100) * 100);
+}
+
+/** Starting point of an operation picked from the catalog: all of it can be overridden per job. */
+export function operationFromService(service, laborRate) {
+	const hours = Number(service.hours) || 1;
+	return {
+		serviceId: service.id,
+		name: service.name,
+		hours,
+		price: service.price || laborPrice(hours, laborRate),
+		cost: Number(service.cost) || 0,
+	};
+}
+
+/** Net/gross price and margin of one operation (bani). `vatRate` is 0 when not a VAT payer. */
+export function operationFigures(op, vatRate = 0) {
+	const net = Math.max(Math.round(Number(op.price) || 0), 0);
+	const cost = Math.max(Math.round(Number(op.cost) || 0), 0);
+	const vat = percentOf(net, vatRate);
+	const margin = net - cost;
+	return { net, vat, gross: net + vat, cost, margin, marginPct: net ? Math.round((margin / net) * 1000) / 10 : 0 };
+}
+
+/** Labor line for an operation: qty = hours, unit price/cost are per hour so the line totals equal the operation's. */
+export function laborLineFromOperation(op, { id, vatRate = 0, staffId = null }) {
+	const hours = Number(op.hours) > 0 ? Number(op.hours) : 1;
+	return {
+		id,
+		kind: "labor",
+		refId: op.serviceId ?? null,
+		description: String(op.name ?? "").trim() || "Manoperă",
+		qty: hours,
+		unit: "h",
+		unitPrice: Math.round((Number(op.price) || 0) / hours),
+		discountPct: 0,
+		vatRate,
+		cost: Math.round((Number(op.cost) || 0) / hours),
+		staffId,
+	};
+}
+
+/** VAT rate (%) of an operation: its own override, else the shop's standard; 0 when not a VAT payer. */
+export function operationVatRate(op, { vatPayer = true, vatRate = 0 } = {}) {
+	if (!vatPayer) return 0;
+	return op.vatRate == null ? Number(vatRate) || 0 : Number(op.vatRate) || 0;
 }

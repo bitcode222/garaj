@@ -55,6 +55,22 @@ export const APPOINTMENT_STATUS = {
 	cancelled: { label: "Anulat", tone: "neutral", icon: CircleX },
 };
 
+/**
+ * A visit on the dashboard calendar (src/domain/visit.js): booked, then the job's own
+ * stages with the board's labels and tones. "Programat" is drawn as an outline
+ * (`outline`), so it never reads as the solid neutral of "Predat".
+ */
+export const VISIT_STAGE = {
+	scheduled: { label: "Programat", tone: "neutral", icon: CalendarClock, outline: true, hint: "Încă nu a sosit" },
+	estimate: WORK_ORDER_STATUS.estimate,
+	approved: WORK_ORDER_STATUS.approved,
+	in_progress: WORK_ORDER_STATUS.in_progress,
+	waiting_parts: WORK_ORDER_STATUS.waiting_parts,
+	ready: WORK_ORDER_STATUS.ready,
+	delivered: WORK_ORDER_STATUS.delivered,
+	no_show: APPOINTMENT_STATUS.no_show,
+};
+
 export const INVOICE_STATE = {
 	draft: { label: "Ciornă", tone: "neutral", icon: FilePen },
 	issued: { label: "Emisă", tone: "blue", icon: FileText },

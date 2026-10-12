@@ -7,6 +7,7 @@ import { DomainError } from "@/domain/errors";
 import { uid } from "@/domain/ids";
 import { stockDelta } from "@/domain/inventory";
 import { buildStorno, issueInvoice, issueProblems, paymentProblem } from "@/domain/invoice";
+import { laborLineFromOperation, operationFromService, operationVatRate } from "@/domain/lines";
 import { formatPlate, normalizePlate, addReading } from "@/domain/vehicle";
 import { defaultInspection, toInvoiceDraft, transition } from "@/domain/work-order";
 import { mergeSettings } from "./defaults";
@@ -175,7 +176,7 @@ export const saveStaff = (input) =>
 export const saveBay = (input) =>
 	saveSimple("bays", input, "numele postului", { kind: "lift", active: true, order: values("bays").length });
 export const saveService = (input) =>
-	saveSimple("services", input, "denumirea operațiunii", { category: "maintenance", hours: 1, price: 0, parts: [] });
+	saveSimple("services", input, "denumirea operațiunii", { category: "maintenance", hours: 1, price: 0, cost: 0, parts: [] });
 export const savePart = (input) =>
 	saveSimple("parts", input, "denumirea piesei", { code: "", brand: "", unit: "buc", cost: 0, price: 0, stock: 0, minStock: 0, location: "" });
 
@@ -215,28 +216,28 @@ export function linesFromService(serviceId, { staffId = null } = {}) {
 	const s = getState();
 	const service = s.services[serviceId];
 	if (!service) return [];
-	const vatRate = s.settings.invoicing.vatPayer ? s.settings.invoicing.vatRate : 0;
-	const hours = Number(service.hours) || 1;
-	const lines = [
-		{
-			id: uid(),
-			kind: "labor",
-			refId: service.id,
-			description: service.name,
-			qty: hours,
-			unit: "h",
-			unitPrice: service.price ? Math.round(service.price / hours) : s.settings.laborRate,
-			discountPct: 0,
-			vatRate,
-			cost: 0,
-			staffId,
-		},
-	];
-	for (const { partId, qty } of service.parts ?? []) {
+	return linesFromOperation(operationFromService(service, s.settings.laborRate), { staffId });
+}
+
+/** Labor line from an (editable) operation, plus the catalog package's parts when it came from the catalog. */
+export function linesFromOperation(op, { staffId = null } = {}) {
+	const s = getState();
+	const lines = [laborLineFromOperation(op, { id: uid(), vatRate: operationVatRate(op, s.settings.invoicing), staffId })];
+	for (const { partId, qty } of s.services[op.serviceId]?.parts ?? []) {
 		const line = lineFromPart(partId, qty);
 		if (line) lines.push(line);
 	}
 	return lines;
+}
+
+/** The operations of an appointment/job form; older records only have `serviceIds`. */
+export function resolveOperations({ operations, serviceIds } = {}) {
+	if (operations) return operations;
+	const s = getState();
+	return (serviceIds ?? [])
+		.map((id) => s.services[id])
+		.filter(Boolean)
+		.map((service) => ({ id: uid(), ...operationFromService(service, s.settings.laborRate) }));
 }
 
 export function lineFromPart(partId, qty = 1) {
@@ -338,6 +339,7 @@ export async function createWorkOrder({
 	bayId = null,
 	appointmentId = null,
 	serviceIds = [],
+	operations = null,
 	status = "estimate",
 }) {
 	const s = getState();
@@ -345,7 +347,7 @@ export async function createWorkOrder({
 	if (!vehicleId) throw new DomainError("invalid", "Alege mașina.");
 	const vehicle = mustGet("vehicles", vehicleId, "Mașina");
 	const t = now();
-	const lines = serviceIds.flatMap((id) => linesFromService(id, { staffId }));
+	const lines = resolveOperations({ operations, serviceIds }).flatMap((op) => linesFromOperation(op, { staffId }));
 	let warning = null;
 	let nextVehicle = null;
 	if (Number(mileage) > 0) {
@@ -391,7 +393,7 @@ export async function createWorkOrder({
 	return { order, warning };
 }
 
-export function checkInAppointment(appointmentId, { mileage, fuelLevel, complaint } = {}) {
+export function checkInAppointment(appointmentId, { mileage, fuelLevel, complaint, operations } = {}) {
 	const appointment = mustGet("appointments", appointmentId, "Programarea");
 	if (appointment.workOrderId) throw new DomainError("exists", "Mașina are deja o lucrare deschisă din această programare.");
 	if (!appointment.vehicleId) throw new DomainError("invalid", "Adaugă întâi mașina pe programare.");
@@ -405,6 +407,7 @@ export function checkInAppointment(appointmentId, { mileage, fuelLevel, complain
 		bayId: appointment.bayId,
 		appointmentId,
 		serviceIds: appointment.serviceIds ?? [],
+		operations: operations ?? appointment.operations ?? null,
 	});
 }
 

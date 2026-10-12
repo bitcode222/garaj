@@ -95,6 +95,23 @@ function useSwipeDismiss(open, onOpenChange) {
 }
 
 /**
+ * Ref callback for the sheet's scroller. Radix's scroll lock (react-remove-scroll)
+ * preventDefaults wheel/touchmove at a scroller's edges, which kills the native
+ * rubber-band. Events that start inside the scroller never reach its document
+ * listener; the page behind stays put through `overscroll-contain` and the overlay.
+ */
+function bounceThroughScrollLock(el) {
+	if (!el) return;
+	const stop = (event) => event.stopPropagation();
+	el.addEventListener("wheel", stop, { passive: true });
+	el.addEventListener("touchmove", stop, { passive: true });
+	return () => {
+		el.removeEventListener("wheel", stop);
+		el.removeEventListener("touchmove", stop);
+	};
+}
+
+/**
  * Create/edit surface: a bottom sheet on phones, a right-hand panel from md up.
  * Focus moves to the panel, not the first input, so the iOS keyboard does not
  * pop up before the user chooses a field.
@@ -106,7 +123,8 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 	return (
 		<DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
 			<DialogPrimitive.Portal>
-				{depth === 0 && <DialogPrimitive.Overlay className="scrim" />}
+				{/* Radix mounts its scroll lock in the Overlay, so stacked sheets need one too (untinted) or they cannot scroll. */}
+					<DialogPrimitive.Overlay className={cn("scrim", depth === 0 && "bg-white/10")} />
 				<DialogPrimitive.Content
 					ref={contentRef}
 					tabIndex={-1}
@@ -129,7 +147,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 						className,
 					)}
 				>
-					<div className="shrink-0 touch-pan-y px-4 pt-[calc(0.5rem+var(--safe-top))] pb-3 md:px-6 md:pt-5" {...swipe.handlers}>
+					<div className="shrink-0 touch-pan-y px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10" {...swipe.handlers}>
 						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. */}
 						<div className="-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-9">
 							<button
@@ -160,7 +178,12 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 							</DialogPrimitive.Description>
 						</div>
 					</div>
-					<div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-5 md:px-6"><SheetDepth.Provider value={depth + 1}>{children}</SheetDepth.Provider></div>
+					<div ref={bounceThroughScrollLock} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+						{/* 1px taller than the viewport: short content still scrolls, so WebKit rubber-bands it. */}
+						<div className="min-h-[calc(100%+1px)] px-10 pb-10">
+							<SheetDepth.Provider value={depth + 1}>{children}</SheetDepth.Provider>
+						</div>
+					</div>
 					{footer && (
 						<div className="flex shrink-0 flex-wrap justify-end gap-2 border-t bg-card px-4 pt-3 pb-[calc(0.75rem+var(--safe-bottom))] md:px-6 md:pb-5 [&>*]:max-md:flex-1">
 							{footer}

@@ -18,7 +18,7 @@ import { combineDateTime, dayOfInstant, minutesBetween, pad2, todayISO } from "@
 import { fmtTime } from "@/lib/format";
 import { APPOINTMENT_STATUS } from "@/lib/labels";
 import { navigateFromSheet, openSheet } from "@/lib/sheets";
-import { deleteAppointment, saveAppointment, setAppointmentStatus } from "@/lib/store/actions";
+import { deleteAppointment, resolveOperations, saveAppointment, setAppointmentStatus } from "@/lib/store/actions";
 import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
 import { selectActive, selectAppointmentsByDay } from "@/lib/store/selectors";
 import { ServicesField } from "@/features/common/services-field";
@@ -57,7 +57,7 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 		return {
 			customerId: base.customerId ?? vehicles[vehicleId]?.customerId ?? null,
 			vehicleId: base.vehicleId ?? vehicleId ?? null,
-			serviceIds: base.serviceIds ?? [],
+			operations: resolveOperations(base),
 			title: base.title ?? "",
 			notes: base.notes ?? "",
 			date: startISO ? dayOfInstant(startISO) : todayISO(),
@@ -76,12 +76,12 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 	const conflicts = startISO ? findConflicts(candidate, byDay.get(form.date) ?? []) : [];
 	const customer = form.customerId ? customers[form.customerId] : null;
 
-	const onServices = (serviceIds) => {
-		const hours = serviceIds.reduce((sum, sid) => sum + (Number(services[sid]?.hours) || 0), 0);
-		const autoTitle = serviceIds.map((sid) => services[sid]?.name).filter(Boolean).join(", ");
-		const previousAuto = form.serviceIds.map((sid) => services[sid]?.name).filter(Boolean).join(", ");
+	const onServices = (operations) => {
+		const hours = operations.reduce((sum, op) => sum + (Number(op.hours) || 0), 0);
+		const autoTitle = operations.map((op) => op.name).filter(Boolean).join(", ");
+		const previousAuto = form.operations.map((op) => op.name).filter(Boolean).join(", ");
 		set({
-			serviceIds,
+			operations,
 			title: !form.title || form.title === previousAuto ? autoTitle : form.title,
 			duration: hours ? Math.max(30, Math.ceil((hours * 60) / 30) * 30) : form.duration,
 		});
@@ -96,7 +96,8 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 				...(existing ?? {}),
 				customerId: form.customerId,
 				vehicleId: form.vehicleId,
-				serviceIds: form.serviceIds,
+				serviceIds: form.operations.map((op) => op.serviceId).filter(Boolean),
+				operations: form.operations,
 				title: form.title.trim() || "Programare",
 				notes: form.notes,
 				start: startISO,
@@ -212,7 +213,7 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 					<VehiclePicker value={form.vehicleId} customerId={form.customerId} onChange={(vid, v) => set({ vehicleId: vid, customerId: form.customerId ?? v.customerId })} />
 				</Field>
 				<Field label="Operațiuni">
-					<ServicesField value={form.serviceIds} onChange={onServices} />
+					<ServicesField value={form.operations} onChange={onServices} />
 				</Field>
 				<Field label="Titlu">{(fid) => <Input id={fid} value={form.title} onChange={(e) => set({ title: e.target.value })} placeholder="ex. Revizie + geometrie" />}</Field>
 				<div className="grid grid-cols-2 gap-4 sm:grid-cols-3">

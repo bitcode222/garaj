@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { lastReading } from "@/domain/vehicle";
 import { fmtKm } from "@/lib/format";
 import { FUEL_LEVELS } from "@/lib/labels";
-import { checkInAppointment, createWorkOrder } from "@/lib/store/actions";
+import { checkInAppointment, createWorkOrder, resolveOperations } from "@/lib/store/actions";
 import { useCollection, useEntity } from "@/lib/store/hooks";
 import { selectActive } from "@/lib/store/selectors";
 import { ServicesField } from "@/features/common/services-field";
@@ -34,7 +34,7 @@ export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicl
 		complaint: appointment?.title ?? "",
 		mileage: null,
 		fuelLevel: 2,
-		serviceIds: appointment?.serviceIds ?? [],
+		operations: resolveOperations(appointment ?? {}),
 		staffId: appointment?.staffId ?? null,
 		bayId: appointment?.bayId ?? null,
 		status: "estimate",
@@ -83,7 +83,7 @@ export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicl
 				</>
 			}
 		>
-			<form id="checkin-form" onSubmit={submit} className="grid gap-4" noValidate>
+			<form id="checkin-form" onSubmit={submit} className="grid gap-4 pb-28" noValidate>
 				<Field label="Mașină" required error={touched && !form.vehicleId ? "Alege sau adaugă mașina." : null}>
 					<VehiclePicker
 						value={form.vehicleId}
@@ -118,7 +118,7 @@ export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicl
 					{(id) => <Textarea id={id} value={form.complaint} onChange={(e) => set({ complaint: e.target.value })} placeholder="ex. zgomot la frânare pe față" />}
 				</Field>
 				<Field label="Operațiuni estimate" hint="Aduc manopera și piesele din catalog în deviz">
-					<ServicesField value={form.serviceIds} onChange={(serviceIds) => set({ serviceIds })} />
+					<ServicesField value={form.operations} onChange={(operations) => set({ operations })} />
 				</Field>
 				<div className="grid grid-cols-2 gap-4">
 					<Field label="Mecanic">

@@ -7,12 +7,13 @@ import { addMonthsISO, diffDaysISO, isISODate } from "./dates.js";
 import { deadline, estimateKm } from "./vehicle.js";
 import { reservedByPart, stockDelta, stockLevel } from "./inventory.js";
 import { buildStorno, invoiceState, issueInvoice, issueProblems, paymentProblem } from "./invoice.js";
-import { computeTotals, laborPrice, lineNet } from "./lines.js";
+import { computeTotals, laborLineFromOperation, laborPrice, lineNet, operationFigures, operationVatRate, operationFromService } from "./lines.js";
 import { divRound, formatMoney, parseMoney, parseQuantity, percentOf, toInputAmount } from "./money.js";
 import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
 import { fold, matchesTokens, queryTokens } from "./search.js";
 import { addReading, formatPlate, serviceDue, vinIssue } from "./vehicle.js";
+import { VISIT_STAGES, countStages, defaultCalendarView, jobsWithoutBooking, visitStage } from "./visit.js";
 import { WO_NEXT, canTransition, isBackwardMove, transition } from "./work-order.js";
 
 const settings = {
@@ -358,5 +359,75 @@ describe("work order next step", () => {
 		}
 		assert.equal(WO_NEXT.delivered, undefined);
 		assert.equal(WO_NEXT.cancelled, undefined);
+	});
+});
+
+test("operation: custom price and cost give margin, and the labor line totals match", () => {
+	const op = operationFromService({ id: "s1", name: "Ulei", hours: 1.5, price: 30000 }, 20000);
+	assert.deepEqual(op, { serviceId: "s1", name: "Ulei", hours: 1.5, price: 30000, cost: 0 });
+	const custom = { ...op, name: "Ulei special", hours: 2, price: 45000, cost: 15000 };
+	const f = operationFigures(custom, 21);
+	assert.equal(f.net, 45000);
+	assert.equal(f.gross, 54450);
+	assert.equal(f.margin, 30000);
+	assert.equal(f.marginPct, 66.7);
+	const line = laborLineFromOperation(custom, { id: "l1", vatRate: 21 });
+	assert.equal(line.description, "Ulei special");
+	assert.equal(lineNet(line), 45000);
+	const t = computeTotals([line]);
+	assert.equal(t.laborCost, 15000);
+	assert.equal(t.laborMargin, 30000);
+});
+
+test("operation VAT: own rate overrides the standard; none when not a VAT payer", () => {
+	assert.equal(operationVatRate({}, { vatPayer: true, vatRate: 21 }), 21);
+	assert.equal(operationVatRate({ vatRate: 11 }, { vatPayer: true, vatRate: 21 }), 11);
+	assert.equal(operationVatRate({ vatRate: 0 }, { vatPayer: true, vatRate: 21 }), 0);
+	assert.equal(operationVatRate({ vatRate: 11 }, { vatPayer: false, vatRate: 21 }), 0);
+});
+
+describe("visit stage (dashboard calendar)", () => {
+	test("a booking shows its job's stage once the car is checked in", () => {
+		assert.equal(visitStage({ status: "scheduled" }), "scheduled");
+		assert.equal(visitStage({ status: "confirmed" }), "scheduled");
+		assert.equal(visitStage({ status: "arrived" }, { status: "estimate" }), "estimate");
+		assert.equal(visitStage({ status: "arrived" }, { status: "waiting_parts" }), "waiting_parts");
+		assert.equal(visitStage({ status: "arrived" }, { status: "ready" }), "ready");
+		assert.equal(visitStage({ status: "done" }, { status: "delivered" }), "delivered");
+		assert.equal(visitStage({ status: "done" }), "delivered");
+		assert.equal(visitStage({ status: "no_show" }), "no_show");
+	});
+
+	test("cancelled bookings and cancelled jobs are not shown; a missing job still counts as in the shop", () => {
+		assert.equal(visitStage({ status: "cancelled" }), null);
+		assert.equal(visitStage({ status: "arrived" }, { status: "cancelled" }), null);
+		assert.equal(visitStage({ status: "arrived" }), "in_progress");
+	});
+
+	test("opens on the day only when something active is booked for it", () => {
+		assert.equal(defaultCalendarView([{ status: "confirmed" }]), "day");
+		assert.equal(defaultCalendarView([{ status: "done" }]), "day");
+		assert.equal(defaultCalendarView([{ status: "cancelled" }, { status: "no_show" }]), "week");
+		assert.equal(defaultCalendarView([]), "week");
+		assert.equal(defaultCalendarView(undefined), "week");
+	});
+
+	test("jobs without a shown booking: open only, in pipeline order, oldest first", () => {
+		const orders = [
+			{ id: "a", status: "ready", createdAt: "2026-10-01T08:00:00.000Z" },
+			{ id: "b", status: "estimate", createdAt: "2026-10-03T08:00:00.000Z" },
+			{ id: "c", status: "estimate", createdAt: "2026-10-02T08:00:00.000Z" },
+			{ id: "d", status: "delivered", createdAt: "2026-10-01T08:00:00.000Z" },
+			{ id: "e", status: "in_progress", createdAt: "2026-10-01T08:00:00.000Z" },
+		];
+		assert.deepEqual(jobsWithoutBooking(orders, new Set(["e"])).map((o) => o.id), ["c", "b", "a"]);
+	});
+
+	test("counts cover every stage", () => {
+		const counts = countStages(["estimate", "estimate", "ready", "scheduled"]);
+		assert.deepEqual(Object.keys(counts), VISIT_STAGES);
+		assert.equal(counts.estimate, 2);
+		assert.equal(counts.ready, 1);
+		assert.equal(counts.delivered, 0);
 	});
 });
