@@ -157,10 +157,22 @@ class Page {
 		await sleep(250);
 	}
 
-	async press(key, code = key, keyCode = 0) {
-		await this.send("Input.dispatchKeyEvent", { type: "keyDown", key, code, windowsVirtualKeyCode: keyCode });
-		await this.send("Input.dispatchKeyEvent", { type: "keyUp", key, code, windowsVirtualKeyCode: keyCode });
+	/** `shift` holds Shift down for the key. */
+	async press(key, code = key, keyCode = 0, { shift = false } = {}) {
+		const modifiers = shift ? 8 : 0;
+		await this.send("Input.dispatchKeyEvent", { type: "keyDown", key, code, windowsVirtualKeyCode: keyCode, modifiers });
+		await this.send("Input.dispatchKeyEvent", { type: "keyUp", key, code, windowsVirtualKeyCode: keyCode, modifiers });
 		await sleep(200);
+	}
+
+	/** One real wheel event at a point; no pause after it, so a check can time two of them. */
+	async wheel({ x, y }, deltaX, deltaY) {
+		await this.send("Input.dispatchMouseEvent", { type: "mouseWheel", x, y, deltaX, deltaY });
+	}
+
+	async resize(width, height) {
+		await this.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
+		await sleep(300);
 	}
 
 	close() {
@@ -170,20 +182,28 @@ class Page {
 
 // ── what the dashboard calendar shows ────────────────────────────────────────
 
-const READY = `document.querySelector("h2")?.textContent`;
+const DATE = 'button[aria-label^="Alege data"]';
+const READY = `document.querySelector(${JSON.stringify(DATE)})?.textContent`;
 const STRIP = 'section[aria-label="Deja în service"]';
 const LEGEND = '[role=group][aria-label="Arată o singură etapă"]';
 const REVEAL = 'button[aria-label^="Arată programarea"]';
+const TIMELINE = "[data-timeline]";
+const NEXT = q('button[aria-label="Ziua următoare"]');
+const PREVIOUS = q('button[aria-label="Ziua anterioară"]');
 
 /** A card's label is "car · plate · customer · stage · #number". */
 const stageOfCard = (label) => label.split(" · ").at(-2);
 
 const STATE = `(() => {
 	const strip = document.querySelector(${JSON.stringify(STRIP)});
+	const track = strip?.querySelector("ul");
 	const cards = strip ? [...strip.querySelectorAll("li > button:first-child")] : [];
+	const timeline = document.querySelector(${JSON.stringify(TIMELINE)});
 	const lit = (el) => el.className.includes("ring-brand");
+	const inside = (el, box) => { const a = el.getBoundingClientRect(), b = box.getBoundingClientRect(); return a.left >= b.left - 1 && a.right <= b.right + 1; };
+	const blocks = [...document.querySelectorAll("[data-appt]")];
 	return {
-		title: document.querySelector("h2")?.textContent ?? null,
+		label: document.querySelector(${JSON.stringify(DATE)})?.textContent ?? null,
 		view: document.querySelector("[role=tab][aria-selected=true]")?.textContent ?? null,
 		filter: document.querySelector(${JSON.stringify(`${LEGEND} [aria-pressed=true]`)})?.textContent ?? null,
 		stripShown: Boolean(strip),
@@ -192,10 +212,18 @@ const STATE = `(() => {
 		stripNote: strip?.querySelector("p.flex-1")?.textContent ?? null,
 		cards: cards.map((card) => card.getAttribute("aria-label")),
 		litCards: cards.filter(lit).length,
-		blocks: document.querySelectorAll("[data-appt]").length,
-		litBlocks: [...document.querySelectorAll("[data-appt]")].filter(lit).length,
+		blocks: blocks.length,
+		litBlocks: blocks.filter(lit).length,
+		litBlockInView: timeline ? blocks.filter(lit).every((block) => inside(block, timeline)) : null,
 		selection: document.querySelector('button[aria-label^="Renunță la selecție"]')?.textContent ?? null,
 		arrows: strip ? [...strip.querySelectorAll('button[aria-label^="Mașina"]')].map((button) => button.disabled) : [],
+		track: track ? { atStart: track.scrollLeft <= 4, atEnd: track.scrollLeft + track.clientWidth >= track.scrollWidth - 4 } : null,
+		days: [...document.querySelectorAll("[data-day]")].map((day) => day.dataset.day),
+		left: timeline ? Math.round(timeline.scrollLeft) : null,
+		width: timeline?.clientWidth ?? null,
+		scrollable: timeline ? timeline.scrollWidth > timeline.clientWidth : null,
+		pageY: Math.round(window.scrollY),
+		azi: [...document.querySelectorAll("button")].some((button) => button.textContent.trim() === "Azi"),
 		overflow: document.documentElement.scrollWidth - window.innerWidth,
 	};
 })()`;
@@ -212,19 +240,42 @@ const skip = (reason) => {
 
 async function checkDesktop(page, url) {
 	const state = () => page.eval(STATE);
+	/** Waits for the page to reach a state (glides take up to 650 ms) and returns it. */
+	const until = async (test, what) => {
+		const deadline = Date.now() + 4000;
+		for (;;) {
+			const now = await state();
+			if (test(now)) return now;
+			if (Date.now() > deadline) throw new Error(`${what}; the date reads "${now.label}", scroll ${now.left}, page ${now.pageY}`);
+			await sleep(60);
+		}
+	};
+	/** Waits until the timeline has stopped moving (a glide, or the eased wheel) and returns the state. */
+	const rest = async () => {
+		let last = await state();
+		for (let tries = 0; tries < 40; tries++) {
+			await sleep(150);
+			const now = await state();
+			if (now.left === last.left && now.pageY === last.pageY) return now;
+			last = now;
+		}
+		throw new Error("the timeline never came to rest");
+	};
 	// Every check starts from a freshly loaded page, so a failure cannot leak state into the next one.
 	const fresh = (name, run) =>
 		check(name, async () => {
 			await page.goto(url);
 			await page.waitFor(READY, "the dashboard", 20000);
+			await until((now) => now.left > 0, "the timeline never opened on today");
 			await run();
 		});
-	const start = await state();
+	const start = await until((now) => now.left > 0, "the timeline never opened on today");
 	const all = start.cards.length;
-	expect(start.title === "Programul de azi", `the demo should open on today's day view, got "${start.title}"`);
+	expect(start.label.endsWith("azi"), `the demo should open on today, the date reads "${start.label}"`);
 	expect(all > 1, `expected several cars in service, got ${all}`);
 	const stage = stageOfCard(start.cards[0]);
-	const segment = `${q(`button[title^="${stage}:"]`)}`;
+	const segment = q(`button[title^="${stage}:"]`);
+	const onGrid = () => page.centre(q(TIMELINE), "the timeline");
 
 	const filterOn = async () => {
 		await page.click(segment, `the "${stage}" segment of the bar`);
@@ -237,6 +288,119 @@ async function checkDesktop(page, url) {
 		expect(now.stripChip === null, `${when}: the cards still carry the chip "${now.stripChip}"`);
 		expect(now.cards.length === all, `${when}: ${now.cards.length} of ${all} cars shown`);
 	};
+
+	console.log(" Scrolling through days");
+
+	await fresh("the day in view is written between the ‹ › buttons", async () => {
+		const order = await page.eval(`[${PREVIOUS}, ${q(DATE)}, ${NEXT}].map((el) => Math.round(el.getBoundingClientRect().left))`);
+		expect(order[0] < order[1] && order[1] < order[2], `left edges of ‹, date, ›: ${order.join(", ")}`);
+	});
+
+	await fresh("› glides to the next day, ‹ comes back, and the date follows", async () => {
+		await page.click(NEXT, "next day");
+		const next = await rest();
+		expect(next.label.endsWith("mâine"), `after › the date reads "${next.label}"`);
+		expect(next.left > start.left, `the timeline did not move forward (${start.left} → ${next.left})`);
+		expect(next.azi, "away from today, the Azi button should show");
+		await page.click(PREVIOUS, "previous day");
+		const back = await rest();
+		expect(back.label.endsWith("azi"), `after ‹ the date reads "${back.label}"`);
+		expect(!back.azi, "on today, the Azi button should be gone");
+	});
+
+	await fresh("the mouse wheel over the timeline scrolls through days, not the page", async () => {
+		await page.hover(q(TIMELINE));
+		const point = await onGrid();
+		const before = await state();
+		for (let notch = 0; notch < 4; notch++) {
+			await page.wheel(point, 0, 100);
+			await sleep(40);
+		}
+		const now = await rest();
+		expect(now.label !== before.label, `four wheel notches should reach another day; the date still reads "${now.label}"`);
+		expect(now.left > before.left, `scroll went ${before.left} → ${now.left}`);
+		expect(now.pageY === before.pageY, `the page scrolled by ${now.pageY - before.pageY}px`);
+		await page.wheel(point, 0, -100);
+		await sleep(40);
+		await page.wheel(point, 0, -100);
+		const back = await rest();
+		expect(back.left < now.left, "wheeling up should go back in time");
+	});
+
+	await fresh("the wheel anywhere else scrolls the page, and a page scroll in flight is never taken over", async () => {
+		// Both points are read with the page at the top, where the title and the timeline are on screen together.
+		await page.eval("window.scrollTo(0, 0)");
+		const read = (element) => page.eval(`(() => { const r = ${element}.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; })()`);
+		const outside = await read(q("h1"));
+		const inside = await read(q(TIMELINE));
+		const before = await state();
+		// One gesture: it starts on the page, and the pointer is over the timeline by its second event.
+		await page.wheel(outside, 0, 120);
+		await page.wheel(inside, 0, 120);
+		await page.wheel(inside, 0, 120);
+		const now = await rest();
+		expect(now.pageY > before.pageY, "the page should have scrolled");
+		expect(now.left === before.left, `the timeline took over a page scroll (${before.left} → ${now.left})`);
+	});
+
+	await fresh("a sideways wheel scrolls the timeline natively", async () => {
+		await page.hover(q(TIMELINE));
+		const point = await onGrid();
+		const before = await state();
+		await page.wheel(point, 300, 0);
+		const now = await rest();
+		expect(Math.abs(now.left - before.left - 300) <= 2, `moved by ${now.left - before.left}px for a 300px wheel`);
+		expect(now.pageY === before.pageY, `the page scrolled by ${now.pageY - before.pageY}px`);
+	});
+
+	await fresh("keys: → next day, Shift → a week on; only the days around the view are in the page", async () => {
+		await page.eval(`${q(TIMELINE)}.focus()`);
+		await page.press("ArrowRight", "ArrowRight", 39);
+		await until((now) => now.label.endsWith("mâine"), "→ should go to tomorrow");
+		for (let week = 0; week < 4; week++) await page.press("ArrowRight", "ArrowRight", 39, { shift: true });
+		const far = await rest();
+		expect(far.left > start.left + 20 * far.width, `four weeks on, the timeline is only at ${far.left} (from ${start.left})`);
+		expect(far.days.length <= 5, `${far.days.length} days are rendered: ${far.days.join(", ")}`);
+		expect(far.azi, "a month away, the Azi button should show");
+		await page.press("t", "KeyT", 84);
+		const back = await rest();
+		expect(back.label.endsWith("azi"), `after T the date reads "${back.label}"`);
+	});
+
+	await fresh("Azi comes back to now", async () => {
+		for (let day = 0; day < 3; day++) await page.click(NEXT, "next day");
+		const away = await rest();
+		expect(away.azi && away.left > start.left + 2 * away.width, `three days on: at ${away.left}, Azi shown: ${away.azi}`);
+		await page.click(byText("button", "Azi"), "the Azi button");
+		const now = await rest();
+		expect(now.label.endsWith("azi"), `after Azi the date reads "${now.label}"`);
+		expect(Math.abs(now.left - start.left) <= 1, `back at ${now.left}, started at ${start.left}`);
+	});
+
+	await fresh("a date picked from the date between the arrows is shown from its first hour", async () => {
+		const target = await page.eval(`(() => { const d = new Date(); d.setDate(d.getDate() + 9); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); })()`);
+		await page.eval(
+			`(() => { const input = document.querySelector('input[type=date]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(input, ${JSON.stringify(target)}); input.dispatchEvent(new Event("input", { bubbles: true })); input.dispatchEvent(new Event("change", { bubbles: true })); })()`,
+		);
+		const now = await rest();
+		expect(now.days.includes(target), `the timeline should show ${target}; it shows ${now.days.join(", ")}`);
+		expect(now.label.includes(`, ${Number(target.slice(8))} `), `the date reads "${now.label}", expected ${target}`);
+	});
+
+	await fresh("resizing keeps the same day in view", async () => {
+		await page.click(NEXT, "next day");
+		const wide = await rest();
+		expect(wide.label.endsWith("mâine"), `after › the date reads "${wide.label}"`);
+		await page.resize(1180, 900);
+		const narrow = await rest();
+		expect(narrow.width < wide.width, "the timeline did not get narrower");
+		expect(narrow.label.endsWith("mâine"), `after resizing the date reads "${narrow.label}" (scroll ${wide.left} → ${narrow.left}, days ${narrow.days.join(", ")})`);
+		await page.resize(1440, 900);
+		const again = await rest();
+		expect(again.label.endsWith("mâine"), `after resizing back the date reads "${again.label}"`);
+	});
+
+	console.log(" Filter, hover and selection");
 
 	await fresh("a tapped colour filters the cards and says so next to them", async () => {
 		const now = await filterOn();
@@ -263,16 +427,15 @@ async function checkDesktop(page, url) {
 
 	await fresh("the filter stays while moving between days, and Azi clears it", async () => {
 		await filterOn();
-		await page.click(q('button[aria-label="Ziua următoare"]'), "next day");
-		const next = await state();
+		await page.click(NEXT, "next day");
+		const next = await rest();
+		expect(next.label.endsWith("mâine"), `after › the date reads "${next.label}"`);
 		expect(next.filter?.startsWith(stage), `on the next day the filter is ${next.filter}`);
-		await page.click(q('button[aria-label="Ziua anterioară"]'), "previous day");
-		const back = await state();
-		expect(back.stripChip === `Doar: ${stage}`, `back on today the chip is ${back.stripChip}`);
-		expect(back.cards.every((card) => stageOfCard(card) === stage), "back on today the cards are not the filtered ones");
-		await page.click(q('button[aria-label="Ziua următoare"]'), "next day");
+		expect(next.stripChip === `Doar: ${stage}` && next.cards.every((card) => stageOfCard(card) === stage), "on the next day the cards are not the filtered ones");
 		await page.click(byText("button", "Azi"), "the Azi button");
-		expectNoFilter(await state(), "after Azi");
+		const back = await rest();
+		expect(back.label.endsWith("azi"), `after Azi the date reads "${back.label}"`);
+		expectNoFilter(back, "after Azi");
 	});
 
 	await fresh("the chip next to the cards and Esc both clear the filter", async () => {
@@ -296,46 +459,63 @@ async function checkDesktop(page, url) {
 		expectNoFilter(await state(), "after clearing");
 	});
 
-	await fresh("the carousel arrows match what can be scrolled", async () => {
-		expect(start.arrows[0] === true, "at the start the previous arrow should be disabled");
-		const counts = new Map();
-		for (const card of start.cards) counts.set(stageOfCard(card), (counts.get(stageOfCard(card)) ?? 0) + 1);
-		const single = [...counts].find(([, count]) => count === 1)?.[0];
-		if (!single) skip("no stage has exactly one car in service");
-		await page.click(q(`button[title^="${single}:"]`), `the "${single}" segment`);
-		const now = await state();
-		expect(now.cards.length === 1, `expected one "${single}" car, got ${now.cards.length}`);
-		expect(now.arrows.every(Boolean), `one card cannot scroll, but the arrows are ${JSON.stringify(now.arrows)}`);
-		await page.click(q(`button[title^="${single}:"]`));
+	await fresh("the carousel arrows match what can be scrolled, before and after a filter", async () => {
+		const matches = (now) => now.arrows[0] === now.track.atStart && now.arrows[1] === now.track.atEnd;
+		expect(matches(start), `unfiltered: arrows ${JSON.stringify(start.arrows)}, track ${JSON.stringify(start.track)}`);
+		expect(!start.arrows[1], "with every car listed, the next arrow should be enabled");
+		const now = await filterOn();
+		expect(matches(now), `filtered: arrows ${JSON.stringify(now.arrows)}, track ${JSON.stringify(now.track)}`);
 	});
 
-	await fresh("hover lights a car and lets go when the pointer leaves", async () => {
-		await page.hover(q(`${STRIP} li`), "the first card");
-		expect((await state()).litCards >= 1, "the hovered card is not lit");
+	await fresh("hovering a booking lights it and its car's card, and lets go when the pointer leaves", async () => {
+		// Find a booking on screen whose car is in service: hovering it must light both halves.
+		const count = await page.eval(`document.querySelectorAll("[data-appt]").length`);
+		let linked = null;
+		for (let i = 0; i < count && !linked; i++) {
+			await page.hover(`document.querySelectorAll("[data-appt]")[${i}]`, "a booking");
+			const now = await state();
+			if (now.litBlocks >= 1 && now.litCards >= 1) linked = now;
+		}
+		if (!linked) skip("no booking in view belongs to a car in service");
 		await page.hover(q("h1"), "the page title");
 		const now = await state();
 		expect(now.litCards === 0 && now.litBlocks === 0, `still lit after leaving: ${now.litCards} cards, ${now.litBlocks} bookings`);
 	});
 
-	await fresh("Arată în calendar selects the booking, and it stays selected until Esc", async () => {
+	await fresh("Arată în calendar travels to the booking, and it stays selected until Esc", async () => {
 		const card = `[...document.querySelectorAll(${JSON.stringify(`${STRIP} li`)})].find((li) => li.querySelector(${JSON.stringify(REVEAL)}))`;
 		if (!(await page.eval(`Boolean(${card})`))) skip("no car in service has a booking");
 		await page.hover(card, "a card with a booking");
 		await page.click(`${card}.querySelector(${JSON.stringify(REVEAL)})`, "its calendar button");
 		await page.waitFor(`Boolean(${q('button[aria-label^="Renunță la selecție"]')})`, "the selection to show in the header");
+		await until((now) => now.litBlocks >= 1 && now.litBlockInView, "the selected booking should be lit and inside the timeline");
 		await page.hover(q("h1"), "the page title");
+		await sleep(700);
 		const away = await state();
-		expect(away.litBlocks === 1, `with the pointer away, ${away.litBlocks} bookings are lit (expected the selected one)`);
+		expect(away.litBlocks === 1 && away.litBlockInView, `with the pointer away: ${away.litBlocks} bookings lit, in view: ${away.litBlockInView}`);
+		expect(away.litCards === 1, `the card it came from should stay lit, ${away.litCards} are`);
 		await page.press("Escape", "Escape", 27);
 		const cleared = await state();
 		expect(cleared.selection === null && cleared.litBlocks === 0, `after Esc: selection ${cleared.selection}, ${cleared.litBlocks} lit`);
 	});
+
+	await fresh("from Săptămână, Arată în calendar opens Zi on the booking", async () => {
+		await page.click(byText("[role=tab]", "Săptămână"), "the Săptămână tab");
+		const card = `[...document.querySelectorAll(${JSON.stringify(`${STRIP} li`)})].find((li) => li.querySelector(${JSON.stringify(REVEAL)}))`;
+		if (!(await page.eval(`Boolean(${card})`))) skip("no car in service has a booking");
+		await page.hover(card, "a card with a booking");
+		await page.click(`${card}.querySelector(${JSON.stringify(REVEAL)})`, "its calendar button");
+		const now = await until((s) => s.view === "Zi" && s.litBlocks === 1 && s.litBlockInView, "Zi should open with the booking lit and in view");
+		expect(now.selection !== null, "the selection should be named in the header");
+	});
 }
 
 async function checkPhone(page) {
-	await check("phone: nothing is wider than the screen", async () => {
+	await check("phone: nothing is wider than the screen, and the timeline scrolls sideways inside its card", async () => {
 		const now = await page.eval(STATE);
 		expect(now.overflow <= 0, `the page is ${now.overflow}px wider than the screen`);
+		expect(now.scrollable, "the timeline does not scroll");
+		expect(now.label.endsWith("azi"), `the date reads "${now.label}"`);
 	});
 	await check("phone: the calendar button on a card is visible without hover", async () => {
 		const opacity = await page.eval(`(() => { const el = ${q(REVEAL)}; return el ? getComputedStyle(el).opacity : null; })()`);

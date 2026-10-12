@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { ArrowRight, CalendarDays, CalendarPlus, CalendarSearch, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Card } from "@/components/ds/card";
 import { EmptyState, Initials, Money } from "@/components/ds/data";
@@ -11,19 +11,21 @@ import { ToneDot } from "@/components/ds/tone";
 import { computeTotals } from "@/domain/lines";
 import { Button } from "@/components/ui/button";
 import { isActiveAppointment } from "@/domain/appointment";
-import { dayOfInstant } from "@/domain/dates";
+import { addDaysISO, dayOfInstant, diffDaysISO } from "@/domain/dates";
 import { formatPlate, vehicleName } from "@/domain/vehicle";
-import { VISIT_STAGES, appointmentForJob, countStages, defaultCalendarView, jobsWithoutBooking, visitStage } from "@/domain/visit";
-import { fmtDate, fmtTime, fmtWorkOrder, plural } from "@/lib/format";
+import { VISIT_STAGES, appointmentForJob, countStages, defaultCalendarView } from "@/domain/visit";
+import { fmtDate, fmtDays, fmtTime, fmtWorkOrder, plural } from "@/lib/format";
 import { VISIT_STAGE } from "@/lib/labels";
 import { useOpenDetail } from "@/lib/detail-mode";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useSettings } from "@/lib/store/hooks";
-import { selectActive, selectAppointmentsByDay } from "@/lib/store/selectors";
+import { selectActive, selectAppointmentsByDay, selectVisits } from "@/lib/store/selectors";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
-import { atMinute, navigate, rangeLabel, timeBounds, toMinutes, viewRange, weekDays } from "@/features/calendar/utils";
-import { DayTimeline, LIT, WeekStrip, hoverHandlers, stageClass } from "./visit-timeline";
+import { atMinute, minuteOfDay, navigate, toMinutes, viewRange, weekDays } from "@/features/calendar/utils";
+import { Timeline } from "./timeline";
+import { DAYS_AHEAD, DAYS_BACK } from "./timeline-geometry";
+import { LIT, WeekStrip, hoverHandlers, stageClass } from "./visit-timeline";
 
 const VIEWS = [
 	{ value: "day", label: "Zi" },
@@ -95,8 +97,9 @@ function StageLine({ counts, value, onChange }) {
 }
 
 /**
- * Cars in the shop that no shown booking stands for, as a carousel of cards: make
- * logo, car and plate, customer, mechanic, job number, time in and the total.
+ * Every car in the shop, as a carousel of cards: make logo, car and plate,
+ * customer, mechanic, job number, time in and the total. It is the shop right
+ * now, so it does not change with the day the timeline shows.
  * Phones swipe (snap per card); from md up the arrows scroll it. With a stage
  * filter on, the title says so and carries the way out, and the list (keyed by the
  * filter) restarts at its first card.
@@ -230,10 +233,14 @@ function InShopStrip({ jobs, total, filter, onClearFilter, vehicles, customers, 
 	);
 }
 
+const NONE = [];
+
 /**
- * The dashboard's calendar: today as a timeline or the week as a strip, coloured
- * by visit stage. Opens on the day when something is booked for it, otherwise on
- * the week; the choice is re-made each new day and never while the user looks at it.
+ * The dashboard's calendar (docs/DASHBOARD-CALENDAR.md). Zi is the continuous
+ * timeline: days side by side, scrolled through, with the day in view written
+ * between the ‹ › buttons. Săptămână is still the paged strip of day columns
+ * (it becomes the timeline's second zoom in phase 3). Opens on Zi when something
+ * is booked today, otherwise on Săptămână; decided once per day.
  */
 export function DashboardCalendar({ today }) {
 	const settings = useSettings();
@@ -245,58 +252,72 @@ export function DashboardCalendar({ today }) {
 	const staffMap = useCollection("staff");
 	const staff = selectActive(staffMap);
 	const byDay = selectAppointmentsByDay(appointments);
+	const visits = selectVisits(appointments, workOrders);
+	const workDays = settings.hours.days;
 
 	const suggested = defaultCalendarView(byDay.get(today));
 	const [auto, setAuto] = useState({ day: today, view: suggested });
 	const [choice, setChoice] = useState(null);
+	// Săptămână: the week shown. Zi: where the timeline opens (it then keeps its own scroll position).
 	const [picked, setPicked] = useState(null);
+	// Zi: a booking to open the timeline on, when "Arată în calendar" comes from Săptămână.
+	const [opening, setOpening] = useState(null);
+	// Zi: what the timeline reports while it scrolls: the day in view (live), the day it settled on, and whether today is in view.
+	const [seen, setSeen] = useState(null);
 	const [stage, setStage] = useState(null);
-	// Two states on purpose (docs/DASHBOARD-CALENDAR.md, D6): the car under the pointer or keyboard
-	// focus is transient; the visit chosen with "Arată în calendar" stays until it is dismissed.
+	// Two states on purpose (D6): the car under the pointer or keyboard focus is transient;
+	// the visit chosen with "Arată în calendar" stays until it is dismissed.
 	const [hovered, setHovered] = useState(null);
 	const [selected, setSelected] = useState(null); // { appointmentId, orderId }
-	// Booking to bring into view after "Arată în calendar": scrolled to once the day it is on has rendered.
-	const pendingReveal = useRef(null);
-	const [revealTick, setRevealTick] = useState(0);
-	// A new day (app left open overnight) starts fresh: default view, today, no filter.
+	const timeline = useRef(null);
+	const dateInput = useRef(null);
+	// A new day (app left open overnight) starts fresh: default view, now, no filter, nothing selected.
 	if (auto.day !== today) {
 		setAuto({ day: today, view: suggested });
 		setChoice(null);
 		setPicked(null);
+		setOpening(null);
+		setSeen(null);
 		setStage(null);
 		setHovered(null);
 		setSelected(null);
 	}
 	const view = choice ?? auto.view;
-	const date = picked ?? today;
+	const zi = view === "day";
+	const opensOn = opening?.day ?? picked ?? today;
+	// The label follows the scroll live; everything computed from the day waits until scrolling stops (D8).
+	const labelDay = zi ? (seen?.day ?? opensOn) : (picked ?? today);
+	const date = zi ? (seen?.settled ?? opensOn) : (picked ?? today);
 	const range = viewRange(view, date);
-	const onToday = today >= range.from && today <= range.to;
-	const workDays = settings.hours.days;
+	const onToday = zi ? (seen ? seen.todayVisible : opensOn === today) : today >= range.from && today <= range.to;
+
+	const onView = useCallback(({ day, todayVisible, settled }) => {
+		setSeen((prev) => {
+			const next = { day, todayVisible, settled: settled ? day : (prev?.settled ?? day) };
+			return prev && prev.day === next.day && prev.todayVisible === next.todayVisible && prev.settled === next.settled ? prev : next;
+		});
+	}, []);
 
 	const model = useMemo(() => {
-		const stageOf = new Map();
-		const eventsByDay = new Map();
-		const candidates = view === "day" ? [date] : weekDays(date);
-		for (const day of candidates) {
-			const list = [];
-			for (const a of byDay.get(day) ?? []) {
-				const s = visitStage(a, a.workOrderId ? workOrders[a.workOrderId] : null);
-				if (!s) continue;
-				stageOf.set(a.id, s);
-				list.push(a);
-			}
-			eventsByDay.set(day, list);
-		}
+		const bookingsOf = (day) => visits.bookingsByDay.get(day) ?? NONE;
+		const candidates = zi ? [date] : weekDays(date);
 		// Week: Monday to Saturday, and Sunday only when the shop works, something is booked, or it is today.
-		const days = view === "day" ? candidates : candidates.filter((d, i) => i < 6 || d === today || eventsByDay.get(d).length > 0 || workDays.includes(0));
-		const bookings = days.flatMap((d) => eventsByDay.get(d));
-		const shownOrders = new Set(bookings.map((a) => a.workOrderId).filter(Boolean));
-		const inShop = onToday ? jobsWithoutBooking(Object.values(workOrders), shownOrders) : [];
-		const counts = countStages([...bookings.map((a) => stageOf.get(a.id)), ...inShop.map((o) => o.status)]);
-		return { stageOf, eventsByDay, days, bookings, inShop, counts };
-	}, [view, date, today, onToday, byDay, workOrders, workDays]);
+		const days = zi ? candidates : candidates.filter((d, i) => i < 6 || d === today || bookingsOf(d).length > 0 || workDays.includes(0));
+		const bookings = days.flatMap(bookingsOf);
+		// The line counts what the section shows: every car in service, plus the bookings in view, each visit once.
+		const inService = new Set(visits.inService);
+		const counts = countStages([...visits.inService.map((visit) => visit.stage), ...bookings.filter((visit) => !inService.has(visit)).map((visit) => visit.stage)]);
+		return {
+			days,
+			bookings,
+			counts,
+			// What the week strip still takes: bookings as appointments, and their stages.
+			eventsByDay: new Map(days.map((d) => [d, bookingsOf(d).map((visit) => visit.appointment)])),
+			stageOf: new Map(bookings.map((visit) => [visit.id, visit.stage])),
+		};
+	}, [zi, date, today, visits, workDays]);
 
-	// Where to send the user when the shown range is empty.
+	// Where to send the user when nothing is booked in view.
 	const nextDay = useMemo(() => {
 		let best = null;
 		for (const [day, list] of byDay) if (day > range.to && (!best || day < best) && list.some(isActiveAppointment)) best = day;
@@ -315,39 +336,52 @@ export function DashboardCalendar({ today }) {
 		setHovered(null);
 	};
 	const changeView = (next) => {
+		if (next === view) return;
+		// Săptămână takes over the week of the day in view; Zi opens on the week's day (or on today).
+		if (next === "week") setPicked(date);
+		setOpening(null);
+		setSeen(null);
 		setChoice(next);
 		setStage(null);
 		setHovered(null);
 	};
-	const goTo = (day) => {
-		setPicked(day);
+	const step = (direction) => {
 		setHovered(null);
+		if (zi) timeline.current?.step(direction);
+		else setPicked(navigate("week", date, direction));
 	};
 	const goToday = () => {
-		setPicked(null);
 		setStage(null);
 		setHovered(null);
+		if (zi) timeline.current?.goToNow();
+		else setPicked(null);
+	};
+	/** A day chosen in the date picker, or the next booking: the start of that day (or the given time). */
+	const jumpTo = (day, minute) => {
+		setHovered(null);
+		if (zi) timeline.current?.goTo({ day, minute, align: 0 });
+		else setPicked(day);
+	};
+	const pickDay = (day) => {
+		setPicked(day);
+		changeView("day");
 	};
 
-	// Card → calendar: the booking's day in the day view, selected; the filter goes only if it would hide the booking.
+	// Card → calendar: travel to the booking and select it; the filter goes only if it would hide the booking.
 	const reveal = (order, appointment) => {
-		if (stage && visitStage(appointment, appointment.workOrderId ? workOrders[appointment.workOrderId] : null) !== stage) setStage(null);
-		setPicked(dayOfInstant(appointment.start));
-		setChoice("day");
+		const target = visits.byId.get(appointment.id);
+		if (stage && target?.stage !== stage) setStage(null);
 		setHovered(null);
 		setSelected({ appointmentId: appointment.id, orderId: order.id });
-		pendingReveal.current = appointment.id;
-		setRevealTick((n) => n + 1);
+		const at = { day: dayOfInstant(appointment.start), minute: minuteOfDay(appointment.start), align: 0.5, focusId: appointment.id };
+		if (zi) {
+			timeline.current?.goTo(at);
+		} else {
+			setOpening(at);
+			setSeen(null);
+			setChoice("day");
+		}
 	};
-	useEffect(() => {
-		const id = pendingReveal.current;
-		if (!id) return;
-		pendingReveal.current = null;
-		const block = document.querySelector(`[data-appt="${id}"]`);
-		block?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
-		// Focus follows the travel: Enter opens the booking, Esc drops the selection, wherever the click came from.
-		block?.focus({ preventScroll: true });
-	}, [revealTick, date, view]);
 
 	const onKeyDown = (event) => {
 		if (event.key !== "Escape" || event.defaultPrevented) return;
@@ -358,48 +392,77 @@ export function DashboardCalendar({ today }) {
 	};
 
 	const isShown = (a) => !stage || model.stageOf.get(a.id) === stage;
-	const shownBookings = stage ? model.bookings.filter(isShown) : model.bookings;
-	const shownJobs = stage ? model.inShop.filter((o) => o.status === stage) : model.inShop;
+	const shownBookings = stage ? model.bookings.filter((visit) => visit.stage === stage) : model.bookings;
+	const shownCars = stage ? visits.inService.filter((visit) => visit.stage === stage) : visits.inService;
 
-	const create = ({ start, staffId } = {}) => openSheet("appointment", { start, staffId });
-	const open = (a) => {
-		setHovered(null);
-		openDetail("appointment", a.id);
-	};
-	const pickDay = (day) => {
-		setPicked(day);
-		changeView("day");
-	};
-	// "Add" from an empty range books into it: today takes the form's next free slot, another day its opening hour.
-	const anchor = onToday ? today : model.days[0];
-	const createHere = () => create(anchor === today ? {} : { start: atMinute(anchor, toMinutes(settings.hours.open)) });
+	const create = useCallback(({ start, staffId } = {}) => openSheet("appointment", { start, staffId }), []);
+	const openBooking = useCallback(
+		(booking) => {
+			setHovered(null);
+			openDetail("appointment", booking.id);
+		},
+		[openDetail],
+	);
+	// "Add" from an empty week books into it: this week takes the form's next free slot, another week its first day's opening hour.
+	const createHere = () => create(onToday ? {} : { start: atMinute(model.days[0], toMinutes(settings.hours.open)) });
 
-	const title = view === "day" ? (date === today ? "Programul de azi" : fmtDate(date, "EEEE, d MMMM")) : onToday ? "Săptămâna aceasta" : rangeLabel("week", date);
-	const summary = [plural(model.bookings.length, "programare", "programări"), model.inShop.length ? `${model.inShop.length} deja în service` : null].filter(Boolean).join(" · ");
+	const near = diffDaysISO(today, labelDay);
+	const week = weekDays(date);
+	// Zi: "marți, 13 oct. · azi". Săptămână: "12 – 18 oct. 2026", short enough for the same fixed width.
+	const label = zi ? fmtDate(labelDay, "EEEE, d MMM") : `${fmtDate(week[0], week[0].slice(0, 7) === week[6].slice(0, 7) ? "d" : "d MMM")} – ${fmtDate(week[6], "d MMM yyyy")}`;
+	const labelNote = zi && Math.abs(near) <= 1 ? fmtDays(near) : null;
+	const summary = `${plural(model.bookings.length, "programare", "programări")} · ${visits.inService.length} în service`;
 	// While a car is hovered or focused, say how many of its visits this view shows.
 	const hoveredName = hovered ? vehicleName(vehicles[hovered]) || "Mașina" : null;
-	const hoveredCount = hovered ? model.bookings.filter((a) => a.vehicleId === hovered).length : 0;
+	const hoveredCount = hovered ? model.bookings.filter((visit) => visit.vehicleId === hovered).length : 0;
 	const hoveredSummary = `${hoveredName} · ${hoveredCount ? plural(hoveredCount, "programare în afișaj", "programări în afișaj") : "nicio programare în afișaj"}`;
 	const selectedLabel = selection
 		? `${vehicleName(vehicles[selectedBooking.vehicleId]) || selectedBooking.title || "Programare"} · ${fmtDate(selectedBooking.start, "EEE, d MMM")} ${fmtTime(selectedBooking.start)}`
 		: null;
-	const emptyTitle = view === "week" ? "Nicio programare în această săptămână" : date === today ? "Nicio programare azi" : "Nicio programare în această zi";
 
 	let body;
-	if (!model.bookings.length) {
+	if (zi) {
+		body = (
+			<div className="relative">
+				<Timeline
+					key={today}
+					ref={timeline}
+					today={today}
+					settings={settings}
+					visits={visits}
+					staff={staff}
+					customers={customers}
+					filter={stage}
+					hovered={hovered}
+					selectedId={selection?.appointmentId}
+					initial={opening ?? { day: picked ?? today }}
+					onView={onView}
+					onOpen={openBooking}
+					onCreate={create}
+					onHover={setHovered}
+				/>
+				{/* Nothing booked on the day in view: the timeline stays (free time can still be tapped) and offers the next booking. */}
+				{model.bookings.length === 0 && nextDay && (
+					<Button size="sm" variant="outline" className="absolute right-3 bottom-3 z-30 bg-card shadow-xs max-md:h-11" onClick={() => jumpTo(nextDay, minuteOfDay(byDay.get(nextDay).find(isActiveAppointment).start))}>
+						Următoarea: {fmtDate(nextDay, "EEE, d MMM")} <ArrowRight />
+					</Button>
+				)}
+			</div>
+		);
+	} else if (!model.bookings.length) {
 		body = (
 			<div className="border-t p-4 md:p-5">
 				<EmptyState
 					compact
 					icon={CalendarDays}
-					title={emptyTitle}
+					title="Nicio programare în această săptămână"
 					action={
 						<div className="flex flex-wrap justify-center gap-2">
 							<Button size="sm" className="max-md:h-11" onClick={createHere}>
 								<CalendarPlus /> Adaugă programare
 							</Button>
 							{nextDay && (
-								<Button size="sm" variant="outline" className="max-md:h-11" onClick={() => goTo(nextDay)}>
+								<Button size="sm" variant="outline" className="max-md:h-11" onClick={() => jumpTo(nextDay)}>
 									Următoarea: {fmtDate(nextDay, "EEE, d MMM")}
 								</Button>
 							)}
@@ -414,7 +477,7 @@ export function DashboardCalendar({ today }) {
 				<EmptyState
 					compact
 					title={`Nicio programare în etapa „${VISIT_STAGE[stage].label}”`}
-					description={shownJobs.length ? "Mașinile din această etapă sunt în lista „Deja în service” de mai sus." : "În intervalul afișat nu e nimic în această etapă."}
+					description={shownCars.length ? "Mașinile din această etapă sunt în lista „Deja în service” de mai sus." : "În săptămâna afișată nu e nimic în această etapă."}
 					action={
 						<Button size="sm" variant="outline" className="max-md:h-11" onClick={() => applyStage(null)}>
 							Arată tot
@@ -422,25 +485,6 @@ export function DashboardCalendar({ today }) {
 					}
 				/>
 			</div>
-		);
-	} else if (view === "day") {
-		body = (
-			<DayTimeline
-				key={date}
-				date={date}
-				today={today}
-				staff={staff}
-				events={model.bookings}
-				stageOf={model.stageOf}
-				isShown={isShown}
-				bounds={timeBounds(settings, model.bookings)}
-				customers={customers}
-				onOpen={open}
-				onCreate={create}
-				hovered={hovered}
-				onHover={setHovered}
-				selectedId={selection?.appointmentId}
-			/>
 		);
 	} else {
 		body = (
@@ -454,7 +498,7 @@ export function DashboardCalendar({ today }) {
 				filtered={Boolean(stage)}
 				workDays={workDays}
 				customers={customers}
-				onOpen={open}
+				onOpen={openBooking}
 				onPickDay={pickDay}
 				hovered={hovered}
 				onHover={setHovered}
@@ -466,19 +510,47 @@ export function DashboardCalendar({ today }) {
 	return (
 		<Card className="mb-6 overflow-hidden" onKeyDown={onKeyDown}>
 			<header className="flex flex-col gap-3 p-4 pb-3 md:p-5 md:pb-3 lg:flex-row lg:items-center lg:justify-between">
-				<div className="flex min-w-0 items-center gap-2">
-					<Button variant="outline" size="icon" className="size-11 shrink-0 md:size-8" onClick={() => goTo(navigate(view, date, "prev"))} aria-label={view === "day" ? "Ziua anterioară" : "Săptămâna anterioară"}>
-						<ChevronLeft />
-					</Button>
-					<Button variant="outline" size="icon" className="size-11 shrink-0 md:size-8" onClick={() => goTo(navigate(view, date, "next"))} aria-label={view === "day" ? "Ziua următoare" : "Săptămâna următoare"}>
-						<ChevronRight />
-					</Button>
-					<div className="min-w-0 pl-1">
-						<h2 className="truncate text-heading first-letter:uppercase">{title}</h2>
-						<p className="truncate text-xs text-muted-foreground">
-							{hovered ? hoveredSummary : view === "week" && onToday ? `${rangeLabel("week", date)} · ${summary}` : summary}
-						</p>
+				<h2 className="sr-only">Programul</h2>
+				<div className="flex min-w-0 flex-col gap-1.5 lg:flex-row lg:items-center lg:gap-3">
+					{/* The day or range in view sits between the arrows, at a fixed width, so the arrows never move (R2). */}
+					<div className="flex min-w-0 items-center gap-1.5">
+						<Button variant="outline" size="icon" className="size-11 shrink-0 md:size-8" onClick={() => step(-1)} aria-label={zi ? "Ziua anterioară" : "Săptămâna anterioară"}>
+							<ChevronLeft />
+						</Button>
+						<div className="relative min-w-0 flex-1 md:w-52 md:flex-none">
+							<button
+								type="button"
+								onClick={() => {
+									const input = dateInput.current;
+									if (input?.showPicker) input.showPicker();
+									else input?.focus();
+								}}
+								aria-label={`Alege data. Afișat: ${label}${labelNote ? `, ${labelNote}` : ""}`}
+								className="flex h-11 w-full items-center justify-center gap-1.5 rounded-md px-2 text-sm transition-colors hover:bg-accent md:h-8"
+							>
+								<span aria-live="polite" className="truncate font-semibold first-letter:uppercase">
+									{label}
+								</span>
+								{labelNote && <span className="shrink-0 text-muted-foreground">· {labelNote}</span>}
+							</button>
+							{/* The native date picker, opened by the label; invisible, anchored under it. */}
+							<input
+								ref={dateInput}
+								type="date"
+								tabIndex={-1}
+								aria-hidden
+								value={labelDay}
+								min={addDaysISO(today, -DAYS_BACK)}
+								max={addDaysISO(today, DAYS_AHEAD)}
+								onChange={(event) => event.target.value && jumpTo(event.target.value)}
+								className="pointer-events-none absolute inset-x-0 bottom-0 h-0 w-full opacity-0"
+							/>
+						</div>
+						<Button variant="outline" size="icon" className="size-11 shrink-0 md:size-8" onClick={() => step(1)} aria-label={zi ? "Ziua următoare" : "Săptămâna următoare"}>
+							<ChevronRight />
+						</Button>
 					</div>
+					<p className="truncate text-xs text-muted-foreground">{hovered ? hoveredSummary : summary}</p>
 				</div>
 				<div className="flex items-center gap-2">
 					{!onToday && (
@@ -509,8 +581,8 @@ export function DashboardCalendar({ today }) {
 				</div>
 			)}
 			<InShopStrip
-				jobs={shownJobs}
-				total={model.inShop.length}
+				jobs={shownCars.map((visit) => visit.order)}
+				total={visits.inService.length}
 				filter={stage}
 				onClearFilter={() => applyStage(null)}
 				vehicles={vehicles}
@@ -520,7 +592,7 @@ export function DashboardCalendar({ today }) {
 				hovered={hovered}
 				onHover={setHovered}
 				selectedOrderId={selection?.orderId}
-				targetFor={(order) => appointmentForJob(order, appointments, today)}
+				targetFor={(order) => visits.byOrder.get(order.id)?.appointment ?? appointmentForJob(order, appointments, today)}
 				onReveal={reveal}
 				onOpen={(order) => {
 					setHovered(null);

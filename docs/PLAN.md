@@ -76,7 +76,7 @@ Status legend: ✅ done in this MVP · 🟡 partial / stubbed · ⏭ later
   ```
   One active invoice per work order (a cancelled one frees the slot).
 - **Appointments** — `scheduled → confirmed → arrived (checked-in, linked to a work order) → done`; also `no_show`, `cancelled`. Conflicts = same mechanic or same bay with overlapping time → warning badge.
-- **Visit stage (dashboard calendar)** — one vocabulary for a car's trip through the shop, `src/domain/visit.js`: a booking is `scheduled` until check-in, then shows its job's stage (`estimate … ready`), then `delivered`; `no_show` stays, cancelled bookings and cancelled jobs are hidden. Open jobs that no shown booking stands for (walk-ins, cars left from earlier days) are listed next to the calendar, so the stage counts equal the open jobs. The calendar opens on the **day** when something active is booked for today, otherwise on the **week**.
+- **Visit stage (dashboard calendar)** — one vocabulary for a car's trip through the shop, `src/domain/visit.js`: a booking is `scheduled` until check-in, then shows its job's stage (`estimate … ready`), then `delivered`; `no_show` stays, cancelled bookings and cancelled jobs are hidden. A booking and the job it became are one visit (`buildVisits`); an open job nobody booked is a walk-in. Every car in service is listed next to the calendar, and the stage counts are those cars plus the bookings in view, each visit once. The calendar opens on the **day** when something active is booked for today, otherwise on the **week**.
 - **Stock** — consumed when an invoice is **issued** (part lines linked to the catalog); storno restores it. *Reserved* = part lines on open work orders. *Available* = stock − reserved. Low stock when available ≤ min.
 - **Mileage** — logged at each check-in. Lower than the last reading → warning, still allowed (cluster replaced / typo), kept in history.
 - **Service due** — next due = last service + interval (months) **or** + interval (km), whichever comes first. Km is estimated from the average daily km of the mileage history.
@@ -98,7 +98,7 @@ Reminder → booking conversion · estimate approval rate · average ticket · l
 
 | Module | Route | Key capabilities |
 |---|---|---|
-| Azi (dashboard) | `/` | Calendar first (day timeline per mechanic or week strip, coloured and filterable by visit stage), KPIs, ready for pickup, mechanic load, to-contact list, low stock |
+| Azi (dashboard) | `/` | Calendar first (a timeline scrolled through day by day, or a week strip; every car in service linked to its booking; coloured and filterable by visit stage), KPIs, ready for pickup, mechanic load, to-contact list, low stock |
 | Programări | `/calendar/` | Day (per-mechanic columns) / Week / Month / Year heatmap / Agenda; create, move (drag), resize, status actions, check-in |
 | Lucrări | `/work-orders/`, `/work-orders/detail/?id=` | List with one-tap status menu; detail with status stepper, lines editor, inspection, activity; create invoice; share estimate |
 | Facturi | `/invoices/`, `/invoices/detail/?id=` | List + filters; **document view** (the reference page); issue, record payment, storno, print/PDF, share |

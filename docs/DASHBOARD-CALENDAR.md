@@ -1,6 +1,6 @@
 # Dashboard calendar v2: plan
 
-**Status: plan approved by the owner on 13 Oct 2026. Phase 0 is 🟢 built; phases 1 to 7 are 🟡 planned.**
+**Status: plan approved by the owner on 13 Oct 2026. Phases 0, 1 and 2 are 🟢 built; phases 3 to 7 are 🟡 planned.**
 It replaces the paged Zi / Săptămână calendar on Azi (`src/features/dashboard/dashboard-calendar.jsx`, `visit-timeline.jsx`).
 Build order and status are in §10; each phase ships on its own. The owner's answers are in §11.
 
@@ -165,7 +165,7 @@ Files: `timeline-geometry.js` (pure: day offsets, day at a scroll position, posi
 - A day's width: Zi = the wider of the grid and 72 px per hour (a day fills the grid on desktop, scrolls inside the day on a phone); Săptămână = the wider of 8.5 rem and one sixth of the grid.
 - A closed day with nothing booked is 48 px. Positions come from one precomputed list of offsets, so "which day is at this scroll position" is a lookup.
 - The same hours for every day: shop hours, widened once to cover bookings outside them, capped at 06:00 to 22:00.
-- Row heights never change while scrolling: each mechanic's row has one or two lanes, decided once for the whole range. A third overlapping booking becomes "+N", which opens that day in Programări.
+- Row heights never change while scrolling: every mechanic's row is one lane (52 px). Two overlapping bookings share the lane at half height, one line each; a third and beyond become "+N", which opens Programări.
 - On resize, rotation or a zoom change, the instant under the reading point stays under it.
 
 ## 8. Performance
@@ -213,13 +213,22 @@ Each phase ends with `npm test && npm run lint && npm run build`, the browser ch
 | Phase | What ships | Done when |
 |---|---|---|
 | 0 🟢 | On the current code: filter lifetime and chip next to the cards (D7), hovered vs selected (D6), carousel arrows. The headless-Chrome checks move into the repo as `npm run ui:check` | The scripted "filter → Săptămână → Zi" run shows every card |
-| 1 | Data only: `selectVisits`, link by visit, late-arrival and waiting-pickup rules, with tests | Tests pass; no UI change |
-| 2 | Continuous timeline in Zi: geometry with tests, virtualised days, live date between the arrows, "Azi", gliding ‹ ›, wheel, trackpad, swipe, keyboard, now line | Scripted wheel and scroll runs pass; frame recording on the iPhone is smooth |
+| 1 🟢 | Data only: `selectVisits`, link by visit, late-arrival and waiting-pickup rules, with tests | Tests pass; no UI change |
+| 2 🟢 | Continuous timeline in Zi: geometry with tests, virtualised days, live date between the arrows, "Azi", gliding ‹ ›, wheel, trackpad, swipe, keyboard, now line | Scripted wheel and scroll runs pass; frame recording on the iPhone is smooth |
 | 3 | Săptămână as the second zoom; zoom keeps the day in view; the opening rule | Switching zoom never changes the day under the reading point |
 | 4 | Cars in service: all cars, grouped, calendar anchor on each card, two-way link, selected-visit line with actions, the glide and pulse (§6) | Scripted "card → booking" runs for near, far, filtered and deleted targets |
 | 5 | Status line counts cars plus days in view and settles after scrolling | Counts match the cards and blocks on screen in every scripted state |
 | 6 | Late and waiting-pickup marks; pins for walk-in cars (Q3) | Each has a domain test and a screenshot check |
 | 7 | Old paged components removed; `DESIGN-SYSTEM.md` and `PLAN.md` updated to 🟢; full pass on the iPhone | Nothing in this file is still 🟡 |
+
+Built differently from the plan, and why:
+
+- **Rows are one lane, not one or two.** With two full lanes every double-booked mechanic's row was twice as tall on every day; sharing the lane at half height keeps the timeline compact and its height fixed.
+- **Every car in service is already always shown** (the first half of D4, planned for phase 4). Otherwise the cards would appear and disappear as the day in view changed, and the timeline would jump up and down while scrolling sideways.
+- **No scroll snapping.** It fights the wheel and the glide; ‹ › and the keys land exactly on a day's start instead.
+- **A mouse-wheel notch moves a quarter of a day, eased**; a trackpad follows the fingers one to one.
+- **Săptămână is still the paged strip** until phase 3. Switching to it takes the week of the day in view; switching back opens Zi on that week's day.
+- **Phase 2's "frame recording on the iPhone" is not done.** In headless Chrome a 6-screen scroll in 2.4 s holds 16.7 ms per frame with 13 DOM changes; the phone itself is still to be measured.
 
 Risks to watch: re-rendering days during iOS momentum scrolling (kept safe by fixed row heights and one spare day on each side); scroll snapping fighting the glide (snap off while gliding); the wheel guard feeling wrong in practice (Q1).
 

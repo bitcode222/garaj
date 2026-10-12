@@ -8,6 +8,7 @@ import { reservedByPart } from "@/domain/inventory";
 import { computeReminders } from "@/domain/reminders";
 import { fold } from "@/domain/search";
 import { formatPlate, normalizePlate, vehicleName } from "@/domain/vehicle";
+import { buildVisits } from "@/domain/visit";
 import { formatInvoiceNumber } from "@/domain/invoice";
 
 function memo(fn) {
@@ -125,6 +126,9 @@ export const selectAppointmentsSorted = memoWeak((appointments) =>
 export const selectAppointmentsByDay = memoWeak((appointments) =>
 	groupBy(selectAppointmentsSorted(appointments), (a) => dayOfInstant(a.start)),
 );
+
+/** The visits index of the dashboard calendar (src/domain/visit.js): bookings and jobs as one thing. */
+export const selectVisits = memo((appointments, workOrders) => buildVisits(appointments, workOrders));
 
 export const selectActive = memoWeak((collection) =>
 	Object.values(collection)
