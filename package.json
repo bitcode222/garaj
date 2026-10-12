@@ -10,6 +10,7 @@
     "start": "npx serve out",
     "lint": "eslint",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"src/domain/*.test.js\"",
+    "ui:check": "next build && node scripts/ui-check.mjs",
     "ios:sync": "next build && cap sync ios",
     "ios:open": "cap open ios",
     "ios:device": "bash scripts/ios-device.sh",

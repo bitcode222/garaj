@@ -1,4 +1,5 @@
 import { isActiveAppointment } from "./appointment.js";
+import { dayOfInstant, diffDaysISO } from "./dates.js";
 import { OPEN_STATUSES } from "./work-order.js";
 
 // A visit is one car's trip through the shop as the dashboard calendar shows it:
@@ -41,4 +42,20 @@ export function countStages(stages) {
 	const counts = Object.fromEntries(VISIT_STAGES.map((s) => [s, 0]));
 	for (const s of stages) if (s in counts) counts[s] += 1;
 	return counts;
+}
+
+/**
+ * The booking a job's card points to: the one it was checked in from, else any
+ * booking that names the job, else the same car's booking nearest to `today`
+ * (a car can have several). Null when the car has nothing booked.
+ */
+export function appointmentForJob(order, appointments, today) {
+	const live = Object.values(appointments).filter((a) => a.status !== "cancelled");
+	const linked = live.find((a) => a.id === order.appointmentId) ?? live.find((a) => a.workOrderId === order.id);
+	if (linked) return linked;
+	if (!order.vehicleId) return null;
+	const distance = (a) => Math.abs(diffDaysISO(today, dayOfInstant(a.start)));
+	return live
+		.filter((a) => a.vehicleId === order.vehicleId)
+		.reduce((best, a) => (best && distance(best) <= distance(a) ? best : a), null);
 }

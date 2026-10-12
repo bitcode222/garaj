@@ -21,6 +21,25 @@ export function stageClass(stage) {
 	return cn(tone(meta.tone).block, stage === "delivered" && "opacity-60", stage === "no_show" && "line-through opacity-60");
 }
 
+/**
+ * Hovering (mouse) or keyboard-focusing an item lights up everything for its car,
+ * across the calendar and the cards. It is transient: touch never sets it, and a
+ * mouse click's focus does not count (only `:focus-visible`), so nothing sticks.
+ * What stays lit after "Arată în calendar" is the selection, a separate state.
+ */
+export function hoverHandlers(vehicleId, onHover) {
+	const car = vehicleId ?? null;
+	return {
+		onPointerEnter: (e) => e.pointerType === "mouse" && onHover?.(car),
+		onPointerLeave: (e) => e.pointerType === "mouse" && onHover?.(null),
+		onFocus: (e) => e.target.matches(":focus-visible") && onHover?.(car),
+		onBlur: () => onHover?.(null),
+	};
+}
+
+/** Ring of a lit item: the selected booking, or anything of the hovered car. */
+export const LIT = "ring-2 ring-brand";
+
 const describe = (a, customer, stage) =>
 	[`${fmtTime(a.start)}–${fmtTime(a.end)}`, a.title, customer?.name, VISIT_STAGE[stage].label].filter(Boolean).join(" · ");
 
@@ -30,7 +49,7 @@ const describe = (a, customer, stage) =>
  * Read-only on purpose (moving and resizing live in the calendar). On a phone the
  * timeline scrolls sideways inside the card and opens at the current time.
  */
-export function DayTimeline({ date, today, staff, events, stageOf, isShown, bounds, customers, onOpen, onCreate }) {
+export function DayTimeline({ date, today, staff, events, stageOf, isShown, bounds, customers, onOpen, onCreate, hovered, onHover, selectedId }) {
 	const scroller = useRef(null);
 	const now = useNowMinute();
 	const span = bounds.end - bounds.start;
@@ -132,9 +151,12 @@ export function DayTimeline({ date, today, staff, events, stageOf, isShown, boun
 											onClick={() => onOpen(a)}
 											title={label}
 											aria-label={label}
+											data-appt={a.id}
+											{...hoverHandlers(a.vehicleId, onHover)}
 											className={cn(
-												"absolute z-[5] flex min-w-7 flex-col justify-center overflow-hidden rounded-md border px-2 text-left text-xs select-none",
+												"absolute z-[5] flex min-w-7 flex-col justify-center overflow-hidden rounded-md border px-2 text-left text-xs select-none transition-[opacity,box-shadow]",
 												stageClass(stageOf.get(a.id)),
+												(a.id === selectedId || (hovered && a.vehicleId === hovered)) && cn("z-[6]", LIT),
 											)}
 											style={{
 												left: `calc(${pct(start)} + 1px)`,
@@ -166,7 +188,7 @@ export function DayTimeline({ date, today, staff, events, stageOf, isShown, boun
  * The day header (and "+N încă") opens that day. Scrolls sideways on a phone and
  * opens with today at the left edge.
  */
-export function WeekStrip({ days, today, eventsByDay, stageOf, isShown, filtered, workDays, customers, onOpen, onPickDay }) {
+export function WeekStrip({ days, today, eventsByDay, stageOf, isShown, filtered, workDays, customers, onOpen, onPickDay, hovered, onHover, selectedId }) {
 	const scroller = useRef(null);
 	const first = days[0];
 	useEffect(() => {
@@ -212,9 +234,12 @@ export function WeekStrip({ days, today, eventsByDay, stageOf, isShown, filtered
 												onClick={() => onOpen(a)}
 												title={label}
 												aria-label={label}
+												data-appt={a.id}
+												{...hoverHandlers(a.vehicleId, onHover)}
 												className={cn(
-													"flex min-h-11 w-full min-w-0 flex-col justify-center rounded-md border px-1.5 text-left text-xs md:min-h-7 md:flex-row md:items-center md:justify-start md:gap-1.5",
+													"flex min-h-11 w-full min-w-0 flex-col justify-center rounded-md border px-1.5 text-left text-xs transition-[opacity,box-shadow] md:min-h-7 md:flex-row md:items-center md:justify-start md:gap-1.5",
 													stageClass(stageOf.get(a.id)),
+													(a.id === selectedId || (hovered && a.vehicleId === hovered)) && LIT,
 												)}
 											>
 												<span className="shrink-0 tabular-nums opacity-80">{fmtTime(a.start)}</span>

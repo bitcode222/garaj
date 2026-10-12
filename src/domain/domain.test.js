@@ -13,7 +13,7 @@ import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
 import { fold, matchesTokens, queryTokens } from "./search.js";
 import { addReading, formatPlate, serviceDue, vinIssue } from "./vehicle.js";
-import { VISIT_STAGES, countStages, defaultCalendarView, jobsWithoutBooking, visitStage } from "./visit.js";
+import { VISIT_STAGES, appointmentForJob, countStages, defaultCalendarView, jobsWithoutBooking, visitStage } from "./visit.js";
 import { WO_NEXT, canTransition, isBackwardMove, transition } from "./work-order.js";
 
 const settings = {
@@ -429,5 +429,25 @@ describe("visit stage (dashboard calendar)", () => {
 		assert.equal(counts.estimate, 2);
 		assert.equal(counts.ready, 1);
 		assert.equal(counts.delivered, 0);
+	});
+});
+
+describe("card → calendar target", () => {
+	const at = (id, start, extra = {}) => ({ id, start, status: "scheduled", vehicleId: "car1", ...extra });
+	test("prefers the booking the job was checked in from, then any booking that names it", () => {
+		const appts = { a: at("a", "2026-10-20T09:00:00.000Z"), b: at("b", "2026-10-14T09:00:00.000Z", { workOrderId: "job1" }) };
+		assert.equal(appointmentForJob({ id: "job1", vehicleId: "car1", appointmentId: "a" }, appts, "2026-10-13").id, "a");
+		assert.equal(appointmentForJob({ id: "job1", vehicleId: "car1" }, appts, "2026-10-13").id, "b");
+	});
+	test("otherwise the same car's booking nearest to today; cancelled ones are ignored; none for another car", () => {
+		const appts = {
+			far: at("far", "2026-10-30T09:00:00.000Z"),
+			near: at("near", "2026-10-15T09:00:00.000Z"),
+			gone: at("gone", "2026-10-13T10:00:00.000Z", { status: "cancelled" }),
+			other: at("other", "2026-10-13T11:00:00.000Z", { vehicleId: "car2" }),
+		};
+		assert.equal(appointmentForJob({ id: "j", vehicleId: "car1" }, appts, "2026-10-13").id, "near");
+		assert.equal(appointmentForJob({ id: "j", vehicleId: "car9" }, appts, "2026-10-13"), null);
+		assert.equal(appointmentForJob({ id: "j" }, appts, "2026-10-13"), null);
 	});
 });
