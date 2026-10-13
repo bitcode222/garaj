@@ -4,18 +4,21 @@ import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, 
 import { Initials } from "@/components/ds/data";
 import { addDaysISO, minutesBetween, parseISODate } from "@/domain/dates";
 import { fmtHours } from "@/lib/format";
+import { useMediaQuery } from "@/lib/hooks";
 import { useNowMinute } from "@/features/calendar/time-grid";
 import { minuteOfDay, toMinutes } from "@/features/calendar/utils";
-import { AXIS_PX, DAY_LABEL_PX, ROW_PX, TimelineDay } from "./timeline-day";
+import { AXIS_PX, DAY_LABEL_PX, ROW_PX, TimelineDay, TimelineWeekDay, weekHeight } from "./timeline-day";
 import {
 	DAYS_AHEAD,
 	DAYS_BACK,
 	HOUR_MIN_PX,
 	READING_POINT,
+	WEEK_DAYS,
+	WEEK_MIN_PX,
 	buildTimeline,
 	daysInView,
 	indexOfDay,
-	instantAt,
+	locate,
 	maxScroll,
 	scrollToKeep,
 	scrollToShow,
@@ -34,19 +37,25 @@ const clockMinute = () => {
 };
 
 /**
- * The continuous timeline (docs/DASHBOARD-CALENDAR.md): days side by side, each
- * from the first to the last shown hour, a row per mechanic. It scrolls sideways
- * natively (trackpad, swipe, Shift + wheel); a mouse wheel moved up or down over
- * it scrolls through days too, unless the page was already scrolling when the
- * pointer got here. Only the days in view (plus one on each side) are in the DOM.
+ * The timeline (docs/DASHBOARD-CALENDAR.md): one strip of days, side by side, at
+ * one of two zooms. Zi: each day from the first to the last shown hour, a row per
+ * mechanic. Săptămână: a narrow column per day with its bookings as chips. It
+ * scrolls sideways natively (trackpad, swipe, Shift + wheel); a mouse wheel moved
+ * up or down over it scrolls through days too, unless the page was already
+ * scrolling when the pointer got here. Only the days in view (plus a few spare)
+ * are in the DOM.
  *
  * The scroll position never becomes React state: a passive listener reads it once
  * per frame and updates state only when the rendered days or the day in view
- * change. `onView({ day, todayVisible, settled })` tells the parent which day is
- * under the reading point, live while scrolling and once more when it stops.
- * `ref` exposes goTo({ day, minute, align, focusId }), goToNow() and step(±1, days).
+ * change. `onView({ day, from, to, todayVisible, settled })` tells the parent
+ * what is in view, live while scrolling and once more when it stops. `ref`
+ * exposes goTo({ day, minute, align, focusId, reveal }), goToNow() and
+ * step(±1, days). The parent remounts it (key) to change the zoom, passing where
+ * to open in `initial`.
  */
-export function Timeline({ ref, today, settings, visits, staff, customers, filter, hovered, selectedId, initial, onView, onOpen, onCreate, onHover }) {
+export function Timeline({ ref, zoom, today, settings, visits, staff, customers, filter, focus, initial, onView, onOpen, onCreate, onPickDay, onHover }) {
+	const week = zoom === "week";
+	const wide = useMediaQuery("(min-width: 768px)");
 	const scroller = useRef(null);
 	const [viewport, setViewport] = useState(0);
 	const [view, setView] = useState(null); // { first, last, label }: day indices, set by the scroll listener
@@ -93,14 +102,16 @@ export function Timeline({ ref, today, settings, visits, staff, customers, filte
 		return buildTimeline({
 			from: addDaysISO(today, -DAYS_BACK),
 			count: DAY_COUNT,
-			dayWidth: Math.max(viewport, hourCount * HOUR_MIN_PX),
+			// Zi: a day fills the grid, or scrolls inside itself when the grid is too narrow for its hours.
+			// Săptămână: six days fill the grid, fewer on a phone.
+			dayWidth: week ? Math.max(WEEK_MIN_PX, viewport / WEEK_DAYS) : Math.max(viewport, hourCount * HOUR_MIN_PX),
 			// Slim: closed and nothing booked. Never today, and never because of the stage filter.
 			isSlim: (day) => day !== today && !workDays.includes(parseISODate(day).getDay()) && !visits.bookingsByDay.has(day),
 		});
-	}, [viewport, hourCount, today, workDays, visits]);
+	}, [viewport, week, hourCount, today, workDays, visits]);
 
-	// Where the view is: the time under the reading point, and the geometry it was read in. Kept across
-	// resizes and data changes, so the same moment stays under the same point.
+	// Where the view is: the day (and time) it is on, and the geometry it was read in. Kept across
+	// resizes and data changes, so the same moment stays in the same place.
 	const anchor = useRef(null);
 	const positioned = useRef(false);
 	// The geometry the scroll listener reads. A ref, set in the same layout effect that moves the scroll
@@ -116,18 +127,19 @@ export function Timeline({ ref, today, settings, visits, staff, customers, filte
 	useLayoutEffect(() => {
 		const el = scroller.current;
 		if (!el || !layout) return;
-		geometry.current = { layout, hours, today };
+		geometry.current = { layout, hours, today, week };
 		const width = el.clientWidth;
 		if (!positioned.current) {
 			positioned.current = true;
 			const start = initial ?? { day: today };
 			const minute = start.minute ?? (start.day === today ? clockMinute() : hours.start);
-			el.scrollLeft = scrollToShow(layout, hours, start.day, minute, width, start.align ?? READING_POINT);
+			// Săptămână opens with the day at the left edge; Zi with the time at the reading point.
+			el.scrollLeft = scrollToShow(layout, hours, start.day, minute, width, start.align ?? (week ? 0 : READING_POINT));
 			if (start.focusId) setTimeout(() => el.querySelector(`[data-appt="${start.focusId}"]`)?.focus({ preventScroll: true }), 80);
 		} else if (anchor.current) {
 			const at = anchor.current;
 			const moved = at.dayWidth !== layout.dayWidth || at.viewport !== width || at.offset !== layout.offsets[indexOfDay(layout, at.day)];
-			if (moved) el.scrollLeft = scrollToKeep(layout, hours, at.day, at.minute, width);
+			if (moved) el.scrollLeft = week ? scrollToShow(layout, hours, at.day, hours.start, width, 0) : scrollToKeep(layout, hours, at.day, at.minute, width);
 		}
 		// `initial` and `today` only matter the first time; afterwards the anchor decides.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -142,26 +154,26 @@ export function Timeline({ ref, today, settings, visits, staff, customers, filte
 		let timer = 0;
 		let told = null;
 		const read = () => {
-			const { layout: lay, hours: shown, today: day } = geometry.current;
+			const { layout: lay, hours: shown, today: day, week: columns } = geometry.current;
 			const width = el.clientWidth;
-			const range = daysInView(lay, el.scrollLeft, width);
-			const reading = instantAt(lay, shown, el.scrollLeft + width * READING_POINT);
+			const range = daysInView(lay, el.scrollLeft, width, columns ? 2 : 1);
+			const at = locate(lay, shown, el.scrollLeft, width, columns);
 			const todayIndex = indexOfDay(lay, day);
-			return { lay, width, range, reading, todayVisible: todayIndex >= range.firstVisible && todayIndex <= range.lastVisible };
+			return { lay, width, range, at, from: lay.days[at.from], to: lay.days[at.to], todayVisible: todayIndex >= range.firstVisible && todayIndex <= range.lastVisible };
 		};
 		const update = () => {
 			frame = 0;
-			const { lay, width, range, reading, todayVisible } = read();
-			anchor.current = { day: reading.day, minute: reading.minute, offset: lay.offsets[reading.index], dayWidth: lay.dayWidth, viewport: width };
-			setView((prev) => (prev && prev.first === range.first && prev.last === range.last && prev.label === reading.index ? prev : { first: range.first, last: range.last, label: reading.index }));
-			if (!told || told.day !== reading.day || told.todayVisible !== todayVisible) {
-				told = { day: reading.day, todayVisible };
-				notify.current?.({ day: reading.day, todayVisible, settled: false });
+			const { lay, width, range, at, from, to, todayVisible } = read();
+			anchor.current = { day: at.day, minute: at.minute, offset: lay.offsets[at.index], dayWidth: lay.dayWidth, viewport: width };
+			setView((prev) => (prev && prev.first === range.first && prev.last === range.last && prev.label === at.index ? prev : { first: range.first, last: range.last, label: at.index }));
+			if (!told || told.day !== at.day || told.from !== from || told.to !== to || told.todayVisible !== todayVisible) {
+				told = { day: at.day, from, to, todayVisible };
+				notify.current?.({ ...told, settled: false });
 			}
 		};
 		const settle = () => {
-			const { reading, todayVisible } = read();
-			notify.current?.({ day: reading.day, todayVisible, settled: true });
+			const { at, from, to, todayVisible } = read();
+			notify.current?.({ day: at.day, from, to, todayVisible, settled: true });
 		};
 		const onScroll = () => {
 			if (!frame) frame = requestAnimationFrame(update);
@@ -216,26 +228,31 @@ export function Timeline({ ref, today, settings, visits, staff, customers, filte
 	}, []);
 
 	const api = useMemo(() => {
-		const goTo = ({ day, minute, align = 0.5, focusId }) => {
+		/** Travel to a day (and time). `reveal` also brings the timeline itself into view on the page (phones). */
+		const goTo = ({ day, minute, align = 0.5, focusId, reveal = false }) => {
 			const el = scroller.current;
 			if (!el || !layout) return;
+			if (reveal) el.scrollIntoView({ block: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 			glideTo(scrollToShow(layout, hours, day, minute ?? hours.start, el.clientWidth, align), () => {
 				if (focusId) setTimeout(() => el.querySelector(`[data-appt="${focusId}"]`)?.focus({ preventScroll: true }), 60);
 			});
 		};
 		return {
 			goTo,
-			goToNow: () => goTo({ day: today, minute: clockMinute(), align: READING_POINT }),
-			/** ‹ ›: the start of the next (or previous) open day; quick presses add up instead of restarting. */
-			step: (direction, steps = 1) => {
+			goToNow: () => goTo(week ? { day: today, align: 0 } : { day: today, minute: clockMinute(), align: READING_POINT }),
+			/**
+			 * ‹ › and the arrow keys: the start of the day `days` on. Zi counts open days (closed, empty ones are
+			 * stepped over); Săptămână counts calendar days. Quick presses add up instead of restarting.
+			 */
+			step: (direction, days = 1) => {
 				const el = scroller.current;
 				if (!el || !layout) return;
-				const from = motion.current.index ?? instantAt(layout, hours, el.scrollLeft + el.clientWidth * READING_POINT).index;
-				const index = stepIndex(layout, from, direction, steps);
+				const from = motion.current.index ?? locate(layout, hours, el.scrollLeft, el.clientWidth, week).index;
+				const index = week ? Math.min(Math.max(from + direction * days, 0), DAY_COUNT - 1) : stepIndex(layout, from, direction, days);
 				glideTo(Math.min(layout.offsets[index], maxScroll(layout, el.clientWidth)), null, index);
 			},
 		};
-	}, [layout, hours, today, glideTo]);
+	}, [layout, hours, today, week, glideTo]);
 	useImperativeHandle(ref, () => api, [api]);
 
 	// Wheel: sideways is the browser's own scrolling. Up or down over the timeline also moves through days,
@@ -278,7 +295,7 @@ export function Timeline({ ref, today, settings, visits, staff, customers, filte
 			if ((delta < 0 && el.scrollLeft <= 0) || (delta > 0 && el.scrollLeft >= limit - 1)) return;
 			event.preventDefault();
 			if (Math.abs(delta) >= 50) {
-				// A mouse-wheel notch: about a quarter of a day, eased so it does not jump.
+				// A mouse-wheel notch: about a quarter of a day in Zi, a day or so in Săptămână, eased so it does not jump.
 				target = Math.min(Math.max((target ?? el.scrollLeft) + delta * Math.max(1, dayWidth / 400), 0), limit);
 				if (!frame) frame = requestAnimationFrame(ease);
 			} else {
@@ -313,14 +330,16 @@ export function Timeline({ ref, today, settings, visits, staff, customers, filte
 		event.preventDefault();
 	};
 
-	// Until the first scroll event: the day the timeline opens on, and its neighbours.
+	// Until the first scroll event: the day the timeline opens on, and enough neighbours to fill the grid.
 	const startIndex = layout ? indexOfDay(layout, (initial ?? { day: today }).day) : 0;
-	const shown = view ?? { first: Math.max(0, startIndex - 1), last: Math.min(DAY_COUNT - 1, startIndex + 1), label: startIndex };
+	const shown = view ?? { first: Math.max(0, startIndex - (week ? WEEK_DAYS : 1)), last: Math.min(DAY_COUNT - 1, startIndex + (week ? WEEK_DAYS + 2 : 1)), label: startIndex };
 	const indices = [];
 	if (layout) for (let i = shown.first; i <= shown.last; i++) indices.push(i);
-	const labelled = rows.length > 1 || rows[0].staff != null;
+	const labelled = !week && (rows.length > 1 || rows[0].staff != null);
 	const inView = layout ? (visits.bookingsByDay.get(layout.days[shown.label]) ?? NO_VISITS) : NO_VISITS;
-	const height = DAY_LABEL_PX + AXIS_PX + rows.length * ROW_PX;
+	const headPx = wide ? 36 : 44;
+	const chipPx = wide ? 28 : 44;
+	const height = week ? weekHeight(headPx, chipPx) : DAY_LABEL_PX + AXIS_PX + rows.length * ROW_PX;
 
 	return (
 		<div className="flex border-t" onKeyDown={onKeyDown}>
@@ -351,36 +370,32 @@ export function Timeline({ ref, today, settings, visits, staff, customers, filte
 				ref={attach}
 				tabIndex={0}
 				role="group"
-				aria-label="Programul pe zile. Săgețile stânga și dreapta schimbă ziua, T duce la acum."
-				data-timeline
+				aria-label={`Programul pe ${week ? "săptămâni" : "zile"}. Săgețile stânga și dreapta schimbă ziua, cu Shift o săptămână, T duce la azi.`}
+				data-timeline={zoom}
 				className="no-scrollbar relative min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset"
 			>
 				<div className="relative" style={{ width: layout?.total ?? 0, height }}>
 					{indices.map((i) => {
 						const day = layout.days[i];
-						return (
-							<TimelineDay
-								key={day}
-								day={day}
-								left={layout.offsets[i]}
-								width={layout.offsets[i + 1] - layout.offsets[i]}
-								slim={Boolean(layout.slim[i])}
-								isToday={day === today}
-								isPast={day < today}
-								closed={!workDays.includes(parseISODate(day).getDay())}
-								visits={visits.bookingsByDay.get(day) ?? NO_VISITS}
-								rows={rows}
-								rowKeyOf={rowKeyOf}
-								hours={hours}
-								now={day === today ? now : null}
-								filter={filter}
-								hovered={hovered}
-								selectedId={selectedId}
-								customers={customers}
-								onOpen={onOpen}
-								onCreate={onCreate}
-								onHover={onHover}
-							/>
+						const common = {
+							day,
+							left: layout.offsets[i],
+							width: layout.offsets[i + 1] - layout.offsets[i],
+							slim: Boolean(layout.slim[i]),
+							isToday: day === today,
+							isPast: day < today,
+							closed: !workDays.includes(parseISODate(day).getDay()),
+							visits: visits.bookingsByDay.get(day) ?? NO_VISITS,
+							filter,
+							focus,
+							customers,
+							onOpen,
+							onHover,
+						};
+						return week ? (
+							<TimelineWeekDay key={day} {...common} headPx={headPx} chipPx={chipPx} onPickDay={onPickDay} />
+						) : (
+							<TimelineDay key={day} {...common} rows={rows} rowKeyOf={rowKeyOf} hours={hours} now={day === today ? now : null} onCreate={onCreate} />
 						);
 					})}
 				</div>

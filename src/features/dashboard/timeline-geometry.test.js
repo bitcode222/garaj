@@ -9,10 +9,12 @@ import {
 	indexAt,
 	indexOfDay,
 	instantAt,
+	locate,
 	scrollToKeep,
 	scrollToShow,
 	stepIndex,
 	timelineHours,
+	wholeDaysInView,
 	xOf,
 } from "./timeline-geometry.js";
 
@@ -75,6 +77,40 @@ describe("timeline geometry", () => {
 		assert.equal(scrollToShow(layout, hours, "2026-10-13", 18 * 60, 400), 1600);
 		// Centred, for "Arată în calendar".
 		assert.equal(scrollToShow(layout, hours, "2026-10-13", 13 * 60, 400, 0.5), 1300);
+	});
+
+	test("a day narrower than the grid (Săptămână) is placed whole: at the left edge, or centred", () => {
+		const week = buildTimeline({ from: "2026-10-12", count: 14, dayWidth: 160, isSlim: (day) => sundays.has(day) });
+		// Tuesday at the left edge, whatever the time.
+		assert.equal(scrollToShow(week, hours, "2026-10-13", 9 * 60, 960, 0), 160);
+		assert.equal(scrollToShow(week, hours, "2026-10-13", 17 * 60, 960, 0), 160);
+		// Thursday centred: its 160 px in the middle of 960.
+		assert.equal(scrollToShow(week, hours, "2026-10-15", 9 * 60, 960, 0.5), 480 - 400);
+		// Never before the first day.
+		assert.equal(scrollToShow(week, hours, "2026-10-12", 9 * 60, 960, 0.5), 0);
+	});
+
+	test("the days completely in view; none when a day is wider than the grid", () => {
+		const week = buildTimeline({ from: "2026-10-12", count: 14, dayWidth: 160, isSlim: (day) => sundays.has(day) });
+		assert.deepEqual(wholeDaysInView(week, 0, 960), { first: 0, last: 5 });
+		assert.deepEqual(wholeDaysInView(week, 160, 960), { first: 1, last: 6 });
+		// Scrolled a little further: Monday and Tuesday are cut on the left, the slim Sunday still fits on the right.
+		assert.deepEqual(wholeDaysInView(week, 200, 960), { first: 2, last: 6 });
+		assert.deepEqual(wholeDaysInView(layout, 1000, 1000), { first: 1, last: 1 });
+		assert.equal(wholeDaysInView(layout, 1500, 1000), null);
+		assert.equal(wholeDaysInView(layout, 1000, 400), null);
+	});
+
+	test("the day the view is on: under the reading point in Zi, the first whole day in Săptămână", () => {
+		// Zi, a day as wide as the grid, aligned: that day, and it alone is whole.
+		assert.deepEqual(locate(layout, hours, 1000, 1000, false), { index: 1, day: "2026-10-13", minute: 11 * 60, from: 1, to: 1 });
+		// Zi, half way between two days: the day under the reading point; no day is whole.
+		assert.deepEqual(locate(layout, hours, 1500, 1000, false), { index: 1, day: "2026-10-13", minute: 16 * 60, from: 1, to: 1 });
+		assert.equal(locate(layout, hours, 1800, 1000, false).day, "2026-10-14");
+		// Săptămână: the first whole day, and the range of whole days.
+		const week = buildTimeline({ from: "2026-10-12", count: 14, dayWidth: 160, isSlim: (day) => sundays.has(day) });
+		assert.deepEqual(locate(week, hours, 160, 960, true), { index: 1, day: "2026-10-13", minute: 8 * 60, from: 1, to: 6 });
+		assert.equal(locate(week, hours, 200, 960, true).day, "2026-10-14");
 	});
 
 	test("after a resize the same time stays under the reading point", () => {

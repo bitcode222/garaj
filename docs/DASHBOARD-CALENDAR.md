@@ -1,6 +1,6 @@
 # Dashboard calendar v2: plan
 
-**Status: plan approved by the owner on 13 Oct 2026. Phases 0, 1 and 2 are 🟢 built; phases 3 to 7 are 🟡 planned.**
+**Status: plan approved by the owner on 13 Oct 2026. Phases 0 to 5 are 🟢 built; phases 6 and 7 are 🟡 planned.**
 It replaces the paged Zi / Săptămână calendar on Azi (`src/features/dashboard/dashboard-calendar.jsx`, `visit-timeline.jsx`).
 Build order and status are in §10; each phase ships on its own. The owner's answers are in §11.
 
@@ -40,17 +40,18 @@ Checked on the current code. "Reproduced" means driven in headless Chrome; "read
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│ [‹]  marți, 13 oct · azi  [›]   [Azi]            [Zi | Săptămână]  Calendar → │  header
-│      Dacia Logan · azi 13:30 · Programat   [Primire] [Deschide] [✕]     │  selected visit (only when one is selected)
+│ [‹]  marți, 13 oct · azi  [›]   11 programări · 13 în service   [Azi]  [Zi | Săptămână]  Calendar → │  header
 ├─────────────────────────────────────────────────────────────────────────┤
-│ ÎN SERVICE ACUM · 13   [Doar: În lucru ✕]                         ‹ ›   │
-│ DEVIZ · 2 [card][card]  APROBAT · 2 [card][card]  ÎN LUCRU · 4 [card]…  │  cars, grouped by stage
+│ DEJA ÎN SERVICE · 13   [Doar: În lucru ✕]                         ‹ ›   │
+│ ● Deviz 2 [card][card]  ● Aprobat 2 [card][card]  ● În lucru 4 [card]…  │  cars, grouped by stage
 ├─────────────────────────────────────────────────────────────────────────┤
 │ ▨▨▨▨████████████████   ○ Programat 4  ● Deviz 2  ● Aprobat 2  ● În lucru 4 … │  status line = filter
 ├─────────────────────────────────────────────────────────────────────────┤
 │    │ lun 12        ┊ mar 13 · azi          ┊ mie 14         ┊ joi 15    │
 │ AP │      ▭▭▭      ┊  ▭▭▭▭  ┃      ▭▭▭     ┊    ▭▭          ┊           │  one continuous strip of days
 │ MI │   ▭▭          ┊        ┃  ▭▭▭▭        ┊        ▭▭▭     ┊  ▭▭       │  ┃ = now
+├─────────────────────────────────────────────────────────────────────────┤
+│ Dacia Logan · azi 13:30 · Programat        [Primire] [Deschide] [✕]     │  selected visit (only when one is selected)
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -215,9 +216,9 @@ Each phase ends with `npm test && npm run lint && npm run build`, the browser ch
 | 0 🟢 | On the current code: filter lifetime and chip next to the cards (D7), hovered vs selected (D6), carousel arrows. The headless-Chrome checks move into the repo as `npm run ui:check` | The scripted "filter → Săptămână → Zi" run shows every card |
 | 1 🟢 | Data only: `selectVisits`, link by visit, late-arrival and waiting-pickup rules, with tests | Tests pass; no UI change |
 | 2 🟢 | Continuous timeline in Zi: geometry with tests, virtualised days, live date between the arrows, "Azi", gliding ‹ ›, wheel, trackpad, swipe, keyboard, now line | Scripted wheel and scroll runs pass; frame recording on the iPhone is smooth |
-| 3 | Săptămână as the second zoom; zoom keeps the day in view; the opening rule | Switching zoom never changes the day under the reading point |
-| 4 | Cars in service: all cars, grouped, calendar anchor on each card, two-way link, selected-visit line with actions, the glide and pulse (§6) | Scripted "card → booking" runs for near, far, filtered and deleted targets |
-| 5 | Status line counts cars plus days in view and settles after scrolling | Counts match the cards and blocks on screen in every scripted state |
+| 3 🟢 | Săptămână as the second zoom; zoom keeps the day in view; the opening rule | Switching zoom never changes the day under the reading point |
+| 4 🟢 | Cars in service: all cars, grouped, calendar anchor on each card, two-way link, selected-visit line with actions, the glide and pulse (§6) | Scripted "card → booking" runs for near, far, filtered and deleted targets |
+| 5 🟢 | Status line counts cars plus days in view and settles after scrolling (built with phase 2) | Counts match the cards and blocks on screen in every scripted state |
 | 6 | Late and waiting-pickup marks; pins for walk-in cars (Q3) | Each has a domain test and a screenshot check |
 | 7 | Old paged components removed; `DESIGN-SYSTEM.md` and `PLAN.md` updated to 🟢; full pass on the iPhone | Nothing in this file is still 🟡 |
 
@@ -227,7 +228,11 @@ Built differently from the plan, and why:
 - **Every car in service is already always shown** (the first half of D4, planned for phase 4). Otherwise the cards would appear and disappear as the day in view changed, and the timeline would jump up and down while scrolling sideways.
 - **No scroll snapping.** It fights the wheel and the glide; ‹ › and the keys land exactly on a day's start instead.
 - **A mouse-wheel notch moves a quarter of a day, eased**; a trackpad follows the fingers one to one.
-- **Săptămână is still the paged strip** until phase 3. Switching to it takes the week of the day in view; switching back opens Zi on that week's day.
+- **Săptămână shows the days in view, not Monday to Sunday.** It is the same strip zoomed out, so the date between the arrows is the first and last whole day in view ("13 – 18 oct. 2026") and ‹ › move seven days.
+- **Zooming in picks the useful day.** Today, when today is among the days shown; otherwise the first of them; a day's header zooms in on that day. Zooming out puts the day in view at the left edge. The timeline is remounted for a zoom change (no animation between zooms).
+- **The selected visit's line is docked under the timeline**, not under the header, so selecting never moves the cards or the timeline.
+- **Opening a booking also selects it** (ring on the booking and its car's card, card scrolled into view, no pulse). Only "Arată în calendar" pulses, because only it travels.
+- **Hover is plain React state**, not an external store: with 13 cards and about 20 bookings in view the re-render is not measurable, and the React Compiler keeps the days memoised.
 - **Phase 2's "frame recording on the iPhone" is not done.** In headless Chrome a 6-screen scroll in 2.4 s holds 16.7 ms per frame with 13 DOM changes; the phone itself is still to be measured.
 
 Risks to watch: re-rendering days during iOS momentum scrolling (kept safe by fixed row heights and one spare day on each side); scroll snapping fighting the glide (snap off while gliding); the wheel guard feeling wrong in practice (Q1).

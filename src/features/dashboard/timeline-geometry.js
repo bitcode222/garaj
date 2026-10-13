@@ -10,6 +10,8 @@ export const SLIM_PX = 48; // a closed day with nothing booked
 export const DAYS_BACK = 180;
 export const DAYS_AHEAD = 365;
 export const READING_POINT = 0.3; // the day under this fraction of the grid is "the day in view"
+export const WEEK_DAYS = 6; // Săptămână: this many days fill the grid…
+export const WEEK_MIN_PX = 136; // …unless that makes a day narrower than this (phones)
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
@@ -92,15 +94,26 @@ export function daysInView(layout, scrollLeft, viewport, spare = 1) {
 export const maxScroll = (layout, viewport) => Math.max(0, layout.total - viewport);
 
 /**
- * Scroll position that shows a time of a day, with the time at `align` of the grid
- * (0.3 = the reading point, 0.5 = centred) but without leaving the day: a day that
- * fits the grid is shown whole, from its first hour.
+ * Scroll position that shows a day. A day that fits the grid is shown whole, with the
+ * room left over split by `align` (0 = the day at the left edge, 0.5 = centred). A day
+ * wider than the grid (Zi on a phone) scrolls inside itself: the time sits at `align`
+ * of the grid, without leaving the day.
  */
 export function scrollToShow(layout, hours, day, minute, viewport, align = READING_POINT) {
 	const index = indexOfDay(layout, day);
 	const dayStart = layout.offsets[index];
-	const room = Math.max(0, widthAt(layout, index) - viewport);
-	return clamp(clamp(xOf(layout, hours, day, minute) - viewport * align, dayStart, dayStart + room), 0, maxScroll(layout, viewport));
+	const width = widthAt(layout, index);
+	const left = width <= viewport ? dayStart - (viewport - width) * align : clamp(xOf(layout, hours, day, minute) - viewport * align, dayStart, dayStart + width - viewport);
+	return clamp(left, 0, maxScroll(layout, viewport));
+}
+
+/** The first and last day that are completely in view, or null when not even one fits (Zi on a phone). */
+export function wholeDaysInView(layout, scrollLeft, viewport) {
+	let first = indexAt(layout, scrollLeft);
+	if (layout.offsets[first] < scrollLeft - 1) first += 1;
+	let last = indexAt(layout, scrollLeft + viewport - 1);
+	if (layout.offsets[last + 1] > scrollLeft + viewport + 1) last -= 1;
+	return first <= last && first < layout.days.length ? { first, last } : null;
 }
 
 /** Scroll position that keeps a time exactly under the reading point (resize, zoom, data change). */
@@ -119,4 +132,16 @@ export function stepIndex(layout, index, direction, steps = 1) {
 		current = next;
 	}
 	return current;
+}
+
+/**
+ * What is in view. The anchor is the day the view is "on": at the Zi zoom the day (and
+ * time) under the reading point, at the Săptămână zoom the first day completely in
+ * view. `from` and `to` are the first and last whole days, or the anchor alone when
+ * no day fits.
+ */
+export function locate(layout, hours, scrollLeft, viewport, week) {
+	const whole = wholeDaysInView(layout, scrollLeft, viewport);
+	const at = week ? { index: whole ? whole.first : indexAt(layout, scrollLeft), minute: hours.start } : instantAt(layout, hours, scrollLeft + viewport * READING_POINT);
+	return { index: at.index, day: layout.days[at.index], minute: at.minute, from: whole ? whole.first : at.index, to: whole ? whole.last : at.index };
 }

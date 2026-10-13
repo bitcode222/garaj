@@ -2,16 +2,22 @@
 
 import Link from "next/link";
 import { memo } from "react";
-import { fmtDate, fmtTime } from "@/lib/format";
+import { fmtDate, fmtTime, plural } from "@/lib/format";
 import { VISIT_STAGE } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { atMinute, hourLabel, layoutEvents, minuteOfDay } from "@/features/calendar/utils";
-import { LIT, hoverHandlers, stageClass } from "./visit-timeline";
+import { hoverHandlers, litAs, litClass, stageClass } from "./visit-ui";
 
+// Zi
 export const ROW_PX = 52; // every mechanic's row: a 44 px booking, 4 px above and below
-const BLOCK_PX = ROW_PX - 8;
 export const DAY_LABEL_PX = 24; // the strip with the day's name
 export const AXIS_PX = 28; // the strip with the hours
+const BLOCK_PX = ROW_PX - 8;
+
+// Săptămână
+const MAX_PER_DAY = 5; // bookings listed per day before "+N încă"
+/** A week column's height: the day's header, up to five bookings and the "+N încă" row. Fixed, so it never changes while scrolling. */
+export const weekHeight = (headPx, chipPx) => headPx + 12 + (MAX_PER_DAY + 1) * (chipPx + 4);
 
 const HOUR_LINES =
 	"linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to right, color-mix(in oklch, var(--border) 45%, transparent) 1px, transparent 1px)";
@@ -19,48 +25,33 @@ const HOUR_LINES =
 const describe = (visit, customer) =>
 	[`${fmtTime(visit.start)}–${fmtTime(visit.end)}`, visit.appointment.title, customer?.name, VISIT_STAGE[visit.stage].label].filter(Boolean).join(" · ");
 
+const titleOf = (visit, customer) => visit.appointment.title || customer?.name || "Programare";
+
+/** A closed day with nothing booked: just a marker, at either zoom. */
+function SlimDay({ day, left, width }) {
+	return (
+		<div
+			data-day={day}
+			title={`${fmtDate(day, "EEEE, d MMMM")} · închis`}
+			className="absolute inset-y-0 flex flex-col items-center gap-0.5 border-l bg-muted/40 pt-1 text-muted-foreground"
+			style={{ left, width }}
+		>
+			<span className="text-2xs font-medium capitalize">{fmtDate(day, "EEE").slice(0, 2)}</span>
+			<span className="text-xs font-semibold tabular-nums">{Number(day.slice(8))}</span>
+			<span className="mt-3 rotate-180 text-2xs [writing-mode:vertical-rl]">închis</span>
+		</div>
+	);
+}
+
 /**
- * One day of the continuous timeline (docs/DASHBOARD-CALENDAR.md): its name, its
- * hours, a row per mechanic with the bookings placed by the hour, and on today a
- * line at "now" with the elapsed part shaded. Placed absolutely by the scroller,
+ * One day of the timeline at the Zi zoom (docs/DASHBOARD-CALENDAR.md): its name,
+ * its hours, a row per mechanic with the bookings placed by the hour, and on today
+ * a line at "now" with the elapsed part shaded. Placed absolutely by the scroller,
  * which renders only the days in view; memoised, so scrolling re-renders nothing
- * that did not change. A slim day (closed, nothing booked) is just a marker.
+ * that did not change.
  */
-export const TimelineDay = memo(function TimelineDay({
-	day,
-	left,
-	width,
-	slim,
-	isToday,
-	isPast,
-	closed,
-	visits,
-	rows,
-	rowKeyOf,
-	hours,
-	now,
-	filter,
-	hovered,
-	selectedId,
-	customers,
-	onOpen,
-	onCreate,
-	onHover,
-}) {
-	if (slim) {
-		return (
-			<div
-				data-day={day}
-				title={`${fmtDate(day, "EEEE, d MMMM")} · închis`}
-				className="absolute inset-y-0 flex flex-col items-center gap-0.5 border-l bg-muted/40 pt-1 text-muted-foreground"
-				style={{ left, width }}
-			>
-				<span className="text-2xs font-medium capitalize">{fmtDate(day, "EEEEEE")}</span>
-				<span className="text-xs font-semibold tabular-nums">{Number(day.slice(8))}</span>
-				<span className="mt-3 rotate-180 text-2xs [writing-mode:vertical-rl]">închis</span>
-			</div>
-		);
-	}
+export const TimelineDay = memo(function TimelineDay({ day, left, width, slim, isToday, isPast, closed, visits, rows, rowKeyOf, hours, now, filter, focus, customers, onOpen, onCreate, onHover }) {
+	if (slim) return <SlimDay day={day} left={left} width={width} />;
 
 	const span = hours.end - hours.start;
 	const hourCount = span / 60;
@@ -118,6 +109,7 @@ export const TimelineDay = memo(function TimelineDay({
 							const shared = lanes > 1;
 							const customer = customers[visit.customerId];
 							const label = describe(visit, customer);
+							const lit = litAs(visit, focus);
 							const start = Math.max(minuteOfDay(visit.start), hours.start);
 							const rawEnd = minuteOfDay(visit.end) || 24 * 60;
 							const end = Math.min(rawEnd <= minuteOfDay(visit.start) ? 24 * 60 : rawEnd, hours.end);
@@ -129,12 +121,13 @@ export const TimelineDay = memo(function TimelineDay({
 									onClick={() => onOpen(visit)}
 									title={label}
 									aria-label={label}
-									{...hoverHandlers(visit.vehicleId, onHover)}
+									{...hoverHandlers(visit.id, onHover)}
 									className={cn(
 										"absolute z-[5] flex min-w-7 overflow-hidden rounded-md border text-left select-none transition-[box-shadow]",
 										shared ? "items-center px-1.5 text-2xs leading-none" : "flex-col justify-center px-2 text-xs",
 										stageClass(visit.stage),
-										(visit.id === selectedId || (hovered && visit.vehicleId === hovered)) && cn("z-[6]", LIT),
+										lit && cn("z-[6]", litClass(lit)),
+										visit.id === focus.arrived && "animate-visit-arrive",
 									)}
 									style={{
 										left: `calc(${pct(start)} + 1px)`,
@@ -145,12 +138,11 @@ export const TimelineDay = memo(function TimelineDay({
 								>
 									{shared ? (
 										<span className="truncate">
-											<span className="tabular-nums opacity-80">{fmtTime(visit.start)}</span>{" "}
-											<span className="font-semibold">{visit.appointment.title || customer?.name || "Programare"}</span>
+											<span className="tabular-nums opacity-80">{fmtTime(visit.start)}</span> <span className="font-semibold">{titleOf(visit, customer)}</span>
 										</span>
 									) : (
 										<>
-											<span className="truncate font-semibold">{visit.appointment.title || customer?.name || "Programare"}</span>
+											<span className="truncate font-semibold">{titleOf(visit, customer)}</span>
 											<span className="truncate tabular-nums opacity-80">
 												{fmtTime(visit.start)}–{fmtTime(visit.end)}
 												{customer ? ` · ${customer.name}` : ""}
@@ -174,6 +166,79 @@ export const TimelineDay = memo(function TimelineDay({
 					</div>
 				);
 			})}
+		</div>
+	);
+});
+
+/**
+ * One day of the timeline at the Săptămână zoom: a column with the day's header
+ * (it opens that day in Zi) and its bookings as chips in time order, five at most,
+ * then "+N încă". The selected booking is always among the five.
+ */
+export const TimelineWeekDay = memo(function TimelineWeekDay({ day, left, width, slim, isToday, isPast, closed, visits, headPx, chipPx, filter, focus, customers, onOpen, onPickDay, onHover }) {
+	if (slim) return <SlimDay day={day} left={left} width={width} />;
+
+	const list = filter ? visits.filter((visit) => visit.stage === filter) : visits;
+	const shown = list.slice(0, MAX_PER_DAY);
+	const selectedAt = list.findIndex((visit) => visit.id === focus.selected);
+	if (selectedAt >= MAX_PER_DAY) shown[MAX_PER_DAY - 1] = list[selectedAt];
+	const more = list.length - shown.length;
+
+	return (
+		<div data-day={day} className={cn("absolute inset-y-0 flex flex-col border-l", isToday ? "bg-brand/[0.04]" : closed && "bg-muted/40")} style={{ left, width }}>
+			<button
+				type="button"
+				onClick={() => onPickDay(day)}
+				aria-label={`${fmtDate(day, "EEEE, d MMMM")}: ${plural(list.length, "programare", "programări")}. Deschide ziua.`}
+				className="flex shrink-0 items-center justify-center gap-1.5 border-b text-xs transition-colors hover:bg-accent/50"
+				style={{ height: headPx }}
+			>
+				<span className={cn("font-medium capitalize", isPast ? "text-muted-foreground/70" : "text-muted-foreground")}>{fmtDate(day, "EEE")}</span>
+				<span className={cn("flex size-6 items-center justify-center rounded-full font-semibold tabular-nums", isToday && "bg-primary text-primary-foreground")}>{Number(day.slice(8))}</span>
+				{list.length > 0 && <span className="text-2xs text-muted-foreground tabular-nums">· {list.length}</span>}
+			</button>
+			<ul className="flex min-h-0 flex-1 flex-col gap-1 p-1.5">
+				{shown.map((visit) => {
+					const customer = customers[visit.customerId];
+					const label = describe(visit, customer);
+					const lit = litAs(visit, focus);
+					return (
+						<li key={visit.id}>
+							<button
+								type="button"
+								data-appt={visit.id}
+								onClick={() => onOpen(visit)}
+								title={label}
+								aria-label={label}
+								{...hoverHandlers(visit.id, onHover)}
+								className={cn(
+									"flex w-full min-w-0 flex-col justify-center rounded-md border px-1.5 text-left text-xs transition-[box-shadow] md:flex-row md:items-center md:justify-start md:gap-1.5",
+									stageClass(visit.stage),
+									litClass(lit),
+									visit.id === focus.arrived && "animate-visit-arrive",
+								)}
+								style={{ height: chipPx }}
+							>
+								<span className="shrink-0 tabular-nums opacity-80">{fmtTime(visit.start)}</span>
+								<span className="w-full min-w-0 truncate font-medium md:w-auto">{titleOf(visit, customer)}</span>
+							</button>
+						</li>
+					);
+				})}
+				{more > 0 && (
+					<li>
+						<button
+							type="button"
+							onClick={() => onPickDay(day)}
+							className="flex w-full items-center rounded-md px-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+							style={{ height: chipPx }}
+						>
+							+{more} încă
+						</button>
+					</li>
+				)}
+				{list.length === 0 && <li className="flex flex-1 items-center justify-center text-2xs text-muted-foreground">{filter ? "–" : closed ? "Închis" : "Liber"}</li>}
+			</ul>
 		</div>
 	);
 });
