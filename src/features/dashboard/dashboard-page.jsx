@@ -8,28 +8,28 @@ import {
 	CalendarDays,
 	CalendarPlus,
 	CarFront,
+	CircleCheck,
 	Clock,
 	PackageSearch,
-	Sparkles,
 	Wallet,
 	Wrench,
 	Banknote,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { ContactActions } from "@/components/ds/contact";
-import { Banner, EmptyState, Initials, Meter, Money, Stat } from "@/components/ds/data";
+import { Initials, Meter, Money, Stat } from "@/components/ds/data";
 import { Page } from "@/components/ds/page";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
-import { ListPageSkeleton } from "@/components/ds/skeletons";
-import { ToneBadge, ToneDot } from "@/components/ds/tone";
+import { ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { minutesBetween } from "@/domain/dates";
 import { stockLevel } from "@/domain/inventory";
 import { computeTotals } from "@/domain/lines";
 import { formatPlate, vehicleName } from "@/domain/vehicle";
 import { OPEN_STATUSES } from "@/domain/work-order";
 import { fmtDate, fmtTime, plural } from "@/lib/format";
-import { REMINDER_TYPES, WORK_ORDER_STATUS } from "@/lib/labels";
+import { REMINDER_TYPES } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
 import { tone } from "@/lib/tones";
 import { useCollection, useIsReady, useSettings, useStoreValue, useToday } from "@/lib/store/hooks";
@@ -41,7 +41,7 @@ import {
 	selectReserved,
 } from "@/lib/store/selectors";
 import { cn } from "@/lib/utils";
-import { AppointmentCard } from "@/features/calendar/appointment-card";
+import { DashboardCalendar } from "./dashboard-calendar";
 
 function greeting() {
 	const h = new Date().getHours();
@@ -57,11 +57,35 @@ const REMINDER_TEXT = {
 	tomorrow: (r) => `Programat mâine la ${fmtTime(r.start)}`,
 };
 
+/** Loading state with the page's own geometry: greeting, calendar card, KPIs, two columns. */
+function DashboardSkeleton() {
+	return (
+		<Page width="wide">
+			<div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+				<div className="space-y-2">
+					<Skeleton className="h-4 w-40" />
+					<Skeleton className="h-7 w-48" />
+				</div>
+				<Skeleton className="h-11 w-full rounded-md md:h-9 md:w-72" />
+			</div>
+			<Skeleton className="mb-6 h-80 w-full rounded-xl" />
+			<div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+				{Array.from({ length: 4 }, (_, i) => (
+					<Skeleton key={i} className="h-[74px] rounded-xl" />
+				))}
+			</div>
+			<div className="grid gap-6 lg:grid-cols-3">
+				<Skeleton className="h-64 rounded-xl lg:col-span-2" />
+				<Skeleton className="h-64 rounded-xl" />
+			</div>
+		</Page>
+	);
+}
+
 export function DashboardPage() {
 	const ready = useIsReady();
 	const today = useToday();
 	const settings = useSettings();
-	const demo = useStoreValue("demo");
 	const appointments = useCollection("appointments");
 	const workOrders = useCollection("workOrders");
 	const invoices = useCollection("invoices");
@@ -108,7 +132,7 @@ export function DashboardPage() {
 		return { todays, open, byStatus, outstanding, overdue, issuedToday, collectedToday, lowStock, capacity, load, upcoming };
 	}, [today, appointments, workOrders, invoices, payments, parts, staff, settings.hours]);
 
-	if (!ready || !data) return <ListPageSkeleton stats rows={6} />;
+	if (!ready || !data) return <DashboardSkeleton />;
 
 	return (
 		<Page width="wide">
@@ -127,24 +151,11 @@ export function DashboardPage() {
 				</div>
 			</header>
 
-			{demo && (
-				<Banner
-					tone="yellow"
-					icon={Sparkles}
-					className="mb-6"
-					title="Ești în modul demo"
-					action={
-						<Button asChild size="sm" variant="outline" className="bg-card">
-							<Link href="/settings/#date">Începe cu datele tale</Link>
-						</Button>
-					}
-				>
-					Un service fictiv cu un an de istoric. Explorează liber — nimic nu pleacă din acest dispozitiv.
-				</Banner>
-			)}
+			<DashboardCalendar today={today} />
 
 			<div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
 				<Stat
+					className="border-0 bg-transparent p-0 hover:bg-transparent"
 					label="În service acum"
 					value={data.open.length}
 					hint={plural(data.byStatus.ready.length, "mașină gata", "mașini gata")}
@@ -153,6 +164,7 @@ export function DashboardPage() {
 					href="/work-orders/"
 				/>
 				<Stat
+					className="border-0 bg-transparent p-0 hover:bg-transparent"
 					label="Programări azi"
 					value={data.todays.length}
 					hint={data.upcoming ? `Următoarea la ${fmtTime(data.upcoming.start)}` : "Nimic în așteptare"}
@@ -160,8 +172,9 @@ export function DashboardPage() {
 					tone="blue"
 					href="/calendar/"
 				/>
-				<Stat label="Încasat azi" value={<Money value={data.collectedToday} decimals={0} />} hint={plural(data.issuedToday, "factură emisă", "facturi emise")} icon={Banknote} tone="green" href="/invoices/" />
+				<Stat className="border-0 bg-transparent p-0 hover:bg-transparent" label="Încasat azi" value={<Money value={data.collectedToday} decimals={0} />} hint={plural(data.issuedToday, "factură emisă", "facturi emise")} icon={Banknote} tone="green" href="/invoices/" />
 				<Stat
+					className="border-0 bg-transparent p-0 hover:bg-transparent"
 					label="De încasat"
 					value={<Money value={data.outstanding} decimals={0} />}
 					hint={data.overdue ? plural(data.overdue, "restanță", "restanțe") : "Fără restanțe"}
@@ -175,35 +188,9 @@ export function DashboardPage() {
 				<div className="min-w-0 space-y-6 lg:col-span-2">
 					<Card>
 						<CardHeader
-							title="Programul de azi"
-							icon={Clock}
-							action={
-								<Button asChild variant="ghost" size="sm">
-									<Link href="/calendar/">
-										Calendar <ArrowRight />
-									</Link>
-								</Button>
-							}
-						/>
-						<CardContent className="pt-3">
-							{data.todays.length ? (
-								<ol className="space-y-2">
-									{data.todays.map((a) => (
-										<li key={a.id}>
-											<AppointmentCard appointment={a} vehicle={vehicles[a.vehicleId]} customer={customers[a.customerId]} mechanic={staffMap[a.staffId]} dimPast />
-										</li>
-									))}
-								</ol>
-							) : (
-								<EmptyState compact icon={CalendarDays} title="Nicio programare azi" action={<Button size="sm" onClick={() => openSheet("appointment")}>Adaugă programare</Button>} />
-							)}
-						</CardContent>
-					</Card>
-
-					<Card>
-						<CardHeader
-							title="În service acum"
-							icon={Wrench}
+							title="Gata de predare"
+							icon={CircleCheck}
+							description={plural(data.byStatus.ready.length, "mașină", "mașini")}
 							action={
 								<Button asChild variant="ghost" size="sm">
 									<Link href="/work-orders/">
@@ -212,24 +199,9 @@ export function DashboardPage() {
 								</Button>
 							}
 						/>
-						<CardContent className="space-y-4 pt-3">
-							<div className="flex h-2.5 overflow-hidden rounded-full bg-muted" aria-hidden>
-								{OPEN_STATUSES.map((s) =>
-									data.byStatus[s].length ? <span key={s} className={tone(WORK_ORDER_STATUS[s].tone).bar} style={{ flexGrow: data.byStatus[s].length }} /> : null,
-								)}
-							</div>
-							<div className="flex flex-wrap gap-x-4 gap-y-1.5">
-								{OPEN_STATUSES.map((s) => (
-									<span key={s} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-										<ToneDot tone={WORK_ORDER_STATUS[s].tone} />
-										{WORK_ORDER_STATUS[s].label}
-										<span className="font-semibold text-foreground tabular-nums">{data.byStatus[s].length}</span>
-									</span>
-								))}
-							</div>
-							{data.byStatus.ready.length > 0 && (
+						<CardContent className="pt-3">
+							{data.byStatus.ready.length ? (
 								<div className="space-y-2">
-									<p className="text-2xs font-medium tracking-wider text-muted-foreground uppercase">Gata de predare</p>
 									{data.byStatus.ready.map((order) => {
 										const vehicle = vehicles[order.vehicleId];
 										const customer = customers[order.customerId];
@@ -256,7 +228,30 @@ export function DashboardPage() {
 										);
 									})}
 								</div>
+							) : (
+								<p className="text-sm text-muted-foreground">Nicio mașină nu așteaptă predarea.</p>
 							)}
+						</CardContent>
+					</Card>
+
+					<Card>
+						<CardHeader title="Încărcare azi" icon={Clock} description={`Program ${settings.hours.open}–${settings.hours.close}`} />
+						<CardContent className="space-y-3 pt-3">
+							{data.load.map(({ staff: s, minutes }) => {
+								const pct = data.capacity ? minutes / data.capacity : 0;
+								return (
+									<div key={s.id} className="flex items-center gap-3">
+										<Initials name={s.name} tone={s.color} size="sm" />
+										<div className="min-w-0 flex-1">
+											<div className="mb-1 flex justify-between text-xs">
+												<span className="truncate font-medium">{s.name}</span>
+												<span className="text-muted-foreground tabular-nums">{(minutes / 60).toLocaleString("ro-RO", { maximumFractionDigits: 1 })} h</span>
+											</div>
+											<Meter value={minutes} max={data.capacity} tone={pct > 1 ? "red" : pct > 0.8 ? "yellow" : "green"} label={s.name} />
+										</div>
+									</div>
+								);
+							})}
 						</CardContent>
 					</Card>
 				</div>
@@ -302,27 +297,6 @@ export function DashboardPage() {
 							) : (
 								<p className="text-sm text-muted-foreground">Nimeni de contactat azi. 🎉</p>
 							)}
-						</CardContent>
-					</Card>
-
-					<Card>
-						<CardHeader title="Încărcare azi" icon={Clock} description={`Program ${settings.hours.open}–${settings.hours.close}`} />
-						<CardContent className="space-y-3 pt-3">
-							{data.load.map(({ staff: s, minutes }) => {
-								const pct = data.capacity ? minutes / data.capacity : 0;
-								return (
-									<div key={s.id} className="flex items-center gap-3">
-										<Initials name={s.name} tone={s.color} size="sm" />
-										<div className="min-w-0 flex-1">
-											<div className="mb-1 flex justify-between text-xs">
-												<span className="truncate font-medium">{s.name}</span>
-												<span className="text-muted-foreground tabular-nums">{(minutes / 60).toLocaleString("ro-RO", { maximumFractionDigits: 1 })} h</span>
-											</div>
-											<Meter value={minutes} max={data.capacity} tone={pct > 1 ? "red" : pct > 0.8 ? "yellow" : "green"} label={s.name} />
-										</div>
-									</div>
-								);
-							})}
 						</CardContent>
 					</Card>
 

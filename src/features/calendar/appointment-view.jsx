@@ -52,7 +52,7 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 		destructive: ["cancelled", "no_show"],
 	});
 	const canCheckIn = a && ["scheduled", "confirmed"].includes(a.status);
-	const serviceNames = a?.serviceIds?.map((sid) => services[sid]?.name).filter(Boolean);
+	const serviceNames = a?.operations ? a.operations.map((op) => op.name).filter(Boolean) : a?.serviceIds?.map((sid) => services[sid]?.name).filter(Boolean);
 
 	return (
 		<DetailSheet

@@ -18,7 +18,8 @@ const RESIZE_ZONE = 18; // px at the bottom of a block that resize instead of mo
 const EDGE = 70; // px from the scroller edge where dragging auto-scrolls
 const MAX_SCROLL = 14; // px per frame
 
-function useNowMinute() {
+/** Local minutes since midnight, refreshed every minute; null until mounted. */
+export function useNowMinute() {
 	const [now, setNow] = useState(null);
 	useEffect(() => {
 		const tick = () => {

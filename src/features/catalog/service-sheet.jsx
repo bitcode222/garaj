@@ -16,7 +16,7 @@ import { deleteCatalogItem, saveService } from "@/lib/store/actions";
 import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
 import { selectList } from "@/lib/store/selectors";
 
-const EMPTY = { name: "", category: "maintenance", hours: 1, price: null, parts: [] };
+const EMPTY = { name: "", category: "maintenance", hours: 1, price: null, cost: 0, parts: [] };
 
 export default function ServiceSheet({ open, onOpenChange, id }) {
 	const confirm = useConfirm();
@@ -99,6 +99,9 @@ export default function ServiceSheet({ open, onOpenChange, id }) {
 						{(fid) => <MoneyInput id={fid} value={form.price ?? suggested} onValueChange={(price) => set({ price })} />}
 					</Field>
 				</div>
+				<Field label="Cost intern manoperă" hint="Implicit la adăugarea în deviz; calculează marja">
+					{(fid) => <MoneyInput id={fid} value={form.cost ?? 0} onValueChange={(cost) => set({ cost })} />}
+				</Field>
 				<Field label="Piese incluse (pachet)" hint="Se adaugă automat în deviz odată cu operațiunea">
 					<div className="space-y-2">
 						{form.parts.map((p, i) => (

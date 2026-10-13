@@ -7,12 +7,13 @@ import { addMonthsISO, diffDaysISO, isISODate } from "./dates.js";
 import { deadline, estimateKm } from "./vehicle.js";
 import { reservedByPart, stockDelta, stockLevel } from "./inventory.js";
 import { buildStorno, invoiceState, issueInvoice, issueProblems, paymentProblem } from "./invoice.js";
-import { computeTotals, laborPrice, lineNet } from "./lines.js";
+import { computeTotals, laborLineFromOperation, laborPrice, lineNet, operationFigures, operationVatRate, operationFromService } from "./lines.js";
 import { divRound, formatMoney, parseMoney, parseQuantity, percentOf, toInputAmount } from "./money.js";
 import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
 import { fold, matchesTokens, queryTokens } from "./search.js";
 import { addReading, formatPlate, serviceDue, vinIssue } from "./vehicle.js";
+import { VISIT_STAGES, arrivalDelay, buildVisits, countStages, defaultCalendarView, pickupWait, visitStage } from "./visit.js";
 import { WO_NEXT, canTransition, isBackwardMove, transition } from "./work-order.js";
 
 const settings = {
@@ -358,5 +359,140 @@ describe("work order next step", () => {
 		}
 		assert.equal(WO_NEXT.delivered, undefined);
 		assert.equal(WO_NEXT.cancelled, undefined);
+	});
+});
+
+test("operation: custom price and cost give margin, and the labor line totals match", () => {
+	const op = operationFromService({ id: "s1", name: "Ulei", hours: 1.5, price: 30000 }, 20000);
+	assert.deepEqual(op, { serviceId: "s1", name: "Ulei", hours: 1.5, price: 30000, cost: 0 });
+	const custom = { ...op, name: "Ulei special", hours: 2, price: 45000, cost: 15000 };
+	const f = operationFigures(custom, 21);
+	assert.equal(f.net, 45000);
+	assert.equal(f.gross, 54450);
+	assert.equal(f.margin, 30000);
+	assert.equal(f.marginPct, 66.7);
+	const line = laborLineFromOperation(custom, { id: "l1", vatRate: 21 });
+	assert.equal(line.description, "Ulei special");
+	assert.equal(lineNet(line), 45000);
+	const t = computeTotals([line]);
+	assert.equal(t.laborCost, 15000);
+	assert.equal(t.laborMargin, 30000);
+});
+
+test("operation VAT: own rate overrides the standard; none when not a VAT payer", () => {
+	assert.equal(operationVatRate({}, { vatPayer: true, vatRate: 21 }), 21);
+	assert.equal(operationVatRate({ vatRate: 11 }, { vatPayer: true, vatRate: 21 }), 11);
+	assert.equal(operationVatRate({ vatRate: 0 }, { vatPayer: true, vatRate: 21 }), 0);
+	assert.equal(operationVatRate({ vatRate: 11 }, { vatPayer: false, vatRate: 21 }), 0);
+});
+
+describe("visit stage (dashboard calendar)", () => {
+	test("a booking shows its job's stage once the car is checked in", () => {
+		assert.equal(visitStage({ status: "scheduled" }), "scheduled");
+		assert.equal(visitStage({ status: "confirmed" }), "scheduled");
+		assert.equal(visitStage({ status: "arrived" }, { status: "estimate" }), "estimate");
+		assert.equal(visitStage({ status: "arrived" }, { status: "waiting_parts" }), "waiting_parts");
+		assert.equal(visitStage({ status: "arrived" }, { status: "ready" }), "ready");
+		assert.equal(visitStage({ status: "done" }, { status: "delivered" }), "delivered");
+		assert.equal(visitStage({ status: "done" }), "delivered");
+		assert.equal(visitStage({ status: "no_show" }), "no_show");
+	});
+
+	test("cancelled bookings and cancelled jobs are not shown; a missing job still counts as in the shop", () => {
+		assert.equal(visitStage({ status: "cancelled" }), null);
+		assert.equal(visitStage({ status: "arrived" }, { status: "cancelled" }), null);
+		assert.equal(visitStage({ status: "arrived" }), "in_progress");
+	});
+
+	test("opens on the day only when something active is booked for it", () => {
+		assert.equal(defaultCalendarView([{ status: "confirmed" }]), "day");
+		assert.equal(defaultCalendarView([{ status: "done" }]), "day");
+		assert.equal(defaultCalendarView([{ status: "cancelled" }, { status: "no_show" }]), "week");
+		assert.equal(defaultCalendarView([]), "week");
+		assert.equal(defaultCalendarView(undefined), "week");
+	});
+
+	test("counts cover every stage", () => {
+		const counts = countStages(["estimate", "estimate", "ready", "scheduled"]);
+		assert.deepEqual(Object.keys(counts), VISIT_STAGES);
+		assert.equal(counts.estimate, 2);
+		assert.equal(counts.ready, 1);
+		assert.equal(counts.delivered, 0);
+	});
+});
+
+describe("visits index", () => {
+	// Local-time instants, so the test does not depend on the machine's time zone.
+	const local = (day, hour, minute = 0) => new Date(`${day}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`).toISOString();
+	const appointments = {
+		booked: { id: "booked", status: "confirmed", start: local("2026-10-13", 14), end: local("2026-10-13", 15), vehicleId: "car1", customerId: "c1", staffId: "m1" },
+		early: { id: "early", status: "arrived", start: local("2026-10-13", 9), end: local("2026-10-13", 11), vehicleId: "car2", workOrderId: "job2", staffId: "m2" },
+		named: { id: "named", status: "arrived", start: local("2026-10-12", 9), end: local("2026-10-12", 10), vehicleId: "car3" },
+		gone: { id: "gone", status: "cancelled", start: local("2026-10-13", 10), end: local("2026-10-13", 11), vehicleId: "car4", workOrderId: "job4" },
+		old: { id: "old", status: "done", start: local("2026-10-01", 9), end: local("2026-10-01", 10), vehicleId: "car2", workOrderId: "job0" },
+	};
+	const workOrders = {
+		job0: { id: "job0", status: "delivered", vehicleId: "car2", createdAt: local("2026-10-01", 9) },
+		job2: { id: "job2", status: "ready", vehicleId: "car2", appointmentId: "early", createdAt: local("2026-10-13", 9) },
+		job3: { id: "job3", status: "in_progress", vehicleId: "car3", appointmentId: "named", createdAt: local("2026-10-12", 9) },
+		job4: { id: "job4", status: "estimate", vehicleId: "car4", staffId: "m1", createdAt: local("2026-10-13", 10) },
+		job5: { id: "job5", status: "estimate", vehicleId: "car5", createdAt: local("2026-10-11", 16) },
+	};
+	const visits = buildVisits(appointments, workOrders);
+
+	test("a booking and its job are one visit, whichever side names the other", () => {
+		assert.equal(visits.byId.get("early").order.id, "job2");
+		assert.equal(visits.byId.get("early").stage, "ready");
+		assert.equal(visits.byOrder.get("job3").id, "named");
+		assert.equal(visits.byOrder.get("job3").stage, "in_progress");
+		assert.equal(visits.byId.get("booked").stage, "scheduled");
+		assert.equal(visits.byId.get("booked").order, null);
+	});
+
+	test("open jobs nobody booked are walk-ins; a cancelled booking does not hide its open job", () => {
+		assert.equal(visits.byId.get("job5").kind, "walkin");
+		assert.equal(visits.byId.get("job5").day, "2026-10-11");
+		assert.equal(visits.byId.has("gone"), false);
+		assert.equal(visits.byOrder.get("job4").kind, "walkin");
+		assert.equal(visits.byOrder.get("job4").staffId, "m1");
+	});
+
+	test("bookings are grouped by local day in time order; walk-ins are not calendar blocks", () => {
+		assert.deepEqual(visits.bookingsByDay.get("2026-10-13").map((v) => v.id), ["early", "booked"]);
+		assert.deepEqual(visits.bookingsByDay.get("2026-10-12").map((v) => v.id), ["named"]);
+		assert.equal(visits.bookingsByDay.has("2026-10-11"), false);
+	});
+
+	test("every car in service has a place on the calendar: walk-ins sit at their check-in time", () => {
+		assert.deepEqual(visits.visitsByDay.get("2026-10-13").map((v) => v.id), ["early", "job4", "booked"]);
+		assert.deepEqual(visits.visitsByDay.get("2026-10-11").map((v) => v.id), ["job5"]);
+		const walkin = visits.byId.get("job5");
+		assert.equal(walkin.start, workOrders.job5.createdAt);
+		assert.equal(new Date(walkin.end) - new Date(walkin.start), 30 * 60_000);
+		for (const visit of visits.inService) assert.ok(visits.visitsByDay.get(visit.day).includes(visit), `${visit.id} is on no day`);
+	});
+
+	test("in service: every open job once, pipeline order, longest in the shop first", () => {
+		assert.deepEqual(visits.inService.map((v) => v.order.id), ["job5", "job4", "job3", "job2"]);
+	});
+
+	test("visits of one car are found together (this job, and its other bookings)", () => {
+		assert.deepEqual(visits.byVehicle.get("car2").map((v) => v.id).sort(), ["early", "old"]);
+	});
+
+	test("late arrival: only today, only not yet arrived, only past the grace", () => {
+		const now = local("2026-10-13", 14, 40);
+		assert.equal(arrivalDelay(appointments.booked, now), 40);
+		assert.equal(arrivalDelay(appointments.booked, local("2026-10-13", 14, 10)), 0);
+		assert.equal(arrivalDelay(appointments.early, now), 0);
+		assert.equal(arrivalDelay({ ...appointments.booked, start: local("2026-10-12", 14) }, now), 0);
+	});
+
+	test("waiting for pickup counts whole days since the car became ready", () => {
+		const ready = { status: "ready", dates: { ready: local("2026-10-11", 15) } };
+		assert.equal(pickupWait(ready, "2026-10-13"), 2);
+		assert.equal(pickupWait(ready, "2026-10-11"), 0);
+		assert.equal(pickupWait({ status: "in_progress", dates: {} }, "2026-10-13"), 0);
+		assert.equal(pickupWait({ status: "ready" }, "2026-10-13"), 0);
 	});
 });

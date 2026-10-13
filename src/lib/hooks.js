@@ -142,3 +142,16 @@ export async function shareText({ title, text }) {
 		}
 	}
 }
+
+/** True while a CSS media query matches. False on the server and on the first client render, so hydration matches. */
+export function useMediaQuery(query) {
+	return useSyncExternalStore(
+		(listener) => {
+			const media = window.matchMedia(query);
+			media.addEventListener("change", listener);
+			return () => media.removeEventListener("change", listener);
+		},
+		() => window.matchMedia(query).matches,
+		() => false,
+	);
+}
