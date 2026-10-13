@@ -32,14 +32,26 @@ export const litClass = (level) => (level === "this" ? "ring-2 ring-brand" : lev
 
 /**
  * Hovering (mouse) or keyboard-focusing an item lights its visit. Transient: touch
- * never sets it, and a mouse click's focus does not count (only `:focus-visible`),
- * so nothing sticks. What stays lit is the selection, a separate state.
+ * never sets it, a mouse click's focus does not count (only `:focus-visible`), and
+ * neither does focus that the timeline moved itself (focusQuietly), so nothing
+ * sticks. What stays lit is the selection, a separate state.
  */
 export function hoverHandlers(visitId, onHover) {
 	return {
 		onPointerEnter: (event) => event.pointerType === "mouse" && onHover?.(visitId),
 		onPointerLeave: (event) => event.pointerType === "mouse" && onHover?.(null),
-		onFocus: (event) => event.target.matches(":focus-visible") && onHover?.(visitId),
+		onFocus: (event) => !("quiet" in event.target.dataset) && event.target.matches(":focus-visible") && onHover?.(visitId),
 		onBlur: () => onHover?.(null),
 	};
+}
+
+/**
+ * Moves keyboard focus to an item the user travelled to (so Enter opens it and Esc
+ * clears the selection) without that focus counting as a hover.
+ */
+export function focusQuietly(node) {
+	if (!node) return;
+	node.dataset.quiet = "";
+	node.focus({ preventScroll: true });
+	delete node.dataset.quiet;
 }

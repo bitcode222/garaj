@@ -5,9 +5,9 @@ import { Initials } from "@/components/ds/data";
 import { addDaysISO, minutesBetween, parseISODate } from "@/domain/dates";
 import { fmtHours } from "@/lib/format";
 import { useMediaQuery } from "@/lib/hooks";
-import { useNowMinute } from "@/features/calendar/time-grid";
-import { minuteOfDay, toMinutes } from "@/features/calendar/utils";
+import { atMinute, minuteOfDay, toMinutes } from "@/features/calendar/utils";
 import { AXIS_PX, DAY_LABEL_PX, ROW_PX, TimelineDay, TimelineWeekDay, weekHeight } from "./timeline-day";
+import { focusQuietly } from "./visit-ui";
 import {
 	DAYS_AHEAD,
 	DAYS_BACK,
@@ -53,13 +53,12 @@ const clockMinute = () => {
  * step(±1, days). The parent remounts it (key) to change the zoom, passing where
  * to open in `initial`.
  */
-export function Timeline({ ref, zoom, today, settings, visits, staff, customers, filter, focus, initial, onView, onOpen, onCreate, onPickDay, onHover }) {
+export function Timeline({ ref, zoom, today, now, settings, visits, staff, customers, vehicles, filter, focus, initial, onView, onOpen, onCreate, onPickDay, onHover }) {
 	const week = zoom === "week";
 	const wide = useMediaQuery("(min-width: 768px)");
 	const scroller = useRef(null);
 	const [viewport, setViewport] = useState(0);
 	const [view, setView] = useState(null); // { first, last, label }: day indices, set by the scroll listener
-	const now = useNowMinute();
 	const workDays = settings.hours.days;
 	const open = toMinutes(settings.hours.open);
 	const close = toMinutes(settings.hours.close);
@@ -83,7 +82,8 @@ export function Timeline({ ref, zoom, today, settings, visits, staff, customers,
 		const keyOf = (visit) => (single ? "all" : active.has(visit.staffId) ? visit.staffId : "none");
 		const spans = [];
 		let unassigned = false;
-		for (const list of visits.bookingsByDay.values()) {
+		// Bookings and the walk-ins' pins: both need a row and must fit the shown hours.
+		for (const list of visits.visitsByDay.values()) {
 			for (const visit of list) {
 				const from = minuteOfDay(visit.start);
 				const to = minuteOfDay(visit.end) || 24 * 60;
@@ -105,8 +105,8 @@ export function Timeline({ ref, zoom, today, settings, visits, staff, customers,
 			// Zi: a day fills the grid, or scrolls inside itself when the grid is too narrow for its hours.
 			// Săptămână: six days fill the grid, fewer on a phone.
 			dayWidth: week ? Math.max(WEEK_MIN_PX, viewport / WEEK_DAYS) : Math.max(viewport, hourCount * HOUR_MIN_PX),
-			// Slim: closed and nothing booked. Never today, and never because of the stage filter.
-			isSlim: (day) => day !== today && !workDays.includes(parseISODate(day).getDay()) && !visits.bookingsByDay.has(day),
+			// Slim: closed, and no booking or walk-in that day. Never today, and never because of the stage filter.
+			isSlim: (day) => day !== today && !workDays.includes(parseISODate(day).getDay()) && !visits.visitsByDay.has(day),
 		});
 	}, [viewport, week, hourCount, today, workDays, visits]);
 
@@ -135,7 +135,7 @@ export function Timeline({ ref, zoom, today, settings, visits, staff, customers,
 			const minute = start.minute ?? (start.day === today ? clockMinute() : hours.start);
 			// Săptămână opens with the day at the left edge; Zi with the time at the reading point.
 			el.scrollLeft = scrollToShow(layout, hours, start.day, minute, width, start.align ?? (week ? 0 : READING_POINT));
-			if (start.focusId) setTimeout(() => el.querySelector(`[data-appt="${start.focusId}"]`)?.focus({ preventScroll: true }), 80);
+			if (start.focusId) setTimeout(() => focusQuietly(el.querySelector(`[data-appt="${start.focusId}"]`)), 80);
 		} else if (anchor.current) {
 			const at = anchor.current;
 			const moved = at.dayWidth !== layout.dayWidth || at.viewport !== width || at.offset !== layout.offsets[indexOfDay(layout, at.day)];
@@ -234,7 +234,7 @@ export function Timeline({ ref, zoom, today, settings, visits, staff, customers,
 			if (!el || !layout) return;
 			if (reveal) el.scrollIntoView({ block: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 			glideTo(scrollToShow(layout, hours, day, minute ?? hours.start, el.clientWidth, align), () => {
-				if (focusId) setTimeout(() => el.querySelector(`[data-appt="${focusId}"]`)?.focus({ preventScroll: true }), 60);
+				if (focusId) setTimeout(() => focusQuietly(el.querySelector(`[data-appt="${focusId}"]`)), 60);
 			});
 		};
 		return {
@@ -337,6 +337,7 @@ export function Timeline({ ref, zoom, today, settings, visits, staff, customers,
 	if (layout) for (let i = shown.first; i <= shown.last; i++) indices.push(i);
 	const labelled = !week && (rows.length > 1 || rows[0].staff != null);
 	const inView = layout ? (visits.bookingsByDay.get(layout.days[shown.label]) ?? NO_VISITS) : NO_VISITS;
+	const nowAt = now == null ? null : atMinute(today, now);
 	const headPx = wide ? 36 : 44;
 	const chipPx = wide ? 28 : 44;
 	const height = week ? weekHeight(headPx, chipPx) : DAY_LABEL_PX + AXIS_PX + rows.length * ROW_PX;
@@ -372,7 +373,9 @@ export function Timeline({ ref, zoom, today, settings, visits, staff, customers,
 				role="group"
 				aria-label={`Programul pe ${week ? "săptămâni" : "zile"}. Săgețile stânga și dreapta schimbă ziua, cu Shift o săptămână, T duce la azi.`}
 				data-timeline={zoom}
-				className="no-scrollbar relative min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset"
+				// The scroll margins are for goTo's "bring the timeline into view": on a phone it must clear the fixed
+				// top bar and tab bar, and leave room for the selected visit's line under it.
+				className="no-scrollbar relative min-w-0 flex-1 scroll-mt-[calc(4.5rem+var(--safe-top))] scroll-mb-[calc(var(--tabbar-h)+var(--safe-bottom)+5.5rem)] overflow-x-auto overflow-y-hidden overscroll-x-contain outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset md:scroll-my-20"
 			>
 				<div className="relative" style={{ width: layout?.total ?? 0, height }}>
 					{indices.map((i) => {
@@ -385,10 +388,13 @@ export function Timeline({ ref, zoom, today, settings, visits, staff, customers,
 							isToday: day === today,
 							isPast: day < today,
 							closed: !workDays.includes(parseISODate(day).getDay()),
-							visits: visits.bookingsByDay.get(day) ?? NO_VISITS,
+							visits: visits.visitsByDay.get(day) ?? NO_VISITS,
+							// Only today's day reads the clock, so the minute tick re-renders one day.
+							nowAt: day === today ? nowAt : null,
 							filter,
 							focus,
 							customers,
+							vehicles,
 							onOpen,
 							onHover,
 						};

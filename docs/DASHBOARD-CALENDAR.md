@@ -1,6 +1,6 @@
 # Dashboard calendar v2: plan
 
-**Status: plan approved by the owner on 13 Oct 2026. Phases 0 to 5 are 🟢 built; phases 6 and 7 are 🟡 planned.**
+**Status: plan approved by the owner on 13 Oct 2026. All phases (0 to 7) are 🟢 built.** What is still open: the owner's own hands-on pass on the physical iPhone (the app is installed there; the checks below ran in Chrome and in the iOS 27 simulator).
 It replaces the paged Zi / Săptămână calendar on Azi (`src/features/dashboard/dashboard-calendar.jsx`, `visit-timeline.jsx`).
 Build order and status are in §10; each phase ships on its own. The owner's answers are in §11.
 
@@ -194,8 +194,8 @@ Checked with a frame recording on the iPhone during a swipe and a glide (the met
 | Unassigned or inactive mechanic | A "Nealocat" row, present whenever any such booking exists in the range, so rows never appear mid-scroll |
 | No mechanics, or one | A single row without the label column |
 | More than 8 mechanics | The card grows; the timeline never scrolls vertically inside itself (the wheel is taken by days) |
-| Car with several bookings | The button goes to this job's booking, else the nearest one |
-| Car with no booking | No button; the card says "fără programare · primit 12 oct" (a pin on the timeline in phase 6) |
+| Car with several bookings | The button goes to this job's own booking; the car's other bookings get the lighter ring |
+| Car with no booking | A pin on the timeline at the time it was received; the card says "primit ieri 10:30" and its button travels to the pin |
 | Target deleted or cancelled mid-travel | Travel ends, selection cleared |
 | A booking saved in a sheet while scrolled away | Position kept; the block appears in place |
 | Shop hours changed in Setări | Geometry rebuilt; the same day stays in view |
@@ -219,8 +219,8 @@ Each phase ends with `npm test && npm run lint && npm run build`, the browser ch
 | 3 🟢 | Săptămână as the second zoom; zoom keeps the day in view; the opening rule | Switching zoom never changes the day under the reading point |
 | 4 🟢 | Cars in service: all cars, grouped, calendar anchor on each card, two-way link, selected-visit line with actions, the glide and pulse (§6) | Scripted "card → booking" runs for near, far, filtered and deleted targets |
 | 5 🟢 | Status line counts cars plus days in view and settles after scrolling (built with phase 2) | Counts match the cards and blocks on screen in every scripted state |
-| 6 | Late and waiting-pickup marks; pins for walk-in cars (Q3) | Each has a domain test and a screenshot check |
-| 7 | Old paged components removed; `DESIGN-SYSTEM.md` and `PLAN.md` updated to 🟢; full pass on the iPhone | Nothing in this file is still 🟡 |
+| 6 🟢 | Late and waiting-pickup marks; pins for walk-in cars (Q3) | Each has a domain test and a screenshot check |
+| 7 🟢 | Old paged components removed; `DESIGN-SYSTEM.md` and `PLAN.md` updated to 🟢; full pass on the iPhone | Nothing in this file is still 🟡 |
 
 Built differently from the plan, and why:
 
@@ -233,7 +233,10 @@ Built differently from the plan, and why:
 - **The selected visit's line is docked under the timeline**, not under the header, so selecting never moves the cards or the timeline.
 - **Opening a booking also selects it** (ring on the booking and its car's card, card scrolled into view, no pulse). Only "Arată în calendar" pulses, because only it travels.
 - **Hover is plain React state**, not an external store: with 13 cards and about 20 bookings in view the re-render is not measurable, and the React Compiler keeps the days memoised.
-- **Phase 2's "frame recording on the iPhone" is not done.** In headless Chrome a 6-screen scroll in 2.4 s holds 16.7 ms per frame with 13 DOM changes; the phone itself is still to be measured.
+- **A walk-in's pin replaces "another booking of the same car".** A car that came without a booking is drawn as a pin (a pill with a car) at the time it was received, on its mechanic's row; its card says "primit ieri 10:30" and its calendar button travels to that pin. So every card has the button, and the selected visit can be a walk-in (its line then offers only the job).
+- **Late is said in three places**: on the booking ("întârzie 45 min", a clock only when the booking shares its lane), in the header summary ("3 mașini întârzie") and in the selected visit's line. A finished car's card says "gata de 2 zile".
+- **Measured in WebKit, not on the physical phone.** In the iOS 27 simulator (iPhone 18 Pro Max, the app's own web view) a 6-screen scroll in 2.4 s holds 16.7 ms per frame (p95 17 ms, worst 31 ms) forwards, back and again; the very first scroll after a fresh install had one 379 ms frame, once. Headless Chrome gives the same 16.7 ms. A recording on the phone itself has not been made.
+- **Two things only WebKit on a phone showed, both fixed**: after "Arată în calendar" the selected item could sit behind the tab bar (the timeline now has scroll margins for the fixed bars and for the selected visit's line), and the focus moved to the booking counted as a hover (it is now moved quietly, `focusQuietly`).
 
 Risks to watch: re-rendering days during iOS momentum scrolling (kept safe by fixed row heights and one spare day on each side); scroll snapping fighting the glide (snap off while gliding); the wheel guard feeling wrong in practice (Q1).
 

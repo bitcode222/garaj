@@ -30,13 +30,6 @@ export function defaultCalendarView(appointmentsToday) {
 	return (appointmentsToday ?? []).some(isActiveAppointment) ? "day" : "week";
 }
 
-/** Open jobs that no shown booking stands for (walk-ins, cars left from earlier days), oldest stage first. */
-export function jobsWithoutBooking(orders, shownOrderIds) {
-	return orders
-		.filter((o) => OPEN_STATUSES.includes(o.status) && !shownOrderIds.has(o.id))
-		.sort((a, b) => OPEN_STATUSES.indexOf(a.status) - OPEN_STATUSES.indexOf(b.status) || (a.createdAt < b.createdAt ? -1 : 1));
-}
-
 /** How many visits are in each stage (every stage present, zero when empty). */
 export function countStages(stages) {
 	const counts = Object.fromEntries(VISIT_STAGES.map((s) => [s, 0]));
@@ -44,23 +37,10 @@ export function countStages(stages) {
 	return counts;
 }
 
-/**
- * The booking a job's card points to: the one it was checked in from, else any
- * booking that names the job, else the same car's booking nearest to `today`
- * (a car can have several). Null when the car has nothing booked.
- */
-export function appointmentForJob(order, appointments, today) {
-	const live = Object.values(appointments).filter((a) => a.status !== "cancelled");
-	const linked = live.find((a) => a.id === order.appointmentId) ?? live.find((a) => a.workOrderId === order.id);
-	if (linked) return linked;
-	if (!order.vehicleId) return null;
-	const distance = (a) => Math.abs(diffDaysISO(today, dayOfInstant(a.start)));
-	return live
-		.filter((a) => a.vehicleId === order.vehicleId)
-		.reduce((best, a) => (best && distance(best) <= distance(a) ? best : a), null);
-}
-
 const byStart = (a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
+
+/** How long a walk-in is drawn on the calendar, in minutes (it has no planned slot). */
+export const WALKIN_SLOT_MIN = 30;
 
 /**
  * Every visit the dashboard calendar deals with, built once from the bookings and the jobs.
@@ -69,6 +49,11 @@ const byStart = (a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
  * `id` is the booking's id, or the job's for a walk-in. A booking and a job are one visit
  * when either names the other. Hidden bookings (see visitStage) have no visit, so an
  * open job behind one counts as a walk-in and the car is never lost.
+ *
+ * A walk-in has no planned slot: it sits on the calendar at its check-in time, and its
+ * `end` is nominal (WALKIN_SLOT_MIN later), only so it can be placed next to bookings.
+ * `bookingsByDay` is what was booked (counts, booked hours); `visitsByDay` adds the
+ * walk-ins checked in that day, so every car in service has a place on the calendar.
  */
 export function buildVisits(appointments, workOrders) {
 	const orders = Object.values(workOrders);
@@ -79,8 +64,12 @@ export function buildVisits(appointments, workOrders) {
 	const byOrder = new Map();
 	const byVehicle = new Map();
 	const bookingsByDay = new Map();
+	const visitsByDay = new Map();
 	const add = (visit) => {
 		byId.set(visit.id, visit);
+		const sameDay = visitsByDay.get(visit.day);
+		if (sameDay) sameDay.push(visit);
+		else visitsByDay.set(visit.day, [visit]);
 		if (visit.order) byOrder.set(visit.order.id, visit);
 		if (visit.vehicleId) {
 			const sameCar = byVehicle.get(visit.vehicleId);
@@ -120,7 +109,7 @@ export function buildVisits(appointments, workOrders) {
 			order,
 			stage: order.status,
 			start: order.createdAt,
-			end: null,
+			end: new Date(new Date(order.createdAt).getTime() + WALKIN_SLOT_MIN * 60_000).toISOString(),
 			day: dayOfInstant(order.createdAt),
 			vehicleId: order.vehicleId ?? null,
 			customerId: order.customerId ?? null,
@@ -129,11 +118,12 @@ export function buildVisits(appointments, workOrders) {
 	}
 
 	for (const list of bookingsByDay.values()) list.sort(byStart);
+	for (const list of visitsByDay.values()) list.sort(byStart);
 	// The shop right now: every open job once, in pipeline order, longest in the shop first.
 	const inService = [...byOrder.values()]
 		.filter((visit) => OPEN_STATUSES.includes(visit.order.status))
 		.sort((a, b) => OPEN_STATUSES.indexOf(a.order.status) - OPEN_STATUSES.indexOf(b.order.status) || (a.order.createdAt < b.order.createdAt ? -1 : 1));
-	return { byId, byOrder, byVehicle, bookingsByDay, inService };
+	return { byId, byOrder, byVehicle, bookingsByDay, visitsByDay, inService };
 }
 
 /** Minutes a booked car is overdue today: not arrived more than `grace` minutes after its start. 0 otherwise. */

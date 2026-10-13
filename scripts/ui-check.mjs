@@ -186,13 +186,13 @@ const DATE = 'button[aria-label^="Alege data"]';
 const READY = `document.querySelector(${JSON.stringify(DATE)})?.textContent`;
 const STRIP = 'section[aria-label="Deja în service"]';
 const LEGEND = '[role=group][aria-label="Arată o singură etapă"]';
-const REVEAL = 'button[aria-label^="Arată programarea"]';
+const REVEAL = 'button[aria-label^="Arată în calendar"]';
 const TIMELINE = "[data-timeline]";
 const DOCK = '[role=status]:has(button[aria-label^="Renunță la selecție"])';
 const NEXT = q('button[aria-label$="următoare"]:not([aria-label^="Mașina"])');
 const PREVIOUS = q('button[aria-label$="anterioară"]:not([aria-label^="Mașina"])');
 
-/** A card's label is "car · plate · customer · mechanic · where on the calendar · stage · #number". */
+/** A card's label is "car · plate · customer · mechanic · (gata de N zile ·) where on the calendar · stage · #number". */
 const stageOfCard = (label) => label.split(" · ").at(-2);
 const anchorOfCard = (label) => label.split(" · ").at(-3);
 
@@ -226,6 +226,11 @@ const STATE = `(() => {
 		litBlocks: blocks.filter(strong).length,
 		softBlocks: blocks.filter(soft).length,
 		litBlockInView: timeline ? blocks.filter(strong).every((block) => within(block, timeline)) : null,
+		litKinds: blocks.filter(strong).map((block) => block.dataset.kind),
+		pins: blocks.filter((block) => block.dataset.kind === "walkin").length,
+		late: blocks.filter((block) => block.getAttribute("aria-label").includes("întârzie")).map((block) => block.getAttribute("aria-label")),
+		lateShown: blocks.filter((block) => block.textContent.includes("întârzie")).length,
+		summary: document.querySelector(${JSON.stringify(DATE)})?.closest("header").querySelector("p")?.textContent ?? null,
 		pulsing: blocks.filter((block) => block.className.includes("animate-visit-arrive")).length,
 		selection: dock?.querySelector('button[aria-label^="Renunță la selecție"]').getAttribute("aria-label") ?? null,
 		dockText: dock?.querySelector("p")?.textContent ?? null,
@@ -298,7 +303,9 @@ async function checkDesktop(page, url) {
 	const segment = q(`button[title^="${stage}:"]`);
 	const tab = (name) => byText("[role=tab]", name);
 	const onGrid = () => page.centre(q(TIMELINE), "the timeline");
-	const cardWithBooking = `[...document.querySelectorAll(${JSON.stringify(`${STRIP} li`)})].find((li) => li.querySelector(":scope > " + ${JSON.stringify(REVEAL)}))`;
+	const cardWhere = (test) => `[...document.querySelectorAll(${JSON.stringify(`${STRIP} li:has(> [data-visit])`)})].find((li) => ${test}.test((li.querySelector("[data-visit]")?.getAttribute("aria-label") ?? "").split(" · ").at(-3) ?? ""))`;
+	const cardWithBooking = cardWhere("/^azi \\d\\d:\\d\\d$/");
+	const cardWithoutBooking = cardWhere("/^primit /");
 	/**
 	 * Hovers the bookings in view until one lights a car's card too: a booking of a car that is in service.
 	 * Only bookings already inside the timeline's box, by id, so hovering never scrolls days in or out.
@@ -500,10 +507,38 @@ async function checkDesktop(page, url) {
 	});
 
 	await fresh("every card says where the car is on the calendar", async () => {
-		const known = /^((azi|mâine|ieri|\d+ [^\s]+) \d\d:\d\d|altă programare: \d+ [^\s]+|fără programare)$/;
+		const known = /^(primit )?(azi|mâine|ieri|\d+ [^\s]+) \d\d:\d\d$/;
 		const odd = start.cards.map(anchorOfCard).filter((anchor) => !known.test(anchor));
 		expect(odd.length === 0, `unexpected: ${odd.join(" | ")}`);
 		expect(start.cards.some((card) => /^azi \d\d:\d\d$/.test(anchorOfCard(card))), "no car in service is booked for today in this demo data");
+	});
+
+	await fresh("a car that came without a booking has a pin on the timeline, and its card travels to it", async () => {
+		expect(start.cards.length === (await page.eval(`document.querySelectorAll(${JSON.stringify(`${STRIP} ${REVEAL}`)}).length`)), "every card should carry the calendar button");
+		if (!(await page.eval(`Boolean(${cardWithoutBooking})`))) skip("every car in service was booked");
+		await page.hover(cardWithoutBooking, "a card of a car that came without a booking");
+		await page.click(`${cardWithoutBooking}.querySelector(":scope > " + ${JSON.stringify(REVEAL)})`, "its calendar button");
+		await until((now) => now.litBlocks === 1 && now.litBlockInView, "the car's pin should be lit and inside the timeline");
+		await page.hover(q("h1"), "the page title");
+		const now = await rest();
+		expect(now.litKinds[0] === "walkin", `the lit item is a ${now.litKinds[0]}, expected the walk-in's pin`);
+		expect(!now.label.endsWith("azi"), `the pin is on the day the car was received; the date reads "${now.label}"`);
+		expect(now.dockText.includes("primit"), `the line reads "${now.dockText}"`);
+		expect(now.dockActions.some((action) => action.startsWith("Lucrarea #")) && !now.dockActions.includes("Deschide"), `the line's actions: ${now.dockActions.join(", ")}`);
+	});
+
+	await fresh("a finished car says how long it has been waiting", async () => {
+		const waiting = start.cards.filter((card) => card.includes(" · gata de "));
+		if (!waiting.length) skip("no finished car has waited a day");
+		expect(waiting.every((card) => stageOfCard(card) === "Gata"), `not all of them are finished: ${waiting.map(stageOfCard).join(", ")}`);
+		expect(waiting.every((card) => /gata de (1 zi|\d+ (de )?zile)/.test(card)), `unexpected wording: ${waiting.join(" | ")}`);
+		const shown = await page.eval(`[...document.querySelectorAll(${JSON.stringify(`${STRIP} [data-visit]`)})].filter((card) => card.textContent.includes("gata de")).length`);
+		expect(shown === waiting.length, `${shown} cards show it, ${waiting.length} should`);
+	});
+
+	await fresh("nobody is marked late before their time", async () => {
+		expect(start.late.length === 0, `at 11:20 these are marked late: ${start.late.join(" | ")}`);
+		expect(!start.summary.includes("întârzie"), `the summary reads "${start.summary}"`);
 	});
 
 	console.log(" Filter, hover and selection");
@@ -589,6 +624,7 @@ async function checkDesktop(page, url) {
 		const away = await rest();
 		expect(away.litBlocks === 1 && away.litBlockInView, `with the pointer away: ${away.litBlocks} bookings lit, in view: ${away.litBlockInView}`);
 		expect(away.pulsing === 1, `the booking it travelled to should pulse; ${away.pulsing} do`);
+		expect(!away.summary.includes("în afișaj"), `the focus moved to the booking must not count as a hover; the summary reads "${away.summary}"`);
 		expect(away.litCards === 1, `the card it came from should stay lit, ${away.litCards} are`);
 		expect(away.dockActions.includes("Deschide"), `the selected visit's actions: ${away.dockActions.join(", ")}`);
 		await page.press("Escape", "Escape", 27);
@@ -633,6 +669,17 @@ async function checkDesktop(page, url) {
 		expect(now.dockActions.includes("Primire") && now.dockActions.includes("Deschide"), `the line's actions: ${now.dockActions.join(", ")}`);
 		await page.click(byText(`${DOCK} button`, "Primire"), "Primire");
 		await until((s) => s.sheets >= 1, "the check-in sheet should open");
+	});
+}
+
+/** The same shop at 15:45: cars booked for earlier that have not arrived are late. */
+async function checkAfternoon(page) {
+	await check("a booked car that has not arrived a quarter of an hour on is marked late", async () => {
+		const now = await page.eval(STATE);
+		expect(now.late.length >= 1, "at 15:45 no booking is marked late");
+		expect(now.late.every((text) => /întârzie (\d+ min|\d+ h( \d+ min)?)$/.test(text)), `unexpected wording: ${now.late.join(" | ")}`);
+		expect(now.lateShown >= 1, "no booking shows the delay in words");
+		expect(/· (o mașină|\d+ mașini) întârzie$/.test(now.summary), `the summary reads "${now.summary}"`);
 	});
 }
 
@@ -705,6 +752,16 @@ try {
 	await checkDesktop(desktop, url);
 	await check("no script errors on the page", async () => expect(desktop.errors.length === 0, desktop.errors.join("\n      ")));
 	desktop.close();
+
+	console.log("Dashboard calendar, desktop, the clock at 15:45");
+	const later = new Date();
+	later.setHours(15, 45, 0, 0);
+	const afternoon = await Page.open(port, { width: 1440, height: 900, clockOffset: later.getTime() - Date.now() });
+	await afternoon.goto(url);
+	await afternoon.waitFor(READY, "the dashboard", 40000);
+	await sleep(600);
+	await checkAfternoon(afternoon);
+	afternoon.close();
 
 	console.log("Dashboard calendar, phone 430 × 932");
 	const phone = await Page.open(port, { width: 430, height: 932, touch: true, clockOffset });

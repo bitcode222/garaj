@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, CalendarSearch, CarFront, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ArrowRight, CalendarSearch, CarFront, ChevronLeft, ChevronRight, Clock, X } from "lucide-react";
 import { Card } from "@/components/ds/card";
 import { Initials, Money } from "@/components/ds/data";
 import { Segmented } from "@/components/ds/inputs";
@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { isActiveAppointment } from "@/domain/appointment";
 import { addDaysISO, dayOfInstant, diffDaysISO } from "@/domain/dates";
 import { formatPlate, vehicleName } from "@/domain/vehicle";
-import { VISIT_STAGES, appointmentForJob, countStages, defaultCalendarView } from "@/domain/visit";
+import { VISIT_STAGES, arrivalDelay, countStages, defaultCalendarView, pickupWait } from "@/domain/visit";
 import { fmtDate, fmtDays, fmtTime, fmtWorkOrder, plural } from "@/lib/format";
 import { VISIT_STAGE } from "@/lib/labels";
 import { useOpenDetail } from "@/lib/detail-mode";
@@ -22,8 +22,10 @@ import { useCollection, useSettings } from "@/lib/store/hooks";
 import { selectActive, selectAppointmentsByDay, selectVisits } from "@/lib/store/selectors";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
-import { minuteOfDay } from "@/features/calendar/utils";
+import { useNowMinute } from "@/features/calendar/time-grid";
+import { atMinute, minuteOfDay } from "@/features/calendar/utils";
 import { Timeline } from "./timeline";
+import { fmtDelay } from "./timeline-day";
 import { DAYS_AHEAD, DAYS_BACK } from "./timeline-geometry";
 import { NO_FOCUS, hoverHandlers, litAs, litClass, stageClass } from "./visit-ui";
 
@@ -96,15 +98,23 @@ function StageLine({ counts, value, onChange }) {
 	);
 }
 
+/** "azi 14:00", "ieri 09:30", "9 oct. 16:00". */
+function whenText(today, instant) {
+	const away = diffDaysISO(today, dayOfInstant(instant));
+	return `${Math.abs(away) <= 1 ? fmtDays(away) : fmtDate(instant, "d MMM")} ${fmtTime(instant)}`;
+}
+
 /**
  * Every car in the shop, always (it is the shop right now, whatever day the
  * timeline shows): a carousel of cards grouped by stage, in the status line's
  * order, each group under a label that stays in view while its cards scroll.
- * A card says where the car is on the calendar and carries a button that travels
- * there. Phones swipe (snap per card); from md up the arrows scroll it. With a
- * stage filter on, the title says so and carries the way out.
+ * A card says where the car is on the calendar (its booking, or the time it was
+ * received when it came without one) and carries a button that travels there; a
+ * finished car says how long it has been waiting. Phones swipe (snap per card);
+ * from md up the arrows scroll it. With a stage filter on, the title says so and
+ * carries the way out.
  */
-function InShopStrip({ groups, total, filter, onClearFilter, vehicles, customers, staff, settings, today, focus, onHover, targetFor, onReveal, onOpen }) {
+function InShopStrip({ groups, total, filter, onClearFilter, vehicles, customers, staff, settings, today, focus, onHover, onReveal, onOpen }) {
 	const track = useRef(null);
 	const [edge, setEdge] = useState({ start: true, end: true });
 	// The arrows follow everything that changes what can be scrolled: the scroll itself, cards added or removed, the width.
@@ -147,10 +157,6 @@ function InShopStrip({ groups, total, filter, onClearFilter, vehicles, customers
 	};
 	const stageLabel = filter ? VISIT_STAGE[filter].label : null;
 	const shown = groups.reduce((sum, group) => sum + group.visits.length, 0);
-	const when = (start) => {
-		const away = diffDaysISO(today, dayOfInstant(start));
-		return `${Math.abs(away) <= 1 ? fmtDays(away) : fmtDate(start, "d MMM")} ${fmtTime(start)}`;
-	};
 
 	return (
 		<section aria-label="Deja în service" className="flex flex-col gap-2.5 border-t px-4 pt-2.5 pb-4 md:flex-row md:items-start md:gap-4 md:px-5 md:pt-3 md:pb-5">
@@ -199,12 +205,13 @@ function InShopStrip({ groups, total, filter, onClearFilter, vehicles, customers
 									const vehicle = vehicles[order.vehicleId];
 									const customer = customers[order.customerId];
 									const mechanic = order.staffId ? staff[order.staffId] : null;
-									const target = targetFor(visit);
 									const name = vehicleName(vehicle) || `Lucrarea ${fmtWorkOrder(order.number)}`;
 									const gross = computeTotals(order.lines, { vatPayer: settings.invoicing.vatPayer }).gross;
-									// Where the car is on the calendar: its own booking, another booking of the same car, or nowhere.
-									const anchor = visit.appointment ? when(visit.appointment.start) : target ? `altă programare: ${fmtDate(target.start, "d MMM")}` : "fără programare";
-									const label = [name, vehicle?.plate && formatPlate(vehicle.plate), customer?.name, mechanic?.name, anchor, VISIT_STAGE[order.status].label, fmtWorkOrder(order.number)]
+									// Where the car is on the calendar: its booking, or (it came without one) the moment it was received.
+									const anchor = `${visit.appointment ? "" : "primit "}${whenText(today, visit.start)}`;
+									const waiting = pickupWait(order, today);
+									const waitingText = waiting ? `gata de ${plural(waiting, "zi", "zile")}` : null;
+									const label = [name, vehicle?.plate && formatPlate(vehicle.plate), customer?.name, mechanic?.name, waitingText, anchor, VISIT_STAGE[order.status].label, fmtWorkOrder(order.number)]
 										.filter(Boolean)
 										.join(" · ");
 									return (
@@ -236,7 +243,15 @@ function InShopStrip({ groups, total, filter, onClearFilter, vehicles, customers
 														</span>
 													</span>
 												</span>
-												<span className="truncate text-2xs font-medium">{customer?.name ?? "Client necunoscut"}</span>
+												<span className="flex items-center justify-between gap-2 text-2xs">
+													<span className="truncate font-medium">{customer?.name ?? "Client necunoscut"}</span>
+													{waitingText && (
+														<span className="flex shrink-0 items-center gap-1 font-semibold">
+															<Clock className="size-3" aria-hidden />
+															{waitingText}
+														</span>
+													)}
+												</span>
 												<span className="mt-auto flex items-center justify-between gap-2 border-t border-current/15 pt-2 text-2xs">
 													<span className="flex min-w-0 items-center gap-1.5">
 														{mechanic ? <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="size-5" /> : null}
@@ -247,17 +262,15 @@ function InShopStrip({ groups, total, filter, onClearFilter, vehicles, customers
 													</span>
 												</span>
 											</button>
-											{target && (
-												<button
-													type="button"
-													onClick={() => onReveal(visit, target)}
-													aria-label={`Arată programarea în calendar: ${target.title || "Programare"}, ${fmtDate(target.start, "d MMM")} ${fmtTime(target.start)}`}
-													title="Arată în calendar"
-													className="absolute top-2 right-2 z-10 flex size-8 items-center justify-center rounded-md border bg-card text-foreground shadow-xs opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 pointer-coarse:opacity-100 hover:bg-accent"
-												>
-													<CalendarSearch className="size-4" aria-hidden />
-												</button>
-											)}
+											<button
+												type="button"
+												onClick={() => onReveal(visit)}
+												aria-label={`Arată în calendar: ${name}, ${anchor}`}
+												title="Arată în calendar"
+												className="absolute top-2 right-2 z-10 flex size-8 items-center justify-center rounded-md border bg-card text-foreground shadow-xs opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 pointer-coarse:opacity-100 hover:bg-accent"
+											>
+												<CalendarSearch className="size-4" aria-hidden />
+											</button>
 										</li>
 									);
 								})}
@@ -290,6 +303,8 @@ export function DashboardCalendar({ today }) {
 	const staff = selectActive(staffMap);
 	const byDay = selectAppointmentsByDay(appointments);
 	const visits = selectVisits(appointments, workOrders);
+	const now = useNowMinute();
+	const nowAt = now == null ? null : atMinute(today, now);
 
 	const suggested = defaultCalendarView(byDay.get(today));
 	const [auto, setAuto] = useState({ day: today, view: suggested });
@@ -350,15 +365,12 @@ export function DashboardCalendar({ today }) {
 	}, [settledFrom, settledTo, visits]);
 
 	// Where to send the user when nothing is booked in view.
-	const nextDay = useMemo(() => {
-		let best = null;
-		for (const [day, list] of byDay) if (day > settledTo && (!best || day < best) && list.some(isActiveAppointment)) best = day;
-		return best;
-	}, [byDay, settledTo]);
+	let nextDay = null;
+	for (const [day, list] of byDay) if (day > settledTo && (!nextDay || day < nextDay) && list.some(isActiveAppointment)) nextDay = day;
 
-	// A selection is only as alive as its visit: deleted or cancelled, and it is gone without anyone clearing it.
-	const selectedVisit = selected ? visits.byId.get(selected.id) : null;
-	const selection = selectedVisit?.appointment ? selected : null;
+	// A selection is only as alive as its visit: a booking deleted or cancelled, a walk-in's job closed, and it is gone without anyone clearing it.
+	const selectedVisit = selected ? (visits.byId.get(selected.id) ?? null) : null;
+	const selection = selectedVisit ? selected : null;
 	const hoveredCar = hovered ? (visits.byId.get(hovered)?.vehicleId ?? null) : null;
 	const selectedCar = selection ? selectedVisit.vehicleId : null;
 	const selectedId = selection?.id ?? null;
@@ -404,14 +416,12 @@ export function DashboardCalendar({ today }) {
 		timeline.current?.goTo({ day, minute, align: 0 });
 	};
 
-	// Card → calendar: travel to the booking and select it, at the current zoom; the filter goes only if it would hide the booking.
-	const reveal = (card, appointment) => {
-		const target = visits.byId.get(appointment.id);
-		if (!target) return;
-		if (stage && target.stage !== stage) setStage(null);
+	// Card → calendar: travel to the car's place on the timeline (its booking, or the pin where it was received) and
+	// select it, at the current zoom. A card is only shown when its stage passes the filter, so its place is too.
+	const reveal = (visit) => {
 		setHovered(null);
-		setSelected({ id: target.id, origin: card.id, travelled: true });
-		timeline.current?.goTo({ day: target.day, minute: minuteOfDay(target.start), align: 0.5, focusId: target.id, reveal: true });
+		setSelected({ id: visit.id, origin: null, travelled: true });
+		timeline.current?.goTo({ day: visit.day, minute: minuteOfDay(visit.start), align: 0.5, focusId: visit.id, reveal: true });
 	};
 
 	const onKeyDown = (event) => {
@@ -435,12 +445,14 @@ export function DashboardCalendar({ today }) {
 	}, [visits, stage]);
 
 	const create = useCallback(({ start, staffId } = {}) => openSheet("appointment", { start, staffId }), []);
-	// Opening a booking also selects it: when the sheet closes, the booking and its car's card are still lit.
-	const openBooking = useCallback(
+	// Opening a booking (or a walk-in's pin, which opens its job) also selects it: when the sheet closes,
+	// it and its car's card are still lit.
+	const openVisit = useCallback(
 		(visit) => {
 			setHovered(null);
 			setSelected({ id: visit.id, origin: null, travelled: false });
-			openDetail("appointment", visit.id);
+			if (visit.appointment) openDetail("appointment", visit.appointment.id);
+			else openDetail("work-order", visit.order.id);
 		},
 		[openDetail],
 	);
@@ -450,16 +462,19 @@ export function DashboardCalendar({ today }) {
 	const label = from === to ? fmtDate(from, "EEEE, d MMM") : `${fmtDate(from, from.slice(0, 7) === to.slice(0, 7) ? "d" : "d MMM")} – ${fmtDate(to, "d MMM yyyy")}`;
 	const labelNote = from === to && Math.abs(near) <= 1 ? fmtDays(near) : null;
 	const summary = `${plural(model.bookings.length, "programare", "programări")} · ${visits.inService.length} în service`;
+	// Booked for today, more than a quarter of an hour ago, and still not here.
+	const lateToday = nowAt ? (visits.bookingsByDay.get(today) ?? NONE).filter((visit) => arrivalDelay(visit.appointment, nowAt) > 0).length : 0;
 	// While a visit is hovered or focused, say how many of its car's bookings this view shows.
 	const hoveredCount = hoveredCar ? model.bookings.filter((visit) => visit.vehicleId === hoveredCar).length : 0;
 	const hoveredSummary = hovered
 		? `${vehicleName(vehicles[hoveredCar]) || "Mașina"} · ${hoveredCount ? plural(hoveredCount, "programare în afișaj", "programări în afișaj") : "nicio programare în afișaj"}`
 		: null;
 
+	// The selected visit, for the line under the timeline: a booking, or a walk-in (no booking, only its job).
 	const picked = selection ? selectedVisit.appointment : null;
-	const pickedAway = picked ? diffDaysISO(today, selectedVisit.day) : 0;
-	const pickedWhen = picked ? `${Math.abs(pickedAway) <= 1 ? fmtDays(pickedAway) : fmtDate(picked.start, "EEE, d MMM")} ${fmtTime(picked.start)}` : null;
-	const pickedName = picked ? vehicleName(vehicles[selectedVisit.vehicleId]) || picked.title || "Programare" : null;
+	const pickedWhen = selection ? `${picked ? "" : "primit "}${whenText(today, selectedVisit.start)}` : null;
+	const pickedName = selection ? vehicleName(vehicles[selectedVisit.vehicleId]) || picked?.title || "Mașină" : null;
+	const pickedLate = picked && nowAt ? arrivalDelay(picked, nowAt) : 0;
 	const canCheckIn = picked && ["scheduled", "confirmed"].includes(picked.status) && picked.vehicleId;
 
 	return (
@@ -505,7 +520,10 @@ export function DashboardCalendar({ today }) {
 							<ChevronRight />
 						</Button>
 					</div>
-					<p className="truncate text-xs text-muted-foreground">{hoveredSummary ?? summary}</p>
+					<p className="truncate text-xs text-muted-foreground">
+						{hoveredSummary ?? summary}
+						{!hoveredSummary && lateToday > 0 && <span className={cn("font-medium", tone("yellow").text)}> · {lateToday === 1 ? "o mașină întârzie" : `${lateToday} mașini întârzie`}</span>}
+					</p>
 				</div>
 				<div className="flex items-center gap-2">
 					{!onToday && (
@@ -533,7 +551,6 @@ export function DashboardCalendar({ today }) {
 				today={today}
 				focus={focus}
 				onHover={setHovered}
-				targetFor={(visit) => visit.appointment ?? appointmentForJob(visit.order, appointments, today)}
 				onReveal={reveal}
 				onOpen={(visit) => {
 					setHovered(null);
@@ -547,15 +564,17 @@ export function DashboardCalendar({ today }) {
 					ref={timeline}
 					zoom={zoom}
 					today={today}
+					now={now}
 					settings={settings}
 					visits={visits}
 					staff={staff}
 					customers={customers}
+					vehicles={vehicles}
 					filter={stage}
 					focus={focus}
 					initial={opening}
 					onView={onView}
-					onOpen={openBooking}
+					onOpen={openVisit}
 					onCreate={create}
 					onPickDay={(day) => changeZoom("day", day)}
 					onHover={setHovered}
@@ -579,6 +598,7 @@ export function DashboardCalendar({ today }) {
 						<CalendarSearch className="size-3.5 shrink-0 text-brand" aria-hidden />
 						<span className="truncate">
 							<span className="font-semibold">{pickedName}</span> · {pickedWhen} · {VISIT_STAGE[selectedVisit.stage].label}
+							{pickedLate > 0 && <span className={cn("font-medium", tone("yellow").text)}> · {fmtDelay(pickedLate)}</span>}
 						</span>
 					</p>
 					<div className="flex items-center gap-1.5">
@@ -587,9 +607,11 @@ export function DashboardCalendar({ today }) {
 								<CarFront /> Primire
 							</Button>
 						)}
-						<Button size="sm" variant="outline" className="max-md:h-11" onClick={() => openDetail("appointment", picked.id)}>
-							Deschide
-						</Button>
+						{picked && (
+							<Button size="sm" variant="outline" className="max-md:h-11" onClick={() => openDetail("appointment", picked.id)}>
+								Deschide
+							</Button>
+						)}
 						{selectedVisit.order && (
 							<Button size="sm" variant="outline" className="max-md:h-11" onClick={() => openDetail("work-order", selectedVisit.order.id)}>
 								Lucrarea {fmtWorkOrder(selectedVisit.order.number)}

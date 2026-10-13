@@ -13,7 +13,7 @@ import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
 import { fold, matchesTokens, queryTokens } from "./search.js";
 import { addReading, formatPlate, serviceDue, vinIssue } from "./vehicle.js";
-import { VISIT_STAGES, appointmentForJob, arrivalDelay, buildVisits, countStages, defaultCalendarView, jobsWithoutBooking, pickupWait, visitStage } from "./visit.js";
+import { VISIT_STAGES, arrivalDelay, buildVisits, countStages, defaultCalendarView, pickupWait, visitStage } from "./visit.js";
 import { WO_NEXT, canTransition, isBackwardMove, transition } from "./work-order.js";
 
 const settings = {
@@ -412,43 +412,12 @@ describe("visit stage (dashboard calendar)", () => {
 		assert.equal(defaultCalendarView(undefined), "week");
 	});
 
-	test("jobs without a shown booking: open only, in pipeline order, oldest first", () => {
-		const orders = [
-			{ id: "a", status: "ready", createdAt: "2026-10-01T08:00:00.000Z" },
-			{ id: "b", status: "estimate", createdAt: "2026-10-03T08:00:00.000Z" },
-			{ id: "c", status: "estimate", createdAt: "2026-10-02T08:00:00.000Z" },
-			{ id: "d", status: "delivered", createdAt: "2026-10-01T08:00:00.000Z" },
-			{ id: "e", status: "in_progress", createdAt: "2026-10-01T08:00:00.000Z" },
-		];
-		assert.deepEqual(jobsWithoutBooking(orders, new Set(["e"])).map((o) => o.id), ["c", "b", "a"]);
-	});
-
 	test("counts cover every stage", () => {
 		const counts = countStages(["estimate", "estimate", "ready", "scheduled"]);
 		assert.deepEqual(Object.keys(counts), VISIT_STAGES);
 		assert.equal(counts.estimate, 2);
 		assert.equal(counts.ready, 1);
 		assert.equal(counts.delivered, 0);
-	});
-});
-
-describe("card → calendar target", () => {
-	const at = (id, start, extra = {}) => ({ id, start, status: "scheduled", vehicleId: "car1", ...extra });
-	test("prefers the booking the job was checked in from, then any booking that names it", () => {
-		const appts = { a: at("a", "2026-10-20T09:00:00.000Z"), b: at("b", "2026-10-14T09:00:00.000Z", { workOrderId: "job1" }) };
-		assert.equal(appointmentForJob({ id: "job1", vehicleId: "car1", appointmentId: "a" }, appts, "2026-10-13").id, "a");
-		assert.equal(appointmentForJob({ id: "job1", vehicleId: "car1" }, appts, "2026-10-13").id, "b");
-	});
-	test("otherwise the same car's booking nearest to today; cancelled ones are ignored; none for another car", () => {
-		const appts = {
-			far: at("far", "2026-10-30T09:00:00.000Z"),
-			near: at("near", "2026-10-15T09:00:00.000Z"),
-			gone: at("gone", "2026-10-13T10:00:00.000Z", { status: "cancelled" }),
-			other: at("other", "2026-10-13T11:00:00.000Z", { vehicleId: "car2" }),
-		};
-		assert.equal(appointmentForJob({ id: "j", vehicleId: "car1" }, appts, "2026-10-13").id, "near");
-		assert.equal(appointmentForJob({ id: "j", vehicleId: "car9" }, appts, "2026-10-13"), null);
-		assert.equal(appointmentForJob({ id: "j" }, appts, "2026-10-13"), null);
 	});
 });
 
@@ -492,6 +461,15 @@ describe("visits index", () => {
 		assert.deepEqual(visits.bookingsByDay.get("2026-10-13").map((v) => v.id), ["early", "booked"]);
 		assert.deepEqual(visits.bookingsByDay.get("2026-10-12").map((v) => v.id), ["named"]);
 		assert.equal(visits.bookingsByDay.has("2026-10-11"), false);
+	});
+
+	test("every car in service has a place on the calendar: walk-ins sit at their check-in time", () => {
+		assert.deepEqual(visits.visitsByDay.get("2026-10-13").map((v) => v.id), ["early", "job4", "booked"]);
+		assert.deepEqual(visits.visitsByDay.get("2026-10-11").map((v) => v.id), ["job5"]);
+		const walkin = visits.byId.get("job5");
+		assert.equal(walkin.start, workOrders.job5.createdAt);
+		assert.equal(new Date(walkin.end) - new Date(walkin.start), 30 * 60_000);
+		for (const visit of visits.inService) assert.ok(visits.visitsByDay.get(visit.day).includes(visit), `${visit.id} is on no day`);
 	});
 
 	test("in service: every open job once, pipeline order, longest in the shop first", () => {
