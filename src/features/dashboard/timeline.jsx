@@ -690,7 +690,7 @@ export function Timeline({ ref, zoom, today, now, settings, visits, staff, custo
 					})}
 					{slot && !drag && layout && (
 						// Where a booking would begin if free time were pressed here.
-						<div aria-hidden data-start-line={hhmm(slot.minute)} className="pointer-events-none absolute z-[8]" style={{ left: xOf(layout, hours, slot.day, slot.minute), top: rowTop(slot.rowKey), height: ROW_PX }}>
+						<div aria-hidden data-start-line={hhmm(slot.minute)} className="pointer-events-none absolute z-[8] transition-[left,top] duration-200 ease-out motion-reduce:transition-none" style={{ left: xOf(layout, hours, slot.day, slot.minute), top: rowTop(slot.rowKey), height: ROW_PX }}>
 							<span className="absolute inset-y-1 left-0 w-0.5 -translate-x-1/2 rounded-full bg-foreground" />
 							<span className="absolute top-1 left-1.5 rounded bg-foreground px-1 text-2xs leading-4 font-semibold whitespace-nowrap text-background tabular-nums">{hhmm(slot.minute)}</span>
 						</div>

@@ -290,3 +290,37 @@ Checks added: the sidebar's own choice on the calendar; the direction button (da
 - **Under the big title, what is in view and how many bookings it has**, as shown (the filters apply), following the scroll: Zi "Azi, 19 octombrie · 11 programări" (the day in the middle), Săptămână "19–25 octombrie · 30 de programări", Lună "în octombrie · 92 de programări".
 - **In ⇅ Zi, the day's date has its own column** at the left of the mechanics' coloured cells, as tall as the day and centred in it; the coloured cells hold only the names (the label column is 140 px, 104 px on a phone). **"+N" in the cars-in-service row** sits in a strip under the lane, so it never covers a car's name on a narrow day.
 
+**Each day's count under its name:**
+
+- **Under each day's name, how many bookings it has**, as shown (the filters apply): "3 programări" where it fits, "3 prog." or "3" where it does not; 0 is faint. In ⇄ it is the header's second line (the header grows from 40 to 54 px); in ⇅ it sits under the date, in the date column beside the mechanics' bands or under the name in Săptămână. A closed day shows it only when it has bookings. The day's button says it too ("luni, 19 octombrie, 3 programări").
+
+**What each card is, at a glance:**
+
+- **Top-left, a mark** (`bookingMark` in `src/domain/visit.js`, names and icons in `BOOKING_MARK`): 📅 still a booking (Programat, Confirmat, and also Neprezentat or Anulat), 🔧 a job (the car was checked in and its lucrare is open: Deviz, Aprobat, În lucru, Așteaptă piese), ✓ finished (the lucrare is Gata or Predat, or the booking is Finalizat). The card's label and tooltip name it too.
+- **Bottom-left, the mechanic's avatar** (it was top-left in ⇅ and top-right in ⇄): its own row when the card is tall enough, at the start of the bottom line when it is not, and at the end of a one-line card or a Lună chip.
+
+**A booking's details on hover:**
+
+- **With a mouse, resting on a card (about 0.1 s) opens its details** beside it (right, else left; under or over a card too wide for either): what it is and its state (📅 Programare · Confirmat, 🔧 Lucrare · În lucru, ✓ Finalizată · Gata), its number, the car with its logo and plate, the day, the hours and how long; then, as a list, Client (and phone), Mecanic (or Nealocat), Elevator, Servicii, Lucrare (number and value), Problemă, Motiv (for a cancelled or missed one), only the lines that have something; the notes; and what to watch: late, the arrival the customer announced, an overlap, the customer's note.
+- **Moving to the next card shows its details at once**; moving away, pressing (a click or a drag), scrolling or Esc hides them. They only inform: a click still opens the booking, and a phone (no hover) keeps the tap. One card for the whole calendar (`BookingPeek`, found through `data-appt`), so the grid carries nothing extra; it replaces the browser's own tooltip on the cards.
+- **The start line over free time glides** to the next slot (0.2 s, eased) instead of jumping, on the calendar (⇄ and ⇅) and on Azi's timeline; with reduced motion it jumps as before.
+
+**Warnings with their fixes, and a job's card opens the job** (the full plan: [`WARNINGS.md`](WARNINGS.md)):
+
+- Each card shows its most urgent warning as an outline and a sign at the end of its top line; the hover card and the sheet say exactly what (with whom, since when, why) and offer the fix as a button, with undo.
+- **A card that is a lucrare (🔧, or ✓ with its job) opens the job's sheet**, not the booking's: once the car is in, the job is what is worked on. A booking still to come (📅) opens the booking's sheet, as before.
+
+**A floating mini month, the settings folded under the header, a search after the title (2026-10-19):**
+
+- **The side panel is gone.** The **mini month floats** over the grid (desktop): moved by its top bar, resized by its bottom-right corner (248–560 px), closed by ✕ and brought back by the calendar icon at the end of the controls. It keeps to the bottom-right by default, is remembered where it was left (`garaj.calendar.mini`), and always stays inside the calendar's area (a narrower window, or the sidebar opening, moves it in). Its days grow with it.
+- **The settings** (Mecanici, Stări, Afișare: direction, colour by, cars in service, confirm on move) are a **collapsible under the header**, opened by **Setări** next to the search (remembered; a badge counts the filters that hide something, Anulat hidden being the default). On a phone (and a narrow tablet) the mini month and the settings stay in the sheet opened from the title.
+- **The sidebar** is no longer folded by the calendar: one choice for every page, open by default (the calendar's own `garaj.sidebar.calendar` is gone).
+
+**The search** (bookings and jobs only), on the title's line (under it on a phone); `/` puts the cursor in it:
+
+- **What it finds**: the car (make, model, plate, VIN), the customer (name, phone), what it is for (title, operations, services, the job's complaint), the mechanic, the booking's number and its job's (#128, #1873). Case, diacritics and spacing do not matter ("ionut" finds "Ionuț", "b123abc" finds "B 123 ABC", "0722123456" finds "0722 123 456"); every word must be found, in any order; it starts at two letters or digits. The rule: `src/domain/booking-search.js` (tested).
+- **What the calendar does** as the query settles (150 ms after the last key; a spinner meanwhile): **the bookings not found fade** (so do the cars in service not found), the **days say "2 din 5"** (found of those shown; "—" for none), the line under the title says "5 din 30 găsite", and the **mini month rings the days with a match**. When nothing found is in view, the calendar **glides to the nearest** (the next one to come, else the last one past) and puts it in focus.
+- **The list** under the field: what is still to come first (soonest first), then what has passed (latest first), then the jobs nobody booked ("lucrări fără programare"); the counts are split ("24 programări · 135 lucrări fără programare"). ↑ ↓ choose, Enter goes there, Esc closes the list (a second Esc empties the search). **‹ n / N ›** (and Enter / Shift+Enter once the list is closed) walk through what was found in time order, bringing each into view, at its hour.
+- **Edge cases**: a booking found but hidden by the filters still counts ("1 ascuns de filtre · Arată" shows everything again) and opens in its sheet from the list; a job nobody booked opens its sheet; a booking far away (outside the strip's window) is reached as any day is (the window moves there); switching the view keeps the search; an empty field brings the calendar back at once.
+- **Performance**: the text each record is found by is built once per change of the data (not per key), as is the job behind each booking; a query is a few `includes` per record (20 000 bookings in a few milliseconds), and the cards learn the result through one set in their lookups, so only the cards on screen re-render.
+

@@ -38,7 +38,8 @@ export function CommandMenu() {
 	const router = useRouter();
 	const [query, setQuery] = useState("");
 	// A new opening starts from what it was opened with (the home page's field passes what was typed there).
-	const [opened, setOpened] = useState(session);
+	// Mounted already open (its code loaded after the key was pressed), that opening is new to it too.
+	const [opened, setOpened] = useState(() => (open ? null : session));
 	if (opened !== session) {
 		setOpened(session);
 		setQuery(seed);

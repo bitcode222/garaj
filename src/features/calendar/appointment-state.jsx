@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarCheck, CalendarClock, CarFront, CircleX, Clock, History, TriangleAlert, Undo2, UserX } from "lucide-react";
+import { CalendarCheck, CalendarClock, CarFront, CircleX, Clock, History, Undo2, UserX } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Timeline } from "@/components/ds/data";
 import { FlowSteps } from "@/components/ds/flow-steps";
@@ -108,26 +108,9 @@ export function AppointmentState({ appointment, order, panel = null, onPanel }) 
 		};
 	}
 
-	// Its time has passed and nothing was recorded: the most common loose end, asked about directly.
-	const notice = flow.over ? (
-		<div className={cn("flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center", tone("yellow").chip)}>
-			<p className="flex min-w-0 flex-1 items-start gap-2 text-sm font-medium">
-				<TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
-				Programarea a trecut. A venit clientul?
-			</p>
-			<div className="flex flex-wrap gap-2">
-				<Button size="sm" className="max-md:h-11" onClick={run.checkin} disabled={Boolean(order)}>
-					<CarFront /> A sosit
-				</Button>
-				<Button size="sm" variant="outline" className="max-md:h-11" onClick={run.no_show}>
-					Neprezentat
-				</Button>
-				<Button size="sm" variant="outline" className="max-md:h-11" onClick={run.reschedule}>
-					Reprogramează
-				</Button>
-			</div>
-		</div>
-	) : appointment.status === "arrived" ? (
+	// Its time has passed and nothing was recorded: the warning "missed" above asks, with its fixes (docs/WARNINGS.md).
+	const notice =
+		appointment.status === "arrived" ? (
 		<p className="text-sm text-muted-foreground">Mașina e în service: totul continuă în lucrare (pasul următor, sus).</p>
 	) : appointment.status === "done" ? (
 		<p className="text-sm text-muted-foreground">Vizita s-a încheiat.</p>

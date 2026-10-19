@@ -119,6 +119,15 @@ export function computeReminders({
 
 const fmtDate = (iso) => (iso ? iso.split("-").reverse().join(".") : "");
 
+/** Asks the customer to confirm a booking ("de azi", "de mâine" or a date): ready-to-send text for WhatsApp / SMS. */
+export function confirmationMessage({ appointment, customer, vehicle, settings, today }) {
+	const hello = `Bună ziua${customer ? `, ${greetingName(customer)}` : ""}!`;
+	const car = vehicle ? `${vehicleName(vehicle)}${vehicle.plate ? ` (${formatPlate(vehicle.plate)})` : ""}` : "mașina dvs.";
+	const day = dayOfInstant(appointment.start);
+	const when = day === today ? "de azi" : day === addDaysISO(today, 1) ? "de mâine" : `din ${fmtDate(day)}`;
+	return `${hello} Vă reamintim programarea ${when}, ora ${timeOfInstant(appointment.start)}, pentru ${car}. Confirmați, vă rugăm? ${settings.shop.name}`;
+}
+
 /** Ready-to-send text for WhatsApp / SMS. */
 export function reminderMessage(reminder, { customer, vehicle, invoice, settings }) {
 	const hello = `Bună ziua${customer ? `, ${greetingName(customer)}` : ""}!`;

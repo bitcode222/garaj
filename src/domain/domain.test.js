@@ -13,7 +13,7 @@ import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
 import { fold, matchesTokens, queryTokens } from "./search.js";
 import { addReading, formatPlate, serviceDue, vinIssue } from "./vehicle.js";
-import { VISIT_STAGES, arrivalDelay, buildVisits, countStages, defaultCalendarView, pickupWait, visitStage, visitSubject, visitTiming } from "./visit.js";
+import { VISIT_STAGES, arrivalDelay, bookingMark, buildVisits, countStages, defaultCalendarView, pickupWait, visitStage, visitSubject, visitTiming } from "./visit.js";
 import { WO_NEXT, canTransition, isBackwardMove, transition } from "./work-order.js";
 
 const settings = {
@@ -411,6 +411,20 @@ describe("visit stage (dashboard calendar)", () => {
 		assert.equal(visitStage({ status: "cancelled" }), null);
 		assert.equal(visitStage({ status: "arrived" }, { status: "cancelled" }), null);
 		assert.equal(visitStage({ status: "arrived" }), "in_progress");
+	});
+
+	test("a booking's card is marked booked, a job once the car is in, done when the job is finished", () => {
+		assert.equal(bookingMark({ status: "scheduled" }), "booking");
+		assert.equal(bookingMark({ status: "confirmed" }), "booking");
+		assert.equal(bookingMark({ status: "no_show" }), "booking");
+		assert.equal(bookingMark({ status: "cancelled" }), "booking");
+		assert.equal(bookingMark({ status: "arrived" }, { status: "estimate" }), "job");
+		assert.equal(bookingMark({ status: "arrived" }, { status: "in_progress" }), "job");
+		assert.equal(bookingMark({ status: "arrived" }, { status: "waiting_parts" }), "job");
+		assert.equal(bookingMark({ status: "arrived" }), "job");
+		assert.equal(bookingMark({ status: "arrived" }, { status: "ready" }), "done");
+		assert.equal(bookingMark({ status: "done" }, { status: "delivered" }), "done");
+		assert.equal(bookingMark({ status: "done" }), "done");
 	});
 
 	test("opens on the day only when something active is booked for it", () => {

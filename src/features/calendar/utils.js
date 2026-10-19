@@ -1,5 +1,5 @@
 import { addDaysISO, addMonthsISO, parseISODate, pad2, toISODate } from "@/domain/dates";
-import { fmtDate } from "@/lib/format";
+import { fmtDate, plural } from "@/lib/format";
 import { APPOINTMENT_STATUS, SERVICE_CATEGORIES } from "@/lib/labels";
 
 export const HOUR_PX = 72;
@@ -127,6 +127,14 @@ export function eventTone(appointment, colorBy, { staff, services }) {
 	if (colorBy === "mechanic") return staff[appointment.staffId]?.color ?? "neutral";
 	if (colorBy === "service") return SERVICE_CATEGORIES[services[appointment.serviceIds?.[0]]?.category]?.tone ?? "neutral";
 	return APPOINTMENT_STATUS[appointment.status]?.tone ?? "blue";
+}
+
+/** A day's bookings as its name says them: in full where it fits in `room` px, shortened where not (`letter`: px a letter, about 6 for 11 px text). */
+export function dayCount(count, room, letter = 6) {
+	const full = plural(count, "programare", "programări");
+	if (full.length * letter <= room) return full;
+	const short = `${count} prog.`;
+	return short.length * letter <= room ? short : String(count);
 }
 
 export const hourLabel = (minutes) => `${pad2(Math.floor(minutes / 60))}:00`;

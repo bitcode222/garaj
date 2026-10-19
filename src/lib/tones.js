@@ -51,6 +51,7 @@ export const TONES = {
 		soft: "bg-amber-50/70 dark:bg-amber-950/30",
 		border: "border-amber-300 dark:border-amber-700",
 		bar: "bg-amber-500",
+		outline: "outline-amber-500",
 	},
 	green: {
 		chip: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300",
@@ -69,6 +70,7 @@ export const TONES = {
 		soft: "bg-red-50/70 dark:bg-red-950/30",
 		border: "border-red-300 dark:border-red-700",
 		bar: "bg-red-500",
+		outline: "outline-red-500",
 	},
 };
 

@@ -679,6 +679,7 @@ async function checkDesktop(page, url) {
 		await page.move({ x: free.x + 50, y: free.y });
 		const over = await state();
 		expect(/^\d\d:(00|15|30|45)$/.test(over.slot ?? ""), `the line reads "${over.slot}"`);
+		await sleep(300); // the line glides to its slot (0.2 s)
 		const line = await page.eval(`(() => { const r = document.querySelector("[data-start-line]").getBoundingClientRect(); return { x: r.left, top: r.top, bottom: r.bottom }; })()`);
 		expect(Math.abs(line.x - (free.x + 50)) <= 16 && line.top < free.y && line.bottom > free.y, `the line is at ${Math.round(line.x)}, the pointer at ${Math.round(free.x + 50)}`);
 		await page.hover(q("h1"), "the page title");
@@ -759,6 +760,7 @@ async function checkDesktop(page, url) {
 		expect(saved.toast.includes("Interval nou") && saved.toast.includes(stretching.drag.range), `the toast reads "${saved.toast}"`);
 		expect((await labelNow()).startsWith(stretching.drag.range), `the booking reads "${await labelNow()}"`);
 		expect(saved.selection !== null, "the booking that was changed should be left selected");
+		await sleep(450); // the toast slides in: its button settles before it is pressed
 		await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
 		await page.waitFor(`${q(`[data-appt="${booking.id}"]`)}?.getAttribute("aria-label").startsWith(${JSON.stringify(before)})`, `the booking back at ${before}`);
 	});
@@ -782,6 +784,7 @@ async function checkDesktop(page, url) {
 		expect(saved.toast.includes("Mutată") && saved.toast.includes(moving.drag.range), `the toast reads "${saved.toast}"`);
 		const label = () => page.eval(`${q(`[data-appt="${booking.id}"]`)}?.getAttribute("aria-label") ?? null`);
 		expect((await label()).startsWith(moving.drag.range), `the booking reads "${await label()}"`);
+		await sleep(450); // the toast slides in: its button settles before it is pressed
 		await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
 		await page.waitFor(`${q(`[data-appt="${booking.id}"]`)}?.getAttribute("aria-label").startsWith(${JSON.stringify(before)})`, `the booking back at ${before}`);
 		// The same booking, pressed and released without moving: it opens, and stays where it is.
@@ -1006,6 +1009,7 @@ async function checkFlow(page, url) {
 		await press("Clientul a confirmat");
 		const after = await settle((now) => now.state?.includes("A sosit — începe lucrarea"), "after confirming, the next step should be check-in");
 		expect(after.toast?.includes("confirmată"), `the toast reads "${after.toast}"`);
+		await sleep(450); // the toast slides in: its button settles before it is pressed
 		await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
 		await settle((now) => now.state?.includes("Clientul a confirmat"), "the undo should put it back to Programat");
 	});
@@ -1024,6 +1028,7 @@ async function checkFlow(page, url) {
 		await press("Mută programarea");
 		const moved = await settle((now) => now.toast?.startsWith("Reprogramată"), "the booking should be moved");
 		expect(moved.title === before.title, "the sheet should still show the same booking");
+		await sleep(450); // the toast slides in: its button settles before it is pressed
 		await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
 	});
 
@@ -1037,6 +1042,7 @@ async function checkFlow(page, url) {
 		await press("Sari la Gata", "[...document.querySelectorAll('[role=alertdialog]')].at(-1)");
 		const jumped = await settle((now) => now.state?.includes("Predă mașina"), "after the jump the next step is 'Predă mașina'");
 		expect((jumped.state.match(/sărit/g) ?? []).length === 2, `the stepper: ${jumped.state}`);
+		await sleep(450); // the toast slides in: its button settles before it is pressed
 		await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
 		await settle((now) => now.state?.includes("Aprobă devizul"), "the undo should put the estimate back");
 	});
@@ -1092,6 +1098,11 @@ async function checkHome(page, url) {
 		const input = `document.querySelector("[role=dialog] input")`;
 		await page.eval(`${q("[data-home-search]")}.focus()`);
 		await page.press("B", "KeyB", 66);
+		// The search loads on first use; a key that came before the page was listening is pressed once more.
+		if (!(await page.waitFor(`${input}?.value`, "the search", 2500).catch(() => null))) {
+			await page.eval(`${q("[data-home-search]")}.focus()`);
+			await page.press("B", "KeyB", 66);
+		}
 		const typed = await page.waitFor(`${input}?.value`, "the search to open with the text");
 		expect(typed === "B", `the search opened with "${typed}"`);
 		await page.press("Escape", "Escape", 27);
@@ -1116,6 +1127,7 @@ async function checkHome(page, url) {
 		expect(countOf(after.title) === countOf(before.title) - 1, `the title went from "${before.title}" to "${after.title}"`);
 		expect(Number(after.note.match(/^(\d+)/)?.[1]) === Number(before.note.match(/^(\d+)/)?.[1]) + 1, `the line went from "${before.note}" to "${after.note}"`);
 		expect((await toast())?.includes("confirmată"), `the toast reads "${await toast()}"`);
+		await sleep(450); // the toast slides in: its button settles before it is pressed
 		await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
 		await page.waitFor(`Boolean(document.querySelector('[data-booking="${id}"]'))`, "the undo to bring the card back");
 	});
@@ -1229,7 +1241,8 @@ async function checkProgramari(page, url) {
 			await page.click(button, "Confirmă on a row");
 			await page.waitFor(`!document.querySelector('[data-row-appointment="${id}"]')`, "the row to leave 'De confirmat'");
 			expect((await toast()).includes("confirmată"), `the toast reads "${await toast()}"`);
-			await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
+			await sleep(450); // the toast slides in: its button settles before it is pressed
+		await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
 			await page.waitFor(`Boolean(document.querySelector('[data-row-appointment="${id}"]'))`, "the undo to bring the row back");
 		}
 		const word = start.labels[0].split(" · ")[2]?.split(" ")[0];
@@ -1310,6 +1323,7 @@ async function checkProgramari(page, url) {
 		await page.up({ x: block.x + width, y: block.y });
 		await page.waitFor(`document.querySelector('[data-appt="${block.id}"]')?.closest("[data-day]")?.dataset.day !== ${JSON.stringify(block.day)}`, "the booking on another day");
 		expect((await toast()).includes("Mutată"), `the toast reads "${await toast()}"`);
+		await sleep(450); // the toast slides in: its button settles before it is pressed
 		await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
 		await page.waitFor(`document.querySelector('[data-appt="${block.id}"]')?.closest("[data-day]")?.dataset.day === ${JSON.stringify(block.day)}`, "the undo to put it back");
 	});
@@ -1333,18 +1347,16 @@ async function checkProgramari(page, url) {
 		expect((await zoom()) === "week", "W did not go back to Săptămână");
 	});
 
-	await fresh("sidebar: the calendar opens with it folded; unfolded there, it stays so on the calendar, and Azi keeps its own", "calendar/?view=week", onCalendar, async () => {
+	await fresh("sidebar: the calendar opens it as every page does (open by default), and folding it there folds it everywhere", "calendar/?view=week", onCalendar, async () => {
 		const folded = () => page.eval(`document.documentElement.dataset.sidebar === "rail"`);
-		expect(await folded(), "the calendar should open with the sidebar folded");
-		await page.click(q('button[aria-label="Extinde bara laterală"]'), "unfold it");
-		expect(!(await folded()), "it did not unfold");
+		expect(!(await folded()), "the calendar should open with the sidebar open");
+		await page.click(q('button[aria-label="Restrânge bara laterală"]') ?? q('[data-shell="sidebar"] button[aria-label*="bara laterală"]'), "fold it");
+		expect(await folded(), "it did not fold");
 		await page.goto(url);
 		await page.waitFor(READY, "the dashboard", 20000);
-		expect(!(await folded()), "Azi should keep its own (open) sidebar");
-		await page.goto(`${url}calendar/`);
-		await page.waitFor(onCalendar, "the calendar", 20000);
-		expect(!(await folded()), "unfolded on the calendar, it should stay so there");
-		await page.eval(`localStorage.removeItem("garaj.sidebar.calendar")`);
+		expect(await folded(), "Azi should keep the same (folded) choice");
+		await page.click(q('button[aria-label="Extinde bara laterală"]'), "unfold it");
+		expect(!(await folded()), "it did not unfold");
 	});
 
 	await fresh("Calendar: the direction button turns Săptămână so days scroll up and down without end, and Lună into months side by side; the choice is kept", "calendar/?view=week", onCalendar, async () => {
@@ -1406,6 +1418,9 @@ async function checkProgramari(page, url) {
 		// How much of each day in view shows, in %, and how many mechanic columns a day has.
 		const seen = () =>
 			page.eval(`(() => { const s = document.querySelector("${CAL}"); const g = s.getBoundingClientRect(); const days = [...s.querySelectorAll("[data-day]:not([data-slim])")].map((d) => { const r = d.getBoundingClientRect(); const part = Math.max(0, Math.min(r.right, g.right) - Math.max(r.left, g.left + (s.clientWidth < 640 ? 48 : 56))); return part > 2 ? Math.round((part / r.width) * 100) : null; }).filter((v) => v != null); const day = s.querySelector("[data-day]:not([data-slim])"); return { days, columns: day ? day.querySelectorAll("[data-col]").length : 0 }; })()`);
+		// The mechanics' boxes are in the settings, folded under the header: unfold them first.
+		await page.eval(`document.querySelector('button[aria-controls="calendar-settings"][aria-expanded="false"]')?.click()`);
+		await sleep(350);
 		const boxes = `document.querySelectorAll('section[aria-label="Mecanici"] input')`;
 		const mechanics = await page.eval(`${boxes}.length`);
 		if (mechanics < 4) skip("fewer than four mechanics in the demo shop");
@@ -1436,9 +1451,59 @@ async function checkProgramari(page, url) {
 		await page.waitFor(`!document.querySelector("[data-mechanic-card]")`, "the card to close when the pointer leaves");
 	});
 
+	await fresh("Calendar: resting the mouse on a booking shows what it is and its details, and moving away hides them", "calendar/?view=week", onCalendar, async () => {
+		const booking = `[...document.querySelectorAll("${CAL} [data-appt]")].find((b) => { const s = document.querySelector("${CAL}").getBoundingClientRect(); const r = b.getBoundingClientRect(); return r.width > 40 && r.left > s.left + 60 && r.right < s.right - 20 && r.top > s.top + 140 && r.bottom < s.bottom - 10; })`;
+		// The floating mini month may lie over the booking: out of the way for this check (brought back at its end).
+		await page.eval(`document.querySelector('button[aria-label="Închide minicalendarul"]')?.click()`);
+		await sleep(150);
+		const id = await page.eval(`(${booking})?.dataset.appt ?? null`);
+		if (!id) skip("no booking in sight");
+		// By its id: hovering scrolls it into view, after which another card may be the first in sight.
+		await page.hover(`document.querySelector('${CAL} [data-appt="${id}"]')`, "a booking");
+		await page.waitFor(`Boolean(document.querySelector("[data-booking-peek]"))`, "the booking's details");
+		const peek = await page.eval(`(() => { const p = document.querySelector("[data-booking-peek]"); const r = p.getBoundingClientRect(); return { text: p.innerText, id: p.dataset.bookingPeek, inside: r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight, box: [r.left, r.top, r.right, r.bottom].map(Math.round), view: [innerWidth, innerHeight] }; })()`);
+		expect(peek.id === id, `the details are of another booking (${peek.id} for ${id})`);
+		expect(/^(Programare|Lucrare|Finalizată)/.test(peek.text) && peek.text.includes("Mecanic"), `the details read: ${peek.text.replace(/\n/g, " | ")}`);
+		expect(peek.inside, `the details spill off the screen (${peek.box.join(", ")} in ${peek.view.join("×")})`);
+		await page.hover(q("main h1") ?? q("header"), "away");
+		await page.move({ x: 5, y: 5 });
+		await page.waitFor(`!document.querySelector("[data-booking-peek]")`, "the details to close when the pointer leaves");
+		await page.eval(`document.querySelector('button[aria-label="Arată minicalendarul"]')?.click()`);
+	});
+
+	await fresh("Calendar: an overlapping booking says with whom, when and why; 'Mută la' fixes it and the toast undoes it", "calendar/?view=week", onCalendar, async () => {
+		const id = await page.eval(`[...document.querySelectorAll("${CAL} [data-appt][data-mark='booking']")].find((b) => /se suprapune/.test(b.getAttribute("aria-label")))?.dataset.appt ?? null`);
+		if (!id) skip("no overlapping booking in sight");
+		await page.click(`document.querySelector('${CAL} [data-appt="${id}"]')`, "the overlapping booking");
+		const warning = `document.querySelector('[role="dialog"] [data-warning="overlap"]')`;
+		await page.waitFor(`Boolean(${warning})`, "the overlap warning in the sheet");
+		await sleep(600); // the sheet slides in: its buttons settle before they are pressed
+		const text = await page.eval(`${warning}.innerText`);
+		expect(/Se suprapune cu/.test(text) && /același (mecanic|elevator)/.test(text) && /\d\d:\d\d–\d\d:\d\d/.test(text), `the warning reads: ${text.replace(/\n/g, " | ")}`);
+		const fix = `[...document.querySelectorAll('[role="dialog"] [data-warning="overlap"] button')].find((b) => b.innerText.trim().startsWith("Mută la"))`;
+		if (!(await page.eval(`Boolean(${fix})`))) skip("no free slot that day");
+		await page.click(fix, "Mută la …");
+		await page.waitFor(`!${warning}`, "the overlap to be resolved");
+		const undo = `[...document.querySelectorAll("[data-sonner-toast] button")].find((b) => b.innerText.trim() === "Anulează")`;
+		await page.waitFor(`Boolean(${undo})`, "the toast with its undo");
+		await sleep(500); // the toast slides in
+		await page.click(undo, "Anulează in the toast");
+		await page.waitFor(`Boolean(${warning})`, "the booking back where it was after the undo");
+	});
+
+	await fresh("Calendar: a lucrare's card opens the job's sheet, a booking's the booking's", "calendar/?view=week", onCalendar, async () => {
+		const job = `document.querySelector("${CAL} [data-appt][data-mark='job']")`;
+		if (!(await page.eval(`Boolean(${job})`))) skip("no job in sight");
+		await page.click(job, "a job's card");
+		await page.waitFor(`[...document.querySelectorAll('[role="dialog"] h2')].some((h) => /^Lucrarea #/.test(h.innerText))`, "the job's sheet");
+	});
+
 	await fresh("Calendar: a mechanic unticked in the panel leaves the grid, and ticking him brings him back", "calendar/?view=week", onCalendar, async () => {
 		const count = () => page.eval(`document.querySelectorAll("${CAL} [data-appt]").length`);
 		const before = await count();
+		// The mechanics' boxes are in the settings, folded under the header: unfold them first.
+		await page.eval(`document.querySelector('button[aria-controls="calendar-settings"][aria-expanded="false"]')?.click()`);
+		await sleep(350);
 		const box = `document.querySelector('section[aria-label="Mecanici"] label')`;
 		if (!(await page.eval(`Boolean(${box})`))) skip("no mechanics");
 		await page.click(box, "the first mechanic's box");
@@ -1448,6 +1513,33 @@ async function checkProgramari(page, url) {
 		await page.click(box, "the first mechanic's box again");
 		await sleep(300);
 		expect((await count()) === before, `ticking back shows ${await count()} of ${before}`);
+		await page.eval(`document.querySelector('button[aria-controls="calendar-settings"][aria-expanded="true"]')?.click()`);
+	});
+
+	await fresh("Calendar search: as it settles the rest fades, the days say how many were found, and Enter walks to the next one", "calendar/?view=week", onCalendar, async () => {
+		// A word every visible booking's car has in common is not known ahead: search for the car of the first booking in sight.
+		const word = await page.eval(`(() => { const b = document.querySelector("${CAL} [data-appt][data-mark]"); const label = b?.getAttribute("aria-label") ?? ""; return (label.split(" · ")[1] ?? "").split(" ")[0] || null; })()`);
+		if (!word || word.length < 2) skip("no booking with a car in sight");
+		await page.click(q('input[type="search"]'), "the search");
+		await page.send("Input.insertText", { text: word });
+		await page.waitFor(`document.querySelectorAll("${CAL} [data-match='1']").length > 0`, "the bookings found");
+		const seen = await page.eval(`({ found: document.querySelectorAll("${CAL} [data-match='1']").length, faded: document.querySelectorAll("${CAL} [data-match='0']").length, line: document.querySelector("[data-in-view]").innerText, hits: [...document.querySelectorAll("[data-day-hits]")].some((e) => / din /.test(e.innerText)), list: document.querySelectorAll('#calendar-search-results [role="option"]').length })`);
+		expect(seen.found > 0 && / din \d+ găsite/.test(seen.line) && seen.hits && seen.list > 0, `searching "${word}": ${JSON.stringify(seen)}`);
+		await page.press("Escape", "Escape", 27); // closes the list
+		await page.press("Enter", "Enter", 13); // the next one
+		await page.waitFor(`(document.querySelector("[data-search-walk] [aria-live]")?.innerText ?? "").includes(" / ")`, "‹ n / N › to say which one is in focus");
+		await page.eval(`document.querySelector('button[aria-label="Golește căutarea"]').click()`);
+		await page.waitFor(`!document.querySelector("${CAL} [data-match]")`, "the calendar back to normal once the search is emptied");
+	});
+
+	await fresh("Calendar: the mini month floats over the grid; closed, the header brings it back", "calendar/?view=week", onCalendar, async () => {
+		await page.waitFor(`Boolean(document.querySelector("[data-floating-month]"))`, "the floating mini month");
+		const box = await page.eval(`(() => { const f = document.querySelector("[data-floating-month]").getBoundingClientRect(); const g = document.querySelector("${CAL}").getBoundingClientRect(); return f.left >= g.left && f.right <= g.right + 1 && f.bottom <= g.bottom + 1; })()`);
+		expect(box, "the mini month should float inside the calendar");
+		await page.click(q('button[aria-label="Închide minicalendarul"]'), "✕");
+		await page.waitFor(`!document.querySelector("[data-floating-month]")`, "the mini month closed");
+		await page.click(q('button[aria-label="Arată minicalendarul"]'), "the header's button");
+		await page.waitFor(`Boolean(document.querySelector("[data-floating-month]"))`, "the mini month back");
 	});
 }
 
@@ -1474,6 +1566,7 @@ async function checkAfternoon(page) {
 		await page.waitFor(`!document.querySelector('[data-booking="${past.id}"]')`, "the card to leave the list");
 		const toast = await page.eval(`document.querySelector("[data-sonner-toast]")?.textContent ?? ""`);
 		expect(toast.includes("neprezentat"), `the toast reads "${toast}"`);
+		await sleep(450); // the toast slides in: its button settles before it is pressed
 		await page.click(q("[data-sonner-toast] button[data-button]"), "Anulează in the toast");
 		await page.waitFor(`Boolean(document.querySelector('[data-booking="${past.id}"]'))`, "the undo to bring the card back");
 	});

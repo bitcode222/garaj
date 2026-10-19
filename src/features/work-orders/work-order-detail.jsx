@@ -59,6 +59,7 @@ import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { closeSheet, walkSheet } from "@/lib/sheets";
 import { JobLinks } from "@/features/flow/visit-links";
 import { JobState, nextLabel, useJobMoves } from "./job-state";
+import { JobWarnings } from "@/features/calendar/booking-warnings";
 import { useWalk } from "@/features/flow/visit-links";
 
 const ACTIVITY_LABEL = { created: "Lucrare deschisă" };
@@ -176,6 +177,7 @@ function WorkOrder({ order, embedded = false }) {
 				meta={
 					<div className="space-y-4">
 						<JobLinks order={order} inSheet={embedded} onInvoice={openInvoice} onLines={showLines} onReactivate={() => moves.perform(moves.flow.next)} />
+						<JobWarnings order={order} />
 						<JobState order={order} moves={moves} onReview={askReview} />
 						<p className="text-xs text-muted-foreground">Deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}</p>
 					</div>

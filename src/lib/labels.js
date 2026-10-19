@@ -5,6 +5,8 @@ import {
 	Banknote,
 	CalendarCheck,
 	CalendarClock,
+	CalendarDays,
+	Check,
 	CarFront,
 	CircleCheck,
 	CircleDashed,
@@ -25,6 +27,13 @@ import {
 	UserX,
 	Wrench,
 } from "lucide-react";
+
+/** What a booking's card on the calendar is marked as, in its top-left corner (src/domain/visit.js bookingMark). */
+export const BOOKING_MARK = {
+	booking: { label: "Programare", tone: "blue", icon: CalendarDays },
+	job: { label: "Lucrare", tone: "orange", icon: Wrench },
+	done: { label: "Finalizată", tone: "green", icon: Check },
+};
 
 export const WORK_ORDER_STATUS = {
 	estimate: { label: "Deviz", tone: "blue", icon: FilePen, hint: "Așteaptă aprobarea clientului" },
