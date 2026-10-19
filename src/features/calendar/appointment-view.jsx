@@ -8,8 +8,7 @@ import { InlineText } from "@/components/ds/inline-text";
 import { KeyValue, KeyValueGrid } from "@/components/ds/data";
 import { PlateTag, VehicleLabel } from "@/components/ds/make-logo";
 import { ToneBadge } from "@/components/ds/tone";
-import { findConflicts } from "@/domain/appointment";
-import { dayOfInstant, minutesBetween } from "@/domain/dates";
+import { minutesBetween } from "@/domain/dates";
 import { deadline, lastReading } from "@/domain/vehicle";
 import { fmtDate, fmtKm, fmtTime } from "@/lib/format";
 import { DEADLINE_STATUS } from "@/lib/labels";
@@ -17,13 +16,11 @@ import { useRemember } from "@/lib/recents";
 import { openSheet } from "@/lib/sheets";
 import { saveAppointment } from "@/lib/store/actions";
 import { useCollection, useEntity, useSettings, useToday } from "@/lib/store/hooks";
-import { selectAppointmentsByDay } from "@/lib/store/selectors";
 import { toast } from "@/lib/toast";
-import { tone } from "@/lib/tones";
-import { cn } from "@/lib/utils";
 import { AppointmentLinks } from "@/features/flow/visit-links";
 import { CustomerNote } from "@/features/reviews/customer-note";
 import { AppointmentHistory, AppointmentState } from "./appointment-state";
+import { BookingWarnings } from "./booking-warnings";
 
 const durationLabel = (m) => (m < 60 ? `${m} min` : `${(m / 60).toLocaleString("ro-RO", { maximumFractionDigits: 1 })} h`);
 
@@ -35,7 +32,7 @@ const autoTitle = (a) => (a.operations ?? []).map((op) => op.name).filter(Boolea
  * place, the flow strip (the job it became, or the way to start it), its state section,
  * then who, what and when, and its history. Everything else is edited in its form.
  */
-export default function AppointmentView({ open, onOpenChange, id }) {
+export default function AppointmentView({ open, onOpenChange, id, panel: openOn = null }) {
 	const settings = useSettings();
 	const today = useToday();
 	const a = useEntity("appointments", id);
@@ -48,13 +45,10 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 	const order = a ? ((a.workOrderId && workOrders[a.workOrderId]) || Object.values(workOrders).find((o) => o.appointmentId === a.id) || null) : null;
 	const services = useCollection("services");
 	// A panel of the state section (reschedule, delay, a reason), also opened from the strip's "Reprogramează".
-	const [panel, setPanel] = useState(null);
+	const [panel, setPanel] = useState(openOn);
 	const last = vehicle ? lastReading(vehicle) : null;
 	const itp = vehicle && today ? deadline(vehicle.itpExpiry, today) : null;
 	const rca = vehicle && today ? deadline(vehicle.rcaExpiry, today) : null;
-	// Only the appointment's own day, and only while it is shown.
-	const byDay = selectAppointmentsByDay(useCollection("appointments"));
-	const conflicts = a && open ? findConflicts(a, byDay.get(dayOfInstant(a.start)) ?? []) : [];
 	const serviceNames = a?.operations ? a.operations.map((op) => op.name).filter(Boolean) : a?.serviceIds?.map((sid) => services[sid]?.name).filter(Boolean);
 
 	const rename = (text) => {
@@ -78,6 +72,8 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 			{a && (
 				<div className="space-y-6">
 					<AppointmentLinks appointment={a} onReschedule={() => setPanel("reschedule")} />
+					{/* What needs attention, exactly, with the fix one tap away (docs/WARNINGS.md). */}
+					<BookingWarnings appointment={a} onPanel={setPanel} />
 					<AppointmentState appointment={a} order={order} panel={panel} onPanel={setPanel} />
 
 					<div className="space-y-4">
@@ -88,7 +84,6 @@ export default function AppointmentView({ open, onOpenChange, id }) {
 								· {fmtTime(a.start)}–{fmtTime(a.end)} ({durationLabel(minutesBetween(a.start, a.end))})
 							</span>
 						</p>
-						{conflicts.length > 0 && <p className={cn("rounded-lg border p-3 text-sm", tone("yellow").chip)}>Se suprapune cu altă programare (același mecanic sau elevator).</p>}
 						<div className="grid gap-2 sm:grid-cols-2">
 							{customer && (
 								<button type="button" onClick={() => openSheet("customer-view", { id: customer.id })} className="flex min-h-14 items-center gap-3 rounded-md border p-3 text-left transition-colors hover:bg-accent/50">

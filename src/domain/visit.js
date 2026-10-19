@@ -25,6 +25,18 @@ export function visitStage(appointment, order = null) {
 	return "scheduled";
 }
 
+/**
+ * What a booking's card on the calendar is marked as: "booking" while it is only booked (or
+ * did not happen), "job" once the car was checked in and its job is open, "done" when the job
+ * is finished (ready for pickup, or delivered). `order` is the job the booking became, if any.
+ */
+export function bookingMark(appointment, order = null) {
+	const stage = visitStage(appointment, order);
+	if (stage === "ready" || stage === "delivered") return "done";
+	if (stage === "estimate" || stage === "approved" || stage === "in_progress" || stage === "waiting_parts") return "job";
+	return "booking";
+}
+
 /** The dashboard calendar opens on the day when something is booked for it, otherwise on the week. */
 export function defaultCalendarView(appointmentsToday) {
 	return (appointmentsToday ?? []).some(isActiveAppointment) ? "day" : "week";

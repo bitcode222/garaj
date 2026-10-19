@@ -58,19 +58,16 @@ function useBadges() {
 	return { openOrders, reminders: reminders.length, toConfirm };
 }
 
-// Desktop: the sidebar can be folded into the rail (docs/APPOINTMENTS-AND-NAV.md D4). The calendar keeps
-// its own choice and opens folded (it wants the width); every other page shares one choice, open by
-// default. The choice is put on <html> by a script in the layout before the first paint, so a folded
-// sidebar never flashes open, and again on every navigation.
+// Desktop: the sidebar can be folded into the rail (docs/APPOINTMENTS-AND-NAV.md D4): one choice for every
+// page (the calendar too), open by default. The choice is put on <html> by a script in the layout before
+// the first paint, so a folded sidebar never flashes open, and again on every navigation.
 const SIDEBAR_KEY = "garaj.sidebar";
-const CALENDAR_SIDEBAR_KEY = "garaj.sidebar.calendar";
-const onCalendar = (pathname) => pathname.startsWith("/calendar");
 
-function readSidebar(pathname) {
+function readSidebar() {
 	try {
-		return onCalendar(pathname) ? (localStorage.getItem(CALENDAR_SIDEBAR_KEY) === "full" ? "full" : "rail") : localStorage.getItem(SIDEBAR_KEY) === "rail" ? "rail" : "full";
+		return localStorage.getItem(SIDEBAR_KEY) === "rail" ? "rail" : "full";
 	} catch {
-		return onCalendar(pathname) ? "rail" : "full";
+		return "full";
 	}
 }
 
@@ -81,7 +78,7 @@ function applySidebar(mode) {
 
 function setSidebar(mode) {
 	try {
-		localStorage.setItem(onCalendar(window.location.pathname) ? CALENDAR_SIDEBAR_KEY : SIDEBAR_KEY, mode);
+		localStorage.setItem(SIDEBAR_KEY, mode);
 	} catch {
 		// private mode: for this page only
 	}
@@ -243,7 +240,7 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 	const isOpen = (key, fallback) => toggled[key] ?? fallback;
 	const toggle = (key, fallback) => setOpenText(JSON.stringify({ ...toggled, [key]: !isOpen(key, fallback) }));
 	return (
-		<aside data-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r bg-background lg:flex">
+		<aside data-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r bg-muted lg:flex">
 			<div className="border-b px-3 py-2.5">
 				<ShopMenu shopName={shopName} demo={demo} />
 			</div>
@@ -423,9 +420,9 @@ export function AppShell({ children }) {
 		const page = PROGRAMARI_PAGES.find((href) => pathname.startsWith(href.replace(/\/$/, "")));
 		if (page) setProgramari(page);
 	}, [pathname, setProgramari]);
-	// Entering or leaving the calendar: its own sidebar choice, or everyone else's, before the paint.
+	// On every navigation, the one choice, before the paint.
 	useLayoutEffect(() => {
-		applySidebar(readSidebar(pathname));
+		applySidebar(readSidebar());
 	}, [pathname]);
 	return (
 		<>

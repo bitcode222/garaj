@@ -5,9 +5,10 @@ import { Initials } from "@/components/ds/data";
 import { addDaysISO, parseISODate } from "@/domain/dates";
 import { vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtTime } from "@/lib/format";
-import { APPOINTMENT_STATUS } from "@/lib/labels";
+import { APPOINTMENT_STATUS, BOOKING_MARK } from "@/lib/labels";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
+import { AlertSign, alertOutline, alertSummary } from "./booking-warnings";
 import { monthInView, rowOfMonth, weekIndexOf, weekWindow, weeksNearEdge } from "./calendar-geometry";
 import { atMinute, eventTone, toMinutes } from "./utils";
 
@@ -47,26 +48,33 @@ export const WeekRow = memo(function WeekRow({ monday, top, height, month, today
 						</button>
 						{shown.map((a) => {
 							const car = vehicleName(lookups.vehicles[a.vehicleId]) || lookups.customers[a.customerId]?.name || a.title;
+							const mark = lookups.marks?.get(a.id) ?? "booking";
+							const Mark = BOOKING_MARK[mark].icon;
+							const alert = lookups.alerts?.get(a.id) ?? null;
 							return (
 								<button
 									key={a.id}
 									type="button"
 									data-appt={a.id}
 									onClick={() => onOpen(a)}
-									title={`${fmtTime(a.start)}–${fmtTime(a.end)} · ${car}`}
-									aria-label={`${fmtTime(a.start)}–${fmtTime(a.end)} · ${car} · ${APPOINTMENT_STATUS[a.status].label}`}
+									aria-label={[`${fmtTime(a.start)}–${fmtTime(a.end)}`, car, APPOINTMENT_STATUS[a.status].label, BOOKING_MARK[mark].label, alertSummary(alert)].filter(Boolean).join(" · ")}
+									data-mark={mark}
 									className={cn(
 										"flex h-[18px] min-w-0 shrink-0 items-center gap-1 rounded border px-1 text-left text-2xs leading-none",
 										tone(eventTone(a, colorBy, lookups)).block,
 										a.status === "scheduled" && "border-dashed",
 										(a.status === "no_show" || a.status === "cancelled") && "line-through opacity-50",
+										alertOutline(alert),
 										a.id === selectedId && "ring-2 ring-brand",
 										away && "opacity-70",
+										lookups.match && !lookups.match.has(a.id) && "opacity-15 saturate-50",
 									)}
 								>
-									{lookups.staff?.[a.staffId] && <Initials name={lookups.staff[a.staffId].name} tone={lookups.staff[a.staffId].color} size="sm" className="size-3 shrink-0 text-[6px]" />}
+									<Mark aria-hidden className="size-2.5 shrink-0" />
 									<span className="shrink-0 tabular-nums opacity-80">{fmtTime(a.start)}</span>
-									<span className="truncate font-medium">{car}</span>
+									<span className="min-w-0 flex-1 truncate font-medium">{car}</span>
+									<AlertSign alert={alert} className="size-2.5" />
+									{lookups.staff?.[a.staffId] && <Initials name={lookups.staff[a.staffId].name} tone={lookups.staff[a.staffId].color} size="sm" className="size-3 shrink-0 text-[6px]" />}
 								</button>
 							);
 						})}
