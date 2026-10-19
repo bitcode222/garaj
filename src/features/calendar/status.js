@@ -1,7 +1,7 @@
 import { toast } from "@/lib/toast";
 import { APPOINTMENT_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
-import { saveAppointment, setAppointmentStatus } from "@/lib/store/actions";
+import { restoreAppointment, setAppointmentStatus } from "@/lib/store/actions";
 
 /** Menu verbs for the one-tap status menu (target status → action label). */
 export const APPOINTMENT_ACTIONS = {
@@ -28,7 +28,7 @@ export function quickMoveAppointment(appointment, to) {
 				label: "Anulează",
 				onClick: () => {
 					try {
-						saveAppointment({ ...appointment });
+						restoreAppointment(appointment);
 					} catch (error) {
 						toast.error(error.message);
 					}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { BookOpen, EllipsisVertical, Package, Plus, Receipt, Trash2, Wrench } from "lucide-react";
 import { Initials, Money } from "@/components/ds/data";
 import { Field, MoneyInput, NumberInput } from "@/components/ds/inputs";
@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { CatalogPicker } from "./catalog-picker";
 
 const KIND_ICON = { labor: Wrench, part: Package, fee: Receipt };
+const TABLE_PX = 768; // the editor's width from which the lines are a table (Tailwind's @3xl, 48 rem)
 
 function LineSheet({ line, open, onOpenChange, onSave, onRemove, staff, vatPayer }) {
 	const [form, setForm] = useState(line);
@@ -104,6 +105,7 @@ function LineSheet({ line, open, onOpenChange, onSave, onRemove, staff, vatPayer
 export function LinesEditor({ lines, onChange, staff = [], vatPayer = true, readOnly = false, defaultStaffId = null }) {
 	const [editing, setEditing] = useState(null);
 	const [picker, setPicker] = useState(false);
+	const root = useRef(null);
 	const staffById = Object.fromEntries(staff.map((s) => [s.id, s]));
 
 	const update = (id, patch) => onChange(lines.map((l) => (l.id === id ? { ...l, ...patch } : l)));
@@ -112,14 +114,17 @@ export function LinesEditor({ lines, onChange, staff = [], vatPayer = true, read
 	const addBlank = (kind) => {
 		const line = { ...blankLine(kind), staffId: kind === "labor" ? defaultStaffId : null };
 		append([line]);
-		if (window.matchMedia("(max-width: 767px)").matches) setEditing(line);
+		// Narrow (a phone, or a sheet): there is no inline row to type in, so the new line opens in its form.
+		if ((root.current?.offsetWidth ?? 0) < TABLE_PX) setEditing(line);
 	};
 
 	return (
-		<div>
+		// The table needs room for its columns (48 rem); in a narrower container (a phone, a sheet) the lines are
+		// stacked rows that open a form on tap. Decided by the editor's own width, not the window's.
+		<div ref={root} className="@container">
 			{lines.length > 0 && (
 				<div className="overflow-hidden rounded-xl border">
-					<div className="hidden grid-cols-[20px_minmax(0,1fr)_84px_104px_64px_104px_32px] items-center gap-2 border-b bg-muted/50 px-3 py-2 text-2xs font-medium tracking-wider text-muted-foreground uppercase md:grid">
+					<div className="hidden grid-cols-[20px_minmax(0,1fr)_84px_104px_64px_104px_32px] items-center gap-2 border-b bg-muted/50 px-3 py-2 text-2xs font-medium tracking-wider text-muted-foreground uppercase @3xl:grid">
 						<span />
 						<span>Descriere</span>
 						<span className="text-right">Cant.</span>
@@ -139,7 +144,7 @@ export function LinesEditor({ lines, onChange, staff = [], vatPayer = true, read
 										type="button"
 										disabled={readOnly}
 										onClick={() => setEditing(line)}
-										className="flex w-full items-center gap-3 px-3 py-3 text-left md:hidden"
+										className="flex w-full items-center gap-3 px-3 py-3 text-left @3xl:hidden"
 									>
 										<Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
 										<span className="min-w-0 flex-1">
@@ -155,7 +160,7 @@ export function LinesEditor({ lines, onChange, staff = [], vatPayer = true, read
 										<Money value={lineNet(line)} className="text-sm font-medium" />
 									</button>
 									{/* desktop */}
-									<div className="hidden grid-cols-[20px_minmax(0,1fr)_84px_104px_64px_104px_32px] items-center gap-2 px-3 py-2 md:grid">
+									<div className="hidden grid-cols-[20px_minmax(0,1fr)_84px_104px_64px_104px_32px] items-center gap-2 px-3 py-2 @3xl:grid">
 										<Icon className="size-4 text-muted-foreground" aria-label={LINE_KINDS[line.kind]?.label} />
 										<div className="flex min-w-0 items-center gap-2">
 											<Input

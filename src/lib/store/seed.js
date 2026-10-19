@@ -679,7 +679,9 @@ export function buildDemoData(today) {
 	for (const v of vehicles) v.mileage.sort((a, b) => (a.date < b.date ? -1 : 1));
 
 	const nextWorkOrder = nextOrder;
-	const counters = { invoices: { GRJ: nextInvoice }, workOrders: nextWorkOrder };
+	// Bookings are numbered in the order they were made, like the jobs.
+	appointments.sort((a, b) => (a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0)).forEach((a, i) => (a.number = i + 1));
+	const counters = { invoices: { GRJ: nextInvoice }, workOrders: nextWorkOrder, appointments: appointments.length + 1 };
 
 	return {
 		collections: {

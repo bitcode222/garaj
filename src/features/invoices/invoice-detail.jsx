@@ -21,6 +21,7 @@ import {
 	User,
 	Wrench,
 } from "lucide-react";
+import { useRemember } from "@/lib/recents";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -43,6 +44,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { smsHref, whatsappHref } from "@/domain/customer";
 import { diffDaysISO } from "@/domain/dates";
 import { buildSnapshot, formatInvoiceNumber, invoiceMessage, issueProblems } from "@/domain/invoice";
+import { InvoiceLinks, useWalk } from "@/features/flow/visit-links";
+import { draftBehindOrder } from "@/domain/work-order";
+import { InvoiceState } from "./invoice-state";
 import { computeTotals } from "@/domain/lines";
 import { fmtDate, fmtDays, fmtWorkOrder } from "@/lib/format";
 import { printPage, shareText, useDraft, useQueryId } from "@/lib/hooks";
@@ -51,7 +55,10 @@ import { closeSheet, openSheet } from "@/lib/sheets";
 import {
 	deleteInvoiceDraft,
 	deletePayment,
+	issueAndPayInvoice,
 	issueInvoiceDraft,
+	redoInvoice,
+	refreshDraftFromOrder,
 	stornoInvoiceById,
 	updateInvoiceDraft,
 } from "@/lib/store/actions";
@@ -88,6 +95,7 @@ export function InvoiceEmbedded({ invoice }) {
 // ── draft ────────────────────────────────────────────────────────────────────
 
 function DraftInvoice({ invoice, embedded = false }) {
+	useRemember("invoice", invoice.id);
 	const router = useRouter();
 	const confirm = useConfirm();
 	const settings = useSettings();
@@ -110,9 +118,40 @@ function DraftInvoice({ invoice, embedded = false }) {
 
 	const customer = draft.customerId ? customers[draft.customerId] : null;
 	const vehicle = draft.vehicleId ? vehicles[draft.vehicleId] : null;
+	const order = useEntity("workOrders", invoice.workOrderId);
+	const today = useToday();
 	const vatPayer = settings.invoicing.vatPayer;
 	const totals = computeTotals(draft.lines, { vatPayer });
 	const problems = issueProblems(draft, { customer });
+	// The job changed after the draft was last touched, and would bill something else now.
+	const behind = Boolean(order && order.updatedAt > invoice.updatedAt && draftBehindOrder(invoice, order, { settings }));
+	const scrollTo = (part) => document.getElementById(`invoice-${part}-${invoice.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+	const issueAndPay = async (method) => {
+		flush();
+		setIssuing(true);
+		try {
+			const { invoice: issued } = await issueAndPayInvoice(invoice.id, { method });
+			toast.success(`Factura ${formatInvoiceNumber(issued.series, issued.number)} a fost emisă și încasată.`);
+		} catch (error) {
+			toast.error(error.message);
+		} finally {
+			setIssuing(false);
+		}
+	};
+	const refresh = () => {
+		flush();
+		try {
+			refreshDraftFromOrder(invoice.id);
+			toast.success("Liniile au fost luate din nou din lucrare.");
+		} catch (error) {
+			toast.error(error.message);
+		}
+	};
+	const fix = (code) => {
+		if (code === "cui" && customer) openSheet("customer", { id: customer.id });
+		else scrollTo(code === "customer" ? "client" : code === "issue_date" || code === "due_date" ? "dates" : "lines");
+	};
 
 	const issue = async () => {
 		flush();
@@ -154,33 +193,22 @@ function DraftInvoice({ invoice, embedded = false }) {
 				back={{ href: "/invoices/", label: "Facturi" }}
 				title="Factură nouă"
 				description={`Seria ${draft.series} · numărul se alocă la emitere`}
+				meta={
+					<div className="space-y-4">
+						<InvoiceLinks invoice={invoice} inSheet={embedded} />
+						<InvoiceState invoice={draft} today={today} customer={customer} behind={behind} handlers={{ issue, issueAndPay, remove, fix, refresh }} />
+					</div>
+				}
 				actions={
-					<>
-						<Button variant="outline" onClick={() => setPreview(true)} className="xl:hidden">
-							<Eye /> Previzualizare
-						</Button>
-						<Button onClick={issue} disabled={issuing} className="max-md:hidden">
-							<FileCheck2 /> Emite factura
-						</Button>
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button variant="ghost" size="icon" aria-label="Mai multe">
-									<EllipsisVertical />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end">
-								<DropdownMenuItem variant="destructive" onSelect={remove}>
-									<Trash2 /> Șterge ciorna
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</>
+					<Button variant="outline" onClick={() => setPreview(true)} className="xl:hidden">
+						<Eye /> Previzualizare
+					</Button>
 				}
 			/>
 
 			<div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
 				<div className="min-w-0 space-y-6">
-					<Card>
+					<Card id={`invoice-client-${invoice.id}`} className="scroll-mt-24">
 						<CardHeader title="Client și mașină" icon={User} />
 						<CardContent className="grid gap-4 sm:grid-cols-2">
 							<Field label="Client" required className="sm:col-span-2">
@@ -207,7 +235,7 @@ function DraftInvoice({ invoice, embedded = false }) {
 						</CardContent>
 					</Card>
 
-					<Card>
+					<Card id={`invoice-dates-${invoice.id}`} className="scroll-mt-24">
 						<CardHeader title="Date" />
 						<CardContent className="grid grid-cols-2 gap-4">
 							<Field label="Data emiterii">
@@ -219,7 +247,7 @@ function DraftInvoice({ invoice, embedded = false }) {
 						</CardContent>
 					</Card>
 
-					<Card>
+					<Card id={`invoice-lines-${invoice.id}`} className="scroll-mt-24">
 						<CardHeader title="Linii" description={vatPayer ? "Prețuri fără TVA" : "Neplătitor de TVA"} />
 						<CardContent>
 							<LinesEditor lines={draft.lines} onChange={(lines) => update({ lines })} staff={staff} vatPayer={vatPayer} />
@@ -238,16 +266,7 @@ function DraftInvoice({ invoice, embedded = false }) {
 						</CardContent>
 					</Card>
 
-					{problems.length > 0 && (
-						<Banner tone="yellow" title="Înainte de emitere">
-							<ul className="list-disc pl-4">
-								{problems.map((p) => (
-									<li key={p}>{p}</li>
-								))}
-							</ul>
-						</Banner>
-					)}
-				</div>
+</div>
 
 				<div className="hidden min-w-0 xl:block">
 					<div className="sticky top-8">
@@ -278,6 +297,7 @@ const ACTIVITY = {
 };
 
 function IssuedInvoice({ invoice, embedded = false }) {
+	useRemember("invoice", invoice.id);
 	const confirm = useConfirm();
 	const router = useRouter();
 	const settings = useSettings();
@@ -300,12 +320,15 @@ function IssuedInvoice({ invoice, embedded = false }) {
 	const message = invoiceMessage({ invoice, balance, settings });
 	const dueDays = today && invoice.dueDate ? diffDaysISO(today, invoice.dueDate) : null;
 
+	const walk = useWalk(embedded);
+	const openInvoice = (id, direction) => walk({ kind: "invoice", id, direction });
+	const refund = paid > 0 ? " Plățile încasate rămân de returnat clientului." : "";
+
+	// Storno cannot be undone (the law): the question says so, and says what follows.
 	const storno = async () => {
 		const ok = await confirm({
 			title: `Stornezi factura ${number}?`,
-			description:
-				"Se emite o factură de stornare cu valori negative, piesele revin în stoc, iar lucrarea poate fi refacturată." +
-				(paid > 0 ? " Plățile încasate rămân de returnat clientului." : ""),
+			description: `Se emite o factură de stornare cu valori negative, piesele revin în stoc, iar lucrarea poate fi refacturată. Nu se poate anula.${refund}`,
 			confirmLabel: "Stornează",
 			destructive: true,
 		});
@@ -313,12 +336,43 @@ function IssuedInvoice({ invoice, embedded = false }) {
 		try {
 			const { storno: created } = await stornoInvoiceById(invoice.id);
 			toast.success(`Stornare emisă: ${formatInvoiceNumber(created.series, created.number)}`);
-			if (embedded) openSheet("invoice-view", { id: created.id });
-			else router.push(`/invoices/detail/?id=${created.id}`);
+			openInvoice(created.id, "forward");
 		} catch (error) {
 			toast.error(error.message);
 		}
 	};
+
+	/** The cancelled invoice made again, as a new draft (from its job's lines when it has one). */
+	const redo = () => {
+		try {
+			const draft = redoInvoice(invoice.id);
+			toast.success("Ciornă nouă, din aceleași linii.");
+			openInvoice(draft.id, "forward");
+		} catch (error) {
+			toast.error(error.message);
+		}
+	};
+
+	// "Stornează și refă": the only way back from an issued invoice, in one confirmation.
+	const stornoAndRedo = async () => {
+		const ok = await confirm({
+			title: `Stornezi și refaci factura ${number}?`,
+			description: `Se emite stornarea și se deschide o ciornă nouă cu aceleași linii, pe care o poți corecta înainte de emitere. Stornarea nu se poate anula.${refund}`,
+			confirmLabel: "Stornează și refă",
+			destructive: true,
+		});
+		if (!ok) return;
+		try {
+			await stornoInvoiceById(invoice.id);
+			const draft = redoInvoice(invoice.id);
+			toast.success("Factura a fost stornată; ciorna nouă e deschisă.");
+			openInvoice(draft.id, "forward");
+		} catch (error) {
+			toast.error(error.message);
+		}
+	};
+
+	const remind = phone ? () => window.open(whatsappHref(phone, message), "_blank", "noopener") : null;
 
 	const share = async () => {
 		const result = await shareText({ title: `Factura ${number}`, text: message });
@@ -347,12 +401,7 @@ function IssuedInvoice({ invoice, embedded = false }) {
 
 	const actions = (
 		<>
-			{payable && (
-				<Button onClick={() => openSheet("payment", { invoiceId: invoice.id })} className="max-md:hidden">
-					<Banknote /> Încasează
-				</Button>
-			)}
-			<Button variant="outline" onClick={() => printPage(`Factura ${number}`)}>
+<Button variant="outline" onClick={() => printPage(`Factura ${number}`)}>
 				<Printer /> <span className="max-sm:hidden">Tipărește / PDF</span>
 			</Button>
 			<DropdownMenu>
@@ -381,21 +430,7 @@ function IssuedInvoice({ invoice, embedded = false }) {
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
-			{invoice.status === "issued" && !invoice.stornoOf && (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" size="icon" aria-label="Mai multe">
-							<EllipsisVertical />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuItem variant="destructive" onSelect={storno}>
-							<Undo2 /> Stornează factura
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			)}
-		</>
+</>
 	);
 
 	return (
@@ -405,40 +440,34 @@ function IssuedInvoice({ invoice, embedded = false }) {
 				back={{ href: "/invoices/", label: "Facturi" }}
 				title={invoice.stornoOf ? `Stornare ${number}` : `Factura ${number}`}
 				meta={
-					<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-						<StatusBadge map={INVOICE_STATE} value={state} />
-						<span>emisă {fmtDate(invoice.issueDate)}</span>
-						{customer && (
-							<>
-								<span aria-hidden>·</span>
-								<Link href={`/customers/detail/?id=${customer.id}`} className="font-medium text-foreground hover:underline">
-									{customer.name}
-								</Link>
-							</>
-						)}
+					<div className="space-y-4">
+						<InvoiceLinks invoice={invoice} inSheet={embedded} />
+						<InvoiceState
+							invoice={invoice}
+							payments={list}
+							today={today}
+							customer={customer}
+							currency={settings.currency}
+							creditNote={stornoBy}
+							original={stornoOf}
+							handlers={{ pay: () => openSheet("payment", { invoiceId: invoice.id }), remind, storno, stornoAndRedo, redo, open: openInvoice }}
+						/>
+						<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+							<span>Emisă {fmtDate(invoice.issueDate)}</span>
+							{customer && (
+								<>
+									<span aria-hidden>·</span>
+									<Link href={`/customers/detail/?id=${customer.id}`} className="font-medium text-foreground hover:underline">
+										{customer.name}
+									</Link>
+								</>
+							)}
+						</div>
 					</div>
 				}
 				actions={actions}
 			/>
 
-			{stornoBy && (
-				<Banner tone="neutral" icon={Undo2} className="mb-6" title="Factură stornată">
-					Anulată prin{" "}
-					<Link className="font-medium underline" href={`/invoices/detail/?id=${stornoBy.id}`}>
-						{formatInvoiceNumber(stornoBy.series, stornoBy.number)}
-					</Link>
-					.
-				</Banner>
-			)}
-			{stornoOf && (
-				<Banner tone="neutral" icon={Undo2} className="mb-6" title="Factură de stornare">
-					Anulează factura{" "}
-					<Link className="font-medium underline" href={`/invoices/detail/?id=${stornoOf.id}`}>
-						{formatInvoiceNumber(stornoOf.series, stornoOf.number)}
-					</Link>
-					.
-				</Banner>
-			)}
 
 			<SplitView
 				stacked={embedded}
@@ -513,14 +542,7 @@ function IssuedInvoice({ invoice, embedded = false }) {
 						<Card>
 							<CardHeader title="Legături" />
 							<CardContent className="grid gap-2 pt-3">
-								{order && (
-									<Button asChild variant="outline" className="justify-start">
-										<Link href={`/work-orders/detail/?id=${order.id}`}>
-											<Wrench /> Lucrarea {fmtWorkOrder(order.number)}
-										</Link>
-									</Button>
-								)}
-								{vehicle && (
+{vehicle && (
 									<Button asChild variant="outline" className="justify-start">
 										<Link href={`/vehicles/detail/?id=${vehicle.id}`}>
 											<CarFront /> Istoric mașină

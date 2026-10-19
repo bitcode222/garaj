@@ -2,6 +2,8 @@
 // replaced (never mutated) on change, so a selector recomputes only when one
 // of its inputs actually changed — and every component shares the result.
 
+import { bookingsToConfirm, invoicesToCollect } from "@/domain/agenda";
+import { homeAnalytics } from "@/domain/analytics";
 import { dayOfInstant } from "@/domain/dates";
 import { invoiceBalance, invoiceState, sumPayments } from "@/domain/invoice";
 import { reservedByPart } from "@/domain/inventory";
@@ -204,3 +206,14 @@ export const selectSearchIndex = memo((customers, vehicles, workOrders, invoices
 	}
 	return items;
 });
+
+/** The home page's "De confirmat" (src/domain/agenda.js); `now` is an instant, a new one each minute. */
+export const selectToConfirm = memo((appointments, now) => bookingsToConfirm(Object.values(appointments), { now }));
+
+/** The home page's "Facturi": what is not collected yet, grouped, with amounts. */
+export const selectToCollect = memo((invoices, payments, today) => invoicesToCollect(Object.values(invoices), selectPaymentsByInvoice(payments), { today }));
+
+/** The home page's "Analiză" for a period ending today ("7d", "30d", "12m"). */
+export const selectHomeAnalytics = memo((payments, workOrders, invoices, appointments, today, period) =>
+	homeAnalytics({ payments: Object.values(payments), workOrders: Object.values(workOrders), invoices: Object.values(invoices), appointments: Object.values(appointments) }, { today, period }),
+);

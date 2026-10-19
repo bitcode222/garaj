@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CalendarPlus, CarFront, EllipsisVertical, FileSearch, Pencil, Plus, ReceiptText, Trash2, UserRound, Wrench } from "lucide-react";
+import { useRemember } from "@/lib/recents";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -28,6 +29,7 @@ import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/l
 import { cn } from "@/lib/utils";
 import { selectInvoiceStates, selectInvoicesByCustomer, selectVehiclesByCustomer, selectWorkOrdersByCustomer } from "@/lib/store/selectors";
 import { tone } from "@/lib/tones";
+import { CustomerNote } from "@/features/reviews/customer-note";
 
 export function CustomerDetail() {
 	const id = useQueryId();
@@ -51,6 +53,7 @@ export function CustomerEmbedded({ customer }) {
 }
 
 function Customer({ customer, embedded = false }) {
+	useRemember("customer", customer.id);
 	const router = useRouter();
 	const confirm = useConfirm();
 	const today = useToday();
@@ -86,12 +89,16 @@ function Customer({ customer, embedded = false }) {
 				back={{ href: "/customers/", label: "Clienți" }}
 				title={customer.name}
 				meta={
-					<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-						<ToneBadge tone={company ? "purple" : "blue"} icon={UserRound}>
-							{CUSTOMER_TYPES[customer.type] ?? CUSTOMER_TYPES.person}
-						</ToneBadge>
-						<span>client din {fmtDate(customer.createdAt, "MMMM yyyy")}</span>
-						{!customer.marketingConsent && <ToneBadge tone="neutral" size="sm">fără acord reamintiri</ToneBadge>}
+					<div className="space-y-2">
+						<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+							<ToneBadge tone={company ? "purple" : "blue"} icon={UserRound}>
+								{CUSTOMER_TYPES[customer.type] ?? CUSTOMER_TYPES.person}
+							</ToneBadge>
+							<span>client din {fmtDate(customer.createdAt, "MMMM yyyy")}</span>
+							{!customer.marketingConsent && <ToneBadge tone="neutral" size="sm">fără acord reamintiri</ToneBadge>}
+						</div>
+						{/* The admin's last note on this customer, from a review. */}
+						<CustomerNote customerId={customer.id} className="text-sm" />
 					</div>
 				}
 				actions={

@@ -1,14 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CalendarCheck, CarFront, CircleX, Trash2, TriangleAlert, UserX, Wrench } from "lucide-react";
+import { Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useConfirm } from "@/components/ds/confirm";
-import { ContactActions } from "@/components/ds/contact";
 import { Field } from "@/components/ds/inputs";
 import { Sheet } from "@/components/ds/sheet";
-import { StatusBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,9 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { findConflicts } from "@/domain/appointment";
 import { combineDateTime, dayOfInstant, minutesBetween, pad2, todayISO } from "@/domain/dates";
 import { fmtTime } from "@/lib/format";
-import { APPOINTMENT_STATUS } from "@/lib/labels";
-import { navigateFromSheet, openSheet } from "@/lib/sheets";
-import { deleteAppointment, resolveOperations, saveAppointment, setAppointmentStatus } from "@/lib/store/actions";
+import { createAppointment, deleteAppointment, resolveOperations, saveAppointment } from "@/lib/store/actions";
 import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
 import { selectActive, selectAppointmentsByDay } from "@/lib/store/selectors";
 import { ServicesField } from "@/features/common/services-field";
@@ -27,7 +22,8 @@ import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 
 const DURATIONS = [30, 60, 90, 120, 180, 240, 480];
-const durationLabel = (m) => (m === 480 ? "Toată ziua (8 h)" : m < 60 ? `${m} min` : `${m / 60} h`.replace(".", ","));
+// "30 min", "1,5 h", "2 h"; a length off the half-hour grid (drawn on a calendar) is spelled out: "1 h 15 min".
+const durationLabel = (m) => (m === 480 ? "Toată ziua (8 h)" : m < 60 ? `${m} min` : m % 30 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m / 60} h`.replace(".", ","));
 
 function nextSlot(settings) {
 	const now = new Date();
@@ -38,14 +34,13 @@ function nextSlot(settings) {
 	return `${pad2(Math.floor(clamped / 60))}:${pad2(clamped % 60)}`;
 }
 
-export default function AppointmentSheet({ open, onOpenChange, id, start, staffId, vehicleId }) {
-	const router = useRouter();
+/** `start` (and `end`, when the interval was drawn on a calendar) and `staffId` prefill a new booking. */
+export default function AppointmentSheet({ open, onOpenChange, id, start, end, staffId, vehicleId }) {
 	const confirm = useConfirm();
 	const settings = useSettings();
 	const existing = useEntity("appointments", id);
 	const services = useCollection("services");
 	const vehicles = useCollection("vehicles");
-	const customers = useCollection("customers");
 	const staff = selectActive(useCollection("staff"));
 	const bays = selectActive(useCollection("bays"));
 	const byDay = selectAppointmentsByDay(useCollection("appointments"));
@@ -53,7 +48,7 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 	const [form, setForm] = useState(() => {
 		const base = existing ?? {};
 		const startISO = base.start ?? start ?? null;
-		const duration = base.start ? minutesBetween(base.start, base.end) : settings.calendar.defaultDuration;
+		const duration = base.start ? minutesBetween(base.start, base.end) : start && end ? minutesBetween(start, end) : settings.calendar.defaultDuration;
 		return {
 			customerId: base.customerId ?? vehicles[vehicleId]?.customerId ?? null,
 			vehicleId: base.vehicleId ?? vehicleId ?? null,
@@ -68,13 +63,14 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 		};
 	});
 	const [touched, setTouched] = useState(false);
+	// An interval drawn on the calendar was chosen on purpose: the operations' hours do not replace it.
+	const drawn = !existing && Boolean(start && end);
 	const set = (patch) => setForm((f) => ({ ...f, ...patch }));
 
 	const startISO = form.date && form.time ? combineDateTime(form.date, form.time) : null;
 	const endISO = startISO ? new Date(new Date(startISO).getTime() + form.duration * 60000).toISOString() : null;
 	const candidate = { id: existing?.id, status: existing?.status ?? "scheduled", start: startISO, end: endISO, staffId: form.staffId, bayId: form.bayId };
 	const conflicts = startISO ? findConflicts(candidate, byDay.get(form.date) ?? []) : [];
-	const customer = form.customerId ? customers[form.customerId] : null;
 
 	const onServices = (operations) => {
 		const hours = operations.reduce((sum, op) => sum + (Number(op.hours) || 0), 0);
@@ -83,16 +79,18 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 		set({
 			operations,
 			title: !form.title || form.title === previousAuto ? autoTitle : form.title,
-			duration: hours ? Math.max(30, Math.ceil((hours * 60) / 30) * 30) : form.duration,
+			duration: hours && !drawn ? Math.max(30, Math.ceil((hours * 60) / 30) * 30) : form.duration,
 		});
 	};
 
-	const submit = (event) => {
+	const submit = async (event) => {
 		event.preventDefault();
 		setTouched(true);
 		if (!form.customerId) return;
 		try {
-			const { conflicts: found } = saveAppointment({
+			// A new booking gets its number from the counter (createAppointment); an edit keeps it.
+			const save = existing ? saveAppointment : createAppointment;
+			const { conflicts: found } = await save({
 				...(existing ?? {}),
 				customerId: form.customerId,
 				vehicleId: form.vehicleId,
@@ -114,15 +112,6 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 		}
 	};
 
-	const status = async (to) => {
-		try {
-			setAppointmentStatus(existing.id, to);
-			toast.success(`Programare: ${APPOINTMENT_STATUS[to].label.toLowerCase()}.`);
-			onOpenChange(false);
-		} catch (error) {
-			toast.error(error.message);
-		}
-	};
 
 	const remove = async () => {
 		if (!(await confirm({ title: "Ștergi programarea?", confirmLabel: "Șterge", destructive: true }))) return;
@@ -135,13 +124,12 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 		}
 	};
 
-	const canCheckIn = existing && ["scheduled", "confirmed"].includes(existing.status);
 
 	return (
 		<Sheet
 			open={open}
 			onOpenChange={onOpenChange}
-			title={existing ? "Programare" : "Programare nouă"}
+			title={existing ? `Editează programarea${existing.number != null ? ` #${existing.number}` : ""}` : "Programare nouă"}
 			description={existing ? undefined : "Rezervă un interval pentru client și mașină"}
 			footer={
 				<>
@@ -159,52 +147,6 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, staffI
 				</>
 			}
 		>
-			{existing && (
-				<div className="mb-5 space-y-3 rounded-xl border bg-muted/40 p-3">
-					<div className="flex items-center justify-between gap-2">
-						<StatusBadge map={APPOINTMENT_STATUS} value={existing.status} />
-						{existing.workOrderId ? (
-							<Button
-								size="sm"
-								onClick={() => {
-									navigateFromSheet(router, `/work-orders/detail/?id=${existing.workOrderId}`);
-								}}
-							>
-								<Wrench /> Deschide lucrarea
-							</Button>
-						) : canCheckIn ? (
-							<Button
-								size="sm"
-								onClick={() => openSheet("checkin", { appointmentId: existing.id })}
-							>
-								<CarFront /> A sosit — primire
-							</Button>
-						) : null}
-					</div>
-					{canCheckIn && (
-						<div className="flex flex-wrap gap-2">
-							{existing.status === "scheduled" && (
-								<Button size="sm" variant="outline" onClick={() => status("confirmed")}>
-									<CalendarCheck /> Confirmă
-								</Button>
-							)}
-							<Button size="sm" variant="outline" onClick={() => status("no_show")}>
-								<UserX /> Neprezentat
-							</Button>
-							<Button size="sm" variant="outline" onClick={() => status("cancelled")}>
-								<CircleX /> Anulează
-							</Button>
-						</div>
-					)}
-					{["no_show", "cancelled"].includes(existing.status) && (
-						<Button size="sm" variant="outline" onClick={() => status("scheduled")}>
-							Reprogramează
-						</Button>
-					)}
-					{customer?.phone && <ContactActions phone={customer.phone} message={`Bună ziua! Vă reamintim programarea din ${form.date.split("-").reverse().join(".")}, ora ${form.time}. ${settings.shop.name}`} />}
-				</div>
-			)}
-
 			<form id="appointment-form" onSubmit={submit} className="grid gap-4" noValidate>
 				<Field label="Client" required error={touched && !form.customerId ? "Alege clientul." : null}>
 					<CustomerPicker value={form.customerId} onChange={(customerId) => set({ customerId, vehicleId: customerId === form.customerId ? form.vehicleId : null })} />

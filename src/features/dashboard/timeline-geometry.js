@@ -5,7 +5,8 @@
 
 import { addDaysISO, diffDaysISO } from "../../domain/dates.js";
 
-export const HOUR_MIN_PX = 72; // narrowest hour; below it a day scrolls inside itself (phones)
+export const HOUR_MIN_PX = 72; // narrowest hour; below it a day scrolls inside itself
+export const HOUR_TOUCH_PX = 96; // narrowest hour on a phone: a quarter of an hour is 24 px under the finger
 export const SLIM_PX = 48; // a closed day with nothing booked
 export const DAYS_BACK = 180;
 export const DAYS_AHEAD = 365;
@@ -81,6 +82,15 @@ export function instantAt(layout, hours, x) {
 	const index = indexAt(layout, x);
 	const fraction = clamp((x - layout.offsets[index]) / widthAt(layout, index), 0, 1);
 	return { index, day: layout.days[index], minute: Math.round(hours.start + fraction * (hours.end - hours.start)) };
+}
+
+/**
+ * The minute of day `index` that `x` points at, for a drag that stays on that day:
+ * left of the day is its first shown minute, right of it the last.
+ */
+export function minuteWithin(layout, hours, index, x) {
+	const fraction = clamp((x - layout.offsets[index]) / widthAt(layout, index), 0, 1);
+	return hours.start + fraction * (hours.end - hours.start);
 }
 
 /** Days in view, and the ones to render: those plus `spare` on each side. */

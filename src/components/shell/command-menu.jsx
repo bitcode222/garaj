@@ -21,7 +21,7 @@ import { createInvoiceDraft } from "@/lib/store/actions";
 import { useCollection } from "@/lib/store/hooks";
 import { selectSearchIndex } from "@/lib/store/selectors";
 import { NAV } from "./nav";
-import { setCommandMenuOpen, useCommandMenuOpen } from "./command-state";
+import { setCommandMenuOpen, useCommandMenu } from "./command-state";
 
 const GROUPS = [
 	{ type: "vehicle", heading: "Mașini", icon: CarFront, href: (id) => `/vehicles/detail/?id=${id}` },
@@ -34,9 +34,15 @@ const LIMIT = 6;
 
 /** ⌘K: plates, VINs, names, phones and document numbers, plus quick actions. */
 export function CommandMenu() {
-	const open = useCommandMenuOpen();
+	const { open, session, seed } = useCommandMenu();
 	const router = useRouter();
 	const [query, setQuery] = useState("");
+	// A new opening starts from what it was opened with (the home page's field passes what was typed there).
+	const [opened, setOpened] = useState(session);
+	if (opened !== session) {
+		setOpened(session);
+		setQuery(seed);
+	}
 	const deferred = useDeferredValue(query);
 	const index = selectSearchIndex(
 		useCollection("customers"),

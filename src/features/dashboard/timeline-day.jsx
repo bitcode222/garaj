@@ -3,20 +3,24 @@
 import Link from "next/link";
 import { memo } from "react";
 import { CarFront, Clock } from "lucide-react";
-import { vehicleName } from "@/domain/vehicle";
-import { arrivalDelay } from "@/domain/visit";
+import { MakeLogo } from "@/components/ds/make-logo";
+import { canReschedule } from "@/domain/appointment";
+import { visitTiming } from "@/domain/visit";
 import { fmtDate, fmtTime, plural } from "@/lib/format";
 import { VISIT_STAGE } from "@/lib/labels";
-import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 import { atMinute, hourLabel, layoutEvents, minuteOfDay } from "@/features/calendar/utils";
-import { hoverHandlers, litAs, litClass, stageClass } from "./visit-ui";
+import { startAt } from "./timeline-drag";
+import { hoverHandlers, litAs, litClass, stageClass, timingClass, timingText, visitText } from "./visit-ui";
 
 // Zi
-export const ROW_PX = 52; // every mechanic's row: a 44 px booking, 4 px above and below
+export const ROW_PX = 58; // every mechanic's row: a 50 px booking (two lines: the car and the clock), 4 px above and below
 export const DAY_LABEL_PX = 24; // the strip with the day's name
 export const AXIS_PX = 28; // the strip with the hours
-const BLOCK_PX = ROW_PX - 8;
+export const HEAD_PX = DAY_LABEL_PX + AXIS_PX; // where the rows begin
+export const BLOCK_PX = ROW_PX - 8;
+const HALF_PX = BLOCK_PX / 2 - 1; // two overlapping bookings share the lane
+const PIN_PX = 36; // a walk-in's pin
 
 // Săptămână
 const MAX_PER_DAY = 5; // bookings listed per day before "+N încă"
@@ -26,23 +30,16 @@ export const weekHeight = (headPx, chipPx) => headPx + 12 + (MAX_PER_DAY + 1) * 
 const HOUR_LINES =
 	"linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to right, color-mix(in oklch, var(--border) 45%, transparent) 1px, transparent 1px)";
 
-/** "întârzie 25 min", "întârzie 1 h 10 min". */
-export const fmtDelay = (minutes) => `întârzie ${minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h${minutes % 60 ? ` ${minutes % 60} min` : ""}`}`;
-
-/** Minutes a booked car is late right now (0 for everything else, and when `nowAt` is not given). */
-const lateBy = (visit, nowAt) => (nowAt && visit.appointment ? arrivalDelay(visit.appointment, nowAt) : 0);
-
 const isWalkIn = (visit) => visit.kind === "walkin";
 
-/** What a booking, or a walk-in's pin, is: for the tooltip and for screen readers. */
-function describe(visit, customer, vehicle, late) {
-	if (isWalkIn(visit)) return [vehicleName(vehicle) || "Mașină", customer?.name, `primit ${fmtTime(visit.start)}`, "fără programare", VISIT_STAGE[visit.stage].label].filter(Boolean).join(" · ");
-	return [`${fmtTime(visit.start)}–${fmtTime(visit.end)}`, visit.appointment.title, customer?.name, VISIT_STAGE[visit.stage].label, late ? fmtDelay(late) : null].filter(Boolean).join(" · ");
+/** What the clock says about a visit right now; null until the clock is known. */
+const timingOf = (visit, nowAt) => (nowAt ? timingText(visitTiming(visit, nowAt)) : null);
+
+/** A booking, or a walk-in's pin, in full: for the tooltip and for screen readers. */
+function describe(visit, text, timing) {
+	const when = isWalkIn(visit) ? `primit ${fmtTime(visit.start)} · fără programare` : `${fmtTime(visit.start)}–${fmtTime(visit.end)}`;
+	return [when, text.name, text.detail, VISIT_STAGE[visit.stage].label, timing?.text].filter(Boolean).join(" · ");
 }
-
-const titleOf = (visit, customer, vehicle) => (isWalkIn(visit) ? vehicleName(vehicle) || customer?.name || "Mașină" : visit.appointment.title || customer?.name || "Programare");
-
-const LATE = tone("yellow").text;
 
 /** A closed day with nothing booked: just a marker, at either zoom. */
 function SlimDay({ day, left, width }) {
@@ -60,14 +57,30 @@ function SlimDay({ day, left, width }) {
 	);
 }
 
+/** An edge of a booking that can be dragged to change when it starts or ends (mouse; touch reads the position instead). */
+function Grip({ edge }) {
+	return (
+		<span
+			data-edge={edge}
+			aria-hidden
+			className={cn(
+				"absolute inset-y-0 w-2 cursor-ew-resize after:absolute after:inset-y-[22%] after:w-0.5 after:rounded-full after:bg-current after:opacity-0 after:transition-opacity group-hover/block:after:opacity-40 pointer-coarse:hidden",
+				edge === "start" ? "left-0 after:left-0.5" : "right-0 after:right-0.5",
+			)}
+		/>
+	);
+}
+
 /**
  * One day of the timeline at the Zi zoom (docs/DASHBOARD-CALENDAR.md): its name,
  * its hours, a row per mechanic with the bookings placed by the hour, and on today
- * a line at "now" with the elapsed part shaded. Placed absolutely by the scroller,
- * which renders only the days in view; memoised, so scrolling re-renders nothing
- * that did not change.
+ * a line at "now" with the elapsed part shaded. A booking says what its car's card
+ * says: make and model, what it is in for, and what the clock says about it. Placed
+ * absolutely by the scroller, which renders only the days in view and handles every
+ * drag (`data-row`, `data-appt` and `data-edge` are what it looks for); memoised, so
+ * scrolling re-renders nothing that did not change.
  */
-export const TimelineDay = memo(function TimelineDay({ day, left, width, slim, isToday, isPast, closed, visits, rows, rowKeyOf, hours, now, nowAt, filter, focus, customers, vehicles, onOpen, onCreate, onHover }) {
+export const TimelineDay = memo(function TimelineDay({ day, left, width, slim, isToday, isPast, closed, visits, rows, rowKeyOf, hours, now, nowAt, filter, focus, dragId, canDrag, customers, vehicles, onOpen, onCreate, onHover }) {
 	if (slim) return <SlimDay day={day} left={left} width={width} />;
 
 	const span = hours.end - hours.start;
@@ -105,12 +118,15 @@ export const TimelineDay = memo(function TimelineDay({ day, left, width, slim, i
 				return (
 					<div
 						key={row.key}
+						data-row={row.key}
 						role="presentation"
+						// A click on free time books from there; a press that is dragged draws the booking (the scroller's job).
 						onClick={(event) => {
 							if (event.target !== event.currentTarget) return;
-							const rect = event.currentTarget.getBoundingClientRect();
+							// Measured on the day (its border included), as the line under the mouse is, so a click books exactly what the line said.
+							const rect = event.currentTarget.closest("[data-day]").getBoundingClientRect();
 							const minute = hours.start + ((event.clientX - rect.left) / rect.width) * span;
-							onCreate({ start: atMinute(day, Math.floor(minute / 30) * 30), staffId: row.staffId });
+							onCreate({ start: atMinute(day, startAt(minute, hours)), staffId: row.staffId });
 						}}
 						className={cn("relative cursor-copy border-b last:border-b-0", isPast && "bg-muted/30", closed && "bg-muted/40")}
 						style={{
@@ -127,9 +143,11 @@ export const TimelineDay = memo(function TimelineDay({ day, left, width, slim, i
 							const walkIn = isWalkIn(visit);
 							const customer = customers[visit.customerId];
 							const vehicle = vehicles[visit.vehicleId];
-							const late = lateBy(visit, nowAt);
-							const label = describe(visit, customer, vehicle, late);
+							const text = visitText(visit, vehicle, customer);
+							const timing = timingOf(visit, nowAt);
+							const label = describe(visit, text, timing);
 							const lit = litAs(visit, focus);
+							const movable = canDrag && !walkIn && canReschedule(visit.appointment);
 							const start = Math.max(minuteOfDay(visit.start), hours.start);
 							const rawEnd = minuteOfDay(visit.end) || 24 * 60;
 							const end = Math.min(rawEnd <= minuteOfDay(visit.start) ? 24 * 60 : rawEnd, hours.end);
@@ -140,49 +158,46 @@ export const TimelineDay = memo(function TimelineDay({ day, left, width, slim, i
 									data-appt={visit.id}
 									data-kind={visit.kind}
 									onClick={() => onOpen(visit)}
-									title={label}
 									aria-label={label}
 									{...hoverHandlers(visit.id, onHover)}
 									className={cn(
-										"absolute z-[5] flex min-w-7 overflow-hidden border text-left select-none transition-[box-shadow]",
+										"group/block @container absolute z-[5] flex min-w-7 touch-manipulation overflow-hidden border text-left text-xs transition-[box-shadow,opacity] select-none [-webkit-touch-callout:none]",
 										// A walk-in is a pin at its check-in time: a pill with a car, never mistaken for a booked slot.
-										walkIn ? "items-center justify-center rounded-full" : shared ? "items-center rounded-md px-1.5 text-2xs leading-none" : "flex-col justify-center rounded-md px-2 text-xs",
+										walkIn ? "items-center justify-center rounded-full" : shared ? "items-center rounded-md px-2 leading-none" : "flex-col justify-center rounded-lg px-2 py-1.5 leading-4",
 										stageClass(visit.stage),
 										lit && cn("z-[6]", litClass(lit)),
+										movable && "pointer-fine:cursor-grab",
+										visit.id === dragId && "opacity-40",
 										visit.id === focus.arrived && "animate-visit-arrive",
 									)}
 									style={{
 										left: `calc(${pct(start)} + 1px)`,
 										width: `calc(${((end - start) / span) * 100}% - 2px)`,
-										top: shared ? 4 + lane * (BLOCK_PX / 2 + 1) : 4,
-										height: shared ? BLOCK_PX / 2 - 1 : BLOCK_PX,
+										top: shared ? 4 + lane * (HALF_PX + 2) : walkIn ? (ROW_PX - PIN_PX) / 2 : 4,
+										height: shared ? HALF_PX : walkIn ? PIN_PX : BLOCK_PX,
 									}}
 								>
 									{walkIn ? (
-										<CarFront className="size-3.5 shrink-0" aria-hidden />
+										<CarFront className="size-4 shrink-0" aria-hidden />
 									) : shared ? (
 										<span className="flex min-w-0 items-center gap-1">
-											{late > 0 && <Clock className={cn("size-3 shrink-0", LATE)} aria-hidden />}
+											{timing?.mark && <Clock className={cn("size-3 shrink-0", timing.mark === "late" && timingClass("late"))} aria-hidden />}
 											<span className="truncate">
-												<span className="tabular-nums opacity-80">{fmtTime(visit.start)}</span> <span className="font-semibold">{titleOf(visit, customer, vehicle)}</span>
+												<span className="tabular-nums opacity-80">{fmtTime(visit.start)}</span> <span className="font-semibold">{text.name}</span>
+												{text.detail && <span className="opacity-80"> · {text.detail}</span>}
 											</span>
 										</span>
 									) : (
+										// Small: the car and the clock. The rest is on its car's card and in its sheet.
 										<>
-											<span className="truncate font-semibold">{titleOf(visit, customer, vehicle)}</span>
-											{late > 0 ? (
-												<span className={cn("flex min-w-0 items-center gap-1 font-medium", LATE)}>
-													<Clock className="size-3 shrink-0" aria-hidden />
-													<span className="truncate">{fmtDelay(late)}</span>
-												</span>
-											) : (
-												<span className="truncate tabular-nums opacity-80">
-													{fmtTime(visit.start)}–{fmtTime(visit.end)}
-													{customer ? ` · ${customer.name}` : ""}
-												</span>
-											)}
+											<span className="truncate font-semibold">{text.name}</span>
+											<span className={cn("truncate text-2xs tabular-nums opacity-80", timingClass(timing?.mark))}>
+												{timing ? timing.text : fmtTime(visit.start)}
+											</span>
 										</>
 									)}
+									{movable && <Grip edge="start" />}
+									{movable && <Grip edge="end" />}
 								</button>
 							);
 						})}
@@ -207,7 +222,8 @@ export const TimelineDay = memo(function TimelineDay({ day, left, width, slim, i
 /**
  * One day of the timeline at the Săptămână zoom: a column with the day's header
  * (it opens that day in Zi) and its bookings as chips in time order, five at most,
- * then "+N încă". The selected booking is always among the five.
+ * then "+N încă". A chip is two lines: when (and what the clock says), and the car.
+ * The selected booking is always among the five.
  */
 export const TimelineWeekDay = memo(function TimelineWeekDay({ day, left, width, slim, isToday, isPast, closed, visits, headPx, chipPx, nowAt, filter, focus, customers, vehicles, onOpen, onPickDay, onHover }) {
 	if (slim) return <SlimDay day={day} left={left} width={width} />;
@@ -236,8 +252,9 @@ export const TimelineWeekDay = memo(function TimelineWeekDay({ day, left, width,
 				{shown.map((visit) => {
 					const customer = customers[visit.customerId];
 					const vehicle = vehicles[visit.vehicleId];
-					const late = lateBy(visit, nowAt);
-					const label = describe(visit, customer, vehicle, late);
+					const text = visitText(visit, vehicle, customer);
+					const timing = timingOf(visit, nowAt);
+					const label = describe(visit, text, timing);
 					const lit = litAs(visit, focus);
 					return (
 						<li key={visit.id}>
@@ -246,23 +263,25 @@ export const TimelineWeekDay = memo(function TimelineWeekDay({ day, left, width,
 								data-appt={visit.id}
 								data-kind={visit.kind}
 								onClick={() => onOpen(visit)}
-								title={label}
 								aria-label={label}
 								{...hoverHandlers(visit.id, onHover)}
 								className={cn(
-									"flex w-full min-w-0 flex-col justify-center rounded-md border px-1.5 text-left text-xs transition-[box-shadow] md:flex-row md:items-center md:justify-start md:gap-1.5",
+									"flex w-full min-w-0 flex-col justify-center rounded-md border px-1.5 text-left text-xs leading-4 transition-[box-shadow]",
 									stageClass(visit.stage),
 									litClass(lit),
 									visit.id === focus.arrived && "animate-visit-arrive",
 								)}
 								style={{ height: chipPx }}
 							>
-								<span className="flex shrink-0 items-center gap-1 tabular-nums opacity-80">
-									{isWalkIn(visit) && <CarFront className="size-3.5" aria-hidden />}
-									{late > 0 && <Clock className={cn("size-3", LATE)} aria-hidden />}
-									{fmtTime(visit.start)}
+								<span className={cn("flex min-w-0 items-center gap-1 text-2xs", timingClass(timing?.mark))}>
+									{isWalkIn(visit) && <CarFront className="size-3.5 shrink-0" aria-hidden />}
+									{timing?.mark && <Clock className="size-3 shrink-0" aria-hidden />}
+									<span className="truncate tabular-nums">
+										{fmtTime(visit.start)}
+										{timing ? ` · ${timing.text}` : ""}
+									</span>
 								</span>
-								<span className="w-full min-w-0 truncate font-medium md:w-auto">{titleOf(visit, customer, vehicle)}</span>
+								<span className="w-full min-w-0 truncate font-medium">{text.name}</span>
 							</button>
 						</li>
 					);

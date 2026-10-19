@@ -1,7 +1,16 @@
 // User operations. Each one validates with the domain rules and throws a
 // DomainError with a Romanian, user-facing message when something is not allowed.
 
-import { appointmentProblem, findConflicts, setAppointmentStatus as nextAppointmentStatus } from "@/domain/appointment";
+import {
+	announceDelay,
+	appointmentProblem,
+	callOffAppointment,
+	findConflicts,
+	numberAppointments,
+	rescheduleAppointment,
+	setAppointmentStatus as nextAppointmentStatus,
+	statusBeforeCheckIn,
+} from "@/domain/appointment";
 import { addDaysISO, dayOfInstant, todayISO } from "@/domain/dates";
 import { DomainError } from "@/domain/errors";
 import { uid } from "@/domain/ids";
@@ -9,7 +18,8 @@ import { stockDelta } from "@/domain/inventory";
 import { buildStorno, issueInvoice, issueProblems, paymentProblem } from "@/domain/invoice";
 import { laborLineFromOperation, operationFromService, operationVatRate } from "@/domain/lines";
 import { formatPlate, normalizePlate, addReading } from "@/domain/vehicle";
-import { defaultInspection, toInvoiceDraft, transition } from "@/domain/work-order";
+import { defaultInspection, invoiceLinesFromOrder, toInvoiceDraft, transition } from "@/domain/work-order";
+import { dropLastRequest, logRequest, markReceived, newReview, noteCustomer } from "@/domain/review";
 import { mergeSettings } from "./defaults";
 import { COLLECTIONS, atomic, commit, getState, replaceAllData, snapshotForBackup } from "./store";
 
@@ -25,6 +35,7 @@ function mustGet(name, id, label) {
 
 async function readCounters(tx) {
 	const counters = (await tx.getMeta("counters")) ?? {};
+	// `appointments` stays missing until the first booking is numbered (see createAppointment).
 	return { invoices: {}, workOrders: 1, ...counters };
 }
 
@@ -284,28 +295,82 @@ function conflictsFor(appointment) {
 	return findConflicts(appointment, sameDay);
 }
 
+const NEW_APPOINTMENT = { title: "", notes: "", serviceIds: [], staffId: null, bayId: null, vehicleId: null, status: "scheduled", workOrderId: null, expectedAt: null, cancelReason: null };
+
+/**
+ * A new booking, with the next booking number (docs/VISIT-FLOW.md D5). The first booking
+ * made after numbering arrived numbers the older ones first, oldest first.
+ */
+export async function createAppointment(input) {
+	const problem = appointmentProblem(input);
+	if (problem) throw new DomainError("invalid", problem);
+	const t = now();
+	const appointment = await atomic(["appointments"], async (tx) => {
+		const counters = await readCounters(tx);
+		let number = counters.appointments;
+		if (number == null) {
+			const older = numberAppointments(values("appointments"));
+			for (const numbered of older.numbered) tx.put("appointments", numbered);
+			number = older.next;
+		}
+		const created = { ...NEW_APPOINTMENT, ...input, id: uid(), number, activity: [{ at: t, type: "created" }], createdAt: t, updatedAt: t };
+		tx.put("appointments", created);
+		tx.setMeta("counters", { ...counters, appointments: number + 1 });
+		return created;
+	});
+	return { appointment, conflicts: conflictsFor(appointment) };
+}
+
+/** Bookings saved before numbering arrived get their numbers, once (called when the data is loaded). */
+export async function ensureAppointmentNumbers() {
+	if (!values("appointments").some((a) => a.number == null)) return;
+	await atomic(["appointments"], async (tx) => {
+		const counters = await readCounters(tx);
+		const { numbered, next } = numberAppointments(values("appointments"), counters.appointments ?? 1);
+		for (const appointment of numbered) tx.put("appointments", appointment);
+		tx.setMeta("counters", { ...counters, appointments: next });
+	});
+}
+
+/** Saves changes to an existing booking (a new one is made with createAppointment, which gives it a number). */
 export function saveAppointment(input) {
 	const problem = appointmentProblem(input);
 	if (problem) throw new DomainError("invalid", problem);
 	const existing = input.id ? getState().appointments[input.id] : null;
-	const t = now();
-	const appointment = {
-		title: "",
-		notes: "",
-		serviceIds: [],
-		staffId: null,
-		bayId: null,
-		vehicleId: null,
-		status: "scheduled",
-		workOrderId: null,
-		...existing,
-		...input,
-		id: existing?.id ?? uid(),
-		createdAt: existing?.createdAt ?? t,
-		updatedAt: t,
-	};
+	if (!existing) throw new DomainError("not_found", "Programarea nu mai există.");
+	const appointment = { ...NEW_APPOINTMENT, ...existing, ...input, id: existing.id, createdAt: existing.createdAt, updatedAt: now() };
 	commit({ appointments: { put: [appointment] } });
 	return { appointment, conflicts: conflictsFor(appointment) };
+}
+
+/** Puts a booking back exactly as it was (the undo of a toast). */
+export function restoreAppointment(previous) {
+	if (!getState().appointments[previous.id]) throw new DomainError("not_found", "Programarea nu mai există.");
+	commit({ appointments: { put: [{ ...previous, updatedAt: now() }] } });
+}
+
+/** A new time for a booking (docs/VISIT-FLOW.md §6.1); `customerKnows` keeps a confirmed booking confirmed. */
+export function rescheduleAppointmentTo(id, { start, end, customerKnows = false }) {
+	const previous = mustGet("appointments", id, "Programarea");
+	const appointment = rescheduleAppointment(previous, { start, end, customerKnows, now: now() });
+	commit({ appointments: { put: [appointment] } });
+	return { appointment, previous, conflicts: conflictsFor(appointment) };
+}
+
+/** The customer said they will arrive at `expectedAt`; the booking keeps its slot. */
+export function announceAppointmentDelay(id, expectedAt) {
+	const previous = mustGet("appointments", id, "Programarea");
+	const appointment = announceDelay(previous, { expectedAt, now: now() });
+	commit({ appointments: { put: [appointment] } });
+	return { appointment, previous };
+}
+
+/** Cancels a booking, or records a no-show, with an optional reason. */
+export function callOffAppointmentById(id, { to, reason = null, note = "" }) {
+	const previous = mustGet("appointments", id, "Programarea");
+	const appointment = callOffAppointment(previous, { to, reason, note, now: now() });
+	commit({ appointments: { put: [appointment] } });
+	return { appointment, previous };
 }
 
 export function moveAppointment(id, start, end) {
@@ -386,20 +451,34 @@ export async function createWorkOrder({
 		tx.put("workOrders", created);
 		if (nextVehicle) tx.put("vehicles", nextVehicle);
 		if (appointment) {
-			tx.put("appointments", { ...appointment, status: "arrived", workOrderId: created.id, updatedAt: t });
+			// The booking remembers what it was before check-in (a deleted job puts it back) and forgets an announced delay.
+			tx.put("appointments", {
+				...appointment,
+				vehicleId: appointment.vehicleId ?? vehicleId,
+				status: "arrived",
+				workOrderId: created.id,
+				expectedAt: null,
+				activity: [...(appointment.activity ?? []), { at: t, type: "checked_in", from: appointment.status }],
+				updatedAt: t,
+			});
 		}
 		return created;
 	});
 	return { order, warning };
 }
 
-export function checkInAppointment(appointmentId, { mileage, fuelLevel, complaint, operations } = {}) {
+/**
+ * The booked car arrived: opens its job. A booking made without a car takes the car chosen at
+ * check-in (`vehicleId`), and keeps it.
+ */
+export function checkInAppointment(appointmentId, { mileage, fuelLevel, complaint, operations, vehicleId = null } = {}) {
 	const appointment = mustGet("appointments", appointmentId, "Programarea");
 	if (appointment.workOrderId) throw new DomainError("exists", "Mașina are deja o lucrare deschisă din această programare.");
-	if (!appointment.vehicleId) throw new DomainError("invalid", "Adaugă întâi mașina pe programare.");
+	const car = appointment.vehicleId ?? vehicleId;
+	if (!car) throw new DomainError("invalid", "Alege mașina care a sosit.");
 	return createWorkOrder({
 		customerId: appointment.customerId,
-		vehicleId: appointment.vehicleId,
+		vehicleId: car,
 		complaint: complaint ?? appointment.title ?? "",
 		mileage,
 		fuelLevel,
@@ -424,16 +503,28 @@ export function updateWorkOrder(id, patch) {
 	return next;
 }
 
-export function setWorkOrderStatus(id, to) {
+/**
+ * Puts a job (and its booking, which may have followed it) back exactly as they were: the undo
+ * of a status change. Refused when the job was deleted meanwhile.
+ */
+export function restoreWorkOrder(previous, previousAppointment = null) {
+	if (!getState().workOrders[previous.id]) throw new DomainError("not_found", "Lucrarea nu mai există.");
+	const t = now();
+	const changes = { workOrders: { put: [{ ...previous, updatedAt: t }] } };
+	if (previousAppointment && getState().appointments[previousAppointment.id]) changes.appointments = { put: [{ ...previousAppointment, updatedAt: t }] };
+	commit(changes);
+}
+
+/** Moves a job; `reason` (reopening, cancelling) goes into its history. The booking follows: done when the car is handed over, in the shop again when the job is reopened. */
+export function setWorkOrderStatus(id, to, { reason = "" } = {}) {
 	const order = mustGet("workOrders", id, "Lucrarea");
-	const next = transition(order, to, { now: now() });
+	const t = now();
+	const next = transition(order, to, { now: t, reason });
 	const changes = { workOrders: { put: [next] } };
-	if (to === "delivered" && order.appointmentId) {
-		const appointment = getState().appointments[order.appointmentId];
-		if (appointment && appointment.status === "arrived") {
-			changes.appointments = { put: [{ ...appointment, status: "done", updatedAt: now() }] };
-		}
-	}
+	const appointment = order.appointmentId ? getState().appointments[order.appointmentId] : null;
+	const follow = (status) => ({ put: [{ ...appointment, status, activity: [...(appointment.activity ?? []), { at: t, type: "status", from: appointment.status, to: status }], updatedAt: t }] });
+	if (appointment && to === "delivered" && appointment.status === "arrived") changes.appointments = follow("done");
+	if (appointment && order.status === "delivered" && to !== "delivered" && appointment.status === "done") changes.appointments = follow("arrived");
 	commit(changes);
 	return next;
 }
@@ -446,7 +537,12 @@ export function deleteWorkOrder(id) {
 	const changes = { workOrders: { del: [id] } };
 	if (order.appointmentId) {
 		const appointment = getState().appointments[order.appointmentId];
-		if (appointment) changes.appointments = { put: [{ ...appointment, status: "confirmed", workOrderId: null, updatedAt: now() }] };
+		// The booking goes back to what it was before check-in, not always to "confirmed".
+		if (appointment) {
+			const t = now();
+			const status = statusBeforeCheckIn(appointment);
+			changes.appointments = { put: [{ ...appointment, status, workOrderId: null, activity: [...(appointment.activity ?? []), { at: t, type: "status", from: appointment.status, to: status }], updatedAt: t }] };
+		}
 	}
 	commit(changes);
 }
@@ -569,6 +665,60 @@ export async function stornoInvoiceById(id) {
 		return { storno, refundDue: paid.reduce((sum, p) => sum + p.amount, 0) };
 	});
 }
+
+/**
+ * Issues a draft and records it as paid in full, in one step (a counter sale,
+ * docs/VISIT-FLOW.md §6.3). If recording the payment fails, the invoice stays issued.
+ */
+export async function issueAndPayInvoice(id, { method = "cash" } = {}) {
+	const issued = await issueInvoiceDraft(id);
+	const payment = recordPayment(issued.id, { amount: issued.totals.gross, method });
+	return { invoice: issued, payment };
+}
+
+/**
+ * A new draft that makes a cancelled invoice again: from its job's lines when it has a job
+ * (the job then points to the new draft), else a copy of the cancelled invoice's lines.
+ */
+export function redoInvoice(id) {
+	const original = mustGet("invoices", id, "Factura");
+	if (original.status !== "cancelled") throw new DomainError("invalid", "Doar o factură stornată se reface.");
+	if (original.workOrderId && getState().workOrders[original.workOrderId]) return invoiceForWorkOrder(original.workOrderId);
+	const draft = createInvoiceDraft({ customerId: original.customerId, vehicleId: original.vehicleId });
+	return updateInvoiceDraft(draft.id, { lines: original.lines.map((line) => ({ ...line, id: uid() })), mileage: original.mileage ?? null, notes: "" }) ?? draft;
+}
+
+/** A draft whose job changed after it was made takes the job's lines again. */
+export function refreshDraftFromOrder(id) {
+	const draft = mustGet("invoices", id, "Factura");
+	const order = draft.workOrderId ? getState().workOrders[draft.workOrderId] : null;
+	if (!order) throw new DomainError("not_found", "Lucrarea nu mai există.");
+	return updateInvoiceDraft(id, { lines: invoiceLinesFromOrder(order, { settings: getState().settings }) });
+}
+
+// ── reviews ──────────────────────────────────────────────────────────────────
+
+/** The review of a job, if one was started. */
+export const reviewOfJob = (workOrderId) => values("reviews").find((review) => review.workOrderId === workOrderId) ?? null;
+
+/** Changes the review of a job, starting it on the first change (docs/VISIT-FLOW.md §6.4). */
+function changeReview(workOrderId, change) {
+	const order = mustGet("workOrders", workOrderId, "Lucrarea");
+	const t = now();
+	const current = reviewOfJob(workOrderId) ?? newReview({ id: uid(), workOrderId, customerId: order.customerId, vehicleId: order.vehicleId, invoiceId: order.invoiceId ?? null, now: t });
+	const next = change(current, t);
+	commit({ reviews: { put: [next] } });
+	return next;
+}
+
+/** A request for a review was sent (or copied) on `channel`: whatsapp · sms · copy. */
+export const logReviewRequest = (workOrderId, channel) => changeReview(workOrderId, (review, t) => logRequest(review, { channel, now: t }));
+/** "N-am trimis": takes back the last logged request. */
+export const dropLastReviewRequest = (workOrderId) => changeReview(workOrderId, (review, t) => dropLastRequest(review, { now: t }));
+/** The customer answered (or not, after all). */
+export const markReviewReceived = (workOrderId, received = true) => changeReview(workOrderId, (review, t) => markReceived(review, { received, now: t }));
+/** The admin's own note on the customer: stars, tags, text. */
+export const noteOnCustomer = (workOrderId, fields) => changeReview(workOrderId, (review, t) => noteCustomer(review, { ...fields, now: t }));
 
 export function recordPayment(invoiceId, { amount, method = "cash", date = todayISO(), note = "" }) {
 	const s = getState();

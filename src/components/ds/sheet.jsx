@@ -9,6 +9,23 @@ import { cn } from "@/lib/utils";
 /** Position in the global sheet stack. A sheet above another reuses the scrim below it. */
 export const SheetDepth = createContext(0);
 
+/**
+ * A sheet reached by walking a visit's records (docs/VISIT-FLOW.md D4): the side it comes in
+ * from ("forward" = from the right, "back" = from the left), the side it leaves to when the
+ * next record replaces it, and `back()` to walk back along the way it came.
+ */
+export const SheetMotion = createContext({ enter: null, leave: null, back: null });
+
+// Walking slides a short way and fades: the two records swap in place, the panel does not fly in from the edge.
+const ENTER = {
+	forward: "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-right-12",
+	back: "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-left-12",
+};
+const LEAVE = {
+	forward: "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-left-12",
+	back: "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-right-12",
+};
+
 const DISMISS_DISTANCE = 100; // px dragged right
 const DISMISS_VELOCITY = 0.6; // px/ms, a quick flick
 const LEAVE_MS = 180;
@@ -119,12 +136,15 @@ function bounceThroughScrollLock(el) {
 export function Sheet({ open, onOpenChange, title, description, headerActions, footer, className, children }) {
 	const contentRef = useRef(null);
 	const depth = useContext(SheetDepth);
+	const motion = useContext(SheetMotion);
+	const walked = Boolean(motion.enter || motion.leave);
 	const swipe = useSwipeDismiss(open, onOpenChange);
 	return (
 		<DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
 			<DialogPrimitive.Portal>
 				{/* Radix mounts its scroll lock in the Overlay, so stacked sheets need one too (untinted) or they cannot scroll. */}
-					<DialogPrimitive.Overlay className={cn("scrim", depth === 0 && "bg-white/10")} />
+					{/* Walking keeps one scrim: the arriving record's shows at once, the leaving one's goes at once. */}
+					<DialogPrimitive.Overlay className={cn("scrim", depth === 0 && "bg-white/10", motion.enter && "data-[state=open]:animate-none", motion.leave && "data-[state=closed]:hidden")} />
 				<DialogPrimitive.Content
 					ref={contentRef}
 					tabIndex={-1}
@@ -134,15 +154,22 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 						event.preventDefault();
 						contentRef.current?.focus();
 					}}
+					// A record left by walking must not pull the focus back to the page behind the next one.
+					onCloseAutoFocus={(event) => motion.leave && event.preventDefault()}
+					// Pressing a toast (its "Anulează") is not a click outside the sheet: the sheet stays open.
+					onPointerDownOutside={(event) => event.target?.closest?.("[data-sonner-toaster]") && event.preventDefault()}
+					onInteractOutside={(event) => event.target?.closest?.("[data-sonner-toaster]") && event.preventDefault()}
 					className={cn(
 						"fixed z-50 flex flex-col bg-card text-card-foreground shadow-2xl outline-none",
 						// Phone: a full-height screen that pushes in from the right, lifted above the keyboard.
 						"inset-x-0 bottom-(--kb) h-(--vvh) max-h-dvh duration-300",
-						"data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
+						walked
+							? cn(motion.enter ? ENTER[motion.enter] : "data-[state=open]:animate-in data-[state=open]:slide-in-from-right", motion.leave ? LEAVE[motion.leave] : "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right")
+							: "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
 						// md and up: a side panel.
 						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:border-l",
-						// One width for every sheet on the web (md and up), so stacked sheets line up exactly.
-						"md:max-w-3xl",
+						// One width for every sheet on the web (md and up), so stacked sheets line up exactly (42 rem, 672 px).
+						"md:max-w-2xl",
 						depth > 0 && "shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.25)]",
 						className,
 					)}
@@ -152,10 +179,11 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 						<div className="-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-9">
 							<button
 								type="button"
-								onClick={() => onOpenChange(false)}
+								// Reached by walking a visit, Back walks back the way it came; otherwise it closes.
+								onClick={() => (motion.back ? motion.back() : onOpenChange(false))}
 								className={cn(
 									"flex h-11 items-center gap-0.5 rounded-md pr-3 pl-1.5 text-[15px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground active:bg-accent md:h-9 md:pl-2 md:text-sm md:gap-1",
-									depth === 0 && "md:hidden",
+									depth === 0 && !motion.back && "md:hidden",
 								)}
 								aria-label="Înapoi"
 							>
