@@ -1,6 +1,6 @@
 # Dashboard calendar v2: plan
 
-**Status: plan approved by the owner on 13 Oct 2026. All phases (0 to 7) are 🟢 built.** What is still open: the owner's own hands-on pass on the physical iPhone (the app is installed there; the checks below ran in Chrome and in the iOS 27 simulator).
+**Status: plan approved by the owner on 13 Oct 2026. All phases (0 to 8) are 🟢 built.** Phase 8 (§12: bigger bookings, the same wording on a card and its booking, editing in place) was asked for by the owner on 13 Oct after phases 0 to 7 were merged. What is still open: the owner's own hands-on pass on the physical iPhone (the checks below ran in Chrome; phases 0 to 7 also in the iOS 27 simulator).
 It replaces the paged Zi / Săptămână calendar on Azi (`src/features/dashboard/dashboard-calendar.jsx`, `visit-timeline.jsx`).
 Build order and status are in §10; each phase ships on its own. The owner's answers are in §11.
 
@@ -95,7 +95,7 @@ Selecting a block scrolls its card into view in the carousel; hovering never mov
 
 **D9. "Arată în calendar" is one motion.** See §6.
 
-**D10. Still read-only.** Moving and resizing bookings stays in Programări.
+**D10. Edited in place at the Zi zoom** (it was read-only until phase 8). See §12.
 
 **D11. No dimming.** Highlighting adds a ring; nothing else fades (owner, 13 Oct).
 
@@ -111,8 +111,9 @@ Selecting a block scrolls its card into view in the carousel; hovering never mov
 | Hovered visit | 2 px brand ring on its block and its card | D6 |
 | Selected visit | The same ring, kept; the block pulses once on arrival | D6 |
 | Same car, another visit | 1 px brand outline | While a visit is hovered or selected |
-| Late arrival | Amber clock and "întârzie 25 min" on the block | Programat, start passed by more than 15 min, today |
-| Waiting for pickup | "gata de 2 zile" on the card | Gata for a day or more |
+| Late arrival | Amber clock and "întârzie 25 min" on the block and on nothing else (the car has no card yet) | Programat, start passed by more than 15 min, today |
+| What the clock says | One line, the same on a car's card and on its booking: "în 45 min", "de 2 h în service", "gata de 2 zile" (§12) | Every visit except delivered and no-show |
+| Where a booking would begin | A line with the time, on the quarter of an hour under the mouse | Mouse over free time, Zi |
 
 ### Quick access
 
@@ -125,6 +126,8 @@ Selecting a block scrolls its card into view in the carousel; hovering never mov
 | Check a car in | Select today's booking, then "Primire" in the selected-visit line |
 | Open the job or the booking | Tap the card or the block |
 | Book at a time | Tap free time on a mechanic's row |
+| Book an interval | Press on free time and drag (touch: press and hold first) |
+| Move a booking, or change how long it is | Drag it by its body, or by either edge (touch: press and hold first) |
 | See one stage | Tap a colour |
 | Clear | Esc: first the selection, then the filter |
 
@@ -163,10 +166,10 @@ Files: `timeline-geometry.js` (pure: day offsets, day at a scroll position, posi
 ### Geometry
 
 - Days from today − 180 to today + 365. Past the ends scrolling stops and a chip links to Programări.
-- A day's width: Zi = the wider of the grid and 72 px per hour (a day fills the grid on desktop, scrolls inside the day on a phone); Săptămână = the wider of 8.5 rem and one sixth of the grid.
+- A day's width: Zi = the wider of the grid and 72 px per hour, 96 px per hour on a phone (a day fills the grid on desktop, scrolls inside the day on a phone); Săptămână = the wider of 8.5 rem and one sixth of the grid.
 - A closed day with nothing booked is 48 px. Positions come from one precomputed list of offsets, so "which day is at this scroll position" is a lookup.
 - The same hours for every day: shop hours, widened once to cover bookings outside them, capped at 06:00 to 22:00.
-- Row heights never change while scrolling: every mechanic's row is one lane (52 px). Two overlapping bookings share the lane at half height, one line each; a third and beyond become "+N", which opens Programări.
+- Row heights never change while scrolling: every mechanic's row is one lane (58 px; 76 px for a while in phase 8, 52 px before). Two overlapping bookings share the lane at half height, one line each; a third and beyond become "+N", which opens Programări.
 - On resize, rotation or a zoom change, the instant under the reading point stays under it.
 
 ## 8. Performance
@@ -178,7 +181,7 @@ Files: `timeline-geometry.js` (pure: day offsets, day at a scroll position, posi
 | A hover re-renders 2 to 4 items, not the section | Hover lives in an external store; each card and block subscribes to "is it me?" |
 | Data work once per change, not per scroll | `selectVisits` memoised on the collections; a day's list is a map lookup |
 | No layout work in the glide | Target computed before the first frame; the loop only writes `scrollLeft` |
-| The minute tick repaints one line | Only today's day component reads the clock |
+| The minute tick repaints the days in view, once a minute | Since phase 8 every booking says what the clock says about it, so every rendered day (four at most in Zi) reads the clock |
 | No layout animation | Rings and the pulse use box-shadow, opacity and transform only |
 
 Checked with a frame recording on the iPhone during a swipe and a glide (the method in the simulator memory note), not by eye.
@@ -221,6 +224,7 @@ Each phase ends with `npm test && npm run lint && npm run build`, the browser ch
 | 5 🟢 | Status line counts cars plus days in view and settles after scrolling (built with phase 2) | Counts match the cards and blocks on screen in every scripted state |
 | 6 🟢 | Late and waiting-pickup marks; pins for walk-in cars (Q3) | Each has a domain test and a screenshot check |
 | 7 🟢 | Old paged components removed; `DESIGN-SYSTEM.md` and `PLAN.md` updated to 🟢; full pass on the iPhone | Nothing in this file is still 🟡 |
+| 8 🟢 | §12: bigger bookings with the card's wording, the clock's line on both, the line where a booking would begin, drawing, moving and stretching bookings | Scripted drags with a mouse and with a finger; a swipe still scrolls |
 
 Built differently from the plan, and why:
 
@@ -250,3 +254,67 @@ All four were answered "as recommended" on 13 Oct 2026.
 | Q2 | Is problem 1 in §2 the "stale În lucru cards" bug you meant, and are the clearing rules in D7 right? | Yes; clear on Zi / Săptămână switch, "Azi", Esc, second tap; keep while scrolling |
 | Q3 | Should a car that came without a booking get a pin on the timeline at its check-in time, so every car has a place on it? | Yes, in phase 6 |
 | Q4 | On the phone, swipe up/down over the timeline keeps scrolling the page (days move with sideways swipes). OK? | Yes. The timeline fills most of the first screen, so taking vertical swipes would trap the page |
+
+## 12. Phase 8: one wording, bigger bookings, editing in place
+
+Asked for by the owner on 13 Oct 2026, after phases 0 to 7: a stronger visual tie between a car's card and its booking, bigger bookings with more descriptive titles, the time until or since on both, and a timeline that can be worked on directly (draw a booking, change its interval).
+
+### The tie between a card and its booking
+
+A card and a booking are recognised as the same thing when they say the same things. Both now show, in the same words and the same order:
+
+| Line | Card | Booking (Zi) | Where it comes from |
+|---|---|---|---|
+| Who | Make logo, **make and model**, then plate and job number | Make logo, **make and model** | `visitText` |
+| What for | The booking's title, else the complaint, else the job's first operations | The same, then the customer | `visitSubject` (domain) |
+| The clock | "de 2 h în service", "gata de 2 zile" | The same, then the interval | `visitTiming` (domain), `timingText` |
+| Where on the calendar | "azi 14:00–16:00", or "primit ieri 10:30" | Its place | |
+
+What the clock says, by state:
+
+| State | Says | Marked |
+|---|---|---|
+| Booked, still to come | "în 45 min", "în 3 h", "mâine", "în 3 zile" | |
+| Booked, the customer called to say they come later (docs/VISIT-FLOW.md §6.1) | "vine la 10:30"; late only after that time | |
+| Booked, expected now (inside the 15 min grace) | "acum" | |
+| Booked for earlier today, not here | "întârzie 25 min" | Amber, clock |
+| Booked for an earlier day, never arrived | "nu a sosit" | Amber, clock |
+| In the shop, not finished | "abia primită", "de 2 h în service", "de 3 zile în service" (from when the job was opened) | |
+| Finished | "gata acum", "gata de 3 h", "gata de 2 zile" (from when it became ready) | Heavier, clock, from one day up |
+| Delivered, no-show | Nothing | |
+
+The lit state is the same on both too: a 2 px brand ring and a brand shadow. Still no dimming (D11).
+
+Sizes: a mechanic's row is 58 px (a booking 50 px, two lines: make and model, and what the clock says, or the time; it does not grow on hover, the rest is on its car's card and in its sheet); an hour is at least 96 px on a phone, so a quarter of an hour is 24 px under the finger. On desktop a day still fills the grid. A chip in Săptămână is two lines (44 px) at every width.
+
+### Editing in place (Zi only)
+
+| Do this | With a mouse | With a finger |
+|---|---|---|
+| See where a booking would begin | Point at free time: a line and the time, on the quarter of an hour | (press and hold shows it) |
+| Book from a time, for the usual length | Click | Tap |
+| Book an interval | Press and drag, either way; release | Press and hold, then drag |
+| Move a booking (time, mechanic, day) | Drag it by its body | Press and hold its middle, then drag |
+| Change when it starts or ends | Drag its left or right edge (a grip shows on hover) | Press and hold within 22 px of a side, then drag |
+| Give up | Esc, or drop it where it was | Drop it where it was |
+
+Rules:
+
+- Everything lands on a quarter of an hour, inside the shown hours; a booking is never shorter than a quarter of an hour. A drawn or stretched booking stays on its day and its mechanic; a moved one follows the pointer, and waits on the last open day while over a closed one.
+- While drawing, the line that was under the mouse stays as the booking's beginning; a dashed slot grows from it and a bubble above says "08:45–10:15 · 1 h 30 min". The form then opens with that start, length and mechanic. A drawn length is kept when operations are picked in the form (their hours would otherwise replace it).
+- A mouse drag starts after 4 px, so a click still opens a booking or books from free time. A finger must hold still for 380 ms first (the same as in Programări, with the same haptics); moving sooner is a scroll, so swiping through days is unchanged.
+- Only bookings that are `scheduled`, `confirmed` or `arrived` can be dragged (`canReschedule`). Delivered, no-show and walk-in pins stay put.
+- A drop saves through `useReschedule` (shared with Programări): the optional confirmation from the calendar's settings, a toast that says where the booking went ("Mutată", "Interval nou"), warns about an overlap and offers "Anulează". The booking is left selected.
+- Dragging near a side of the grid scrolls it (up to 14 px a frame, only in the direction the pointer is heading). For a drawn or stretched booking it stops at the ends of its day.
+- The preview is drawn by the timeline, over the days, and the pointer is captured by the scroller: it survives the days that are rendered and removed under it. The day a drag began on stays rendered until the drag ends, because a finger's moves are delivered to the element it first touched.
+- Săptămână has no hours, so nothing is dragged there.
+- Dragging is a shortcut, not the only way: the booking's form changes the same things and is reachable by keyboard.
+
+Maths (`timeline-drag.js`, unit-tested): `startAt`, `drawSpan`, `stretchSpan`, `shiftSpan`, `edgeSpeed`. Pointer handling: `timeline.jsx`.
+
+Not done, on purpose: no drag in Săptămână; no "over the planned time" mark for a job that runs past its booking (a car that waits for parts for days would always carry it).
+
+## 13. On the new home page (17 Oct 2026)
+
+Azi became the Cloudflare-style home ([`HOME-PAGE.md`](HOME-PAGE.md)). For this calendar it means: the cars in service are drawn by the shared cards form (`CardSection` in `components/ds/card-section.jsx`, the same as De confirmat and Facturi), on the page rather than inside the calendar's card, with the status line under them; the timeline keeps its own card right below. Everything in this document still holds: the link between a card and its booking, the filter, hover and selection, editing in place. A finished car's card also tells its customer on WhatsApp (Anunță).
+

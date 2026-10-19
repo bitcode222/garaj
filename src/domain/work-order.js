@@ -7,20 +7,21 @@ import { greetingName } from "./customer.js";
 import { formatPlate, vehicleName } from "./vehicle.js";
 
 // estimate → approved → in_progress ⇄ waiting_parts → ready → delivered
-// Small jobs may skip approval (estimate → in_progress); ready → in_progress is rework.
+// docs/VISIT-FLOW.md §6.2. An open job can jump forward to any later stage (the steps in
+// between are recorded as skipped), and step back to any earlier one (a job marked "ready"
+// too early goes back to "in progress", a wrongly approved one back to the estimate).
+// A delivered job can be reopened (it comes back as "ready"), a cancelled one reactivated
+// (as an estimate); a ready car is not cancelled, it is delivered or sent back to work.
 export const WO_FLOW = ["estimate", "approved", "in_progress", "waiting_parts", "ready", "delivered"];
 
-// Any open job can also step back to an earlier stage (a job marked "ready" too
-// early goes back to "in progress", a wrongly approved one back to the estimate).
-// Delivered and cancelled jobs are closed.
 export const WO_TRANSITIONS = {
-	estimate: ["approved", "in_progress", "cancelled"],
-	approved: ["in_progress", "estimate", "cancelled"],
-	in_progress: ["waiting_parts", "ready", "approved", "estimate", "cancelled"],
-	waiting_parts: ["in_progress", "approved", "estimate", "cancelled"],
+	estimate: ["approved", "in_progress", "ready", "delivered", "cancelled"],
+	approved: ["in_progress", "ready", "delivered", "estimate", "cancelled"],
+	in_progress: ["waiting_parts", "ready", "delivered", "approved", "estimate", "cancelled"],
+	waiting_parts: ["in_progress", "ready", "delivered", "approved", "estimate", "cancelled"],
 	ready: ["delivered", "in_progress", "approved", "estimate"],
-	delivered: [],
-	cancelled: [],
+	delivered: ["ready"],
+	cancelled: ["estimate"],
 };
 
 const WO_RANK = { estimate: 0, approved: 1, in_progress: 2, waiting_parts: 2, ready: 3, delivered: 4 };
@@ -45,15 +46,26 @@ export function canTransition(from, to) {
 	return WO_TRANSITIONS[from]?.includes(to) ?? false;
 }
 
-export function transition(order, to, { now = new Date().toISOString() } = {}) {
+/** The main stages a forward jump from `from` to `to` passes over ("waiting for parts" is a pause, never skipped). */
+export function skippedStages(from, to) {
+	const main = ["estimate", "approved", "in_progress", "ready", "delivered"];
+	const start = main.indexOf(from === "waiting_parts" ? "in_progress" : from);
+	const end = main.indexOf(to);
+	return start >= 0 && end > start + 1 ? main.slice(start + 1, end) : [];
+}
+
+/** Moves a job to `to`. `reason` (reopening, cancelling) goes into the history with the move. */
+export function transition(order, to, { now = new Date().toISOString(), reason = "" } = {}) {
 	if (!canTransition(order.status, to)) {
 		throw new DomainError("invalid_transition", "Lucrarea nu poate trece în această stare.");
 	}
+	const skipped = skippedStages(order.status, to);
+	const entry = { at: now, type: "status", from: order.status, to, ...(skipped.length ? { skipped } : null), ...(reason.trim() ? { reason: reason.trim() } : null) };
 	return {
 		...order,
 		status: to,
 		dates: { ...order.dates, [to]: now },
-		activity: [...(order.activity ?? []), { at: now, type: "status", from: order.status, to }],
+		activity: [...(order.activity ?? []), entry],
 		updatedAt: now,
 	};
 }
@@ -85,9 +97,29 @@ export function orderTotals(order, settings) {
 	return computeTotals(order.lines, { vatPayer: settings.invoicing.vatPayer });
 }
 
+/** The job's lines as they go on its invoice (new ids; the VAT rate the shop charges). */
+export function invoiceLinesFromOrder(order, { settings }) {
+	const { vatPayer, vatRate } = settings.invoicing;
+	return order.lines.map((line) => ({ ...line, id: uid(), vatRate: vatPayer ? (line.vatRate ?? vatRate) : 0 }));
+}
+
+const LINE_FIELDS = ["kind", "refId", "description", "qty", "unit", "unitPrice", "discountPct", "vatRate"];
+const lineKey = (line) => LINE_FIELDS.map((field) => String(line[field] ?? "")).join("|");
+
+/**
+ * True when a draft's lines are no longer what its job would put on an invoice (the job was
+ * changed after the draft was made). Ids and order do not count; what is billed does.
+ */
+export function draftBehindOrder(draft, order, { settings }) {
+	if (!order || draft.status !== "draft") return false;
+	const fresh = invoiceLinesFromOrder(order, { settings }).map(lineKey).sort();
+	const current = (draft.lines ?? []).map(lineKey).sort();
+	return fresh.length !== current.length || fresh.some((key, index) => key !== current[index]);
+}
+
 /** A draft invoice prefilled from the work order; the snapshot is taken at issue time. */
 export function toInvoiceDraft(order, { settings, today }) {
-	const { vatPayer, vatRate, series, dueDays } = settings.invoicing;
+	const { series, dueDays } = settings.invoicing;
 	return {
 		id: uid(),
 		status: "draft",
@@ -99,11 +131,7 @@ export function toInvoiceDraft(order, { settings, today }) {
 		vehicleId: order.vehicleId,
 		workOrderId: order.id,
 		mileage: order.mileage ?? null,
-		lines: order.lines.map((line) => ({
-			...line,
-			id: uid(),
-			vatRate: vatPayer ? (line.vatRate ?? vatRate) : 0,
-		})),
+		lines: invoiceLinesFromOrder(order, { settings }),
 		notes: "",
 		activity: [],
 	};
@@ -133,4 +161,10 @@ export function estimateMessage({ order, customer, vehicle, settings }) {
 	]
 		.filter(Boolean)
 		.join("\n");
+}
+
+/** "The car is ready" for WhatsApp / SMS: the car, its plate, when it can be picked up. */
+export function readyMessage({ customer, vehicle, settings }) {
+	const car = [vehicleName(vehicle), vehicle?.plate ? `(${formatPlate(vehicle.plate)})` : null].filter(Boolean).join(" ") || "Mașina";
+	return [`Bună ziua${customer ? `, ${greetingName(customer)}` : ""}! ${car} este gata de ridicare.`, `Program: ${settings.hours.open}–${settings.hours.close}.`, settings.shop.name].join(" ");
 }

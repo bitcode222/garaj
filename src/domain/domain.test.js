@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 
-import { APPOINTMENT_TRANSITIONS, findConflicts, quickAppointmentMoves } from "./appointment.js";
+import { APPOINTMENT_TRANSITIONS, canReschedule, findConflicts, quickAppointmentMoves } from "./appointment.js";
 import { isValidCUI, isValidIBAN, normalizePhone, smsHref, whatsappHref } from "./customer.js";
 import { addMonthsISO, diffDaysISO, isISODate } from "./dates.js";
 import { deadline, estimateKm } from "./vehicle.js";
@@ -13,7 +13,7 @@ import { computeReminders } from "./reminders.js";
 import { revenueByMonth } from "./reports.js";
 import { fold, matchesTokens, queryTokens } from "./search.js";
 import { addReading, formatPlate, serviceDue, vinIssue } from "./vehicle.js";
-import { VISIT_STAGES, arrivalDelay, buildVisits, countStages, defaultCalendarView, pickupWait, visitStage } from "./visit.js";
+import { VISIT_STAGES, arrivalDelay, buildVisits, countStages, defaultCalendarView, pickupWait, visitStage, visitSubject, visitTiming } from "./visit.js";
 import { WO_NEXT, canTransition, isBackwardMove, transition } from "./work-order.js";
 
 const settings = {
@@ -182,14 +182,14 @@ describe("work orders", () => {
 		assert.ok(!canTransition("delivered", "in_progress"));
 		assert.ok(canTransition("ready", "estimate"));
 		assert.ok(canTransition("in_progress", "approved"));
-		assert.ok(!canTransition("cancelled", "estimate"));
+		assert.ok(canTransition("cancelled", "estimate"));
 		assert.ok(isBackwardMove("ready", "estimate"));
 		assert.ok(!isBackwardMove("in_progress", "waiting_parts"));
 		assert.ok(!isBackwardMove("estimate", "approved"));
 		const o = transition({ status: "estimate", dates: {}, activity: [] }, "approved", { now: "t" });
 		assert.equal(o.status, "approved");
 		assert.equal(o.dates.approved, "t");
-		assert.throws(() => transition(o, "delivered"));
+		assert.throws(() => transition({ ...o, status: "delivered" }, "in_progress"));
 	});
 });
 
@@ -271,6 +271,15 @@ describe("vehicle dates without a known today", () => {
 		const vehicle = { mileage: [{ date: "2026-01-01", km: 1000 }, { date: "2026-06-01", km: 5000 }] };
 		assert.equal(estimateKm(vehicle, null), 5000);
 		assert.deepEqual(deadline("2026-12-01", null), { status: "unknown", days: null });
+	});
+});
+
+describe("rescheduling a booking", () => {
+	test("only a booking that is ahead or under way can be moved or stretched", () => {
+		assert.deepEqual(
+			Object.keys(APPOINTMENT_TRANSITIONS).filter((status) => canReschedule({ status })),
+			["scheduled", "confirmed", "arrived"],
+		);
 	});
 });
 
@@ -494,5 +503,51 @@ describe("visits index", () => {
 		assert.equal(pickupWait(ready, "2026-10-11"), 0);
 		assert.equal(pickupWait({ status: "in_progress", dates: {} }, "2026-10-13"), 0);
 		assert.equal(pickupWait({ status: "ready" }, "2026-10-13"), 0);
+	});
+
+	test("timing: a booked car is still to come, due, late, or never came", () => {
+		const booked = visits.byId.get("booked"); // 13 Oct, 14:00
+		assert.deepEqual(visitTiming(booked, local("2026-10-13", 11, 20)), { kind: "until", minutes: 160, days: 0 });
+		assert.deepEqual(visitTiming(booked, local("2026-10-12", 18)), { kind: "until", minutes: 20 * 60, days: 1 });
+		assert.deepEqual(visitTiming(booked, local("2026-10-13", 14, 10)), { kind: "due", minutes: 10, days: 0 });
+		assert.deepEqual(visitTiming(booked, local("2026-10-13", 14, 40)), { kind: "late", minutes: 40, days: 0 });
+		assert.equal(visitTiming(booked, local("2026-10-15", 9)).kind, "missed");
+		assert.equal(visitTiming(booked, local("2026-10-15", 9)).days, 2);
+		// Late on the card is late on the calendar: the same rule as arrivalDelay.
+		for (const minute of [0, 15, 16, 59]) {
+			const now = local("2026-10-13", 14, minute);
+			assert.equal(visitTiming(booked, now).kind === "late", arrivalDelay(appointments.booked, now) > 0, `14:${minute}`);
+		}
+	});
+
+	test("timing: a car in the shop counts from when it was received, a finished one from when it was ready", () => {
+		const now = local("2026-10-13", 11, 20);
+		// A walk-in received two days ago.
+		assert.deepEqual(visitTiming(visits.byId.get("job5"), now), { kind: "inShop", minutes: (43 * 60 + 20), days: 2 });
+		// Booked for yesterday 09:00, checked in then: counted from the job, not from the booking.
+		assert.equal(visitTiming(visits.byId.get("named"), now).kind, "inShop");
+		assert.equal(visitTiming(visits.byId.get("named"), now).days, 1);
+		const ready = { ...visits.byId.get("early"), order: { ...workOrders.job2, dates: { ready: local("2026-10-13", 10, 50) } } };
+		assert.deepEqual(visitTiming(ready, now), { kind: "waiting", minutes: 30, days: 0 });
+		// Without the date it became ready, from the start of the visit.
+		assert.equal(visitTiming(visits.byId.get("early"), now).minutes, 140);
+		// A clock that is behind never gives a negative count.
+		assert.equal(visitTiming(ready, local("2026-10-13", 10)).minutes, 0);
+		assert.equal(visitTiming({ stage: "delivered", start: now, day: "2026-10-13" }, now), null);
+		assert.equal(visitTiming({ stage: "no_show", start: now, day: "2026-10-13" }, now), null);
+	});
+
+	test("what a visit is for: the booking's title, else the complaint, else the job's operations", () => {
+		const lines = [
+			{ kind: "labor", description: "Schimb ulei" },
+			{ kind: "part", description: "Filtru ulei" },
+			{ kind: "labor", description: "Geometrie" },
+			{ kind: "labor", description: "Plăcuțe față" },
+		];
+		assert.equal(visitSubject({ appointment: { title: " Revizie + geometrie " }, order: { complaint: "Zgomot" } }), "Revizie + geometrie");
+		assert.equal(visitSubject({ appointment: { title: "Programare" }, order: { complaint: "Zgomot la frânare", lines } }), "Zgomot la frânare");
+		assert.equal(visitSubject({ appointment: null, order: { complaint: "", lines } }), "Schimb ulei, Geometrie +1");
+		assert.equal(visitSubject({ appointment: null, order: { lines: lines.slice(0, 2) } }), "Schimb ulei");
+		assert.equal(visitSubject({ appointment: { title: "" }, order: null }), "");
 	});
 });

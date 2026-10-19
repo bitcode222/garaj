@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { TriangleAlert } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Field, NumberInput, Segmented } from "@/components/ds/inputs";
@@ -17,13 +17,17 @@ import { useCollection, useEntity } from "@/lib/store/hooks";
 import { selectActive } from "@/lib/store/selectors";
 import { ServicesField } from "@/features/common/services-field";
 import { CustomerPicker, VehiclePicker } from "@/features/pickers/entity-pickers";
-import { navigateFromSheet } from "@/lib/sheets";
+import { closeSheet, navigateFromSheet, walkSheet } from "@/lib/sheets";
+import { opensInSheet } from "@/lib/detail-mode";
+import { CustomerNote } from "@/features/reviews/customer-note";
+import { SheetDepth } from "@/components/ds/sheet";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 
 /** "Primire mașină": the 30-second check-in that opens a work order. */
 export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicleId }) {
 	const router = useRouter();
+	const depth = useContext(SheetDepth);
 	const appointment = useEntity("appointments", appointmentId);
 	const vehicles = useCollection("vehicles");
 	const staff = selectActive(useCollection("staff"));
@@ -58,7 +62,14 @@ export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicl
 				: await createWorkOrder(payload);
 			if (warning) toast.warning(warning);
 			toast.success(`Lucrarea #${order.number} a fost deschisă.`);
-			navigateFromSheet(router, `/work-orders/detail/?id=${order.id}`);
+			// The job is the booking's next record: with side sheets, the booking walks forward to it
+			// (or the form itself becomes the job); otherwise its page opens.
+			if (opensInSheet()) {
+				if (depth > 0) {
+					closeSheet();
+					walkSheet("work-order-view", { id: order.id }, "forward");
+				} else walkSheet("work-order-view", { id: order.id }, "forward", { trail: false });
+			} else navigateFromSheet(router, `/work-orders/detail/?id=${order.id}`);
 		} catch (error) {
 			toast.error(error.message);
 		} finally {
@@ -94,6 +105,8 @@ export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicl
 				</Field>
 				<Field label="Client" required error={touched && !form.customerId ? "Alege clientul." : null}>
 					<CustomerPicker value={form.customerId} onChange={(customerId) => set({ customerId })} />
+					{/* What was noted about this customer last time (their review), at the moment the car comes in. */}
+					<CustomerNote customerId={form.customerId} />
 				</Field>
 				<div className="grid gap-4 sm:grid-cols-2">
 					<Field label="Kilometraj la primire" hint={last ? `Ultima citire: ${fmtKm(last.km)}` : undefined}>

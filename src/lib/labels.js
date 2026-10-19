@@ -71,6 +71,28 @@ export const VISIT_STAGE = {
 	no_show: APPOINTMENT_STATUS.no_show,
 };
 
+/** Why a booking was called off (src/domain/appointment.js CANCEL_REASONS). */
+export const CANCEL_REASON = {
+	client: "Clientul a anulat",
+	shop: "Service-ul a anulat",
+	other: "Alt motiv",
+};
+
+/** How far a review got (src/domain/review.js reviewState). */
+export const REVIEW_STATE = {
+	none: { label: "Necerută", tone: "neutral" },
+	requested: { label: "Cerută", tone: "blue" },
+	received: { label: "Primită", tone: "green" },
+};
+
+/** The admin's quick tags on a customer, in a review. */
+export const REVIEW_TAGS = {
+	punctual: "Punctual",
+	pays_on_time: "Plătește la timp",
+	demanding: "Pretențios",
+	recommends: "Ne recomandă",
+};
+
 export const INVOICE_STATE = {
 	draft: { label: "Ciornă", tone: "neutral", icon: FilePen },
 	issued: { label: "Emisă", tone: "blue", icon: FileText },

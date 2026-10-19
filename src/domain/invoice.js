@@ -69,24 +69,30 @@ export function buildSnapshot({ settings, customer, vehicle, mileage }) {
 	};
 }
 
-/** Blocking problems before a draft can get a number. */
-export function issueProblems(draft, { customer }) {
-	const problems = [];
-	if (!customer) problems.push("Alege clientul facturii.");
-	if (customer?.type === "company" && !customer.cui) problems.push("Clientul persoană juridică nu are CUI.");
-	if (!draft.lines?.length) problems.push("Adaugă cel puțin o linie.");
+/**
+ * What blocks a draft from getting a number, each with a `code` the screen turns into a fix
+ * (customer, cui, lines, line, issue_date, due_date) and the sentence it shows.
+ */
+export function issueChecklist(draft, { customer }) {
+	const items = [];
+	if (!customer) items.push({ code: "customer", text: "Alege clientul facturii." });
+	if (customer?.type === "company" && !customer.cui) items.push({ code: "cui", text: "Clientul persoană juridică nu are CUI." });
+	if (!draft.lines?.length) items.push({ code: "lines", text: "Adaugă cel puțin o linie." });
 	for (const line of draft.lines ?? []) {
 		const issues = lineIssues(line);
 		if (issues.length) {
-			problems.push(`Linia „${line.description || "fără descriere"}”: ${issues[0]}`);
+			items.push({ code: "line", text: `Linia „${line.description || "fără descriere"}”: ${issues[0]}` });
 			break;
 		}
 	}
-	if (!draft.issueDate) problems.push("Alege data emiterii.");
-	if (draft.dueDate && draft.issueDate && draft.dueDate < draft.issueDate) {
-		problems.push("Scadența nu poate fi înainte de data emiterii.");
-	}
-	return problems;
+	if (!draft.issueDate) items.push({ code: "issue_date", text: "Alege data emiterii." });
+	if (draft.dueDate && draft.issueDate && draft.dueDate < draft.issueDate) items.push({ code: "due_date", text: "Scadența nu poate fi înainte de data emiterii." });
+	return items;
+}
+
+/** Blocking problems before a draft can get a number (the sentences of issueChecklist). */
+export function issueProblems(draft, { customer }) {
+	return issueChecklist(draft, { customer }).map((item) => item.text);
 }
 
 /**

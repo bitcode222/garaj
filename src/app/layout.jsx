@@ -46,6 +46,12 @@ export default function RootLayout({ children }) {
 	return (
 		<html lang="ro" suppressHydrationWarning>
 			<body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+				{/* Before anything is painted: the sidebar folded or not (app-shell.jsx). The calendar opens folded unless unfolded there. */}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `try{var c=location.pathname.indexOf("/calendar")===0,v=localStorage.getItem(c?"garaj.sidebar.calendar":"garaj.sidebar");if(c?v!=="full":v==="rail")document.documentElement.dataset.sidebar="rail"}catch(e){if(location.pathname.indexOf("/calendar")===0)document.documentElement.dataset.sidebar="rail"}`,
+					}}
+				/>
 				<Providers>
 					<AppShell>{children}</AppShell>
 				</Providers>

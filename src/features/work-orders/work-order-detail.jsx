@@ -13,12 +13,12 @@ import {
 	MessageCircle,
 	MessageSquareText,
 	Printer,
-	ReceiptText,
 	Send,
 	Share2,
 	Trash2,
 	Wrench,
 } from "lucide-react";
+import { useRemember } from "@/lib/recents";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -29,54 +29,37 @@ import { Page, PageHeader, SplitView, StickyBar } from "@/components/ds/page";
 import { Plate } from "@/components/ds/plate";
 import { Sheet } from "@/components/ds/sheet";
 import { DetailPageSkeleton } from "@/components/ds/skeletons";
-import { StatusBadge, ToneBadge, ToneDot } from "@/components/ds/tone";
+import { ToneBadge, ToneDot } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { smsHref, whatsappHref } from "@/domain/customer";
 import { todayISO } from "@/domain/dates";
-import { buildSnapshot, formatInvoiceNumber } from "@/domain/invoice";
+import { buildSnapshot } from "@/domain/invoice";
 import { computeTotals } from "@/domain/lines";
 import { vehicleName } from "@/domain/vehicle";
-import { WO_TRANSITIONS, estimateMessage, inspectionSummary, isBackwardMove, isOpen } from "@/domain/work-order";
+import { estimateMessage, inspectionSummary, isOpen, readyMessage } from "@/domain/work-order";
 import { fmtDate, fmtHours, fmtKm, fmtWorkOrder } from "@/lib/format";
 import { printPage, shareText, useDraft, useQueryId } from "@/lib/hooks";
-import { FUEL_LEVELS, INVOICE_STATE, WORK_ORDER_ACTIONS, WORK_ORDER_STATUS } from "@/lib/labels";
-import { deleteWorkOrder, invoiceForWorkOrder, setWorkOrderStatus, updateWorkOrder } from "@/lib/store/actions";
+import { FUEL_LEVELS, WORK_ORDER_STATUS } from "@/lib/labels";
+import { deleteWorkOrder, invoiceForWorkOrder, updateWorkOrder } from "@/lib/store/actions";
 import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
-import { selectActive, selectInvoiceStates } from "@/lib/store/selectors";
+import { selectActive } from "@/lib/store/selectors";
 import { InvoiceDocument } from "@/features/invoices/invoice-document";
 import { LinesEditor } from "@/features/lines/lines-editor";
 import { TotalsBlock } from "@/features/lines/totals-block";
 import { InspectionChecklist } from "./inspection";
-import { StatusMoveItems, useStatusChange } from "@/components/ds/status-menu";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
-import { closeSheet, navigateFromSheet } from "@/lib/sheets";
-import { StatusStepper } from "./status-stepper";
-
-const NEXT_STEP = {
-	estimate: "approved",
-	approved: "in_progress",
-	in_progress: "ready",
-	waiting_parts: "in_progress",
-	ready: "delivered",
-};
-
-const NEXT_LABEL = {
-	estimate: "Aprobă devizul",
-	approved: "Începe lucrul",
-	in_progress: "Marchează gata",
-	waiting_parts: "Piesele au sosit",
-	ready: "Predă mașina",
-};
+import { closeSheet, walkSheet } from "@/lib/sheets";
+import { JobLinks } from "@/features/flow/visit-links";
+import { JobState, nextLabel, useJobMoves } from "./job-state";
+import { useWalk } from "@/features/flow/visit-links";
 
 const ACTIVITY_LABEL = { created: "Lucrare deschisă" };
 
@@ -102,14 +85,15 @@ export function WorkOrderEmbedded({ order }) {
 }
 
 function WorkOrder({ order, embedded = false }) {
+	useRemember("work-order", order.id);
 	const router = useRouter();
 	const confirm = useConfirm();
 	const today = useToday();
 	const settings = useSettings();
 	const customer = useEntity("customers", order.customerId);
+	const appointment = useEntity("appointments", order.appointmentId);
 	const vehicle = useEntity("vehicles", order.vehicleId);
 	const invoices = useCollection("invoices");
-	const payments = useCollection("payments");
 	const staff = selectActive(useCollection("staff"));
 	const bays = selectActive(useCollection("bays"));
 	const [estimateOpen, setEstimateOpen] = useState(false);
@@ -129,49 +113,26 @@ function WorkOrder({ order, embedded = false }) {
 	const vatPayer = settings.invoicing.vatPayer;
 	const totals = computeTotals(draft.lines, { vatPayer });
 	const invoice = order.invoiceId ? invoices[order.invoiceId] : null;
-	const invoiceInfo = invoice && today ? selectInvoiceStates(invoices, payments, today).get(invoice.id) : null;
 	const summary = inspectionSummary(draft.inspection);
 	const message = estimateMessage({ order: draft, customer, vehicle, settings });
-	const next = NEXT_STEP[order.status];
+	// Every status move (state section, phone bar, the strip's "Reactivează") goes through one place.
+	const moves = useJobMoves({ order, invoice, appointment, beforeMove: flush });
+	const next = moves.flow.off ? null : moves.flow.next;
+	const walk = useWalk(embedded);
+	const askReview = () => walk({ kind: "review", id: order.id, direction: "forward", props: { workOrderId: order.id } });
 
-	const move = async (to) => {
-		flush();
-		if (to === "delivered" && (!invoice || invoice.status === "draft")) {
-			const ok = await confirm({
-				title: "Mașina nu are factură emisă",
-				description: "O poți preda acum și factura ulterior (ex. flote cu facturare lunară).",
-				confirmLabel: "Predă fără factură",
-			});
-			if (!ok) return;
-		}
-		try {
-			setWorkOrderStatus(order.id, to);
-			toast.success(`${WORK_ORDER_STATUS[to].label}`);
-		} catch (error) {
-			toast.error(error.message);
-		}
-	};
-
-	const change = useStatusChange({
-		map: WORK_ORDER_STATUS,
-		value: order.status,
-		subject: fmtWorkOrder(order.number),
-		onMove: move,
-		actions: WORK_ORDER_ACTIONS,
-		destructive: ["cancelled"],
-		isBackward: isBackwardMove,
-	});
-
+	// The invoice is the next record of the visit: in a sheet the job's sheet walks forward to it.
 	const openInvoice = () => {
 		flush();
 		try {
 			const inv = invoiceForWorkOrder(order.id);
-			if (embedded) navigateFromSheet(router, `/invoices/detail/?id=${inv.id}`);
+			if (embedded) walkSheet("invoice-view", { id: inv.id }, "forward");
 			else router.push(`/invoices/detail/?id=${inv.id}`);
 		} catch (error) {
 			toast.error(error.message);
 		}
 	};
+	const showLines = () => document.getElementById(`job-lines-${order.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
 	const remove = async () => {
 		if (!(await confirm({ title: `Ștergi lucrarea #${order.number}?`, confirmLabel: "Șterge", destructive: true }))) return;
@@ -214,24 +175,14 @@ function WorkOrder({ order, embedded = false }) {
 				title={`Lucrarea ${fmtWorkOrder(order.number)}`}
 				meta={
 					<div className="space-y-4">
-						<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-							<StatusBadge map={WORK_ORDER_STATUS} value={order.status} />
-							<span>deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}</span>
-						</div>
-						<StatusStepper status={order.status} onMove={locked ? undefined : change} className="max-w-2xl" />
+						<JobLinks order={order} inSheet={embedded} onInvoice={openInvoice} onLines={showLines} onReactivate={() => moves.perform(moves.flow.next)} />
+						<JobState order={order} moves={moves} onReview={askReview} />
+						<p className="text-xs text-muted-foreground">Deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}</p>
 					</div>
 				}
 				actions={
 					<>
-						{next && (
-							<Button onClick={() => change(next)} className="max-md:hidden">
-								{NEXT_LABEL[order.status]}
-							</Button>
-						)}
-						<Button variant="outline" onClick={openInvoice} disabled={!draft.lines.length}>
-							<ReceiptText /> <span className="max-sm:hidden">{invoice && invoice.status !== "cancelled" ? "Factura" : "Facturează"}</span>
-						</Button>
-						<DropdownMenu>
+<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<Button variant="outline">
 									<Send /> <span className="max-sm:hidden">Deviz</span>
@@ -260,7 +211,7 @@ function WorkOrder({ order, embedded = false }) {
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
-						{!locked && (
+						{order.status === "estimate" && !order.invoiceId && (
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button variant="ghost" size="icon" aria-label="Mai multe acțiuni">
@@ -268,15 +219,9 @@ function WorkOrder({ order, embedded = false }) {
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end" className="w-56">
-									<StatusMoveItems map={WORK_ORDER_STATUS} value={order.status} moves={WO_TRANSITIONS[order.status]} onPick={change} actions={WORK_ORDER_ACTIONS} destructive={["cancelled"]} isBackward={isBackwardMove} />
-									{order.status === "estimate" && !order.invoiceId && (
-										<>
-											<DropdownMenuSeparator />
-											<DropdownMenuItem variant="destructive" onSelect={remove}>
-												<Trash2 /> Șterge devizul
-											</DropdownMenuItem>
-										</>
-									)}
+									<DropdownMenuItem variant="destructive" onSelect={remove}>
+										<Trash2 /> Șterge devizul
+									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
 						)}
@@ -355,7 +300,7 @@ function WorkOrder({ order, embedded = false }) {
 										)}
 									</Field>
 								</KeyValueGrid>
-								{customer?.phone && <ContactActions phone={customer.phone} message={order.status === "ready" ? `Bună ziua! ${vehicleName(vehicle)} este gata de ridicare. ${settings.shop.name}` : undefined} />}
+								{customer?.phone && <ContactActions phone={customer.phone} message={order.status === "ready" ? readyMessage({ customer, vehicle, settings }) : undefined} />}
 							</CardContent>
 						</Card>
 
@@ -371,7 +316,7 @@ function WorkOrder({ order, embedded = false }) {
 							</CardContent>
 						</Card>
 
-						<Card>
+						<Card id={`job-lines-${order.id}`} className="scroll-mt-24">
 							<CardHeader title="Deviz" icon={FileText} description={vatPayer ? "Prețuri fără TVA" : "Neplătitor de TVA"} />
 							<CardContent>
 								<LinesEditor
@@ -437,34 +382,7 @@ function WorkOrder({ order, embedded = false }) {
 										<Money value={totals.partsMargin} decimals={0} className="text-sm font-semibold" />
 									</div>
 								</div>
-								{next && (
-									<Button className="w-full max-md:hidden" onClick={() => change(next)}>
-										{NEXT_LABEL[order.status]}
-									</Button>
-								)}
-							</CardContent>
-						</Card>
-
-						<Card>
-							<CardHeader title="Factură" icon={ReceiptText} />
-							<CardContent className="pt-3">
-								{invoice && invoice.status !== "cancelled" ? (
-									<Link href={`/invoices/detail/?id=${invoice.id}`} className="flex items-center justify-between gap-3 rounded-lg border p-3 hover:bg-accent/50">
-										<div>
-											<p className="font-mono text-sm font-medium">{invoice.number == null ? "Ciornă" : formatInvoiceNumber(invoice.series, invoice.number)}</p>
-											<p className="text-xs text-muted-foreground">{fmtDate(invoice.issueDate)}</p>
-										</div>
-										{invoiceInfo && <StatusBadge map={INVOICE_STATE} value={invoiceInfo.state} />}
-									</Link>
-								) : (
-									<div className="space-y-3">
-										<p className="text-sm text-muted-foreground">Liniile devizului trec pe factură; o poți ajusta înainte de emitere.</p>
-										<Button variant="outline" className="w-full" onClick={openInvoice} disabled={!draft.lines.length}>
-											<ReceiptText /> Creează factura
-										</Button>
-									</div>
-								)}
-							</CardContent>
+</CardContent>
 						</Card>
 
 						<Card>
@@ -477,13 +395,11 @@ function WorkOrder({ order, embedded = false }) {
 				}
 			/>
 
+			{/* On a phone the next step also sits in the bottom bar, in reach of the thumb. */}
 			{next && (
 				<StickyBar inline={embedded} className="md:hidden">
-					<Button className="h-11 flex-1" onClick={() => change(next)}>
-						{NEXT_LABEL[order.status]}
-					</Button>
-					<Button variant="outline" className="h-11" onClick={openInvoice} disabled={!draft.lines.length} aria-label="Factură">
-						<ReceiptText />
+					<Button className="h-11 flex-1" onClick={() => moves.perform(next)}>
+						{nextLabel(next)}
 					</Button>
 				</StickyBar>
 			)}

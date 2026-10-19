@@ -10,6 +10,7 @@ import {
 	indexOfDay,
 	instantAt,
 	locate,
+	minuteWithin,
 	scrollToKeep,
 	scrollToShow,
 	stepIndex,
@@ -50,6 +51,14 @@ describe("timeline geometry", () => {
 		assert.equal(xOf(layout, hours, "2026-10-13", 23 * 60), 2000);
 		// A slim day has no hours: its middle.
 		assert.equal(xOf(layout, hours, "2026-10-18", 12 * 60), 6000 + SLIM_PX / 2);
+	});
+
+	test("a drag that stays on its day reads the minute inside that day, pinned at its edges", () => {
+		assert.equal(minuteWithin(layout, hours, 1, 1500), 13 * 60);
+		assert.equal(minuteWithin(layout, hours, 1, 1125), 9 * 60 + 15);
+		// The pointer has left the day: its first or last shown minute.
+		assert.equal(minuteWithin(layout, hours, 1, 400), 8 * 60);
+		assert.equal(minuteWithin(layout, hours, 1, 5200), 18 * 60);
 	});
 
 	test("days outside the range are clamped, and reported as outside", () => {

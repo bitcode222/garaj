@@ -13,10 +13,12 @@ export const COLLECTIONS = [
 	"invoices",
 	"payments",
 	"contacts",
+	"reviews",
 ];
 
 const DB_NAME = "garaj";
-const DB_VERSION = 1;
+// 2: "reviews" (docs/VISIT-FLOW.md §6.4). Opening creates the stores that are missing; nothing else changes.
+const DB_VERSION = 2;
 
 let dbPromise = null;
 

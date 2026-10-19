@@ -205,3 +205,139 @@ export function MixBar({ parts, currency = "RON" }) {
 		</div>
 	);
 }
+
+/**
+ * A clean gridline step for four steps over `max`: 1, 1.5, 2, 2.5, 3, 4, 5, 6 or 8 × 10^n, so the
+ * axis reads 0 · 1,5 K · 3 K · 4,5 K · 6 K, never 1,3 K. `integer`: whole steps only (counts).
+ */
+function niceStep(max, integer = false) {
+	const raw = Math.max(max, integer ? 1 : Number.EPSILON) / 4;
+	const exp = 10 ** Math.floor(Math.log10(raw));
+	for (const factor of [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) {
+		const step = factor * exp;
+		if (step >= raw && (!integer || Number.isInteger(step))) return step;
+	}
+	return 10 * exp;
+}
+
+/** The line through the points, broken where there is no value (null). */
+function linePaths(points, x, y) {
+	const runs = [];
+	let run = [];
+	points.forEach((value, i) => {
+		if (value == null) {
+			if (run.length) runs.push(run);
+			run = [];
+		} else run.push([x(i), y(value)]);
+	});
+	if (run.length) runs.push(run);
+	return runs;
+}
+
+/**
+ * An area chart in the Cloudflare manner (docs/HOME-PAGE.md D9): one series, a 2 px line over a
+ * faint fill, hairline gridlines with their values on the right. `bare` drops the grid and the
+ * axes (the small cards' sparkline). Hover or focus on a point shows its day and value; the
+ * latest point carries a marker. Points are numbers or null (no data that day: a gap).
+ *   keys         one per point; `formatKey(key, long)` names it
+ *   format       a value as text (axis, tooltip); `formatAxis` for the axis when shorter
+ *   integer      the values are counts: whole gridlines only
+ */
+export function AreaChart({ points, keys, format, formatAxis = format, formatKey, label, height = 200, bare = false, integer = false }) {
+	const [ref, width] = useWidth();
+	const [active, setActive] = useState(null);
+	const axisW = bare ? 0 : 44;
+	const padTop = bare ? 8 : 10;
+	const padBottom = bare ? 2 : 22;
+	const plotW = Math.max(0, width - axisW);
+	const plotH = height - padTop - padBottom;
+	const values = points.filter((v) => v != null);
+	const step = niceStep(Math.max(...values, 0), integer);
+	const max = 4 * step;
+	const band = points.length > 1 ? plotW / (points.length - 1) : 0;
+	const x = (i) => (points.length > 1 ? i * band : plotW / 2);
+	const y = (v) => padTop + plotH - (Math.max(0, v) / max) * plotH;
+	const runs = linePaths(points, x, y);
+	const ticks = [0, 1, 2, 3, 4].map((k) => k * step);
+	const last = points.findLastIndex((v) => v != null);
+	const labelAt = new Set([0, Math.floor((points.length - 1) / 2), points.length - 1]);
+	const id = `area-${label.replace(/\W+/g, "-")}`;
+
+	return (
+		<div ref={ref} className="viz relative w-full" style={{ height }}>
+			{width > 0 && (
+				<svg width={width} height={height} role="img" aria-label={label} className="overflow-visible">
+					<defs>
+						<linearGradient id={id} x1="0" x2="0" y1="0" y2="1">
+							<stop offset="0%" stopColor="var(--viz-1)" stopOpacity="0.18" />
+							<stop offset="100%" stopColor="var(--viz-1)" stopOpacity="0" />
+						</linearGradient>
+					</defs>
+					{!bare &&
+						ticks.map((t) => (
+							<g key={t}>
+								<line x1={0} x2={plotW} y1={y(t) + 0.5} y2={y(t) + 0.5} stroke="var(--viz-grid)" strokeWidth="1" />
+								<text x={plotW + 8} y={y(t)} dy="0.32em" className="fill-muted-foreground text-[10px] tabular-nums">
+									{formatAxis(t)}
+								</text>
+							</g>
+						))}
+					{runs.map((run) => (
+						<g key={run[0][0]}>
+							<path d={`M${run[0][0]},${padTop + plotH}${run.map(([px, py]) => `L${px},${py}`).join("")}L${run.at(-1)[0]},${padTop + plotH}Z`} fill={`url(#${id})`} />
+							<path d={run.map(([px, py], k) => `${k ? "L" : "M"}${px},${py}`).join("")} fill="none" stroke="var(--viz-1)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+						</g>
+					))}
+					{!bare &&
+						points.map((_, i) =>
+							labelAt.has(i) ? (
+								<text key={keys[i]} x={x(i)} y={height - 6} textAnchor={i === 0 ? "start" : i === points.length - 1 ? "end" : "middle"} className="fill-muted-foreground text-[10px]">
+									{formatKey(keys[i])}
+								</text>
+							) : null,
+						)}
+					{active != null && <line x1={x(active)} x2={x(active)} y1={padTop} y2={padTop + plotH} stroke="var(--viz-grid)" strokeWidth="1" />}
+					{[active ?? last].map((i) =>
+						i >= 0 && points[i] != null ? <circle key="marker" cx={x(i)} cy={y(points[i])} r="4" fill="var(--viz-1)" stroke="var(--card)" strokeWidth="2" /> : null,
+					)}
+					{/* One band per point, for the pointer and the keyboard. */}
+					{points.map((value, i) => (
+						<rect
+							key={keys[i]}
+							x={Math.max(0, x(i) - band / 2)}
+							y={0}
+							width={points.length > 1 ? band : plotW}
+							height={height}
+							fill="transparent"
+							tabIndex={bare ? -1 : 0}
+							aria-label={`${formatKey(keys[i], true)}: ${value == null ? "fără date" : format(value)}`}
+							onPointerEnter={() => setActive(i)}
+							onPointerLeave={() => setActive(null)}
+							onFocus={() => setActive(i)}
+							onBlur={() => setActive(null)}
+							className="outline-none"
+						/>
+					))}
+				</svg>
+			)}
+			{active != null && width > 0 && (
+				<div className="pointer-events-none absolute -top-2 z-10 w-36 -translate-y-full rounded-lg border bg-popover p-2 text-xs shadow-lg" style={{ left: Math.min(Math.max(0, x(active) - 72), width - 144) }}>
+					<p className="font-semibold text-foreground tabular-nums">{points[active] == null ? "Fără date" : format(points[active])}</p>
+					<p className="text-muted-foreground first-letter:uppercase">{formatKey(keys[active], true)}</p>
+				</div>
+			)}
+		</div>
+	);
+}
+
+/** No data: a faint wave behind a "Fără date" pill, never an empty box (Cloudflare's "No data"). */
+export function NoData({ height = 120 }) {
+	return (
+		<div className="relative flex w-full items-center justify-center" style={{ height }}>
+			<svg viewBox="0 0 200 60" preserveAspectRatio="none" className="absolute inset-0 h-full w-full text-muted-foreground/25" aria-hidden>
+				<path d="M0,38 C20,30 30,44 50,36 S80,20 95,32 S120,48 140,30 S175,24 200,34" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+			</svg>
+			<span className="relative rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">Fără date</span>
+		</div>
+	);
+}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
-import { Building2, CalendarClock, Database, Download, FlaskConical, ImagePlus, Monitor, PanelRight, FileText, Moon, Palette, Percent, Plus, ReceiptText, RotateCcw, Sun, Upload, Users, Warehouse } from "lucide-react";
+import { Building2, CalendarClock, Database, Download, FlaskConical, ImagePlus, Monitor, PanelRight, FileText, Moon, Palette, Percent, Plus, ReceiptText, RotateCcw, Star, Sun, Upload, Users, Warehouse } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -283,6 +283,12 @@ function Settings({ settings }) {
 						<Field label="Tarif manoperă (fără TVA)" hint="pe oră">{(id) => <MoneyInput id={id} value={draft.laborRate} onValueChange={(laborRate) => update({ laborRate })} />}</Field>
 						<Field label="Adaos piese" hint="Pentru prețul sugerat la piese noi">{(id) => <NumberInput id={id} decimals={1} suffix="%" value={draft.partsMarkup} onValueChange={(partsMarkup) => update({ partsMarkup: partsMarkup ?? 0 })} />}</Field>
 					</div>
+				</Section>
+
+				<Section id="recenzii" icon={Star} title="Recenzii" description="La finalul unei vizite poți cere părerea clientului">
+					<Field label="Linkul pentru recenzii" hint="Ex. pagina service-ului pe Google. Apare în mesajul trimis clientului.">
+						{(id) => <Input id={id} type="url" inputMode="url" value={draft.reviews.link} onChange={(e) => update({ reviews: { ...draft.reviews, link: e.target.value.trim() } })} placeholder="https://g.page/r/…" />}
+					</Field>
 				</Section>
 
 				<Section id="program" icon={CalendarClock} title="Program" description="Calendarul arată aceste ore">

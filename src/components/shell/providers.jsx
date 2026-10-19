@@ -6,6 +6,7 @@ import { toast } from "@/lib/toast";
 import { ConfirmProvider } from "@/components/ds/confirm";
 import { Toaster } from "@/components/ui/sonner";
 import { useKeyboardInset } from "@/lib/keyboard";
+import { ensureAppointmentNumbers } from "@/lib/store/actions";
 import { initStore } from "@/lib/store/store";
 import { useStoreValue } from "@/lib/store/hooks";
 
@@ -17,7 +18,10 @@ function StoreBoot() {
 	useKeyboardInset();
 
 	useEffect(() => {
-		initStore();
+		// Data saved before bookings had numbers gets them once, as soon as it is loaded.
+		initStore()
+			.then(ensureAppointmentNumbers)
+			.catch((error) => console.warn("[garaj] numbering bookings failed", error));
 		if (isNative()) document.documentElement.dataset.native = "ios";
 	}, []);
 

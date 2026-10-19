@@ -20,6 +20,11 @@ export function getDetailMode() {
 	}
 }
 
+/** True when a record opens as a side sheet here (md and up, with the sheet preference). */
+export function opensInSheet() {
+	return typeof window !== "undefined" && getDetailMode() === "sheet" && window.matchMedia("(min-width: 768px)").matches;
+}
+
 const ROUTES = {
 	customer: "/customers/detail/",
 	vehicle: "/vehicles/detail/",
@@ -31,14 +36,15 @@ export const detailHref = (type, id) => `${ROUTES[type]}?id=${id}`;
 
 /**
  * `open(type, id)` for customer · vehicle · work-order · invoice · appointment.
- * Appointments have no page of their own: in "page" mode they open the edit form.
+ * Appointments have no page of their own: they always open their sheet (its flow strip and
+ * state section are where a booking is moved on; the form is one tap away, in its top bar).
  */
 export function useOpenDetail() {
 	const router = useRouter();
 	return useCallback(
 		(type, id) => {
 			const sheet = getDetailMode() === "sheet" && window.matchMedia("(min-width: 768px)").matches;
-			if (type === "appointment") openSheet(sheet ? "appointment-view" : "appointment", { id });
+			if (type === "appointment") openSheet("appointment-view", { id });
 			else if (sheet) openSheet(`${type}-view`, { id });
 			else navigateFromSheet(router, detailHref(type, id));
 		},

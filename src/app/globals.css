@@ -420,3 +420,24 @@
 		display: none !important;
 	}
 }
+
+/* A toast's "Anulează" must work while a sheet is open: a modal sheet turns pointer events off
+   for everything outside it (the body), and the toasts would inherit that. */
+[data-sonner-toaster] {
+	pointer-events: auto;
+}
+
+/* The desktop sidebar folded into the rail (docs/APPOINTMENTS-AND-NAV.md D4). The attribute is set
+   on <html> by a script in the layout before the first paint, and outside any layer so it wins
+   over the utilities. */
+@media (min-width: 64rem) {
+	html[data-sidebar="rail"] [data-shell="sidebar"] {
+		display: none;
+	}
+	html[data-sidebar="rail"] [data-shell="rail"] {
+		display: flex;
+	}
+	html[data-sidebar="rail"] #main {
+		padding-left: 4rem;
+	}
+}

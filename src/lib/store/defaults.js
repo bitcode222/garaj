@@ -34,9 +34,12 @@ export const DEFAULT_SETTINGS = {
 		badge: "colored",
 		agendaGroupBy: "date",
 		confirmDrop: false,
+		showService: true, // the calendar's row of cars in service
 		defaultDuration: 60,
 	},
 	appearance: { theme: "system" },
+	// The page a customer is sent to for a review (e.g. the shop's Google reviews), docs/VISIT-FLOW.md §6.4.
+	reviews: { link: "" },
 };
 
 const isObject = (v) => v && typeof v === "object" && !Array.isArray(v);

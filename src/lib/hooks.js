@@ -124,6 +124,32 @@ export async function printPage(name) {
 }
 
 /** Native share sheet when available; clipboard otherwise. Returns "shared" | "copied" | "failed". */
+/**
+ * Copies text: the clipboard API, or (it can be refused: no permission, an older web view) the
+ * old way through a hidden field. True when it worked.
+ */
+export async function copyText(text) {
+	try {
+		await navigator.clipboard.writeText(text);
+		return true;
+	} catch {
+		const field = document.createElement("textarea");
+		field.value = text;
+		field.setAttribute("readonly", "");
+		field.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
+		document.body.appendChild(field);
+		field.select();
+		let done = false;
+		try {
+			done = document.execCommand("copy");
+		} catch {
+			done = false;
+		}
+		field.remove();
+		return done;
+	}
+}
+
 export async function shareText({ title, text }) {
 	try {
 		if (navigator.share) {
@@ -154,4 +180,19 @@ export function useMediaQuery(query) {
 		() => window.matchMedia(query).matches,
 		() => false,
 	);
+}
+
+/** Local minutes since midnight, refreshed every minute; null until mounted. */
+export function useNowMinute() {
+	const [now, setNow] = useState(null);
+	useEffect(() => {
+		const tick = () => {
+			const d = new Date();
+			setNow(d.getHours() * 60 + d.getMinutes());
+		};
+		tick();
+		const timer = setInterval(tick, 60_000);
+		return () => clearInterval(timer);
+	}, []);
+	return now;
 }

@@ -14,7 +14,18 @@ import {
 
 export const NAV = [
 	{ href: "/", label: "Azi", icon: Sun, group: "Operațiuni" },
-	{ href: "/calendar/", label: "Programări", icon: CalendarDays, group: "Operațiuni" },
+	{
+		href: "/calendar/",
+		label: "Programări",
+		icon: CalendarDays,
+		group: "Operațiuni",
+		matches: ["/calendar", "/appointments"],
+		// Two pages (docs/APPOINTMENTS-AND-NAV.md D2): pressing the item opens the first.
+		children: [
+			{ href: "/calendar/", label: "Calendar" },
+			{ href: "/appointments/", label: "Toate programările", badge: "toConfirm" },
+		],
+	},
 	{ href: "/work-orders/", label: "Lucrări", icon: Wrench, group: "Operațiuni", badge: "openOrders" },
 	{ href: "/invoices/", label: "Facturi", icon: ReceiptText, group: "Operațiuni" },
 	{ href: "/customers/", label: "Clienți", icon: Users, group: "Relații" },
@@ -27,7 +38,7 @@ export const NAV = [
 		label: "Setări",
 		icon: Settings,
 		group: "Administrare",
-		// Sub-items: shown under the item while its page is open, jump to a section.
+		// Sub-items: sections of its one page.
 		children: [
 			{ href: "/settings/#service", label: "Service" },
 			{ href: "/settings/#facturare", label: "Facturare" },
@@ -45,6 +56,9 @@ export const TABS = [
 	NAV[3],
 	{ href: "/more/", label: "Mai mult", icon: LayoutGrid, badge: "reminders", matches: ["/customers", "/vehicles", "/reminders", "/catalog", "/reports", "/settings", "/design", "/more"] },
 ];
+
+/** The two Programări pages, as the phone's tab and the switch at the top of both name them. */
+export const PROGRAMARI_PAGES = ["/calendar/", "/appointments/"];
 
 export function isActive(item, pathname) {
 	if (item.matches) return item.matches.some((m) => pathname.startsWith(m));

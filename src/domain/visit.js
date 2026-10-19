@@ -1,5 +1,5 @@
 import { isActiveAppointment } from "./appointment.js";
-import { dayOfInstant, diffDaysISO } from "./dates.js";
+import { dayOfInstant, diffDaysISO, minutesBetween } from "./dates.js";
 import { OPEN_STATUSES } from "./work-order.js";
 
 // A visit is one car's trip through the shop as the dashboard calendar shows it:
@@ -126,11 +126,15 @@ export function buildVisits(appointments, workOrders) {
 	return { byId, byOrder, byVehicle, bookingsByDay, visitsByDay, inService };
 }
 
-/** Minutes a booked car is overdue today: not arrived more than `grace` minutes after its start. 0 otherwise. */
+/**
+ * Minutes a booked car is overdue today: not arrived more than `grace` minutes after its
+ * start, or after the arrival the customer announced (announceDelay). 0 otherwise.
+ */
 export function arrivalDelay(appointment, now, grace = 15) {
 	if (appointment.status !== "scheduled" && appointment.status !== "confirmed") return 0;
 	if (dayOfInstant(appointment.start) !== dayOfInstant(now)) return 0;
-	const late = Math.floor((new Date(now).getTime() - new Date(appointment.start).getTime()) / 60_000);
+	const from = appointment.expectedAt && appointment.expectedAt > appointment.start ? appointment.expectedAt : appointment.start;
+	const late = Math.floor((new Date(now).getTime() - new Date(from).getTime()) / 60_000);
 	return late > grace ? late : 0;
 }
 
@@ -138,4 +142,51 @@ export function arrivalDelay(appointment, now, grace = 15) {
 export function pickupWait(order, today) {
 	if (order.status !== "ready" || !order.dates?.ready) return 0;
 	return Math.max(0, diffDaysISO(dayOfInstant(order.dates.ready), today));
+}
+
+/**
+ * Where a visit stands against the clock: the one line its car's card and its place on the
+ * calendar both show. `minutes` and calendar `days` are counted from `now`, never negative.
+ *   until    booked and still to come
+ *   expected booked, and the customer announced they come later: still to come (`at` is when)
+ *   due      booked, expected right now (inside the grace)
+ *   late     booked for earlier today and not here (the arrivalDelay rule)
+ *   missed   booked for an earlier day and never arrived
+ *   inShop   in the shop and not finished: since the car was received
+ *   waiting  finished: since it became ready
+ * null when the clock says nothing about it (delivered, no-show).
+ */
+export function visitTiming(visit, now, grace = 15) {
+	const today = dayOfInstant(now);
+	const since = (kind, instant) => ({ kind, minutes: Math.max(0, minutesBetween(instant, now)), days: Math.max(0, diffDaysISO(dayOfInstant(instant), today)) });
+	if (visit.stage === "scheduled") {
+		if (visit.day < today) return since("missed", visit.start);
+		// An announced late arrival moves "on time" to the time the customer gave.
+		const expected = visit.appointment?.expectedAt;
+		if (expected && expected > visit.start) {
+			if (expected > now) return { kind: "expected", minutes: minutesBetween(now, expected), days: diffDaysISO(today, dayOfInstant(expected)), at: expected };
+			const passed = since("late", expected);
+			return passed.minutes > grace ? passed : { ...passed, kind: "due" };
+		}
+		if (visit.start > now) return { kind: "until", minutes: minutesBetween(now, visit.start), days: diffDaysISO(today, visit.day) };
+		const passed = since("late", visit.start);
+		return passed.minutes > grace ? passed : { ...passed, kind: "due" };
+	}
+	if (visit.stage === "ready") return since("waiting", visit.order?.dates?.ready ?? visit.start);
+	if (OPEN_STATUSES.includes(visit.stage)) return since("inShop", visit.order?.createdAt ?? visit.start);
+	return null;
+}
+
+/**
+ * What a visit is for, in a few words: the booking's title, else what the customer asked
+ * for at check-in, else the job's first operations. "" when nothing says.
+ */
+export function visitSubject(visit) {
+	const title = visit.appointment?.title?.trim();
+	// "Programare" is what a booking saved without a title is called: it says nothing.
+	if (title && title !== "Programare") return title;
+	const complaint = visit.order?.complaint?.trim();
+	if (complaint) return complaint;
+	const work = (visit.order?.lines ?? []).filter((line) => line.kind === "labor" && line.description).map((line) => line.description);
+	return work.length > 2 ? `${work.slice(0, 2).join(", ")} +${work.length - 2}` : work.join(", ");
 }

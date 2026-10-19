@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CalendarPlus, EllipsisVertical, FileSearch, Gauge, Pencil, Shield, ShieldCheck, Trash2, Wrench } from "lucide-react";
+import { useRemember } from "@/lib/recents";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -127,6 +128,7 @@ export function VehicleEmbedded({ vehicle }) {
 }
 
 function Vehicle({ vehicle, embedded = false }) {
+	useRemember("vehicle", vehicle.id);
 	const router = useRouter();
 	const confirm = useConfirm();
 	const today = useToday();
