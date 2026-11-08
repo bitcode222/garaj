@@ -12,16 +12,19 @@ import { formatPlate, vehicleName } from "./vehicle.js";
 // too early goes back to "in progress", a wrongly approved one back to the estimate).
 // A delivered job can be reopened (it comes back as "ready"), a cancelled one reactivated
 // (as an estimate); a ready car is not cancelled, it is delivered or sent back to work.
+// A deviz the client refused is "declined" (Refuzată, docs/LUCRARE.md pick 14): its own
+// end, reactivated as an estimate.
 export const WO_FLOW = ["estimate", "approved", "in_progress", "waiting_parts", "ready", "delivered"];
 
 export const WO_TRANSITIONS = {
-	estimate: ["approved", "in_progress", "ready", "delivered", "cancelled"],
+	estimate: ["approved", "in_progress", "ready", "delivered", "cancelled", "declined"],
 	approved: ["in_progress", "ready", "delivered", "estimate", "cancelled"],
 	in_progress: ["waiting_parts", "ready", "delivered", "approved", "estimate", "cancelled"],
 	waiting_parts: ["in_progress", "ready", "delivered", "approved", "estimate", "cancelled"],
 	ready: ["delivered", "in_progress", "approved", "estimate"],
 	delivered: ["ready"],
 	cancelled: ["estimate"],
+	declined: ["estimate"],
 };
 
 const WO_RANK = { estimate: 0, approved: 1, in_progress: 2, waiting_parts: 2, ready: 3, delivered: 4 };
@@ -97,10 +100,10 @@ export function orderTotals(order, settings) {
 	return computeTotals(order.lines, { vatPayer: settings.invoicing.vatPayer });
 }
 
-/** The job's lines as they go on its invoice (new ids; the VAT rate the shop charges). */
+/** The job's lines as they go on its invoice (new ids; the VAT rate the shop charges). Lines the client refused never do. */
 export function invoiceLinesFromOrder(order, { settings }) {
 	const { vatPayer, vatRate } = settings.invoicing;
-	return order.lines.map((line) => ({ ...line, id: uid(), vatRate: vatPayer ? (line.vatRate ?? vatRate) : 0 }));
+	return order.lines.filter((line) => !line.refused).map((line) => ({ ...line, id: uid(), vatRate: vatPayer ? (line.vatRate ?? vatRate) : 0 }));
 }
 
 const LINE_FIELDS = ["kind", "refId", "description", "qty", "unit", "unitPrice", "discountPct", "vatRate"];
