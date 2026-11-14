@@ -1,0 +1,10038 @@
+{
+ "documents": [
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76b8ym6ohkc",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76b3sbyqn09",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bcgsfqx22",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76b9ao8q7up",
+     "kind": "labor",
+     "refId": "0mwh0r76agxvhxxet",
+     "description": "Înlocuire biellete antiruliu",
+     "qty": 0.8,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76b2ee72k1f",
+     "kind": "part",
+     "refId": "0mwh0r769dio9her0",
+     "description": "Bieletă antiruliu Meyle",
+     "qty": 2,
+     "unit": "buc",
+     "unitPrice": 8400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 6200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76baxqxkq1i",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 73950,
+    "vat": 15530,
+    "gross": 89480,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 73950,
+      "vat": 15530
+     }
+    ],
+    "labor": 25200,
+    "parts": 46250,
+    "fees": 2500,
+    "cost": 34100,
+    "partsMargin": 12150,
+    "laborCost": 0,
+    "laborMargin": 25200,
+    "hours": 1.4
+   },
+   "net": [
+    10800,
+    25650,
+    3800,
+    14400,
+    16800,
+    2500
+   ],
+   "gross": [
+    13068,
+    31037,
+    4598,
+    17424,
+    20328,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76b8ym6ohkc",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76b3sbyqn09",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bcgsfqx22",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76b9ao8q7up",
+     "kind": "labor",
+     "refId": "0mwh0r76agxvhxxet",
+     "description": "Înlocuire biellete antiruliu",
+     "qty": 0.8,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76b2ee72k1f",
+     "kind": "part",
+     "refId": "0mwh0r769dio9her0",
+     "description": "Bieletă antiruliu Meyle",
+     "qty": 2,
+     "unit": "buc",
+     "unitPrice": 8400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 6200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76baxqxkq1i",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 73950,
+    "vat": 0,
+    "gross": 73950,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 73950,
+      "vat": 0
+     }
+    ],
+    "labor": 25200,
+    "parts": 46250,
+    "fees": 2500,
+    "cost": 34100,
+    "partsMargin": 12150,
+    "laborCost": 0,
+    "laborMargin": 25200,
+    "hours": 1.4
+   },
+   "net": [
+    10800,
+    25650,
+    3800,
+    14400,
+    16800,
+    2500
+   ],
+   "gross": [
+    10800,
+    25650,
+    3800,
+    14400,
+    16800,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bkxgzlpg9",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76b3mdbt33a",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bl4joc5es",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76b1w05i6yj",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 42750,
+    "vat": 8978,
+    "gross": 51728,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 42750,
+      "vat": 8978
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 2500,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800,
+    2500
+   ],
+   "gross": [
+    13068,
+    31037,
+    4598,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bkxgzlpg9",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76b3mdbt33a",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bl4joc5es",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76b1w05i6yj",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 42750,
+    "vat": 0,
+    "gross": 42750,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 42750,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 2500,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800,
+    2500
+   ],
+   "gross": [
+    10800,
+    25650,
+    3800,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bg1m993ar",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76b2p3o0761",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40300,
+    "vat": 8463,
+    "gross": 48763,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 40300,
+      "vat": 8463
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 0,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300
+   ],
+   "gross": [
+    21780,
+    26983
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bg1m993ar",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76b2p3o0761",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40300,
+    "vat": 0,
+    "gross": 40300,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 40300,
+      "vat": 0
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 0,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300
+   ],
+   "gross": [
+    18000,
+    22300
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bg3sj3o62",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76bnwu0nv4q",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bfgz6fytp",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 103800,
+    "vat": 21798,
+    "gross": 125598,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 103800,
+      "vat": 21798
+     }
+    ],
+    "labor": 28800,
+    "parts": 75000,
+    "fees": 0,
+    "cost": 55500,
+    "partsMargin": 19500,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    28800,
+    52700,
+    22300
+   ],
+   "gross": [
+    34848,
+    63767,
+    26983
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bg3sj3o62",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76bnwu0nv4q",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bfgz6fytp",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 103800,
+    "vat": 0,
+    "gross": 103800,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 103800,
+      "vat": 0
+     }
+    ],
+    "labor": 28800,
+    "parts": 75000,
+    "fees": 0,
+    "cost": 55500,
+    "partsMargin": 19500,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    28800,
+    52700,
+    22300
+   ],
+   "gross": [
+    28800,
+    52700,
+    22300
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bz9z4xxa3",
+     "kind": "labor",
+     "refId": "0mwh0r76ap2ta5j9u",
+     "description": "Geometrie roți",
+     "qty": 0.8,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    }
+   ],
+   "totals": {
+    "net": 14400,
+    "vat": 3024,
+    "gross": 17424,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 14400,
+      "vat": 3024
+     }
+    ],
+    "labor": 14400,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 14400,
+    "hours": 0.8
+   },
+   "net": [
+    14400
+   ],
+   "gross": [
+    17424
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bz9z4xxa3",
+     "kind": "labor",
+     "refId": "0mwh0r76ap2ta5j9u",
+     "description": "Geometrie roți",
+     "qty": 0.8,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    }
+   ],
+   "totals": {
+    "net": 14400,
+    "vat": 0,
+    "gross": 14400,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 14400,
+      "vat": 0
+     }
+    ],
+    "labor": 14400,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 14400,
+    "hours": 0.8
+   },
+   "net": [
+    14400
+   ],
+   "gross": [
+    14400
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bfvka1l3m",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76bpbhie7ns",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bmce8ui9j",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40250,
+    "vat": 8453,
+    "gross": 48703,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 40250,
+      "vat": 8453
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    13068,
+    31037,
+    4598
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bfvka1l3m",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76bpbhie7ns",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bmce8ui9j",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40250,
+    "vat": 0,
+    "gross": 40250,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 40250,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    10800,
+    25650,
+    3800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76b0cccx5un",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76bnjbeomb4",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 13300,
+    "vat": 2793,
+    "gross": 16093,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 13300,
+      "vat": 2793
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    2500
+   ],
+   "gross": [
+    13068,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76b0cccx5un",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76bnjbeomb4",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 13300,
+    "vat": 0,
+    "gross": 13300,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 13300,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    2500
+   ],
+   "gross": [
+    10800,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76b5mgcjb7u",
+     "kind": "labor",
+     "refId": "0mwh0r76awjqdr3sp",
+     "description": "Înlocuire rulment roată",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76bzeiexua6",
+     "kind": "part",
+     "refId": "0mwh0r7698otdvskn",
+     "description": "Kit rulment roată SKF",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 28400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 21000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bwcd2u80a",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76b7tcsr84q",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 66900,
+    "vat": 14049,
+    "gross": 80949,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 66900,
+      "vat": 14049
+     }
+    ],
+    "labor": 36000,
+    "parts": 28400,
+    "fees": 2500,
+    "cost": 21000,
+    "partsMargin": 7400,
+    "laborCost": 0,
+    "laborMargin": 36000,
+    "hours": 2
+   },
+   "net": [
+    27000,
+    28400,
+    9000,
+    2500
+   ],
+   "gross": [
+    32670,
+    34364,
+    10890,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76b5mgcjb7u",
+     "kind": "labor",
+     "refId": "0mwh0r76awjqdr3sp",
+     "description": "Înlocuire rulment roată",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76bzeiexua6",
+     "kind": "part",
+     "refId": "0mwh0r7698otdvskn",
+     "description": "Kit rulment roată SKF",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 28400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 21000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bwcd2u80a",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76b7tcsr84q",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 66900,
+    "vat": 0,
+    "gross": 66900,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 66900,
+      "vat": 0
+     }
+    ],
+    "labor": 36000,
+    "parts": 28400,
+    "fees": 2500,
+    "cost": 21000,
+    "partsMargin": 7400,
+    "laborCost": 0,
+    "laborMargin": 36000,
+    "hours": 2
+   },
+   "net": [
+    27000,
+    28400,
+    9000,
+    2500
+   ],
+   "gross": [
+    27000,
+    28400,
+    9000,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bxoee6o7b",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    }
+   ],
+   "totals": {
+    "net": 10800,
+    "vat": 2268,
+    "gross": 13068,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 10800,
+      "vat": 2268
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800
+   ],
+   "gross": [
+    13068
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bxoee6o7b",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    }
+   ],
+   "totals": {
+    "net": 10800,
+    "vat": 0,
+    "gross": 10800,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 10800,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800
+   ],
+   "gross": [
+    10800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bf51ye98b",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76b2aa9ob61",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bfosaxa0r",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 42800,
+    "vat": 8988,
+    "gross": 51788,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 42800,
+      "vat": 8988
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 2500,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300,
+    2500
+   ],
+   "gross": [
+    21780,
+    26983,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bf51ye98b",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76b2aa9ob61",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bfosaxa0r",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 42800,
+    "vat": 0,
+    "gross": 42800,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 42800,
+      "vat": 0
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 2500,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300,
+    2500
+   ],
+   "gross": [
+    18000,
+    22300,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bwxbyh3r0",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76bh34wfeod",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40300,
+    "vat": 8463,
+    "gross": 48763,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 40300,
+      "vat": 8463
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 0,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300
+   ],
+   "gross": [
+    21780,
+    26983
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bwxbyh3r0",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76bh34wfeod",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40300,
+    "vat": 0,
+    "gross": 40300,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 40300,
+      "vat": 0
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 0,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300
+   ],
+   "gross": [
+    18000,
+    22300
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bh271i183",
+     "kind": "labor",
+     "refId": "0mwh0r76a3hc5g6i2",
+     "description": "Înlocuire bujii",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76buxwargqk",
+     "kind": "part",
+     "refId": "0mwh0r769nblfgfw2",
+     "description": "Bujie NGK",
+     "qty": 4,
+     "unit": "buc",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 28000,
+    "vat": 5880,
+    "gross": 33880,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 28000,
+      "vat": 5880
+     }
+    ],
+    "labor": 10800,
+    "parts": 17200,
+    "fees": 0,
+    "cost": 12800,
+    "partsMargin": 4400,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    17200
+   ],
+   "gross": [
+    13068,
+    20812
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bh271i183",
+     "kind": "labor",
+     "refId": "0mwh0r76a3hc5g6i2",
+     "description": "Înlocuire bujii",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76buxwargqk",
+     "kind": "part",
+     "refId": "0mwh0r769nblfgfw2",
+     "description": "Bujie NGK",
+     "qty": 4,
+     "unit": "buc",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 28000,
+    "vat": 0,
+    "gross": 28000,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 28000,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 17200,
+    "fees": 0,
+    "cost": 12800,
+    "partsMargin": 4400,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    17200
+   ],
+   "gross": [
+    10800,
+    17200
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bu8fox90m",
+     "kind": "labor",
+     "refId": "0mwh0r76a5jeb8944",
+     "description": "Curățare filtru de particule (DPF)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76bghjpbbw6",
+     "kind": "part",
+     "refId": "0mwh0r76930wg3o82",
+     "description": "Soluție curățare DPF Liqui Moly",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 16200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 12000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 43200,
+    "vat": 9072,
+    "gross": 52272,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 43200,
+      "vat": 9072
+     }
+    ],
+    "labor": 27000,
+    "parts": 16200,
+    "fees": 0,
+    "cost": 12000,
+    "partsMargin": 4200,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    16200
+   ],
+   "gross": [
+    32670,
+    19602
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bu8fox90m",
+     "kind": "labor",
+     "refId": "0mwh0r76a5jeb8944",
+     "description": "Curățare filtru de particule (DPF)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76bghjpbbw6",
+     "kind": "part",
+     "refId": "0mwh0r76930wg3o82",
+     "description": "Soluție curățare DPF Liqui Moly",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 16200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 12000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 43200,
+    "vat": 0,
+    "gross": 43200,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 43200,
+      "vat": 0
+     }
+    ],
+    "labor": 27000,
+    "parts": 16200,
+    "fees": 0,
+    "cost": 12000,
+    "partsMargin": 4200,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    16200
+   ],
+   "gross": [
+    27000,
+    16200
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76biv8u2sdz",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76bb8aabivp",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bkt7852x1",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40250,
+    "vat": 8453,
+    "gross": 48703,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 40250,
+      "vat": 8453
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    13068,
+    31037,
+    4598
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76biv8u2sdz",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76bb8aabivp",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bkt7852x1",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40250,
+    "vat": 0,
+    "gross": 40250,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 40250,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    10800,
+    25650,
+    3800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76b2bcxnrk9",
+     "kind": "labor",
+     "refId": "0mwh0r76awjqdr3sp",
+     "description": "Înlocuire rulment roată",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76buh6khuhk",
+     "kind": "part",
+     "refId": "0mwh0r7698otdvskn",
+     "description": "Kit rulment roată SKF",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 28400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 21000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 55400,
+    "vat": 11634,
+    "gross": 67034,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 55400,
+      "vat": 11634
+     }
+    ],
+    "labor": 27000,
+    "parts": 28400,
+    "fees": 0,
+    "cost": 21000,
+    "partsMargin": 7400,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    28400
+   ],
+   "gross": [
+    32670,
+    34364
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76b2bcxnrk9",
+     "kind": "labor",
+     "refId": "0mwh0r76awjqdr3sp",
+     "description": "Înlocuire rulment roată",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76buh6khuhk",
+     "kind": "part",
+     "refId": "0mwh0r7698otdvskn",
+     "description": "Kit rulment roată SKF",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 28400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 21000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 55400,
+    "vat": 0,
+    "gross": 55400,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 55400,
+      "vat": 0
+     }
+    ],
+    "labor": 27000,
+    "parts": 28400,
+    "fees": 0,
+    "cost": 21000,
+    "partsMargin": 7400,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    28400
+   ],
+   "gross": [
+    27000,
+    28400
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bw8zrdpqd",
+     "kind": "labor",
+     "refId": "0mwh0r76ak2jc6vtr",
+     "description": "Înlocuire acumulator",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76bsf1fkyi0",
+     "kind": "part",
+     "refId": "0mwh0r769nylu18a4",
+     "description": "Acumulator 74 Ah 680 A Varta",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 70200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 52000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bp7dmfy36",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 78100,
+    "vat": 16401,
+    "gross": 94501,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 78100,
+      "vat": 16401
+     }
+    ],
+    "labor": 5400,
+    "parts": 70200,
+    "fees": 2500,
+    "cost": 52000,
+    "partsMargin": 18200,
+    "laborCost": 0,
+    "laborMargin": 5400,
+    "hours": 0.3
+   },
+   "net": [
+    5400,
+    70200,
+    2500
+   ],
+   "gross": [
+    6534,
+    84942,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bw8zrdpqd",
+     "kind": "labor",
+     "refId": "0mwh0r76ak2jc6vtr",
+     "description": "Înlocuire acumulator",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76bsf1fkyi0",
+     "kind": "part",
+     "refId": "0mwh0r769nylu18a4",
+     "description": "Acumulator 74 Ah 680 A Varta",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 70200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 52000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bp7dmfy36",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 78100,
+    "vat": 0,
+    "gross": 78100,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 78100,
+      "vat": 0
+     }
+    ],
+    "labor": 5400,
+    "parts": 70200,
+    "fees": 2500,
+    "cost": 52000,
+    "partsMargin": 18200,
+    "laborCost": 0,
+    "laborMargin": 5400,
+    "hours": 0.3
+   },
+   "net": [
+    5400,
+    70200,
+    2500
+   ],
+   "gross": [
+    5400,
+    70200,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bijehgq65",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76be2t8kifa",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 13300,
+    "vat": 2793,
+    "gross": 16093,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 13300,
+      "vat": 2793
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    2500
+   ],
+   "gross": [
+    13068,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bijehgq65",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76be2t8kifa",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 13300,
+    "vat": 0,
+    "gross": 13300,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 13300,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    2500
+   ],
+   "gross": [
+    10800,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76cyfhpcxxo",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cqm9qne35",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ckn8n2eoy",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c336cpg58",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cl71fj1r4",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cgx0d9z6z",
+     "kind": "labor",
+     "refId": "0mwh0r76aayr51454",
+     "description": "Înlocuire kit distribuție și pompă apă",
+     "qty": 4,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cgoltkmne",
+     "kind": "part",
+     "refId": "0mwh0r7691ffik9pc",
+     "description": "Kit distribuție cu pompă de apă Gates",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 110700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 82000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cv81prij8",
+     "kind": "part",
+     "refId": "0mwh0r769hcq3jwn8",
+     "description": "Antigel G12+ concentrat Valvoline",
+     "qty": 3,
+     "unit": "l",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c9zxcq2s8",
+     "kind": "part",
+     "refId": "0mwh0r769krcxpnq4",
+     "description": "Curea accesorii Contitech",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 12800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 9500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 278350,
+    "vat": 58454,
+    "gross": 336804,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 278350,
+      "vat": 58454
+     }
+    ],
+    "labor": 99000,
+    "parts": 179350,
+    "fees": 0,
+    "cost": 132800,
+    "partsMargin": 46550,
+    "laborCost": 0,
+    "laborMargin": 99000,
+    "hours": 5.5
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    72000,
+    110700,
+    12900,
+    12800
+   ],
+   "gross": [
+    32670,
+    31037,
+    4598,
+    7381,
+    8954,
+    87120,
+    133947,
+    15609,
+    15488
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76cyfhpcxxo",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cqm9qne35",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ckn8n2eoy",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c336cpg58",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cl71fj1r4",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cgx0d9z6z",
+     "kind": "labor",
+     "refId": "0mwh0r76aayr51454",
+     "description": "Înlocuire kit distribuție și pompă apă",
+     "qty": 4,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cgoltkmne",
+     "kind": "part",
+     "refId": "0mwh0r7691ffik9pc",
+     "description": "Kit distribuție cu pompă de apă Gates",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 110700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 82000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cv81prij8",
+     "kind": "part",
+     "refId": "0mwh0r769hcq3jwn8",
+     "description": "Antigel G12+ concentrat Valvoline",
+     "qty": 3,
+     "unit": "l",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c9zxcq2s8",
+     "kind": "part",
+     "refId": "0mwh0r769krcxpnq4",
+     "description": "Curea accesorii Contitech",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 12800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 9500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 278350,
+    "vat": 0,
+    "gross": 278350,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 278350,
+      "vat": 0
+     }
+    ],
+    "labor": 99000,
+    "parts": 179350,
+    "fees": 0,
+    "cost": 132800,
+    "partsMargin": 46550,
+    "laborCost": 0,
+    "laborMargin": 99000,
+    "hours": 5.5
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    72000,
+    110700,
+    12900,
+    12800
+   ],
+   "gross": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    72000,
+    110700,
+    12900,
+    12800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76bxhaqg2yp",
+     "kind": "labor",
+     "refId": "0mwh0r76a8bmpybof",
+     "description": "Înlocuire plăcuțe frână spate",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76bmsaltgxb",
+     "kind": "part",
+     "refId": "0mwh0r769sh4jwuma",
+     "description": "Plăcuțe frână spate TRW",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 17600,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 13000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bmm1pukdj",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76b3y4g76kd",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bc1jhdxil",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76b0wvak924",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bd5d5wqhz",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 105550,
+    "vat": 22166,
+    "gross": 127716,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 105550,
+      "vat": 22166
+     }
+    ],
+    "labor": 45000,
+    "parts": 60550,
+    "fees": 0,
+    "cost": 44700,
+    "partsMargin": 15850,
+    "laborCost": 0,
+    "laborMargin": 45000,
+    "hours": 2.5
+   },
+   "net": [
+    18000,
+    17600,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ],
+   "gross": [
+    21780,
+    21296,
+    32670,
+    31037,
+    4598,
+    7381,
+    8954
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76bxhaqg2yp",
+     "kind": "labor",
+     "refId": "0mwh0r76a8bmpybof",
+     "description": "Înlocuire plăcuțe frână spate",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76bmsaltgxb",
+     "kind": "part",
+     "refId": "0mwh0r769sh4jwuma",
+     "description": "Plăcuțe frână spate TRW",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 17600,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 13000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bmm1pukdj",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76b3y4g76kd",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bc1jhdxil",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76b0wvak924",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76bd5d5wqhz",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 105550,
+    "vat": 0,
+    "gross": 105550,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 105550,
+      "vat": 0
+     }
+    ],
+    "labor": 45000,
+    "parts": 60550,
+    "fees": 0,
+    "cost": 44700,
+    "partsMargin": 15850,
+    "laborCost": 0,
+    "laborMargin": 45000,
+    "hours": 2.5
+   },
+   "net": [
+    18000,
+    17600,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ],
+   "gross": [
+    18000,
+    17600,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76ckxs9fyjr",
+     "kind": "labor",
+     "refId": "0mwh0r76atwr4i17l",
+     "description": "Încărcare freon AC",
+     "qty": 0.7,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76coxew0rs9",
+     "kind": "part",
+     "refId": "0mwh0r769xe8f02ya",
+     "description": "Freon R1234yf Honeywell",
+     "qty": 5,
+     "unit": "100 g",
+     "unitPrice": 12200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 9000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c3m5iair1",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    }
+   ],
+   "totals": {
+    "net": 82600,
+    "vat": 17346,
+    "gross": 99946,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 82600,
+      "vat": 17346
+     }
+    ],
+    "labor": 21600,
+    "parts": 61000,
+    "fees": 0,
+    "cost": 45000,
+    "partsMargin": 16000,
+    "laborCost": 0,
+    "laborMargin": 21600,
+    "hours": 1.2
+   },
+   "net": [
+    12600,
+    61000,
+    9000
+   ],
+   "gross": [
+    15246,
+    73810,
+    10890
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76ckxs9fyjr",
+     "kind": "labor",
+     "refId": "0mwh0r76atwr4i17l",
+     "description": "Încărcare freon AC",
+     "qty": 0.7,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76coxew0rs9",
+     "kind": "part",
+     "refId": "0mwh0r769xe8f02ya",
+     "description": "Freon R1234yf Honeywell",
+     "qty": 5,
+     "unit": "100 g",
+     "unitPrice": 12200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 9000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c3m5iair1",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    }
+   ],
+   "totals": {
+    "net": 82600,
+    "vat": 0,
+    "gross": 82600,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 82600,
+      "vat": 0
+     }
+    ],
+    "labor": 21600,
+    "parts": 61000,
+    "fees": 0,
+    "cost": 45000,
+    "partsMargin": 16000,
+    "laborCost": 0,
+    "laborMargin": 21600,
+    "hours": 1.2
+   },
+   "net": [
+    12600,
+    61000,
+    9000
+   ],
+   "gross": [
+    12600,
+    61000,
+    9000
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c7mvxo3r0",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76ci1rdjjb2",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c5n2i4c7l",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ci2clxv0i",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76coqpha0fy",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 51750,
+    "vat": 10868,
+    "gross": 62618,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 51750,
+      "vat": 10868
+     }
+    ],
+    "labor": 19800,
+    "parts": 29450,
+    "fees": 2500,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 19800,
+    "hours": 1.1
+   },
+   "net": [
+    10800,
+    25650,
+    3800,
+    9000,
+    2500
+   ],
+   "gross": [
+    13068,
+    31037,
+    4598,
+    10890,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c7mvxo3r0",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76ci1rdjjb2",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c5n2i4c7l",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ci2clxv0i",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76coqpha0fy",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 51750,
+    "vat": 0,
+    "gross": 51750,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 51750,
+      "vat": 0
+     }
+    ],
+    "labor": 19800,
+    "parts": 29450,
+    "fees": 2500,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 19800,
+    "hours": 1.1
+   },
+   "net": [
+    10800,
+    25650,
+    3800,
+    9000,
+    2500
+   ],
+   "gross": [
+    10800,
+    25650,
+    3800,
+    9000,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76ca45xshr4",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cm04qw3v6",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 13300,
+    "vat": 2793,
+    "gross": 16093,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 13300,
+      "vat": 2793
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    2500
+   ],
+   "gross": [
+    13068,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76ca45xshr4",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cm04qw3v6",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 13300,
+    "vat": 0,
+    "gross": 13300,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 13300,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    2500
+   ],
+   "gross": [
+    10800,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76coyemh6to",
+     "kind": "labor",
+     "refId": "0mwh0r76a3hc5g6i2",
+     "description": "Înlocuire bujii",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cti1amkoh",
+     "kind": "part",
+     "refId": "0mwh0r769nblfgfw2",
+     "description": "Bujie NGK",
+     "qty": 4,
+     "unit": "buc",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 28000,
+    "vat": 5880,
+    "gross": 33880,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 28000,
+      "vat": 5880
+     }
+    ],
+    "labor": 10800,
+    "parts": 17200,
+    "fees": 0,
+    "cost": 12800,
+    "partsMargin": 4400,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    17200
+   ],
+   "gross": [
+    13068,
+    20812
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76coyemh6to",
+     "kind": "labor",
+     "refId": "0mwh0r76a3hc5g6i2",
+     "description": "Înlocuire bujii",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cti1amkoh",
+     "kind": "part",
+     "refId": "0mwh0r769nblfgfw2",
+     "description": "Bujie NGK",
+     "qty": 4,
+     "unit": "buc",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 28000,
+    "vat": 0,
+    "gross": 28000,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 28000,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 17200,
+    "fees": 0,
+    "cost": 12800,
+    "partsMargin": 4400,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    17200
+   ],
+   "gross": [
+    10800,
+    17200
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c7d0jtns1",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    }
+   ],
+   "totals": {
+    "net": 9000,
+    "vat": 1890,
+    "gross": 10890,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 9000,
+      "vat": 1890
+     }
+    ],
+    "labor": 9000,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 9000,
+    "hours": 0.5
+   },
+   "net": [
+    9000
+   ],
+   "gross": [
+    10890
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c7d0jtns1",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    }
+   ],
+   "totals": {
+    "net": 9000,
+    "vat": 0,
+    "gross": 9000,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 9000,
+      "vat": 0
+     }
+    ],
+    "labor": 9000,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 9000,
+    "hours": 0.5
+   },
+   "net": [
+    9000
+   ],
+   "gross": [
+    9000
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76cdtk2y17g",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cbdznglqi",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ct6drolmp",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cdaos4ise",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cgekc6x1e",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 69950,
+    "vat": 14690,
+    "gross": 84640,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 69950,
+      "vat": 14690
+     }
+    ],
+    "labor": 27000,
+    "parts": 42950,
+    "fees": 0,
+    "cost": 31700,
+    "partsMargin": 11250,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ],
+   "gross": [
+    32670,
+    31037,
+    4598,
+    7381,
+    8954
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76cdtk2y17g",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cbdznglqi",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ct6drolmp",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cdaos4ise",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cgekc6x1e",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 69950,
+    "vat": 0,
+    "gross": 69950,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 69950,
+      "vat": 0
+     }
+    ],
+    "labor": 27000,
+    "parts": 42950,
+    "fees": 0,
+    "cost": 31700,
+    "partsMargin": 11250,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ],
+   "gross": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c622mt1dc",
+     "kind": "labor",
+     "refId": "0mwh0r76a8bmpybof",
+     "description": "Înlocuire plăcuțe frână spate",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76criuvetck",
+     "kind": "part",
+     "refId": "0mwh0r769sh4jwuma",
+     "description": "Plăcuțe frână spate TRW",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 17600,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 13000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 35600,
+    "vat": 7476,
+    "gross": 43076,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 35600,
+      "vat": 7476
+     }
+    ],
+    "labor": 18000,
+    "parts": 17600,
+    "fees": 0,
+    "cost": 13000,
+    "partsMargin": 4600,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    17600
+   ],
+   "gross": [
+    21780,
+    21296
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c622mt1dc",
+     "kind": "labor",
+     "refId": "0mwh0r76a8bmpybof",
+     "description": "Înlocuire plăcuțe frână spate",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76criuvetck",
+     "kind": "part",
+     "refId": "0mwh0r769sh4jwuma",
+     "description": "Plăcuțe frână spate TRW",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 17600,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 13000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 35600,
+    "vat": 0,
+    "gross": 35600,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 35600,
+      "vat": 0
+     }
+    ],
+    "labor": 18000,
+    "parts": 17600,
+    "fees": 0,
+    "cost": 13000,
+    "partsMargin": 4600,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    17600
+   ],
+   "gross": [
+    18000,
+    17600
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76cldd8zava",
+     "kind": "labor",
+     "refId": "0mwh0r76a5jeb8944",
+     "description": "Curățare filtru de particule (DPF)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76ct86wlo3p",
+     "kind": "part",
+     "refId": "0mwh0r76930wg3o82",
+     "description": "Soluție curățare DPF Liqui Moly",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 16200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 12000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cmt4lysfj",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 45700,
+    "vat": 9597,
+    "gross": 55297,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 45700,
+      "vat": 9597
+     }
+    ],
+    "labor": 27000,
+    "parts": 16200,
+    "fees": 2500,
+    "cost": 12000,
+    "partsMargin": 4200,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    16200,
+    2500
+   ],
+   "gross": [
+    32670,
+    19602,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76cldd8zava",
+     "kind": "labor",
+     "refId": "0mwh0r76a5jeb8944",
+     "description": "Curățare filtru de particule (DPF)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76ct86wlo3p",
+     "kind": "part",
+     "refId": "0mwh0r76930wg3o82",
+     "description": "Soluție curățare DPF Liqui Moly",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 16200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 12000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cmt4lysfj",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 45700,
+    "vat": 0,
+    "gross": 45700,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 45700,
+      "vat": 0
+     }
+    ],
+    "labor": 27000,
+    "parts": 16200,
+    "fees": 2500,
+    "cost": 12000,
+    "partsMargin": 4200,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    16200,
+    2500
+   ],
+   "gross": [
+    27000,
+    16200,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c4l6gnafy",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    }
+   ],
+   "totals": {
+    "net": 10800,
+    "vat": 2268,
+    "gross": 13068,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 10800,
+      "vat": 2268
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800
+   ],
+   "gross": [
+    13068
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c4l6gnafy",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    }
+   ],
+   "totals": {
+    "net": 10800,
+    "vat": 0,
+    "gross": 10800,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 10800,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800
+   ],
+   "gross": [
+    10800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c309935rq",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cvrcf347s",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c536k9cz6",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c06bby3ah",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c9ay9k44v",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 69950,
+    "vat": 14690,
+    "gross": 84640,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 69950,
+      "vat": 14690
+     }
+    ],
+    "labor": 27000,
+    "parts": 42950,
+    "fees": 0,
+    "cost": 31700,
+    "partsMargin": 11250,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ],
+   "gross": [
+    32670,
+    31037,
+    4598,
+    7381,
+    8954
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c309935rq",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cvrcf347s",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c536k9cz6",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c06bby3ah",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c9ay9k44v",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 69950,
+    "vat": 0,
+    "gross": 69950,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 69950,
+      "vat": 0
+     }
+    ],
+    "labor": 27000,
+    "parts": 42950,
+    "fees": 0,
+    "cost": 31700,
+    "partsMargin": 11250,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ],
+   "gross": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c7r9vz3hr",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76cn8jb4ynw",
+     "kind": "labor",
+     "refId": "0mwh0r76aeh1lssan",
+     "description": "Înlocuire bec far",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76c7ix5q3cp",
+     "kind": "part",
+     "refId": "0mwh0r7690ujm8uij",
+     "description": "Bec H7 Philips",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 19200,
+    "vat": 4032,
+    "gross": 23232,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 19200,
+      "vat": 4032
+     }
+    ],
+    "labor": 16200,
+    "parts": 3000,
+    "fees": 0,
+    "cost": 2200,
+    "partsMargin": 800,
+    "laborCost": 0,
+    "laborMargin": 16200,
+    "hours": 0.9
+   },
+   "net": [
+    10800,
+    5400,
+    3000
+   ],
+   "gross": [
+    13068,
+    6534,
+    3630
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c7r9vz3hr",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76cn8jb4ynw",
+     "kind": "labor",
+     "refId": "0mwh0r76aeh1lssan",
+     "description": "Înlocuire bec far",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76c7ix5q3cp",
+     "kind": "part",
+     "refId": "0mwh0r7690ujm8uij",
+     "description": "Bec H7 Philips",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 19200,
+    "vat": 0,
+    "gross": 19200,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 19200,
+      "vat": 0
+     }
+    ],
+    "labor": 16200,
+    "parts": 3000,
+    "fees": 0,
+    "cost": 2200,
+    "partsMargin": 800,
+    "laborCost": 0,
+    "laborMargin": 16200,
+    "hours": 0.9
+   },
+   "net": [
+    10800,
+    5400,
+    3000
+   ],
+   "gross": [
+    10800,
+    5400,
+    3000
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76csxmi75m6",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cux8f2rnt",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 11500,
+    "vat": 2415,
+    "gross": 13915,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 11500,
+      "vat": 2415
+     }
+    ],
+    "labor": 9000,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 9000,
+    "hours": 0.5
+   },
+   "net": [
+    9000,
+    2500
+   ],
+   "gross": [
+    10890,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76csxmi75m6",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cux8f2rnt",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 11500,
+    "vat": 0,
+    "gross": 11500,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 11500,
+      "vat": 0
+     }
+    ],
+    "labor": 9000,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 9000,
+    "hours": 0.5
+   },
+   "net": [
+    9000,
+    2500
+   ],
+   "gross": [
+    9000,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c7cnue6y6",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cwmw6lkvi",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76coqmi2ckx",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76clkenyb3m",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 114600,
+    "vat": 24066,
+    "gross": 138666,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 114600,
+      "vat": 24066
+     }
+    ],
+    "labor": 39600,
+    "parts": 75000,
+    "fees": 0,
+    "cost": 55500,
+    "partsMargin": 19500,
+    "laborCost": 0,
+    "laborMargin": 39600,
+    "hours": 2.2
+   },
+   "net": [
+    10800,
+    28800,
+    52700,
+    22300
+   ],
+   "gross": [
+    13068,
+    34848,
+    63767,
+    26983
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c7cnue6y6",
+     "kind": "labor",
+     "refId": "0mwh0r76aqu6zjt67",
+     "description": "Schimb anvelope sezonier (4 buc.)",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cwmw6lkvi",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76coqmi2ckx",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76clkenyb3m",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 114600,
+    "vat": 0,
+    "gross": 114600,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 114600,
+      "vat": 0
+     }
+    ],
+    "labor": 39600,
+    "parts": 75000,
+    "fees": 0,
+    "cost": 55500,
+    "partsMargin": 19500,
+    "laborCost": 0,
+    "laborMargin": 39600,
+    "hours": 2.2
+   },
+   "net": [
+    10800,
+    28800,
+    52700,
+    22300
+   ],
+   "gross": [
+    10800,
+    28800,
+    52700,
+    22300
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c2j70bkkz",
+     "kind": "labor",
+     "refId": "0mwh0r76anc96okdp",
+     "description": "Înlocuire capete de bară",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cf9fqtdkg",
+     "kind": "part",
+     "refId": "0mwh0r7697oyub7vy",
+     "description": "Cap de bară Lemförder",
+     "qty": 2,
+     "unit": "buc",
+     "unitPrice": 11900,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 8800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cu28y8br1",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76comq4cd8n",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c7tlc0wzy",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 82050,
+    "vat": 17231,
+    "gross": 99281,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 82050,
+      "vat": 17231
+     }
+    ],
+    "labor": 28800,
+    "parts": 53250,
+    "fees": 0,
+    "cost": 39300,
+    "partsMargin": 13950,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    18000,
+    23800,
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    21780,
+    28798,
+    13068,
+    31037,
+    4598
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c2j70bkkz",
+     "kind": "labor",
+     "refId": "0mwh0r76anc96okdp",
+     "description": "Înlocuire capete de bară",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cf9fqtdkg",
+     "kind": "part",
+     "refId": "0mwh0r7697oyub7vy",
+     "description": "Cap de bară Lemförder",
+     "qty": 2,
+     "unit": "buc",
+     "unitPrice": 11900,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 8800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cu28y8br1",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76comq4cd8n",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c7tlc0wzy",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 82050,
+    "vat": 0,
+    "gross": 82050,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 82050,
+      "vat": 0
+     }
+    ],
+    "labor": 28800,
+    "parts": 53250,
+    "fees": 0,
+    "cost": 39300,
+    "partsMargin": 13950,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    18000,
+    23800,
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    18000,
+    23800,
+    10800,
+    25650,
+    3800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76chaku1erq",
+     "kind": "labor",
+     "refId": "0mwh0r76a2mlns1l4",
+     "description": "Înlocuire lichid de frână",
+     "qty": 0.7,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76comnaskze",
+     "kind": "part",
+     "refId": "0mwh0r7698c02xc3u",
+     "description": "Lichid frână DOT 4 ATE",
+     "qty": 1,
+     "unit": "l",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c7003pkwz",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76c8dzvzd3s",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 59000,
+    "vat": 12390,
+    "gross": 71390,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 59000,
+      "vat": 12390
+     }
+    ],
+    "labor": 30600,
+    "parts": 28400,
+    "fees": 0,
+    "cost": 21000,
+    "partsMargin": 7400,
+    "laborCost": 0,
+    "laborMargin": 30600,
+    "hours": 1.7
+   },
+   "net": [
+    12600,
+    6100,
+    18000,
+    22300
+   ],
+   "gross": [
+    15246,
+    7381,
+    21780,
+    26983
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76chaku1erq",
+     "kind": "labor",
+     "refId": "0mwh0r76a2mlns1l4",
+     "description": "Înlocuire lichid de frână",
+     "qty": 0.7,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76comnaskze",
+     "kind": "part",
+     "refId": "0mwh0r7698c02xc3u",
+     "description": "Lichid frână DOT 4 ATE",
+     "qty": 1,
+     "unit": "l",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c7003pkwz",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76c8dzvzd3s",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 59000,
+    "vat": 0,
+    "gross": 59000,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 59000,
+      "vat": 0
+     }
+    ],
+    "labor": 30600,
+    "parts": 28400,
+    "fees": 0,
+    "cost": 21000,
+    "partsMargin": 7400,
+    "laborCost": 0,
+    "laborMargin": 30600,
+    "hours": 1.7
+   },
+   "net": [
+    12600,
+    6100,
+    18000,
+    22300
+   ],
+   "gross": [
+    12600,
+    6100,
+    18000,
+    22300
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c1txuyi2l",
+     "kind": "labor",
+     "refId": "0mwh0r76ap2ta5j9u",
+     "description": "Geometrie roți",
+     "qty": 0.8,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76ct3k3ij5f",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 16900,
+    "vat": 3549,
+    "gross": 20449,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 16900,
+      "vat": 3549
+     }
+    ],
+    "labor": 14400,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 14400,
+    "hours": 0.8
+   },
+   "net": [
+    14400,
+    2500
+   ],
+   "gross": [
+    17424,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c1txuyi2l",
+     "kind": "labor",
+     "refId": "0mwh0r76ap2ta5j9u",
+     "description": "Geometrie roți",
+     "qty": 0.8,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76ct3k3ij5f",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 16900,
+    "vat": 0,
+    "gross": 16900,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 16900,
+      "vat": 0
+     }
+    ],
+    "labor": 14400,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 14400,
+    "hours": 0.8
+   },
+   "net": [
+    14400,
+    2500
+   ],
+   "gross": [
+    14400,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76cxkm2ts89",
+     "kind": "labor",
+     "refId": "0mwh0r76atk0jhz5h",
+     "description": "Echilibrare roți (4 buc.)",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76ccebn6k5c",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cl0jhhutl",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 20500,
+    "vat": 4305,
+    "gross": 24805,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 20500,
+      "vat": 4305
+     }
+    ],
+    "labor": 18000,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    9000,
+    9000,
+    2500
+   ],
+   "gross": [
+    10890,
+    10890,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76cxkm2ts89",
+     "kind": "labor",
+     "refId": "0mwh0r76atk0jhz5h",
+     "description": "Echilibrare roți (4 buc.)",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76ccebn6k5c",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cl0jhhutl",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 20500,
+    "vat": 0,
+    "gross": 20500,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 20500,
+      "vat": 0
+     }
+    ],
+    "labor": 18000,
+    "parts": 0,
+    "fees": 2500,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    9000,
+    9000,
+    2500
+   ],
+   "gross": [
+    9000,
+    9000,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c3lfsbtsl",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76cfpe2v1pg",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cx3gxojkh",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c5cfk8aoe",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76chvogkjab",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cmnynsc14",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cgeslvh79",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cq0mgmewv",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cmm5ho7gf",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 176250,
+    "vat": 37013,
+    "gross": 213263,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 176250,
+      "vat": 37013
+     }
+    ],
+    "labor": 55800,
+    "parts": 117950,
+    "fees": 2500,
+    "cost": 87200,
+    "partsMargin": 30750,
+    "laborCost": 0,
+    "laborMargin": 55800,
+    "hours": 3.1
+   },
+   "net": [
+    28800,
+    52700,
+    22300,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    2500
+   ],
+   "gross": [
+    34848,
+    63767,
+    26983,
+    32670,
+    31037,
+    4598,
+    7381,
+    8954,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c3lfsbtsl",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76cfpe2v1pg",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cx3gxojkh",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c5cfk8aoe",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76chvogkjab",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cmnynsc14",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cgeslvh79",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cq0mgmewv",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cmm5ho7gf",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 176250,
+    "vat": 0,
+    "gross": 176250,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 176250,
+      "vat": 0
+     }
+    ],
+    "labor": 55800,
+    "parts": 117950,
+    "fees": 2500,
+    "cost": 87200,
+    "partsMargin": 30750,
+    "laborCost": 0,
+    "laborMargin": 55800,
+    "hours": 3.1
+   },
+   "net": [
+    28800,
+    52700,
+    22300,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    2500
+   ],
+   "gross": [
+    28800,
+    52700,
+    22300,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76ckwdn4gjy",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cab3jlblh",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76chu1qchio",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c3nfx9wac",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 49250,
+    "vat": 10343,
+    "gross": 59593,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 49250,
+      "vat": 10343
+     }
+    ],
+    "labor": 19800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 19800,
+    "hours": 1.1
+   },
+   "net": [
+    9000,
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    10890,
+    13068,
+    31037,
+    4598
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76ckwdn4gjy",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cab3jlblh",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76chu1qchio",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c3nfx9wac",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 49250,
+    "vat": 0,
+    "gross": 49250,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 49250,
+      "vat": 0
+     }
+    ],
+    "labor": 19800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 19800,
+    "hours": 1.1
+   },
+   "net": [
+    9000,
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    9000,
+    10800,
+    25650,
+    3800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c5faq2rs6",
+     "kind": "labor",
+     "refId": "0mwh0r76ajtby29xv",
+     "description": "Verificare pre-ITP",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    }
+   ],
+   "totals": {
+    "net": 9000,
+    "vat": 1890,
+    "gross": 10890,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 9000,
+      "vat": 1890
+     }
+    ],
+    "labor": 9000,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 9000,
+    "hours": 0.5
+   },
+   "net": [
+    9000
+   ],
+   "gross": [
+    10890
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c5faq2rs6",
+     "kind": "labor",
+     "refId": "0mwh0r76ajtby29xv",
+     "description": "Verificare pre-ITP",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    }
+   ],
+   "totals": {
+    "net": 9000,
+    "vat": 0,
+    "gross": 9000,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 9000,
+      "vat": 0
+     }
+    ],
+    "labor": 9000,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 9000,
+    "hours": 0.5
+   },
+   "net": [
+    9000
+   ],
+   "gross": [
+    9000
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76cq3l0exai",
+     "kind": "labor",
+     "refId": "0mwh0r76a8bmpybof",
+     "description": "Înlocuire plăcuțe frână spate",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cu0plzedn",
+     "kind": "part",
+     "refId": "0mwh0r769sh4jwuma",
+     "description": "Plăcuțe frână spate TRW",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 17600,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 13000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 35600,
+    "vat": 7476,
+    "gross": 43076,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 35600,
+      "vat": 7476
+     }
+    ],
+    "labor": 18000,
+    "parts": 17600,
+    "fees": 0,
+    "cost": 13000,
+    "partsMargin": 4600,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    17600
+   ],
+   "gross": [
+    21780,
+    21296
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76cq3l0exai",
+     "kind": "labor",
+     "refId": "0mwh0r76a8bmpybof",
+     "description": "Înlocuire plăcuțe frână spate",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cu0plzedn",
+     "kind": "part",
+     "refId": "0mwh0r769sh4jwuma",
+     "description": "Plăcuțe frână spate TRW",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 17600,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 13000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 35600,
+    "vat": 0,
+    "gross": 35600,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 35600,
+      "vat": 0
+     }
+    ],
+    "labor": 18000,
+    "parts": 17600,
+    "fees": 0,
+    "cost": 13000,
+    "partsMargin": 4600,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    17600
+   ],
+   "gross": [
+    18000,
+    17600
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c8fujb0bl",
+     "kind": "labor",
+     "refId": "0mwh0r76a8bmpybof",
+     "description": "Înlocuire plăcuțe frână spate",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76co7gi1b8c",
+     "kind": "part",
+     "refId": "0mwh0r769sh4jwuma",
+     "description": "Plăcuțe frână spate TRW",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 17600,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 13000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 35600,
+    "vat": 7476,
+    "gross": 43076,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 35600,
+      "vat": 7476
+     }
+    ],
+    "labor": 18000,
+    "parts": 17600,
+    "fees": 0,
+    "cost": 13000,
+    "partsMargin": 4600,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    17600
+   ],
+   "gross": [
+    21780,
+    21296
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c8fujb0bl",
+     "kind": "labor",
+     "refId": "0mwh0r76a8bmpybof",
+     "description": "Înlocuire plăcuțe frână spate",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76co7gi1b8c",
+     "kind": "part",
+     "refId": "0mwh0r769sh4jwuma",
+     "description": "Plăcuțe frână spate TRW",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 17600,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 13000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 35600,
+    "vat": 0,
+    "gross": 35600,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 35600,
+      "vat": 0
+     }
+    ],
+    "labor": 18000,
+    "parts": 17600,
+    "fees": 0,
+    "cost": 13000,
+    "partsMargin": 4600,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    17600
+   ],
+   "gross": [
+    18000,
+    17600
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76cttlj9x72",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cg52rjnnn",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cfe3w6iyp",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cw1hz50uu",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76clg707n0e",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ctc188fd1",
+     "kind": "labor",
+     "refId": "0mwh0r76aeh1lssan",
+     "description": "Înlocuire bec far",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76c9ge54574",
+     "kind": "part",
+     "refId": "0mwh0r7690ujm8uij",
+     "description": "Bec H7 Philips",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c4swkhejf",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 80850,
+    "vat": 16979,
+    "gross": 97829,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 80850,
+      "vat": 16979
+     }
+    ],
+    "labor": 32400,
+    "parts": 45950,
+    "fees": 2500,
+    "cost": 33900,
+    "partsMargin": 12050,
+    "laborCost": 0,
+    "laborMargin": 32400,
+    "hours": 1.8
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    5400,
+    3000,
+    2500
+   ],
+   "gross": [
+    32670,
+    31037,
+    4598,
+    7381,
+    8954,
+    6534,
+    3630,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76cttlj9x72",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76cg52rjnnn",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cfe3w6iyp",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cw1hz50uu",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76clg707n0e",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ctc188fd1",
+     "kind": "labor",
+     "refId": "0mwh0r76aeh1lssan",
+     "description": "Înlocuire bec far",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76c9ge54574",
+     "kind": "part",
+     "refId": "0mwh0r7690ujm8uij",
+     "description": "Bec H7 Philips",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c4swkhejf",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 80850,
+    "vat": 0,
+    "gross": 80850,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 80850,
+      "vat": 0
+     }
+    ],
+    "labor": 32400,
+    "parts": 45950,
+    "fees": 2500,
+    "cost": 33900,
+    "partsMargin": 12050,
+    "laborCost": 0,
+    "laborMargin": 32400,
+    "hours": 1.8
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    5400,
+    3000,
+    2500
+   ],
+   "gross": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    5400,
+    3000,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76case15rho",
+     "kind": "labor",
+     "refId": "0mwh0r76a3hc5g6i2",
+     "description": "Înlocuire bujii",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cew4kw2c6",
+     "kind": "part",
+     "refId": "0mwh0r769nblfgfw2",
+     "description": "Bujie NGK",
+     "qty": 4,
+     "unit": "buc",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 28000,
+    "vat": 5880,
+    "gross": 33880,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 28000,
+      "vat": 5880
+     }
+    ],
+    "labor": 10800,
+    "parts": 17200,
+    "fees": 0,
+    "cost": 12800,
+    "partsMargin": 4400,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    17200
+   ],
+   "gross": [
+    13068,
+    20812
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76case15rho",
+     "kind": "labor",
+     "refId": "0mwh0r76a3hc5g6i2",
+     "description": "Înlocuire bujii",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cew4kw2c6",
+     "kind": "part",
+     "refId": "0mwh0r769nblfgfw2",
+     "description": "Bujie NGK",
+     "qty": 4,
+     "unit": "buc",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 28000,
+    "vat": 0,
+    "gross": 28000,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 28000,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 17200,
+    "fees": 0,
+    "cost": 12800,
+    "partsMargin": 4400,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    17200
+   ],
+   "gross": [
+    10800,
+    17200
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76czwpgq8c0",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76c1zsop1fs",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76chddiogq9",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ciic22uon",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c900pbli3",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cbmg9614r",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76caloncom1",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 81450,
+    "vat": 17105,
+    "gross": 98555,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 81450,
+      "vat": 17105
+     }
+    ],
+    "labor": 36000,
+    "parts": 42950,
+    "fees": 2500,
+    "cost": 31700,
+    "partsMargin": 11250,
+    "laborCost": 0,
+    "laborMargin": 36000,
+    "hours": 2
+   },
+   "net": [
+    9000,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    2500
+   ],
+   "gross": [
+    10890,
+    32670,
+    31037,
+    4598,
+    7381,
+    8954,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76czwpgq8c0",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76c1zsop1fs",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76chddiogq9",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ciic22uon",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c900pbli3",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cbmg9614r",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76caloncom1",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 81450,
+    "vat": 0,
+    "gross": 81450,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 81450,
+      "vat": 0
+     }
+    ],
+    "labor": 36000,
+    "parts": 42950,
+    "fees": 2500,
+    "cost": 31700,
+    "partsMargin": 11250,
+    "laborCost": 0,
+    "laborMargin": 36000,
+    "hours": 2
+   },
+   "net": [
+    9000,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    2500
+   ],
+   "gross": [
+    9000,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76cagp72nt2",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cxwjsjed4",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c1a4g4bkp",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cntlzzq3u",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76comf4q80s",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 80550,
+    "vat": 16916,
+    "gross": 97466,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 80550,
+      "vat": 16916
+     }
+    ],
+    "labor": 28800,
+    "parts": 51750,
+    "fees": 0,
+    "cost": 38200,
+    "partsMargin": 13550,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    18000,
+    22300,
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    21780,
+    26983,
+    13068,
+    31037,
+    4598
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76cagp72nt2",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cxwjsjed4",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c1a4g4bkp",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cntlzzq3u",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76comf4q80s",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 80550,
+    "vat": 0,
+    "gross": 80550,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 80550,
+      "vat": 0
+     }
+    ],
+    "labor": 28800,
+    "parts": 51750,
+    "fees": 0,
+    "cost": 38200,
+    "partsMargin": 13550,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    18000,
+    22300,
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    18000,
+    22300,
+    10800,
+    25650,
+    3800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76cmflg3n8h",
+     "kind": "labor",
+     "refId": "0mwh0r76a2mlns1l4",
+     "description": "Înlocuire lichid de frână",
+     "qty": 0.7,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cp2h0umsw",
+     "kind": "part",
+     "refId": "0mwh0r7698c02xc3u",
+     "description": "Lichid frână DOT 4 ATE",
+     "qty": 1,
+     "unit": "l",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 18700,
+    "vat": 3927,
+    "gross": 22627,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 18700,
+      "vat": 3927
+     }
+    ],
+    "labor": 12600,
+    "parts": 6100,
+    "fees": 0,
+    "cost": 4500,
+    "partsMargin": 1600,
+    "laborCost": 0,
+    "laborMargin": 12600,
+    "hours": 0.7
+   },
+   "net": [
+    12600,
+    6100
+   ],
+   "gross": [
+    15246,
+    7381
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76cmflg3n8h",
+     "kind": "labor",
+     "refId": "0mwh0r76a2mlns1l4",
+     "description": "Înlocuire lichid de frână",
+     "qty": 0.7,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cp2h0umsw",
+     "kind": "part",
+     "refId": "0mwh0r7698c02xc3u",
+     "description": "Lichid frână DOT 4 ATE",
+     "qty": 1,
+     "unit": "l",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 18700,
+    "vat": 0,
+    "gross": 18700,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 18700,
+      "vat": 0
+     }
+    ],
+    "labor": 12600,
+    "parts": 6100,
+    "fees": 0,
+    "cost": 4500,
+    "partsMargin": 1600,
+    "laborCost": 0,
+    "laborMargin": 12600,
+    "hours": 0.7
+   },
+   "net": [
+    12600,
+    6100
+   ],
+   "gross": [
+    12600,
+    6100
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76caifuya4p",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cbdn0ocve",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40300,
+    "vat": 8463,
+    "gross": 48763,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 40300,
+      "vat": 8463
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 0,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300
+   ],
+   "gross": [
+    21780,
+    26983
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76caifuya4p",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cbdn0ocve",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40300,
+    "vat": 0,
+    "gross": 40300,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 40300,
+      "vat": 0
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 0,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300
+   ],
+   "gross": [
+    18000,
+    22300
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c30qog3gt",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76c3c7q90xc",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cgktfyuvt",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40250,
+    "vat": 8453,
+    "gross": 48703,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 40250,
+      "vat": 8453
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    13068,
+    31037,
+    4598
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c30qog3gt",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76c3c7q90xc",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76cgktfyuvt",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40250,
+    "vat": 0,
+    "gross": 40250,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 40250,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    10800,
+    25650,
+    3800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76coc64l91n",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cl6hewdg4",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76c72l6kr5o",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c7x51ha0z",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 49250,
+    "vat": 10343,
+    "gross": 59593,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 49250,
+      "vat": 10343
+     }
+    ],
+    "labor": 19800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 19800,
+    "hours": 1.1
+   },
+   "net": [
+    9000,
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    10890,
+    13068,
+    31037,
+    4598
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76coc64l91n",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76cl6hewdg4",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    },
+    {
+     "id": "0mwh0r76c72l6kr5o",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c7x51ha0z",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 49250,
+    "vat": 0,
+    "gross": 49250,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 49250,
+      "vat": 0
+     }
+    ],
+    "labor": 19800,
+    "parts": 29450,
+    "fees": 0,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 19800,
+    "hours": 1.1
+   },
+   "net": [
+    9000,
+    10800,
+    25650,
+    3800
+   ],
+   "gross": [
+    9000,
+    10800,
+    25650,
+    3800
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76cazoeijwt",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76c3b4wqttg",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c39qr6c3a",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 103800,
+    "vat": 21798,
+    "gross": 125598,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 103800,
+      "vat": 21798
+     }
+    ],
+    "labor": 28800,
+    "parts": 75000,
+    "fees": 0,
+    "cost": 55500,
+    "partsMargin": 19500,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    28800,
+    52700,
+    22300
+   ],
+   "gross": [
+    34848,
+    63767,
+    26983
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76cazoeijwt",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76c3b4wqttg",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c39qr6c3a",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 103800,
+    "vat": 0,
+    "gross": 103800,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 103800,
+      "vat": 0
+     }
+    ],
+    "labor": 28800,
+    "parts": 75000,
+    "fees": 0,
+    "cost": 55500,
+    "partsMargin": 19500,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    28800,
+    52700,
+    22300
+   ],
+   "gross": [
+    28800,
+    52700,
+    22300
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76c3ky5x9f2",
+     "kind": "labor",
+     "refId": "0mwh0r76anc96okdp",
+     "description": "Înlocuire capete de bară",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cssrlvfz1",
+     "kind": "part",
+     "refId": "0mwh0r7697oyub7vy",
+     "description": "Cap de bară Lemförder",
+     "qty": 2,
+     "unit": "buc",
+     "unitPrice": 11900,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 8800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c34apm6z0",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76c9cazke1s",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c7zb00dhx",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ct3jlmlr1",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 84550,
+    "vat": 17756,
+    "gross": 102306,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 84550,
+      "vat": 17756
+     }
+    ],
+    "labor": 28800,
+    "parts": 53250,
+    "fees": 2500,
+    "cost": 39300,
+    "partsMargin": 13950,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    18000,
+    23800,
+    10800,
+    25650,
+    3800,
+    2500
+   ],
+   "gross": [
+    21780,
+    28798,
+    13068,
+    31037,
+    4598,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76c3ky5x9f2",
+     "kind": "labor",
+     "refId": "0mwh0r76anc96okdp",
+     "description": "Înlocuire capete de bară",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76cssrlvfz1",
+     "kind": "part",
+     "refId": "0mwh0r7697oyub7vy",
+     "description": "Cap de bară Lemförder",
+     "qty": 2,
+     "unit": "buc",
+     "unitPrice": 11900,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 8800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c34apm6z0",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76c9cazke1s",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76c7zb00dhx",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76ct3jlmlr1",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 84550,
+    "vat": 0,
+    "gross": 84550,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 84550,
+      "vat": 0
+     }
+    ],
+    "labor": 28800,
+    "parts": 53250,
+    "fees": 2500,
+    "cost": 39300,
+    "partsMargin": 13950,
+    "laborCost": 0,
+    "laborMargin": 28800,
+    "hours": 1.6
+   },
+   "net": [
+    18000,
+    23800,
+    10800,
+    25650,
+    3800,
+    2500
+   ],
+   "gross": [
+    18000,
+    23800,
+    10800,
+    25650,
+    3800,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76dfutf65ur",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76df5sibtsr",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dp2h9o8t0",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dq5h68pvb",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 42750,
+    "vat": 8978,
+    "gross": 51728,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 42750,
+      "vat": 8978
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 2500,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800,
+    2500
+   ],
+   "gross": [
+    13068,
+    31037,
+    4598,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76dfutf65ur",
+     "kind": "labor",
+     "refId": "0mwh0r769l9tkhh8c",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76df5sibtsr",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dp2h9o8t0",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dq5h68pvb",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 42750,
+    "vat": 0,
+    "gross": 42750,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 42750,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 29450,
+    "fees": 2500,
+    "cost": 21700,
+    "partsMargin": 7750,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    25650,
+    3800,
+    2500
+   ],
+   "gross": [
+    10800,
+    25650,
+    3800,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76dt9op0z4v",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76dmvubeokj",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40300,
+    "vat": 8463,
+    "gross": 48763,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 40300,
+      "vat": 8463
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 0,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300
+   ],
+   "gross": [
+    21780,
+    26983
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76dt9op0z4v",
+     "kind": "labor",
+     "refId": "0mwh0r76avvk2f1a3",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76dmvubeokj",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 40300,
+    "vat": 0,
+    "gross": 40300,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 40300,
+      "vat": 0
+     }
+    ],
+    "labor": 18000,
+    "parts": 22300,
+    "fees": 0,
+    "cost": 16500,
+    "partsMargin": 5800,
+    "laborCost": 0,
+    "laborMargin": 18000,
+    "hours": 1
+   },
+   "net": [
+    18000,
+    22300
+   ],
+   "gross": [
+    18000,
+    22300
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76d381wkdru",
+     "kind": "labor",
+     "refId": "0mwh0r76aeh1lssan",
+     "description": "Înlocuire bec far",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76dui725gyd",
+     "kind": "part",
+     "refId": "0mwh0r7690ujm8uij",
+     "description": "Bec H7 Philips",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 8400,
+    "vat": 1764,
+    "gross": 10164,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 8400,
+      "vat": 1764
+     }
+    ],
+    "labor": 5400,
+    "parts": 3000,
+    "fees": 0,
+    "cost": 2200,
+    "partsMargin": 800,
+    "laborCost": 0,
+    "laborMargin": 5400,
+    "hours": 0.3
+   },
+   "net": [
+    5400,
+    3000
+   ],
+   "gross": [
+    6534,
+    3630
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76d381wkdru",
+     "kind": "labor",
+     "refId": "0mwh0r76aeh1lssan",
+     "description": "Înlocuire bec far",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76dui725gyd",
+     "kind": "part",
+     "refId": "0mwh0r7690ujm8uij",
+     "description": "Bec H7 Philips",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 8400,
+    "vat": 0,
+    "gross": 8400,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 8400,
+      "vat": 0
+     }
+    ],
+    "labor": 5400,
+    "parts": 3000,
+    "fees": 0,
+    "cost": 2200,
+    "partsMargin": 800,
+    "laborCost": 0,
+    "laborMargin": 5400,
+    "hours": 0.3
+   },
+   "net": [
+    5400,
+    3000
+   ],
+   "gross": [
+    5400,
+    3000
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76ds9mkp4ju",
+     "kind": "labor",
+     "refId": "0mwh0r76aeh1lssan",
+     "description": "Înlocuire bec far",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76drxs9x7le",
+     "kind": "part",
+     "refId": "0mwh0r7690ujm8uij",
+     "description": "Bec H7 Philips",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d2vtokf58",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 10900,
+    "vat": 2289,
+    "gross": 13189,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 10900,
+      "vat": 2289
+     }
+    ],
+    "labor": 5400,
+    "parts": 3000,
+    "fees": 2500,
+    "cost": 2200,
+    "partsMargin": 800,
+    "laborCost": 0,
+    "laborMargin": 5400,
+    "hours": 0.3
+   },
+   "net": [
+    5400,
+    3000,
+    2500
+   ],
+   "gross": [
+    6534,
+    3630,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76ds9mkp4ju",
+     "kind": "labor",
+     "refId": "0mwh0r76aeh1lssan",
+     "description": "Înlocuire bec far",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769p5fja7j9"
+    },
+    {
+     "id": "0mwh0r76drxs9x7le",
+     "kind": "part",
+     "refId": "0mwh0r7690ujm8uij",
+     "description": "Bec H7 Philips",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d2vtokf58",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 10900,
+    "vat": 0,
+    "gross": 10900,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 10900,
+      "vat": 0
+     }
+    ],
+    "labor": 5400,
+    "parts": 3000,
+    "fees": 2500,
+    "cost": 2200,
+    "partsMargin": 800,
+    "laborCost": 0,
+    "laborMargin": 5400,
+    "hours": 0.3
+   },
+   "net": [
+    5400,
+    3000,
+    2500
+   ],
+   "gross": [
+    5400,
+    3000,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76d5az07nhg",
+     "kind": "labor",
+     "refId": "0mwh0r76a3hc5g6i2",
+     "description": "Înlocuire bujii",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76di80zczyw",
+     "kind": "part",
+     "refId": "0mwh0r769nblfgfw2",
+     "description": "Bujie NGK",
+     "qty": 4,
+     "unit": "buc",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 28000,
+    "vat": 5880,
+    "gross": 33880,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 28000,
+      "vat": 5880
+     }
+    ],
+    "labor": 10800,
+    "parts": 17200,
+    "fees": 0,
+    "cost": 12800,
+    "partsMargin": 4400,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    17200
+   ],
+   "gross": [
+    13068,
+    20812
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76d5az07nhg",
+     "kind": "labor",
+     "refId": "0mwh0r76a3hc5g6i2",
+     "description": "Înlocuire bujii",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76di80zczyw",
+     "kind": "part",
+     "refId": "0mwh0r769nblfgfw2",
+     "description": "Bujie NGK",
+     "qty": 4,
+     "unit": "buc",
+     "unitPrice": 4300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 3200,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 28000,
+    "vat": 0,
+    "gross": 28000,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 28000,
+      "vat": 0
+     }
+    ],
+    "labor": 10800,
+    "parts": 17200,
+    "fees": 0,
+    "cost": 12800,
+    "partsMargin": 4400,
+    "laborCost": 0,
+    "laborMargin": 10800,
+    "hours": 0.6
+   },
+   "net": [
+    10800,
+    17200
+   ],
+   "gross": [
+    10800,
+    17200
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76d5odu71rn",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76d47iov85x",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d3a52jmp5",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d5edhchzi",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dggq5szwe",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 69950,
+    "vat": 14690,
+    "gross": 84640,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 69950,
+      "vat": 14690
+     }
+    ],
+    "labor": 27000,
+    "parts": 42950,
+    "fees": 0,
+    "cost": 31700,
+    "partsMargin": 11250,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ],
+   "gross": [
+    32670,
+    31037,
+    4598,
+    7381,
+    8954
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76d5odu71rn",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76d47iov85x",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d3a52jmp5",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d5edhchzi",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dggq5szwe",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 69950,
+    "vat": 0,
+    "gross": 69950,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 69950,
+      "vat": 0
+     }
+    ],
+    "labor": 27000,
+    "parts": 42950,
+    "fees": 0,
+    "cost": 31700,
+    "partsMargin": 11250,
+    "laborCost": 0,
+    "laborMargin": 27000,
+    "hours": 1.5
+   },
+   "net": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ],
+   "gross": [
+    27000,
+    25650,
+    3800,
+    6100,
+    7400
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76d2rl4487n",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76dna1bf02y",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d6uvaoi9r",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dd89cvb7h",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76dxs7j4iy8",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dfn6gfe65",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76do2ts2ufx",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d9cpyv87y",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d70yc56k8",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 176250,
+    "vat": 37013,
+    "gross": 213263,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 176250,
+      "vat": 37013
+     }
+    ],
+    "labor": 55800,
+    "parts": 117950,
+    "fees": 2500,
+    "cost": 87200,
+    "partsMargin": 30750,
+    "laborCost": 0,
+    "laborMargin": 55800,
+    "hours": 3.1
+   },
+   "net": [
+    28800,
+    52700,
+    22300,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    2500
+   ],
+   "gross": [
+    34848,
+    63767,
+    26983,
+    32670,
+    31037,
+    4598,
+    7381,
+    8954,
+    3025
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76d2rl4487n",
+     "kind": "labor",
+     "refId": "0mwh0r76af8ye416r",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76dna1bf02y",
+     "kind": "part",
+     "refId": "0mwh0r769vskbtvgd",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d6uvaoi9r",
+     "kind": "part",
+     "refId": "0mwh0r769z0ox3kc9",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dd89cvb7h",
+     "kind": "labor",
+     "refId": "0mwh0r76amh3f5zx1",
+     "description": "Revizie completă (ulei și filtre)",
+     "qty": 1.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769et6esrgs"
+    },
+    {
+     "id": "0mwh0r76dxs7j4iy8",
+     "kind": "part",
+     "refId": "0mwh0r769shkjywi8",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76dfn6gfe65",
+     "kind": "part",
+     "refId": "0mwh0r769j2j5m4i2",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76do2ts2ufx",
+     "kind": "part",
+     "refId": "0mwh0r7694cma8nm8",
+     "description": "Filtru aer Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 6100,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d9cpyv87y",
+     "kind": "part",
+     "refId": "0mwh0r76922l0a8mw",
+     "description": "Filtru polen cu carbon activ Bosch",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 7400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 5500,
+     "staffId": null
+    },
+    {
+     "id": "0mwh0r76d70yc56k8",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 176250,
+    "vat": 0,
+    "gross": 176250,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 176250,
+      "vat": 0
+     }
+    ],
+    "labor": 55800,
+    "parts": 117950,
+    "fees": 2500,
+    "cost": 87200,
+    "partsMargin": 30750,
+    "laborCost": 0,
+    "laborMargin": 55800,
+    "hours": 3.1
+   },
+   "net": [
+    28800,
+    52700,
+    22300,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    2500
+   ],
+   "gross": [
+    28800,
+    52700,
+    22300,
+    27000,
+    25650,
+    3800,
+    6100,
+    7400,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76dtvpkojrq",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    }
+   ],
+   "totals": {
+    "net": 9000,
+    "vat": 1890,
+    "gross": 10890,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 9000,
+      "vat": 1890
+     }
+    ],
+    "labor": 9000,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 9000,
+    "hours": 0.5
+   },
+   "net": [
+    9000
+   ],
+   "gross": [
+    10890
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76dtvpkojrq",
+     "kind": "labor",
+     "refId": "0mwh0r76a14w1qizp",
+     "description": "Diagnoză computerizată",
+     "qty": 0.5,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r767bualwip3"
+    }
+   ],
+   "totals": {
+    "net": 9000,
+    "vat": 0,
+    "gross": 9000,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 9000,
+      "vat": 0
+     }
+    ],
+    "labor": 9000,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 9000,
+    "hours": 0.5
+   },
+   "net": [
+    9000
+   ],
+   "gross": [
+    9000
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "0mwh0r76dtda4u5vt",
+     "kind": "labor",
+     "refId": "0mwh0r76ak2jc6vtr",
+     "description": "Înlocuire acumulator",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76dpxb3nmwm",
+     "kind": "part",
+     "refId": "0mwh0r769nylu18a4",
+     "description": "Acumulator 74 Ah 680 A Varta",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 70200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 52000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 75600,
+    "vat": 15876,
+    "gross": 91476,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 75600,
+      "vat": 15876
+     }
+    ],
+    "labor": 5400,
+    "parts": 70200,
+    "fees": 0,
+    "cost": 52000,
+    "partsMargin": 18200,
+    "laborCost": 0,
+    "laborMargin": 5400,
+    "hours": 0.3
+   },
+   "net": [
+    5400,
+    70200
+   ],
+   "gross": [
+    6534,
+    84942
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "0mwh0r76dtda4u5vt",
+     "kind": "labor",
+     "refId": "0mwh0r76ak2jc6vtr",
+     "description": "Înlocuire acumulator",
+     "qty": 0.3,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwh0r769dosodryc"
+    },
+    {
+     "id": "0mwh0r76dpxb3nmwm",
+     "kind": "part",
+     "refId": "0mwh0r769nylu18a4",
+     "description": "Acumulator 74 Ah 680 A Varta",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 70200,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 52000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 75600,
+    "vat": 0,
+    "gross": 75600,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 75600,
+      "vat": 0
+     }
+    ],
+    "labor": 5400,
+    "parts": 70200,
+    "fees": 0,
+    "cost": 52000,
+    "partsMargin": 18200,
+    "laborCost": 0,
+    "laborMargin": 5400,
+    "hours": 0.3
+   },
+   "net": [
+    5400,
+    70200
+   ],
+   "gross": [
+    5400,
+    70200
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "x",
+     "kind": "labor",
+     "refId": null,
+     "description": "d",
+     "qty": 0.333,
+     "unit": "buc",
+     "unitPrice": 15000,
+     "discountPct": 12.5,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "part",
+     "refId": null,
+     "description": "d",
+     "qty": 3,
+     "unit": "buc",
+     "unitPrice": 1999,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 1500,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "fee",
+     "refId": null,
+     "description": "d",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 9,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 12868,
+    "vat": 2402,
+    "gross": 15270,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 10368,
+      "vat": 2177
+     },
+     {
+      "rate": 9,
+      "taxable": 2500,
+      "vat": 225
+     }
+    ],
+    "labor": 4371,
+    "parts": 5997,
+    "fees": 2500,
+    "cost": 4500,
+    "partsMargin": 1497,
+    "laborCost": 0,
+    "laborMargin": 4371,
+    "hours": 0.33
+   },
+   "net": [
+    4371,
+    5997,
+    2500
+   ],
+   "gross": [
+    5289,
+    7256,
+    2725
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "x",
+     "kind": "labor",
+     "refId": null,
+     "description": "d",
+     "qty": 0.333,
+     "unit": "buc",
+     "unitPrice": 15000,
+     "discountPct": 12.5,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "part",
+     "refId": null,
+     "description": "d",
+     "qty": 3,
+     "unit": "buc",
+     "unitPrice": 1999,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 1500,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "fee",
+     "refId": null,
+     "description": "d",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 9,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 12868,
+    "vat": 0,
+    "gross": 12868,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 12868,
+      "vat": 0
+     }
+    ],
+    "labor": 4371,
+    "parts": 5997,
+    "fees": 2500,
+    "cost": 4500,
+    "partsMargin": 1497,
+    "laborCost": 0,
+    "laborMargin": 4371,
+    "hours": 0.33
+   },
+   "net": [
+    4371,
+    5997,
+    2500
+   ],
+   "gross": [
+    4371,
+    5997,
+    2500
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "x",
+     "kind": "part",
+     "refId": null,
+     "description": "d",
+     "qty": 0.001,
+     "unit": "buc",
+     "unitPrice": 1,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "part",
+     "refId": null,
+     "description": "d",
+     "qty": 1234.567,
+     "unit": "buc",
+     "unitPrice": 99999,
+     "discountPct": 100,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "labor",
+     "refId": null,
+     "description": "d",
+     "qty": 2.5,
+     "unit": "buc",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 0,
+     "cost": 9000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 45000,
+    "vat": 0,
+    "gross": 45000,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 0,
+      "vat": 0
+     },
+     {
+      "rate": 0,
+      "taxable": 45000,
+      "vat": 0
+     }
+    ],
+    "labor": 45000,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 22500,
+    "laborMargin": 22500,
+    "hours": 2.5
+   },
+   "net": [
+    0,
+    0,
+    45000
+   ],
+   "gross": [
+    0,
+    0,
+    45000
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "x",
+     "kind": "part",
+     "refId": null,
+     "description": "d",
+     "qty": 0.001,
+     "unit": "buc",
+     "unitPrice": 1,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "part",
+     "refId": null,
+     "description": "d",
+     "qty": 1234.567,
+     "unit": "buc",
+     "unitPrice": 99999,
+     "discountPct": 100,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "labor",
+     "refId": null,
+     "description": "d",
+     "qty": 2.5,
+     "unit": "buc",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 0,
+     "cost": 9000,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 45000,
+    "vat": 0,
+    "gross": 45000,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 45000,
+      "vat": 0
+     }
+    ],
+    "labor": 45000,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 22500,
+    "laborMargin": 22500,
+    "hours": 2.5
+   },
+   "net": [
+    0,
+    0,
+    45000
+   ],
+   "gross": [
+    0,
+    0,
+    45000
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [
+    {
+     "id": "x",
+     "kind": "labor",
+     "refId": null,
+     "description": "d",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 12345,
+     "discountPct": 33.33,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "labor",
+     "refId": null,
+     "description": "d",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 12345,
+     "discountPct": 66.67,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 12345,
+    "vat": 2592,
+    "gross": 14937,
+    "byRate": [
+     {
+      "rate": 21,
+      "taxable": 12345,
+      "vat": 2592
+     }
+    ],
+    "labor": 12345,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 12345,
+    "hours": 2
+   },
+   "net": [
+    8230,
+    4115
+   ],
+   "gross": [
+    9958,
+    4979
+   ]
+  },
+  {
+   "vatPayer": false,
+   "lines": [
+    {
+     "id": "x",
+     "kind": "labor",
+     "refId": null,
+     "description": "d",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 12345,
+     "discountPct": 33.33,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    },
+    {
+     "id": "x",
+     "kind": "labor",
+     "refId": null,
+     "description": "d",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 12345,
+     "discountPct": 66.67,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "totals": {
+    "net": 12345,
+    "vat": 0,
+    "gross": 12345,
+    "byRate": [
+     {
+      "rate": 0,
+      "taxable": 12345,
+      "vat": 0
+     }
+    ],
+    "labor": 12345,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 12345,
+    "hours": 2
+   },
+   "net": [
+    8230,
+    4115
+   ],
+   "gross": [
+    8230,
+    4115
+   ]
+  },
+  {
+   "vatPayer": true,
+   "lines": [],
+   "totals": {
+    "net": 0,
+    "vat": 0,
+    "gross": 0,
+    "byRate": [],
+    "labor": 0,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 0,
+    "hours": 0
+   },
+   "net": [],
+   "gross": []
+  },
+  {
+   "vatPayer": false,
+   "lines": [],
+   "totals": {
+    "net": 0,
+    "vat": 0,
+    "gross": 0,
+    "byRate": [],
+    "labor": 0,
+    "parts": 0,
+    "fees": 0,
+    "cost": 0,
+    "partsMargin": 0,
+    "laborCost": 0,
+    "laborMargin": 0,
+    "hours": 0
+   },
+   "net": [],
+   "gross": []
+  }
+ ]
+}

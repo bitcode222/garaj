@@ -93,6 +93,34 @@ final class AppStore {
         scheduleSave()
     }
 
+    /// Saves a typed record and stamps `updatedAt`.
+    func save<T: Record>(_ record: T, updatedAt: String) {
+        save(record)
+        if case .object(var raw)? = collections[T.collection]?[record.id] {
+            raw["updatedAt"] = .string(updatedAt)
+            put(T.collection, .object(raw))
+        }
+    }
+
+    /// Writes a raw record (its "id" is the key).
+    func put(_ collection: Collection, _ record: JSONValue) {
+        guard let id = record["id"]?.string else { return }
+        collections[collection, default: [:]][id] = record
+        cache[collection] = nil
+        scheduleSave()
+    }
+
+    func delete<T: Record>(_ type: T.Type, _ id: String) {
+        collections[T.collection]?[id] = nil
+        cache[T.collection] = nil
+        scheduleSave()
+    }
+
+    func setMeta(_ key: String, _ value: JSONValue) {
+        meta[key] = value
+        scheduleSave()
+    }
+
     /// Replaces everything (backup import).
     func replaceAll(with data: Data) async throws {
         let snapshot = try Backup.decode(data)

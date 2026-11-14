@@ -30,6 +30,9 @@ struct RootView: View {
                     MoreView()
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                UndoToastView().padding(.bottom, 64) // above the tab bar
+            }
         }
     }
 }

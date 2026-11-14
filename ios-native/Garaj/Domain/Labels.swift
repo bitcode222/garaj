@@ -35,7 +35,23 @@ enum Labels {
         "ready": .init(label: "Gata", symbol: "checkmark.circle", color: .green, hint: "Gata de predare"),
         "delivered": .init(label: "Predat", symbol: "key", color: .gray, hint: "Mașina a fost predată"),
         "cancelled": .init(label: "Anulat", symbol: "xmark.circle", color: .gray, hint: "Lucrare anulată"),
+        "declined": .init(label: "Refuzat", symbol: "hand.thumbsdown", color: .red, hint: "Clientul a refuzat devizul"),
     ]
+
+    /// What the button that moves a job to a status says (WORK_ORDER_ACTIONS).
+    static func workOrderAction(from: String, to: String) -> String {
+        if from == "delivered" && to == "ready" { return "Redeschide" }
+        if (from == "cancelled" || from == "declined") && to == "estimate" { return "Reactivează" }
+        if WorkOrderRules.isBackward(from, to) {
+            return ["approved": "Înapoi la aprobat", "in_progress": "Înapoi în lucru", "estimate": "Înapoi la deviz"][to] ?? workOrder(to).label
+        }
+        return [
+            "approved": "Aprobă devizul", "in_progress": from == "waiting_parts" ? "Reia lucrul" : "Începe lucrul",
+            "waiting_parts": "Așteaptă piese", "ready": "Marchează gata", "delivered": "Predă mașina",
+            "estimate": "Înapoi la deviz", "cancelled": "Anulează lucrarea",
+            "declined": "Clientul a refuzat",
+        ][to] ?? workOrder(to).label
+    }
 
     static func workOrder(_ status: String) -> StatusStyle {
         workOrderStatus[status] ?? .init(label: status, symbol: "questionmark.circle", color: .gray)
