@@ -70,6 +70,8 @@ Content is centred, at most 72 rem (1152 px) wide, like Cloudflare's. On a phone
 
 **D4. The line under a section.** When its parts *are* the section's groups (stages, invoice states) a tap filters the cards and says so next to the title ("Doar: Restante ✕"), as the in-service line does today. When they are not (the bookings' progress line) it is only a picture and is not pressable. The rule is written once, in `CardSection`.
 
+**D4, now (owner, 5 Nov 2026).** No line or legend under the cards. A section's parts are its card groups (Programări: De confirmat, Au trecut, Confirmate, Sosite, Finalizate, Neprezentate; Devize and Lucrări: their stages; Facturi: its states, by amount), shown as filter chips over the carousel (Toate first) and as a half donut in the title column; a tap on either keeps one part. Programări's "N din M confirmate" moved under its title. See the Cards form in `DESIGN-SYSTEM.md`.
+
 **D5. Every card has the same anatomy** as the in-service card (`VisitCard`): logo, title, a monospaced line (plate, number), what it is for, who and what the clock says, a hairline, then where and how much. A card is tinted by its group's tone, a booking still to confirm is outlined (the "Programat" look). Up to two corner buttons for the one-tap actions (R4); on a phone they are always visible.
 
 **D6. De confirmat.** Bookings with status `scheduled` from now to 7 days on, plus the ones whose time passed with nothing recorded (Q3), grouped: **Au trecut** (amber, the "late" tone), **Azi**, **Mâine**, then a group per day. A card: car, plate, "Programare #128", what it is for, customer, "în 2 h" / "mâine 10:00", mechanic and interval. Corner: **Confirmă** (one tap, toast with "Anulează"; the domain's `setAppointmentStatus`), **Sună**. A past one has **A sosit** and **Neprezentat** instead. The line: the next 7 days' bookings by status (De confirmat outlined, Confirmate purple, Sosite orange, the status tones), legend "8 din 12 confirmate". More than 30: the last card is "+N în Programări".
@@ -103,7 +105,7 @@ New selectors in `lib/store/selectors.js`: `selectToConfirm(appointments, today,
 | Piece | Where | Note |
 |---|---|---|
 | `CardSection` | `ds/card-section.jsx` | D3, D4; replaces `InShopStrip`'s shell |
-| `SectionLine` | `ds/card-section.jsx` | The coloured line + legend, pressable or not (D4) |
+| `PartChips`, `HalfDonut` | `ds/card-section.jsx`, `ds/half-donut.jsx` | The section's parts: chips over the cards and a half donut beside them, both filters (D4, now); they replaced `SectionLine` |
 | `BookingCard`, `InvoiceCard` | `features/dashboard/` | The `VisitCard` anatomy (D5) |
 | `HomeSearch` | `features/dashboard/home-search.jsx` | D2 |
 | `AreaChart`, `Sparkline`, `NoData` | `features/reports/charts.jsx` | Reuse `niceMax`, `useWidth`; tooltip and table view per §4 of the design system |

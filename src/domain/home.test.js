@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 
-import { AGENDA_DAYS, bookingPassed, bookingsToConfirm, invoicesToCollect } from "./agenda.js";
+import { AGENDA_DAYS, ESTIMATE_STAGES, JOB_STAGES, bookingPassed, bookingsToConfirm, dayMarks, invoicesToCollect, jobDeadline, jobsToShow } from "./agenda.js";
+import { SPAN, clampWindow, middleOf, spanOf, windowAround } from "./timeframe.js";
 import { averageTicket, billedHours, change, collected, homeAnalytics, periodWindow, received, showRate, timeInService } from "./analytics.js";
 
 // Local-time instants, so the tests do not depend on the machine's time zone.
@@ -142,7 +143,7 @@ describe("bookings to confirm", () => {
 			groups.map((group) => [group.key, group.items.map((a) => a.id)]),
 			[
 				["past", ["late", "missed"]],
-				[TODAY, ["today"]],
+												[TODAY, ["today"]],
 				["2026-10-18", ["tomorrow1", "tomorrow2"]],
 				["2026-10-23", ["lastDay"]],
 			],
@@ -150,6 +151,21 @@ describe("bookings to confirm", () => {
 		assert.equal(total, 6);
 		assert.deepEqual(week, { scheduled: 5, confirmed: 1, arrived: 0, done: 0, no_show: 0 }); // today's late one is still this week's
 		assert.equal(AGENDA_DAYS, 7);
+	});
+
+		test("all: the week as a whole, every booking of its days (cancelled aside) in the same groups", () => {
+		const list = [booking("late", TODAY, 9), booking("today", TODAY, 15), booking("confirmedToday", TODAY, 16, "confirmed"), booking("doneYesterday", "2026-10-16", 9, "done"), booking("tomorrow1", "2026-10-18", 9), booking("cancelled", "2026-10-19", 9, "cancelled")];
+		const { groups, total, week } = bookingsToConfirm(list, { now: NOW, all: true });
+		assert.deepEqual(
+			groups.map((group) => [group.key, group.items.map((a) => a.id)]),
+			[
+				["past", ["late"]],
+				[TODAY, ["today", "confirmedToday"]],
+				["2026-10-18", ["tomorrow1"]],
+			],
+		);
+		assert.equal(total, 4);
+		assert.deepEqual(week, { scheduled: 3, confirmed: 1, arrived: 0, done: 0, no_show: 0 });
 	});
 
 	test("nothing to confirm is an empty list, not an error", () => {
@@ -195,7 +211,158 @@ describe("invoices to collect", () => {
 		assert.equal(result.groups[2].items[0].dueIn, 1);
 	});
 
+	test("a stretch of dates keeps the invoices created in it or falling due in it, whatever their state", () => {
+		const invoices = [
+			invoice("oldOverdue", { createdAt: at("2026-09-01", 9), dueDate: "2026-10-10" }),
+			invoice("recent", { createdAt: at("2026-10-12", 9), dueDate: "2026-10-30" }),
+			invoice("dueSoon", { createdAt: at("2026-09-15", 9), dueDate: "2026-10-20" }),
+			invoice("noDates", { createdAt: null, issueDate: null, dueDate: "2026-11-30" }),
+			invoice("todayDraft", { status: "draft", number: null, dueDate: null, createdAt: at(TODAY, 10) }),
+			invoice("oldDraft", { status: "draft", number: null, dueDate: null, createdAt: at("2026-08-01", 10) }),
+		];
+		const ids = (from, to) => invoicesToCollect(invoices, new Map(), { today: TODAY, from, to }).groups.flatMap((group) => group.items.map((item) => item.invoice.id));
+		// One with neither a creation nor an issue date is always kept.
+		assert.deepEqual(ids(TODAY, TODAY), ["noDates", "todayDraft"]);
+		assert.deepEqual(ids("2026-10-11", TODAY), ["recent", "noDates", "todayDraft"]);
+		// The week ahead: nothing is created in it, but an invoice falls due in it.
+		assert.deepEqual(ids("2026-10-18", "2026-10-24"), ["dueSoon", "noDates"]);
+		assert.deepEqual(ids("2026-10-01", "2026-10-31"), ["oldOverdue", "dueSoon", "recent", "noDates", "todayDraft"]);
+		// No dates: all of them (drafts oldest first).
+		assert.deepEqual(ids(null, null), ["oldOverdue", "dueSoon", "recent", "noDates", "oldDraft", "todayDraft"]);
+	});
+
 	test("nothing to collect", () => {
 		assert.deepEqual(invoicesToCollect([], new Map(), { today: TODAY }), { groups: [], total: 0, due: 0, drafts: 0 });
+	});
+});
+
+describe("jobs and estimates on the home page", () => {
+	const SETTINGS = { invoicing: { vatPayer: false } };
+	const job = (id, status, created, gross = 0) => ({ id, status, createdAt: at(created, 9), lines: gross ? [{ id: `${id}-l`, kind: "labor", qty: 1, unitPrice: gross, discountPct: 0, vatRate: 0 }] : [] });
+	const orders = [
+		job("waiting", "waiting_parts", "2026-10-07"),
+		job("working", "in_progress", "2026-10-14", 10_000),
+		job("ready", "ready", TODAY, 5_000),
+		job("handedOld", "delivered", "2026-09-01"),
+		job("handed1", "delivered", "2026-10-15"),
+		job("handed2", "delivered", "2026-10-16"),
+		job("estimate", "estimate", TODAY, 2_000),
+		job("approved", "approved", "2026-10-12"),
+		job("cancelled", "cancelled", TODAY),
+	];
+	const shape = (result) => result.groups.map((group) => [group.key, group.items.map((o) => o.id)]);
+
+	test("Lucrări: under way, waiting for parts, finished, handed over (the latest first); estimates and cancelled jobs are not there", () => {
+		const all = jobsToShow(orders, { today: TODAY, stages: JOB_STAGES, settings: SETTINGS });
+		assert.deepEqual(shape(all), [
+			["in_progress", ["working"]],
+			["waiting_parts", ["waiting"]],
+			["ready", ["ready"]],
+			["delivered", ["handed2", "handed1", "handedOld"]],
+		]);
+		assert.equal(all.total, 6);
+		assert.equal(all.amount, 15_000);
+		assert.equal(all.groups[0].amount, 10_000);
+	});
+
+	test("a stretch of dates keeps the jobs created in it", () => {
+		// 7 days, today counting: from 11 Oct on; the job waiting for parts since the 7th is left out.
+		assert.deepEqual(shape(jobsToShow(orders, { from: "2026-10-11", to: TODAY, stages: JOB_STAGES, settings: SETTINGS })), [
+			["in_progress", ["working"]],
+			["ready", ["ready"]],
+			["delivered", ["handed2", "handed1"]],
+		]);
+		assert.deepEqual(shape(jobsToShow(orders, { from: TODAY, to: TODAY, stages: JOB_STAGES, settings: SETTINGS })), [["ready", ["ready"]]]);
+	});
+
+	test("Devize: waiting for the customer, then approved and not started", () => {
+		const estimates = jobsToShow(orders, { today: TODAY, stages: ESTIMATE_STAGES, settings: SETTINGS });
+		assert.deepEqual(shape(estimates), [
+			["estimate", ["estimate"]],
+			["approved", ["approved"]],
+		]);
+		assert.equal(estimates.amount, 2_000);
+	});
+});
+
+describe("the day ruler's window", () => {
+	test("around a day: as many days before as after (one more after for an even length); its middle is that day", () => {
+		assert.deepEqual(windowAround(TODAY, 7), { from: "2026-10-14", to: "2026-10-20" });
+		assert.deepEqual(windowAround(TODAY, 1), { from: TODAY, to: TODAY });
+		assert.deepEqual(windowAround(TODAY, 30), { from: "2026-10-03", to: "2026-11-01" });
+		for (const days of [1, 2, 7, 30, 60]) {
+			assert.equal(spanOf(windowAround(TODAY, days)), days);
+			assert.equal(middleOf(windowAround(TODAY, days)), TODAY);
+		}
+	});
+
+	test("kept to the rules: 1 to 60 days, two years back and one ahead, moved back in whole, never cut", () => {
+		assert.equal(spanOf(clampWindow({ from: TODAY, to: "2027-06-01" }, TODAY)), SPAN.max);
+		assert.deepEqual(clampWindow({ from: "2023-01-01", to: "2023-01-07" }, TODAY), { from: "2024-10-17", to: "2024-10-23" });
+		assert.deepEqual(clampWindow({ from: "2027-10-14", to: "2027-10-20" }, TODAY), { from: "2027-10-11", to: "2027-10-17" });
+		assert.deepEqual(clampWindow({ from: "2026-10-14", to: "2026-10-20" }, TODAY), { from: "2026-10-14", to: "2026-10-20" });
+		// Across a daylight saving change (25 Oct 2026 in Romania): still whole days.
+		assert.deepEqual(windowAround("2026-10-25", 3), { from: "2026-10-24", to: "2026-10-26" });
+	});
+});
+
+describe("deadlines and the ruler's bullets", () => {
+	const SETTINGS = { invoicing: { vatPayer: false } };
+	const appointments = [
+		{ id: "a1", status: "arrived", start: at(TODAY, 9), end: at("2026-10-20", 17), workOrderId: "j1" },
+		{ id: "a2", status: "confirmed", start: at("2026-10-19", 9), end: at("2026-10-19", 10) },
+		{ id: "a3", status: "cancelled", start: at("2026-10-19", 11), end: at("2026-10-19", 12) },
+		{ id: "a4", status: "arrived", start: at(TODAY, 8), end: at(TODAY, 9) },
+	];
+	const workOrders = [
+		{ id: "j1", status: "in_progress", appointmentId: "a1", createdAt: at("2026-10-07", 9), lines: [] },
+		{ id: "j2", status: "estimate", appointmentId: "a4", createdAt: at(TODAY, 8), lines: [] },
+		{ id: "j3", status: "ready", appointmentId: null, createdAt: at("2026-10-16", 9), lines: [] },
+		{ id: "j4", status: "cancelled", createdAt: at(TODAY, 9), lines: [] },
+	];
+	const invoices = [
+		{ id: "f1", status: "issued", number: 1, issueDate: "2026-10-15", dueDate: "2026-10-22", createdAt: at("2026-10-15", 9), totals: { gross: 10_000 } },
+		{ id: "f2", status: "issued", number: 2, issueDate: "2026-10-01", dueDate: "2026-10-22", createdAt: at("2026-10-01", 9), totals: { gross: 10_000 } },
+	];
+	const byId = Object.fromEntries(appointments.map((a) => [a.id, a]));
+
+	test("a job's deadline is the end of its booking while it is not finished; a walk-in or a finished job has none", () => {
+		assert.equal(jobDeadline(workOrders[0], byId.a1), "2026-10-20");
+		assert.equal(jobDeadline(workOrders[1], byId.a4), TODAY);
+		assert.equal(jobDeadline(workOrders[2], null), null);
+		assert.equal(jobDeadline({ ...workOrders[0], status: "ready" }, byId.a1), null);
+	});
+
+	test("a job created before the dates still shows when its deadline is in them", () => {
+		const result = jobsToShow(workOrders, { from: "2026-10-18", to: "2026-10-24", stages: JOB_STAGES, settings: SETTINGS, appointments: byId });
+		assert.deepEqual(result.groups.map((g) => [g.key, g.items.map((o) => o.id)]), [["in_progress", ["j1"]]]);
+	});
+
+	test("bullets: one count per kind and day; deadlines as their own kinds; cancelled and paid records draw nothing", () => {
+		const marks = dayMarks({ appointments, workOrders, invoices, paymentsByInvoice: new Map([["f2", [{ amount: 10_000 }]]]), today: TODAY });
+		assert.deepEqual(marks.get(TODAY), { booking: 2, estimate: 1, estimateDue: 1 });
+		assert.deepEqual(marks.get("2026-10-19"), { booking: 1 });
+		assert.deepEqual(marks.get("2026-10-07"), { job: 1 });
+		assert.deepEqual(marks.get("2026-10-20"), { jobDue: 1 });
+		assert.deepEqual(marks.get("2026-10-16"), { job: 1 });
+		assert.deepEqual(marks.get("2026-10-15"), { invoice: 1 });
+		assert.deepEqual(marks.get("2026-10-22"), { invoiceDue: 1 });
+		assert.equal(marks.get("2026-10-01"), undefined);
+	});
+
+	test("bookings over a stretch of dates in the past: what passed unrecorded is 'past', the rest by day", () => {
+		const list = [
+			{ id: "b1", status: "scheduled", start: at("2026-10-12", 9), end: at("2026-10-12", 10) },
+			{ id: "b2", status: "done", start: at("2026-10-13", 9), end: at("2026-10-13", 10) },
+			{ id: "b3", status: "no_show", start: at("2026-10-14", 9), end: at("2026-10-14", 10) },
+			{ id: "b4", status: "scheduled", start: at("2026-10-02", 9), end: at("2026-10-02", 10) },
+		];
+		const { groups, week } = bookingsToConfirm(list, { now: NOW, all: true, from: "2026-10-10", to: "2026-10-16" });
+		assert.deepEqual(groups.map((g) => [g.key, g.items.map((a) => a.id)]), [
+			["past", ["b1"]],
+			["2026-10-13", ["b2"]],
+			["2026-10-14", ["b3"]],
+		]);
+		assert.deepEqual(week, { scheduled: 1, confirmed: 0, arrived: 0, done: 1, no_show: 1 });
 	});
 });

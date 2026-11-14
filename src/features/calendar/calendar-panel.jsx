@@ -13,7 +13,8 @@ import { monthGrid } from "./utils";
 
 const WEEKDAYS = ["L", "M", "M", "J", "V", "S", "D"];
 const COLOR_BY = [
-	{ value: "status", label: "Stare" },
+	// "status" is the key saved on devices; it now colours by kind, the state being each block's dot (docs/RECORD-COLORS.md).
+	{ value: "status", label: "Tip" },
 	{ value: "mechanic", label: "Mecanic" },
 	{ value: "service", label: "Operație" },
 ];
@@ -100,7 +101,7 @@ function ColorCheck({ checked, onChange, toneName, outline = false, label, pill 
 			<span
 				className={cn(
 					"flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-ring/50",
-					checked ? (outline ? "border-dashed border-foreground/60 bg-card" : cn("border-transparent text-white", tone(toneName).solid)) : "border-foreground/30 bg-transparent",
+					checked ? (outline ? "border-dashed border-foreground/70 bg-card" : cn("border-transparent text-white", tone(toneName).solid)) : "border-foreground/40 bg-transparent",
 				)}
 				aria-hidden
 			>

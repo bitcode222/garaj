@@ -55,6 +55,47 @@ export function appointmentFlow(appointment, { now, order = null }) {
 	return { steps: APPOINTMENT_STEPS, current: APPOINTMENT_STEPS.indexOf(status), off: off ? status : null, over, next, moves };
 }
 
+/** The warnings a booking's Acum card stands for: their sentence is its sentence, their fixes its buttons. */
+export const NOW_KINDS = ["missed", "late", "unconfirmed"];
+
+/**
+ * What a booking's Acum card says and offers (docs/APPOINTMENT-SHEET.md §3.3): the situation, the
+ * warning it stands for (so it is not shown twice), the one primary button, the other buttons and the
+ * quiet links, all as fixes ({ id, ...params }, docs/WARNINGS.md), so one place words and runs them.
+ * `warnings` are bookingWarnings' for the same moment; `phone`: the customer has one.
+ *   key  confirm · waiting · today · late · missed · inShop · done · off
+ */
+export function bookingNow(appointment, { now, order = null, warnings = [], phone = false }) {
+	const flow = appointmentFlow(appointment, { now, order });
+	const warning = (kind) => warnings.find((w) => w.kind === kind) ?? null;
+	const result = (key, { from = null, primary = null, others = [], quiet = [] } = {}) => ({ key, warning: from, primary, others, quiet });
+	const call = phone ? [{ id: "call" }] : [];
+
+	if (flow.off) {
+		const restore = flow.moves.find((m) => m.id === "restore");
+		return result("off", { primary: { id: "reschedule" }, others: restore?.allowed ? [{ id: "restore" }] : [] });
+	}
+	if (appointment.status === "done") return result("done");
+	if (appointment.status === "arrived" || order) return result("inShop");
+
+	const missed = warning("missed");
+	if (missed) return result("missed", { from: missed, primary: { id: "checkin" }, others: missed.fixes.filter((f) => f.id !== "checkin") });
+	const late = warning("late");
+	// Neprezentat is the sheet's last section, with Anulează: never next to "A sosit".
+	if (late) return result("late", { from: late, primary: { id: "checkin" }, others: late.fixes.filter((f) => f.id !== "checkin" && f.id !== "no_show") });
+
+	// Its time has begun (within the grace minutes): the car is expected any moment.
+	if (appointment.start <= now) return result("today", { primary: { id: "checkin" }, others: call });
+	if (appointment.status === "scheduled") {
+		const unconfirmed = warning("unconfirmed");
+		const fixes = unconfirmed ? unconfirmed.fixes : [{ id: "confirm" }, ...(phone ? [{ id: "remind" }, { id: "call" }] : [])];
+		return result("confirm", { from: unconfirmed, primary: fixes[0], others: fixes.slice(1), quiet: [{ id: "checkin" }] });
+	}
+	if (dayOfInstant(appointment.start) === dayOfInstant(now)) return result("today", { primary: { id: "checkin" }, others: call, quiet: [{ id: "unconfirm" }] });
+	// Confirmed for another day: nothing to do but wait; the car may still come early.
+	return result("waiting", { quiet: [{ id: "unconfirm" }, { id: "checkin" }] });
+}
+
 // ── lucrare ─────────────────────────────────────────────────────────────────
 
 export const JOB_STEPS = ["estimate", "approved", "in_progress", "ready", "delivered"];
@@ -150,4 +191,129 @@ export function invoiceFlow(invoice, { payments = [], today, customer = null }) 
 	moves.push(move("storno", "end", { confirm: true }));
 	moves.push(move("storno_and_redo", "end", { confirm: true }));
 	return { steps: INVOICE_STEPS, current: state === "paid" ? 2 : 1, off: null, next: moves.find((m) => m.kind === "next") ?? null, moves, ...facts, paid, balance, overdueDays };
+}
+
+// ── the visit bar ───────────────────────────────────────────────────────────
+
+/** The records of a visit, in order: the sections of the bar every record's sheet opens with (docs/VISIT-BAR.md). */
+export const VISIT_SECTIONS = ["appointment", "estimate", "job", "invoice", "review"];
+const ESTIMATE_STEPS = ["estimate", "approved"];
+const WORK_STEPS = ["in_progress", "ready", "delivered"];
+/** A review's steps (reviewState): not asked, asked, answered. */
+export const REVIEW_STEPS = ["none", "requested", "received"];
+
+// One arc per step: done · now · ahead · skipped (passed over without a date of its own) · off (cancelled, no-show).
+const arcs = (steps, current, { complete = false, skipped = [] } = {}) =>
+	steps.map((step, index) => (skipped.includes(step) ? "skipped" : complete || index < current ? "done" : index === current ? "now" : "ahead"));
+const offArcs = (steps) => steps.map(() => "off");
+
+const walk = { kind: "walk", allowed: true };
+const here = { kind: "here", allowed: true };
+const create = (action, fields = {}) => ({ kind: "create", action, allowed: true, ...fields });
+const cannot = (reason, fix = null) => ({ kind: "create", action: null, allowed: false, reason, fix });
+const none = (reason) => ({ kind: "none", allowed: false, reason });
+
+/** Why a booking cannot start a job any more, and its fix; null when it can. */
+function bookingBlock(appointment) {
+	if (appointment.status === "cancelled") return cannot("Programarea e anulată.", "reschedule");
+	if (appointment.status === "no_show") return cannot("Clientul nu s-a prezentat.", "reschedule");
+	if (appointment.status === "done") return none("Vizita s-a încheiat.");
+	return null;
+}
+
+/**
+ * The visit bar: for each record of a visit, whether it exists, its ring's arcs, whether it is the record open
+ * (`from`: "appointment" · "work-order" · "invoice" · "review"), and what a tap on it does. A tap walks to a record
+ * that exists; creates one that does not, with what exists today (`action`: checkin, start, invoice, review;
+ * `status` for a check-in); or says why it cannot be made yet (`reason`) with its fix (`fix`: reschedule,
+ * reactivate, lines, checkin). `here`: the same work order seen at its other stage. `payments` are the invoice's.
+ *   { sections: [{ key, exists, current, record, id, arcs, off, paused, tap }], current }
+ */
+export function visitBar({ appointment = null, order = null, invoice = null, review = null, payments = [], today, from }) {
+	const started = Boolean(order && (order.status === "cancelled" ? order.dates?.in_progress : !ESTIMATE_STEPS.includes(order.status)));
+	const currentKey = from === "work-order" ? (started ? "job" : "estimate") : from;
+	const stage = order ? JOB_STEPS.indexOf(order.status === "waiting_parts" ? "in_progress" : order.status) : -1;
+	const skipped = order && order.status !== "cancelled" ? skippedSteps(order) : [];
+	const block = appointment ? bookingBlock(appointment) : null;
+	// What starts a job from the booking: check-in, opening it at `status`.
+	const checkin = (status) => (appointment ? (block ?? create("checkin", { status })) : none("Fără lucrare."));
+	const startFirst = (reason) => (appointment && !block ? cannot(reason, "checkin") : none(reason));
+
+	const appointmentSection = appointment
+		? {
+				record: "appointment",
+				id: appointment.id,
+				exists: true,
+				off: appointment.status === "cancelled" || appointment.status === "no_show",
+				arcs:
+					appointment.status === "cancelled" || appointment.status === "no_show"
+						? offArcs(APPOINTMENT_STEPS)
+						: arcs(APPOINTMENT_STEPS, APPOINTMENT_STEPS.indexOf(appointment.status), { complete: appointment.status === "done" }),
+				tap: walk,
+			}
+		: { record: null, exists: false, arcs: APPOINTMENT_STEPS.map(() => "ahead"), tap: none("Fără programare.") };
+
+	let estimate;
+	let job;
+	if (order) {
+		const cancelled = order.status === "cancelled";
+		estimate = {
+			record: "work-order",
+			id: order.id,
+			exists: true,
+			off: cancelled && !started,
+			arcs: cancelled && !started ? offArcs(ESTIMATE_STEPS) : started ? arcs(ESTIMATE_STEPS, ESTIMATE_STEPS.length, { skipped }) : arcs(ESTIMATE_STEPS, stage),
+			tap: started ? here : walk,
+		};
+		if (started) {
+			job = {
+				record: "work-order",
+				id: order.id,
+				exists: true,
+				off: cancelled,
+				paused: order.status === "waiting_parts",
+				arcs: cancelled ? offArcs(WORK_STEPS) : arcs(WORK_STEPS, stage - ESTIMATE_STEPS.length, { complete: order.status === "delivered" }),
+				tap: walk,
+			};
+		} else {
+			// Starting the work is the stepper's move; from a Deviz not approved it passes over "Aprobat" (asked once).
+			job = { record: null, exists: false, arcs: WORK_STEPS.map(() => "ahead"), tap: cancelled ? cannot("Devizul e anulat.", "reactivate") : create("start", { skips: order.status === "estimate" }) };
+		}
+	} else {
+		estimate = { record: null, exists: false, arcs: ESTIMATE_STEPS.map(() => "ahead"), tap: checkin("estimate") };
+		job = { record: null, exists: false, arcs: WORK_STEPS.map(() => "ahead"), tap: checkin("in_progress") };
+	}
+
+	let invoiceSection;
+	if (invoice) {
+		const state = invoiceState(invoice, payments, today);
+		const off = state === "cancelled" || state === "storno";
+		const index = { draft: 0, issued: 1, overdue: 1, partial: 2, paid: 2 }[state] ?? 0;
+		invoiceSection = { record: "invoice", id: invoice.id, exists: true, off, arcs: off ? offArcs(INVOICE_STEPS) : arcs(INVOICE_STEPS, index, { complete: state === "paid" }), tap: walk };
+	} else {
+		let tap;
+		if (!order) tap = startFirst("Începe întâi lucrarea.");
+		else if (order.status === "cancelled") tap = cannot("Lucrarea e anulată.", "reactivate");
+		else if (!order.lines?.length) tap = cannot("Adaugă o operațiune ca să facturezi.", "lines");
+		else tap = create("invoice");
+		invoiceSection = { record: null, exists: false, arcs: INVOICE_STEPS.map(() => "ahead"), tap };
+	}
+
+	let reviewSection;
+	if (review || (from === "review" && order)) {
+		const state = review ? (review.receivedAt ? "received" : review.requests?.length ? "requested" : "none") : "none";
+		reviewSection = { record: "review", id: order?.id ?? review.workOrderId, exists: Boolean(review), off: false, arcs: arcs(REVIEW_STEPS, REVIEW_STEPS.indexOf(state), { complete: state === "received" }), tap: walk };
+	} else {
+		// The review sheet opens empty and is saved on its first change.
+		reviewSection = { record: null, exists: false, arcs: REVIEW_STEPS.map(() => "ahead"), tap: order ? create("review") : startFirst("Recenzia se cere după lucrare.") };
+	}
+
+	const byKey = { appointment: appointmentSection, estimate, job, invoice: invoiceSection, review: reviewSection };
+	const sections = VISIT_SECTIONS.map((key) => {
+		const section = { key, off: false, paused: false, ...byKey[key] };
+		const current = key === currentKey;
+		// The record open is where you are: a tap on it does nothing.
+		return { ...section, current, tap: current ? { kind: "none", allowed: false, reason: null } : section.tap };
+	});
+	return { sections, current: VISIT_SECTIONS.indexOf(currentKey) };
 }

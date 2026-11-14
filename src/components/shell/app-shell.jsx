@@ -17,7 +17,6 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Kbd } from "@/components/ds/data";
 import { useCollection, useSettings, useStoreValue, useToday } from "@/lib/store/hooks";
 import { selectReminders, selectToConfirm } from "@/lib/store/selectors";
 import { OPEN_STATUSES } from "@/domain/work-order";
@@ -31,6 +30,7 @@ import { NAV, PROGRAMARI_PAGES, TABS, isActive } from "./nav";
 import { QuickCreate } from "./quick-create";
 import { useRecentRecords } from "./recents";
 import { openCommandMenu } from "./command-state";
+import { AccountMenu } from "./account-menu";
 import { ThemeToggle } from "./theme-toggle";
 
 const CommandMenu = dynamic(() => import("./command-menu").then((m) => m.CommandMenu), { ssr: false });
@@ -240,7 +240,7 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 	const isOpen = (key, fallback) => toggled[key] ?? fallback;
 	const toggle = (key, fallback) => setOpenText(JSON.stringify({ ...toggled, [key]: !isOpen(key, fallback) }));
 	return (
-		<aside data-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r bg-muted lg:flex">
+		<aside data-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r bg-background lg:flex">
 			<div className="border-b px-3 py-2.5">
 				<ShopMenu shopName={shopName} demo={demo} />
 			</div>
@@ -252,7 +252,6 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 				>
 					<Search className="size-4 shrink-0" aria-hidden />
 					<span className="flex-1 truncate text-left">Caută…</span>
-					<Kbd>⌘K</Kbd>
 				</button>
 				<QuickCreate>
 					<Button variant="brand" size="icon" className="size-10 shrink-0 rounded-lg" aria-label="Nou">
@@ -354,6 +353,7 @@ function TopBar({ shopName }) {
 						<Plus className="size-5" />
 					</Button>
 				</QuickCreate>
+				<AccountMenu />
 			</div>
 		</header>
 	);
@@ -429,6 +429,9 @@ export function AppShell({ children }) {
 			<Sidebar pathname={pathname} badges={badges} shopName={settings.shop.name} demo={demo} />
 			<Rail pathname={pathname} badges={badges} />
 			<TopBar shopName={settings.shop.name} />
+			<div className="fixed top-3 right-4 z-30 hidden md:block" data-print="hide">
+				<AccountMenu className="size-11 border bg-card shadow-xs hover:bg-accent" />
+			</div>
 			<main
 				id="main"
 				className="min-h-dvh pt-[calc(3.5rem+var(--safe-top))] pb-[calc(var(--tabbar-h)+var(--safe-bottom))] md:pt-0 md:pb-0 md:pl-16 lg:pl-64"

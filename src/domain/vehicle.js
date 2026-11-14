@@ -101,3 +101,13 @@ export function vehicleName(vehicle) {
 	if (!vehicle) return "";
 	return [vehicle.make, vehicle.model].filter(Boolean).join(" ");
 }
+
+/** The latest job on a car (cancelled ones aside), other than `except` (the booking's own job). */
+export function lastJob(vehicleId, workOrders = [], { except = null } = {}) {
+	let last = null;
+	for (const order of workOrders) {
+		if (order.vehicleId !== vehicleId || order.status === "cancelled" || order.id === except) continue;
+		if (!last || order.createdAt > last.createdAt) last = order;
+	}
+	return last;
+}

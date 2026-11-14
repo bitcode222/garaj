@@ -11,12 +11,12 @@ import { navigateFromSheet } from "@/lib/sheets";
 import { useIsReady } from "@/lib/store/hooks";
 
 /**
- * Detail overlay (appointment, customer, vehicle, work order, invoice). The
+ * Detail overlay (appointment, customer, vehicle, work order, invoice); `kind` and `state` colour its title (Sheet). The
  * controls live in the top bar: open the full page, edit, close. Also handles
  * the three states every detail needs: loading skeleton, record deleted while
  * open (closes itself), and the footer for primary actions.
  */
-export function DetailSheet({ open, onOpenChange, title, description, entity, missing = "Elementul a fost șters.", fullPage, onEdit, editLabel = "Editează", footer, children }) {
+export function DetailSheet({ open, onOpenChange, title, description, kind, state, bar, make, entity, missing = "Elementul a fost șters.", fullPage, onEdit, editLabel = "Editează", footer, footerClassName, children }) {
 	const router = useRouter();
 	const ready = useIsReady();
 	const gone = ready && !entity;
@@ -33,6 +33,10 @@ export function DetailSheet({ open, onOpenChange, title, description, entity, mi
 			onOpenChange={onOpenChange}
 			title={title}
 			description={description}
+			kind={kind}
+			state={state}
+			bar={entity ? bar : null}
+			make={make}
 			headerActions={
 				entity && (
 					<>
@@ -50,6 +54,7 @@ export function DetailSheet({ open, onOpenChange, title, description, entity, mi
 				)
 			}
 			footer={footer}
+			footerClassName={footerClassName}
 		>
 			{ready && entity ? (
 				children

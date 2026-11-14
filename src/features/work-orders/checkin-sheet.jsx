@@ -25,7 +25,7 @@ import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 
 /** "Primire mașină": the 30-second check-in that opens a work order. */
-export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicleId }) {
+export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicleId, status = "estimate" }) {
 	const router = useRouter();
 	const depth = useContext(SheetDepth);
 	const appointment = useEntity("appointments", appointmentId);
@@ -41,7 +41,8 @@ export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicl
 		operations: resolveOperations(appointment ?? {}),
 		staffId: appointment?.staffId ?? null,
 		bayId: appointment?.bayId ?? null,
-		status: "estimate",
+		// Opened from the visit bar's Lucrare it starts the work at once; from its Deviz (and everywhere else), as a Deviz.
+		status,
 	}));
 	const [touched, setTouched] = useState(false);
 	const [saving, setSaving] = useState(false);

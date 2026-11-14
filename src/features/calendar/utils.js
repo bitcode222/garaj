@@ -1,6 +1,6 @@
 import { addDaysISO, addMonthsISO, parseISODate, pad2, toISODate } from "@/domain/dates";
 import { fmtDate, plural } from "@/lib/format";
-import { APPOINTMENT_STATUS, SERVICE_CATEGORIES } from "@/lib/labels";
+import { RECORD_KIND, SERVICE_CATEGORIES } from "@/lib/labels";
 
 export const HOUR_PX = 72;
 export const PX_PER_MIN = HOUR_PX / 60;
@@ -126,7 +126,8 @@ export function layoutEvents(events) {
 export function eventTone(appointment, colorBy, { staff, services }) {
 	if (colorBy === "mechanic") return staff[appointment.staffId]?.color ?? "neutral";
 	if (colorBy === "service") return SERVICE_CATEGORIES[services[appointment.serviceIds?.[0]]?.category]?.tone ?? "neutral";
-	return APPOINTMENT_STATUS[appointment.status]?.tone ?? "blue";
+	// By kind (docs/RECORD-COLORS.md): every booking in the bookings' colour; its state is the dot it starts with.
+	return RECORD_KIND.appointment.tone;
 }
 
 /** A day's bookings as its name says them: in full where it fits in `room` px, shortened where not (`letter`: px a letter, about 6 for 11 px text). */

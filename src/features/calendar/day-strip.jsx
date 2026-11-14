@@ -10,7 +10,8 @@ import { vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtTime, plural } from "@/lib/format";
 import { haptics } from "@/lib/haptics";
 import { useLocalPreference, useMediaQuery, useNowMinute } from "@/lib/hooks";
-import { APPOINTMENT_STATUS, BOOKING_MARK, WORK_ORDER_STATUS } from "@/lib/labels";
+import { APPOINTMENT_STATUS, WORK_ORDER_STATUS } from "@/lib/labels";
+import { BlockMark } from "./block-mark";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 import { DRAG_SLOP_PX, HOLD_MS, HOLD_SLOP_PX, drawSpan, edgeSpeed, shiftSpan, startAt, stretchSpan } from "@/features/dashboard/timeline-drag";
@@ -35,6 +36,7 @@ import {
 	yOf,
 } from "./calendar-geometry";
 import { AlertSign, alertOutline, alertSummary } from "./booking-warnings";
+import { cardFacts, firstName } from "./card-facts";
 import { MechanicLabel } from "./mechanic-card";
 import { atMinute, dayCount, eventTone, hhmm, layoutEvents, minuteOfDay, toMinutes } from "./utils";
 
@@ -63,31 +65,37 @@ function columnBackground(hourPx, openMin, closeMin, closedDay) {
 }
 
 /**
- * A booking on the grid: its mark and time, the car, the customer, then the plate, as its height
- * allows; the mark (booked, job, done) in the top-left corner, the mechanic's avatar in the bottom-left.
+ * A booking on the grid, filled with what matters most as its height allows: the mark (booked, job,
+ * done) and the time; the car, its make's logo, make and model; who owns it; its plate; what it is
+ * in for; and the mechanic (the avatar in the bottom-left corner, with the name once there is room).
  */
 const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", top, height, left, width, toneName, lookups, past, selected, alert, dragging, movable }) {
-	const mechanic = a.staffId ? lookups.staff?.[a.staffId] : null;
-	const Mark = BOOKING_MARK[mark].icon;
-	const vehicle = lookups.vehicles[a.vehicleId];
-	const customer = lookups.customers[a.customerId];
-	const car = vehicleName(vehicle);
+	const f = cardFacts(a, lookups);
+	const mechanic = f.mechanic;
+	const state = lookups.states?.get(a.id) ?? null;
 	const lines = Math.max(1, Math.floor((height - 6) / 15));
 	const time = `${fmtTime(a.start)}–${fmtTime(a.end)}`;
+	const logo = f.make && <MakeLogo make={f.make} className="size-3 shrink-0" />;
+	const avatar = mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="size-3.5 shrink-0 text-[7px] ring-1 ring-card" />;
+	// Under the car, most important first: who owns it, its plate, what it is in for.
+	const details = [f.owner && { key: "owner", text: f.owner, className: "font-medium" }, f.plate && { key: "plate", text: f.plate, className: "font-mono tracking-wide" }, f.subject && { key: "subject", text: f.subject }].filter(Boolean);
+	// Six lines or more: the mechanic gets a line of their own (avatar and name); fewer, the avatar starts the last line.
+	const ownLine = lines >= 6;
+	const shown = details.slice(0, Math.max(0, lines - 2 - (ownLine ? 1 : 0)));
 	return (
 		<button
 			type="button"
 			data-appt={a.id}
 			data-match={lookups.match ? (lookups.match.has(a.id) ? "1" : "0") : undefined}
-			aria-label={[time, car, customer?.name, a.title, mechanic?.name, APPOINTMENT_STATUS[a.status].label, BOOKING_MARK[mark].label, alertSummary(alert)].filter(Boolean).join(" · ")}
+			aria-label={[time, f.name, f.owner, f.plate, f.subject, mechanic?.name, state?.text ?? APPOINTMENT_STATUS[a.status].label, alertSummary(alert)].filter(Boolean).join(" · ")}
 			data-mark={mark}
 			className={cn(
 				"absolute z-[5] flex flex-col overflow-hidden rounded-md border px-1.5 py-[3px] text-left text-2xs leading-[15px] transition-[box-shadow,opacity] select-none [-webkit-touch-callout:none]",
-				tone(toneName).block,
+				// Outlined in their colour, white inside (very small cards, D): past, cancelled or missed ones keep it (struck through when they did not happen).
+				tone(toneName).line,
 				a.status === "scheduled" && "border-dashed",
-				past && "opacity-60",
 				lookups.match && !lookups.match.has(a.id) && "opacity-15 saturate-50",
-				(a.status === "no_show" || a.status === "cancelled") && "line-through opacity-50",
+				(a.status === "no_show" || a.status === "cancelled") && "line-through",
 				alertOutline(alert),
 				selected && "z-[6] ring-2 ring-brand shadow-md shadow-brand/25",
 				movable && "pointer-fine:cursor-grab",
@@ -96,33 +104,58 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 			style={{ top, height, left: `calc(${left}% + 2px)`, width: `calc(${width}% - 4px)` }}
 		>
 			{lines === 1 ? (
-				// One line: the mark, the time and the car, the avatar at the end.
+				// One line: the mark, the time, the car and its owner, the avatar at the end.
 				<span className="flex min-w-0 items-center gap-1">
-					<Mark aria-hidden className="size-3 shrink-0" />
+					<BlockMark state={state} mark={mark} />
 					<span className="min-w-0 flex-1 truncate">
-						<span className="tabular-nums opacity-80">{fmtTime(a.start)}</span> <span className="font-semibold">{car || customer?.name || a.title}</span>
+						<span className={cn("font-semibold tabular-nums", tone(toneName).text)}>{fmtTime(a.start)}</span> <span className="font-semibold">{f.name}</span>
+						{f.owner && <span> · {f.owner}</span>}
 					</span>
 					<AlertSign alert={alert} />
-					{mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="size-3.5 shrink-0 text-[7px]" />}
+					{avatar}
 				</span>
+			) : lines === 2 ? (
+				// Two lines: the time and the car; the avatar and who owns it (or the plate, or what for).
+				<>
+					<span className="flex min-w-0 items-center gap-1">
+						<BlockMark state={state} mark={mark} />
+						<span className={cn("shrink-0 font-semibold tabular-nums", tone(toneName).text)}>{fmtTime(a.start)}</span>
+						{logo}
+						<span className="min-w-0 flex-1 truncate font-semibold">{f.name}</span>
+						<AlertSign alert={alert} />
+					</span>
+					<span className="flex min-w-0 items-center gap-1">
+						{avatar}
+						{details[0] && <span className={cn("truncate", details[0].className)}>{details[0].text}</span>}
+					</span>
+				</>
 			) : (
 				<>
 					<span className="flex min-w-0 items-center gap-1">
-						<Mark aria-hidden className="size-3 shrink-0" />
-						<span className="min-w-0 flex-1 truncate tabular-nums opacity-80">{time}</span>
+						<BlockMark state={state} mark={mark} />
+						<span className={cn("min-w-0 flex-1 truncate font-semibold tabular-nums", tone(toneName).text)}>{time}</span>
 						{/* What needs attention, at the end of the top line (the details on hover and in the sheet). */}
 						<AlertSign alert={alert} />
 					</span>
 					<span className="flex min-w-0 items-center gap-1 text-xs font-semibold">
-						{/* Two lines: the avatar starts the bottom one. */}
-						{lines === 2 && mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="size-3.5 shrink-0 text-[7px]" />}
-						{lines >= 3 && vehicle?.make && <MakeLogo make={vehicle.make} className="size-3 shrink-0" />}
-						<span className="truncate">{car || customer?.name || a.title || "Programare"}</span>
+						{logo}
+						<span className="truncate">{f.name}</span>
 					</span>
-					{lines >= 4 && car && customer && <span className="truncate opacity-80">{customer.name}</span>}
-					{lines >= 5 && vehicle?.plate && <span className="truncate font-mono tracking-wide uppercase opacity-70">{vehicle.plate}</span>}
-					{/* Three lines or more: the avatar in the bottom-left corner. */}
-					{lines >= 3 && mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="mt-auto size-3.5 shrink-0 text-[7px]" />}
+					{shown.map((d, i) => (
+						<span key={d.key} className="flex min-w-0 items-center gap-1">
+							{/* Fewer than six lines: the avatar starts the last one. */}
+							{!ownLine && i === shown.length - 1 && avatar}
+							<span className={cn("truncate", d.className)}>{d.text}</span>
+						</span>
+					))}
+					{!ownLine && shown.length === 0 && avatar && <span className="mt-auto flex">{avatar}</span>}
+					{/* Six lines or more: the mechanic in the bottom-left corner, with the name. */}
+					{ownLine && mechanic && (
+						<span className="mt-auto flex min-w-0 items-center gap-1">
+							{avatar}
+							<span className="truncate">{firstName(mechanic.name)}</span>
+						</span>
+					)}
 				</>
 			)}
 			{movable && (
@@ -140,15 +173,15 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
  * bookings laid out in lanes. Memoised: scrolling re-renders nothing that did not change.
  * `data-day`, `data-col` and `data-appt` are what the strip's pointer handling looks for.
  */
-const DayColumn = memo(function DayColumn({ day, left, width, slim, closed, events, columns, keyOf, hourPx, openMin, closeMin, colorBy, lookups, selectedId, dragId, now, editable, dim, zebra, onOpen, onCreateAt }) {
+const DayColumn = memo(function DayColumn({ day, left, width, slim, closed, events, columns, keyOf, hourPx, openMin, closeMin, colorBy, lookups, selectedId, dragId, now, editable, zebra, onOpen, onCreateAt }) {
 	if (slim) {
 		return (
-			<div data-day={day} data-slim className="absolute inset-y-0 border-l-2 border-foreground/15" style={{ left, width, ...columnBackground(hourPx, openMin, closeMin, true) }} title={`${fmtDate(day, "EEEE, d MMMM")} · închis`} />
+			<div data-day={day} data-slim className="absolute inset-y-0 border-l-2 border-foreground/40" style={{ left, width, ...columnBackground(hourPx, openMin, closeMin, true) }} title={`${fmtDate(day, "EEEE, d MMMM")} · închis`} />
 		);
 	}
 	const colWidth = 100 / columns.length;
 	return (
-		<div data-day={day} data-dim={dim || undefined} className={cn("absolute inset-y-0 border-l-2 border-foreground/15 transition-opacity duration-300", dim && "opacity-45", zebra && "bg-foreground/[0.035]")} style={{ left, width, ...columnBackground(hourPx, openMin, closeMin, closed) }}>
+		<div data-day={day} className={cn("absolute inset-y-0 border-l-2 border-foreground/40", zebra && "bg-foreground/[0.035]")} style={{ left, width, ...columnBackground(hourPx, openMin, closeMin, closed) }}>
 			{columns.map((column, c) => {
 				const list = events.filter((a) => keyOf(a) === column.key);
 				const placed = layoutEvents(list);
@@ -162,7 +195,7 @@ const DayColumn = memo(function DayColumn({ day, left, width, slim, closed, even
 							const rect = event.currentTarget.getBoundingClientRect();
 							onCreateAt(day, ((event.clientY - rect.top) / hourPx) * 60, column.staffId);
 						}}
-						className={cn("absolute inset-y-0 cursor-copy", c > 0 && "border-l border-dashed border-border/70", columns.length > 1 && tone(column.color).soft)}
+						className={cn("absolute inset-y-0 cursor-copy", c > 0 && "border-l border-dashed border-foreground/45", columns.length > 1 && tone(column.color).lane)}
 						style={{ left: `${c * colWidth}%`, width: `${colWidth}%` }}
 					>
 						{placed.map(({ event: a, lane, lanes }) => {
@@ -243,7 +276,6 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 	const [range, setRange] = useState(null); // { first, last }: the day indices to render
 	const [drag, setDrag] = useState(null); // what a drag would do: { kind, id, day, col, start, end, home }
 	const [slot, setSlot] = useState(null); // free time under the mouse: { day, col, minute }
-	const [focusDay, setFocusDay] = useState(initialDay); // Zi: the day in the middle, at full strength (its neighbours fade)
 	const hourPx = touch ? HOUR_TOUCH_PX : HOUR_PX;
 	const gutter = size.width && size.width < 640 ? 48 : GUTTER_PX;
 	const openMin = toMinutes(settings.hours.open);
@@ -345,7 +377,6 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 			const first = Math.max(0, seen.first - spare);
 			const last = Math.min(lay.days.length - 1, seen.last + spare);
 			setRange((prev) => (prev && prev.first === first && prev.last === last ? prev : { first, last }));
-			if (zi) setFocusDay((prev) => (prev === day ? prev : day));
 			notify.current?.({ day, from: lay.days[seen.first], to: lay.days[seen.last], settled: false });
 		};
 		const settle = () => {
@@ -761,7 +792,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 											key={day}
 											type="button"
 											onClick={() => onPickDay?.(day)}
-											className={cn("absolute top-0 flex items-end justify-center gap-1.5 border-l-2 border-foreground/15 pb-2 transition-[color,opacity] duration-300 hover:text-foreground", zi && !drag && day !== focusDay && "opacity-45")}
+											className={cn("absolute top-0 flex items-end justify-center gap-1.5 border-l-2 border-foreground/40 pb-2 transition-colors hover:text-foreground")}
 											style={{ left: layout.offsets[i], width, height: HEAD_PX }}
 											aria-label={`${fmtDate(day, "EEEE, d MMMM")}, ${plural(count, "programare", "programări")}${zi ? "" : ". Deschide ziua."}`}
 										>
@@ -777,7 +808,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 												</span>
 											</span>
 											{/* A bracket under the name, as wide as the day: the mechanics' columns under it belong to it. */}
-											<span aria-hidden className={cn("absolute inset-x-1.5 bottom-0 h-0.5 rounded-full", isToday ? "bg-brand" : "bg-foreground/25")} />
+											<span aria-hidden className={cn("absolute inset-x-1.5 bottom-0 h-0.5 rounded-full", isToday ? "bg-brand" : "bg-foreground/35")} />
 										</button>
 									);
 								})}
@@ -789,7 +820,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 								<div className="relative flex-1">
 									{indices.map((i) =>
 										layout.slim[i] ? null : (
-											<div key={layout.days[i]} className={cn("absolute top-0 flex border-l-2 border-foreground/15 transition-opacity duration-300", zi && !drag && layout.days[i] !== focusDay && "opacity-45")} style={{ left: layout.offsets[i], width: widthAt(layout, i), height: STAFF_PX }}>
+											<div key={layout.days[i]} className={cn("absolute top-0 flex border-l-2 border-foreground/40")} style={{ left: layout.offsets[i], width: widthAt(layout, i), height: STAFF_PX }}>
 												{/* The day's date at the left of its mechanics' lanes, kept in sight while the day is partly in view. */}
 												<span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-[1] flex w-full items-center">
 													<span className={cn("sticky rounded bg-background/85 px-1 text-[10px] leading-4 font-semibold capitalize tabular-nums shadow-xs", layout.days[i] === today ? "text-brand" : "text-foreground/80")} style={{ left: gutter + 4 }}>
@@ -798,7 +829,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 												</span>
 												{columns.map((column) => (
 													// The mechanic's colour, over the column it tints; the name opens the mechanic's card.
-													<span key={column.key} className={cn("flex min-w-0 flex-1 items-center justify-center border-b-2 px-1", tone(column.color).soft, tone(column.color).border)}>
+													<span key={column.key} className={cn("flex min-w-0 flex-1 items-center justify-center border-b-2 px-1", tone(column.color).lane, tone(column.color).border)}>
 														<MechanicLabel column={column} day={layout.days[i]} className="max-w-full px-1 py-0.5" />
 													</span>
 												))}
@@ -825,7 +856,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 								</button>
 								<div className="relative flex-1">
 									{indices.map((i) => (
-										<span key={layout.days[i]} aria-hidden className="absolute inset-y-0 border-l-2 border-foreground/15" style={{ left: layout.offsets[i] }} />
+										<span key={layout.days[i]} aria-hidden className="absolute inset-y-0 border-l-2 border-foreground/40" style={{ left: layout.offsets[i] }} />
 									))}
 									{bars?.bars.map((bar) => {
 										const from = indexOfDay(layout, bar.from);
@@ -840,12 +871,12 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 												onClick={() => onOpenOrder(bar.order)}
 												title={`${car} · ${stage?.label ?? ""}`}
 												aria-label={`${car}, în service: ${stage?.label ?? ""}. Deschide lucrarea #${bar.order.number}.`}
-												className={cn("absolute flex items-center rounded border text-2xs leading-none", tone(stage?.tone ?? "neutral").block, !bar.open && "opacity-60", lookups.matchOrders && !lookups.matchOrders.has(bar.order.id) && "opacity-15")}
+												className={cn("absolute flex items-center rounded border text-2xs leading-none", tone(stage?.tone ?? "neutral").line, lookups.matchOrders && !lookups.matchOrders.has(bar.order.id) && "opacity-15")}
 												style={{ left: layout.offsets[from] + 2, width: Math.max(layout.offsets[to + 1] - layout.offsets[from] - 4, 18), top: 4 + bar.lane * LANE_PX, height: LANE_PX - 4 }}
 											>
 												{/* Sticky inside the bar: a stay that began days ago still says what it is at the left edge. */}
 												<span className="sticky max-w-full truncate px-1.5" style={{ left: gutter }}>
-													<span className="font-medium">{car}</span> <span className="opacity-75">· {stage?.label}</span>
+													<span className="font-semibold">{car}</span> <span>· {stage?.label}</span>
 												</span>
 											</button>
 										);
@@ -899,7 +930,6 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 										lookups={lookups}
 										selectedId={selectedHere}
 										dragId={dragHere}
-										dim={zi && !drag && day !== focusDay}
 										zebra={!zi && i % 2 === 1}
 										now={day <= today ? nowAt.slice(0, 16) : null}
 										editable={Boolean(onReschedule)}
@@ -936,7 +966,7 @@ function DragPreview({ drag, left, width, hourPx }) {
 	const minutes = drag.end - drag.start;
 	return (
 		<div aria-hidden data-drag={drag.kind} data-range={range} className="pointer-events-none absolute z-[9]" style={{ left: left + 2, width: Math.max(width - 4, 12), top, height }}>
-			<div className={cn("flex h-full flex-col overflow-hidden rounded-md px-1.5 py-[3px] text-2xs leading-[15px] shadow-lg", fresh ? "border-2 border-dashed border-brand bg-[color-mix(in_oklch,var(--brand)_14%,var(--card))]" : cn("border ring-2 ring-brand", tone(drag.toneName).block))}>
+			<div className={cn("flex h-full flex-col overflow-hidden rounded-md px-1.5 py-[3px] text-2xs leading-[15px] shadow-lg", fresh ? "border-2 border-dashed border-brand bg-[color-mix(in_oklch,var(--brand)_14%,var(--card))]" : cn("border ring-2 ring-brand", tone(drag.toneName).line))}>
 				<span className="truncate font-semibold">{fresh ? "Programare nouă" : drag.name}</span>
 			</div>
 			<span className="absolute -top-5 left-0 rounded bg-foreground px-1 text-2xs leading-4 font-semibold whitespace-nowrap text-background tabular-nums">

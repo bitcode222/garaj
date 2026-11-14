@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, CalendarPlus, CarFront, CircleCheck, Eye, Gauge, Hand, Plus, ReceiptText, Rows3, Search, Sparkles, Trash2, Wrench, Columns3, Grid3X3, CalendarRange, Grid2X2 } from "lucide-react";
+import { Bell, CalendarPlus, CarFront, Clock, Flag, Hourglass, PackageSearch, CircleCheck, Eye, Gauge, Hand, Plus, ReceiptText, Rows3, Search, Sparkles, Trash2, Wrench, Columns3, Grid3X3, CalendarRange, Grid2X2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
+import { CardAction, CardButton, LargeCardsProvider, SectionCard } from "@/components/ds/card-section";
 import { useConfirm } from "@/components/ds/confirm";
 import { ContactActions } from "@/components/ds/contact";
 import { Banner, DateTile, EmptyState, Initials, KeyValue, KeyValueGrid, Kbd, Meter, Money, Stat, Timeline } from "@/components/ds/data";
@@ -12,20 +13,24 @@ import { ListRow } from "@/components/ds/list";
 import { Page, PageHeader, Section } from "@/components/ds/page";
 import { Plate } from "@/components/ds/plate";
 import { Sheet } from "@/components/ds/sheet";
-import { StatusBadge, ToneBadge, ToneDot, ToneIcon } from "@/components/ds/tone";
+import { KindMark, StateDot, StateTag, StatusBadge, ToneBadge, ToneDot, ToneIcon, kindCard, kindText } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { computeTotals } from "@/domain/lines";
-import { APPOINTMENT_STATUS, INVOICE_STATE, WORK_ORDER_STATUS } from "@/lib/labels";
+import { APPOINTMENT_STATUS, INVOICE_STATE, RECORD_KIND, WORK_ORDER_STATUS } from "@/lib/labels";
+import { stateLook } from "@/lib/record-state";
+import { cn } from "@/lib/utils";
 import { TONE_NAMES, tone } from "@/lib/tones";
 import { InvoiceDocument } from "@/features/invoices/invoice-document";
+import { VisitCard } from "@/features/dashboard/visit-card";
+import { VisitBar } from "@/components/ds/visit-bar";
 
 const PRINCIPLES = [
 	["Hârtie și cerneală", "Din factură: suprafețe neutre, ierarhie prin tipografie, sume aliniate. Totalul e cel mai vizibil lucru din pagină."],
-	["Culoare cu sens", "Din calendar: culoarea înseamnă stare. Fiecare stare are un ton (50 / 200 / 700) folosit peste tot la fel."],
+	["Culoare cu sens", "Culoarea spune ce e (Programare, Deviz, Lucrare, Factură: cardul, titlul) și cum stă (un punct cu iconiță: roșu, galben, verde, gri). Aceleași peste tot."],
 	["Se înțelege dintr-o privire", "Fiecare ecran răspunde la o întrebare în două secunde: cifra, starea, apoi detaliile."],
 	["Degetul mare întâi", "Ținte de 44 px, foi de jos pe telefon, selectoare native pentru dată și oră."],
 	["Rapid din start", "Doar animații CSS, schelete cu geometria finală, fără spinnere pentru date locale."],
@@ -45,14 +50,72 @@ const SURFACES = [
 ];
 
 const TONE_MEANING = {
-	neutral: "Ciornă, predat, arhivă",
-	blue: "Programat, deviz, info",
-	purple: "Confirmat, aprobat",
-	orange: "În lucru",
-	yellow: "Așteaptă piese, expiră curând",
-	green: "Gata, plătit, în stoc",
-	red: "Restant, anulat, epuizat",
+	neutral: "Stare: ciornă, finalizat, predat, anulat",
+	blue: "Tip: Factură",
+	teal: "Tip: Programare",
+	purple: "Tip: Deviz",
+	orange: "Tip: Lucrare (și starea ei „În lucru”)",
+	yellow: "Stare: de confirmat, de aprobat, de plată, așteaptă piese",
+	green: "Stare: confirmat, aprobat, gata, plătit",
+	red: "Stare: întârziat, nu a sosit, restant, neprezentat",
+	pink: "Tip: Recenzie",
 };
+
+/** Examples of states as their dots draw them (docs/RECORD-COLORS.md). */
+// The visit bar in two moments of a visit: a booking confirmed, nothing made after it; a job under way, not invoiced.
+const BAR_EXAMPLES = [
+	[
+		"O programare confirmată, fără lucrare",
+		[
+			{ key: "appointment", exists: true, current: true, arcs: ["done", "now", "ahead", "ahead"] },
+			{ key: "estimate", exists: false, arcs: ["ahead", "ahead"] },
+			{ key: "job", exists: false, arcs: ["ahead", "ahead", "ahead"] },
+			{ key: "invoice", exists: false, faint: true, arcs: ["ahead", "ahead", "ahead"] },
+			{ key: "review", exists: false, faint: true, arcs: ["ahead", "ahead", "ahead"] },
+		],
+	],
+	[
+		"O lucrare în lucru, încă nefacturată (devizul sărit)",
+		[
+			{ key: "appointment", exists: true, arcs: ["done", "done", "now", "ahead"] },
+			{ key: "estimate", exists: true, arcs: ["skipped", "skipped"] },
+			{ key: "job", exists: true, current: true, arcs: ["now", "ahead", "ahead"] },
+			{ key: "invoice", exists: false, arcs: ["ahead", "ahead", "ahead"] },
+			{ key: "review", exists: false, arcs: ["ahead", "ahead", "ahead"] },
+		],
+	],
+];
+
+// A job card's extra lines, as card-extras.js words them (the owner's picks, 7 Nov 2026).
+const SAMPLE_EXTRAS = [
+	{ key: "waits", icon: Hourglass, text: "Andrei lucrează la ea", tone: "wait" },
+	{ key: "since", icon: Clock, text: "În lucru de 5 h" },
+	{ key: "promise", icon: Flag, text: "Promisă azi la 17:00 · mai sunt 2 h", tone: "warning" },
+];
+
+// The car every card example on this page shows (the demo's own).
+const SAMPLE_CAR = {
+	vehicle: { make: "Opel" },
+	name: "Opel Astra",
+	plate: "B 667 LTV",
+	subject: "Verificare pre-ITP",
+	customer: "Media Vision SRL",
+	mechanic: { name: "Andrei Popa", color: "blue" },
+	anchor: "azi 13:30–14:30",
+	timing: { text: "în 2 h 10 min", mark: null },
+	gross: null,
+};
+
+const STATE_EXAMPLES = [
+	["appointment", { key: "to_confirm", signal: "warning", text: "De confirmat" }],
+	["appointment", { key: "late", signal: "danger", text: "Întârzie 25 min" }],
+	["estimate", { key: "awaiting_approval", signal: "warning", text: "De aprobat" }],
+	["estimate", { key: "approved", signal: "success", text: "Aprobat" }],
+	["job", { key: "in_progress", signal: "active", text: "În lucru" }],
+	["job", { key: "parts_late", signal: "danger", text: "Piese de 4 zile" }],
+	["invoice", { key: "overdue", signal: "danger", text: "Restantă de 1 zi" }],
+	["invoice", { key: "paid", signal: "success", text: "Plătită" }],
+];
 
 const TYPE = [
 	["text-display", "Display 32/36", "12.480 lei", "text-display"],
@@ -128,14 +191,109 @@ export function DesignPage() {
 					</div>
 				</Section>
 
-				<Section title="Tonuri" description="Fiecare stare are un ton, același în chip, calendar, tablou și cronologie.">
+				<Section title="Tip și stare" description="Fiecare tip de înregistrare are culoarea lui (cardul, titlul paginii și al foii, calendarul); starea e un punct cu o iconiță, în roșu, galben, verde sau gri.">
+					<div className="grid gap-4 lg:grid-cols-4">
+						{Object.keys(RECORD_KIND)
+							.filter((kind) => STATE_EXAMPLES.some(([k]) => k === kind))
+							.map((kind) => (
+							<div key={kind} className="space-y-3">
+								<div className="flex items-center gap-2.5">
+									<KindMark kind={kind} size="sm" />
+									<span className={cn("font-semibold", kindText(kind))}>{RECORD_KIND[kind].plural}</span>
+								</div>
+								<div className={cn("space-y-2 rounded-lg border p-3", kindCard(kind))}>
+									{STATE_EXAMPLES.filter(([k]) => k === kind).map(([, signal]) => (
+										<div key={signal.key} className="flex items-center justify-between gap-2">
+											<StateTag state={stateLook(kind, signal)} size="sm" />
+											<StateDot state={stateLook(kind, signal)} size="sm" ring tip />
+										</div>
+									))}
+								</div>
+							</div>
+						))}
+					</div>
+				</Section>
+
+				<Section title="Carduri" description="Trei mărimi, alese de proprietar (7 nov. 2026): foarte mici în calendar (conturate în culoarea lor), mici în liste (240 px) și normale pe Azi (320 px). Cardurile sunt albe; culoarea tipului e pe primul rând.">
+					<div className="grid gap-6 lg:grid-cols-[14rem_16rem_1fr]">
+						<div className="space-y-2">
+							<p className="text-sm font-medium">Foarte mici · calendar</p>
+							<div className="relative h-40 rounded-lg border bg-background p-2">
+								<div className={cn("absolute inset-x-2 top-2 flex h-[68px] flex-col overflow-hidden rounded-md border px-1.5 py-[3px] text-2xs leading-[15px]", tone("teal").line)}>
+									<span className={cn("font-semibold tabular-nums", tone("teal").text)}>10:00–11:30</span>
+									<span className="truncate text-xs font-semibold">{SAMPLE_CAR.name}</span>
+									<span className="truncate">{SAMPLE_CAR.customer}</span>
+									<span className="font-mono tracking-wide">{SAMPLE_CAR.plate}</span>
+								</div>
+								<div className={cn("absolute inset-x-2 top-[84px] flex h-[22px] items-center gap-1 overflow-hidden rounded-md border border-dashed px-1.5 text-2xs", tone("teal").line)}>
+									<span className={cn("font-semibold tabular-nums", tone("teal").text)}>11:45</span>
+									<span className="truncate font-semibold">Renault Clio</span>
+								</div>
+								<div className="absolute inset-x-2 bottom-2 flex h-[18px] items-center gap-1 rounded px-1 text-2xs">
+									<span className={cn("size-1.5 rounded-full", tone("teal").solid)} />
+									<span className={cn("font-semibold tabular-nums", tone("teal").text)}>09:30</span>
+									<span className="truncate font-semibold">Dacia Logan</span>
+								</div>
+							</div>
+							<p className="text-xs text-muted-foreground">Albe, conturate în culoarea lor, ora colorată; o programare neconfirmată are conturul punctat. În Lună doar un punct.</p>
+						</div>
+						<div className="space-y-2">
+							<p className="text-sm font-medium">Mici · 240 px</p>
+							<ul className="flex">
+								<SectionCard>
+									<CardButton look={kindCard("estimate")} aria-label="Deviz, exemplu">
+										<VisitCard facts={{ ...SAMPLE_CAR, kind: "estimate", number: "#1883", timing: { text: "deviz de azi", mark: null }, anchor: "primit azi 08:30", gross: 91500, state: stateLook("estimate", STATE_EXAMPLES[2][1]) }} />
+									</CardButton>
+								</SectionCard>
+							</ul>
+						</div>
+						<div className="space-y-2">
+							<p className="text-sm font-medium">Normale · Azi (cu înregistrările de dinainte în spate)</p>
+							<LargeCardsProvider value>
+								<ul className="flex flex-wrap gap-4">
+									<SectionCard
+										reserve={2}
+										behind={[{ key: "appointment", skipped: false }, { key: "estimate", skipped: false }]}
+										actions={
+											<>
+												<CardAction primary icon={CircleCheck} label="Gata" onClick={() => toast("Exemplu")} />
+												<CardAction icon={PackageSearch} label="Așteaptă piese" onClick={() => toast("Exemplu")} />
+											</>
+										}
+									>
+										<CardButton look={kindCard("job")} aria-label="Lucrare, exemplu">
+											<VisitCard
+												facts={{ ...SAMPLE_CAR, kind: "job", number: "#1883", timing: { text: "de 1 zi în service", mark: null }, anchor: "primit ieri 09:30", gross: 91500, state: stateLook("job", STATE_EXAMPLES[4][1]) }}
+												extras={SAMPLE_EXTRAS}
+												actions
+											/>
+										</CardButton>
+									</SectionCard>
+								</ul>
+							</LargeCardsProvider>
+						</div>
+					</div>
+				</Section>
+
+				<Section title="Bara vizitei" description="Capul foii fiecărei înregistrări a unei vizite: fiecare în culoarea lui, un inel pentru cât a avansat și o linie sub el (punctată cât nu există). Apăsarea duce la înregistrare sau o face.">
+					<div className="max-w-2xl space-y-6 rounded-xl border bg-card p-5">
+						{BAR_EXAMPLES.map(([caption, sections]) => (
+							<div key={caption} className="space-y-2">
+								<p className="text-xs text-muted-foreground">{caption}</p>
+								<VisitBar sections={sections.map((s) => ({ ...s, ...RECORD_KIND[s.key], label: RECORD_KIND[s.key].label, title: RECORD_KIND[s.key].label }))} onTap={() => toast("Exemplu")} />
+							</div>
+						))}
+					</div>
+				</Section>
+
+				<Section title="Tonuri" description="Culorile tipurilor și ale stărilor, aceleași în chip, card, calendar, cronologie.">
 					<div className="overflow-hidden rounded-xl border bg-card">
 						{TONE_NAMES.map((t) => (
 							<div key={t} className="flex flex-wrap items-center gap-3 border-b px-4 py-3 last:border-0">
 								<span className="w-20 font-mono text-xs">{t}</span>
 								<ToneDot tone={t} />
 								<ToneBadge tone={t}>Chip</ToneBadge>
-								<span className={`rounded-md border px-2 py-1 text-xs font-semibold ${tone(t).block}`}>Bloc calendar</span>
+								<span className={`rounded-md border px-2 py-1 text-xs font-semibold ${tone(t).line}`}>Bloc calendar</span>
 								<ToneIcon tone={t} icon={Wrench} size="sm" />
 								<span className={`h-1.5 w-16 rounded-full ${tone(t).bar}`} />
 								<span className="text-sm text-muted-foreground">{TONE_MEANING[t]}</span>
@@ -175,7 +333,7 @@ export function DesignPage() {
 					<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 						<div className="rounded-xl border bg-card p-4 text-sm">e0 · card cu margine</div>
 						<div className="rounded-md border bg-card p-4 text-sm shadow-xs">e1 · control</div>
-						<div className="paper rounded-xl p-4 text-sm shadow-paper ring-1 ring-black/5">e2 · hârtie (document)</div>
+						<div className="paper rounded-xl p-4 text-sm shadow-paper ring-1 ring-black/10">e2 · hârtie (document)</div>
 						<div className="rounded-2xl border bg-popover p-4 text-sm shadow-lg">e3 · meniu, foaie</div>
 					</div>
 					<div className="flex flex-wrap items-end gap-4">

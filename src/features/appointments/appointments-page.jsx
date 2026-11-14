@@ -23,6 +23,7 @@ import { formatPlate, vehicleName } from "@/domain/vehicle";
 import { visitStage, visitTiming } from "@/domain/visit";
 import { fmtDate, fmtHours, fmtNumber, fmtTime, fmtWorkOrder, plural } from "@/lib/format";
 import { useNowMinute } from "@/lib/hooks";
+import { bookingLook } from "@/lib/record-state";
 import { APPOINTMENT_STATUS } from "@/lib/labels";
 import { useOpenDetail } from "@/lib/detail-mode";
 import { openSheet } from "@/lib/sheets";
@@ -181,6 +182,7 @@ export function AppointmentsPage() {
 		<Page>
 			<PageHeader
 				title="Programări"
+				kind="appointment"
 				description={plural(result.counts.all ?? 0, "programare", "programări") + ` · ${PERIOD_LABEL[period].toLowerCase()}`}
 				actions={
 					<>
@@ -193,7 +195,7 @@ export function AppointmentsPage() {
 			/>
 
 			<div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-				<Stat label="Azi" value={stats.today.count} hint={stats.today.next ? `Următoarea la ${fmtTime(stats.today.next.start)}` : "Nimic în așteptare"} icon={CalendarClock} tone="blue" href="/appointments/?period=today" />
+				<Stat label="Azi" value={stats.today.count} hint={stats.today.next ? `Următoarea la ${fmtTime(stats.today.next.start)}` : "Nimic în așteptare"} icon={CalendarClock} tone="teal" href="/appointments/?period=today" />
 				<Stat label="De confirmat" value={stats.toConfirm} hint="în următoarele 7 zile" icon={CalendarCheck} tone={stats.toConfirm ? "yellow" : undefined} href="/appointments/?status=to-confirm" />
 				<Stat label="Neprezentări" value={stats.noShow == null ? "–" : `${fmtNumber(stats.noShow * 100, 0)}%`} hint="din programări, 30 de zile" icon={UserX} tone={stats.noShow > 0.1 ? "red" : undefined} href="/appointments/?status=no_show&period=past" />
 				<Stat
@@ -371,9 +373,10 @@ function Row({ appointment: a, now, customer, vehicle, mechanic, order, operatio
 			actions={APPOINTMENT_ACTIONS}
 			destructive={["cancelled", "no_show"]}
 			size="sm"
+			state={bookingLook(a, now)}
 		/>
 	);
-	const trailing = toConfirm ? [{ key: "confirm", label: "Confirmă", icon: CalendarCheck, tone: "purple", onSelect: onConfirm }] : [];
+	const trailing = toConfirm ? [{ key: "confirm", label: "Confirmă", icon: CalendarCheck, tone: "green", onSelect: onConfirm }] : [];
 	return (
 		<li data-row-appointment={a.id}>
 			<SwipeRow leading={contactSwipeActions(customer?.phone)} trailing={trailing}>

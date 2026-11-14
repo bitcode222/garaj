@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { smsHref, whatsappHref } from "@/domain/customer";
 import { REVIEW_TAGS as TAG_KEYS, reviewMessage, reviewState } from "@/domain/review";
-import { formatPlate, vehicleName } from "@/domain/vehicle";
+import { formatPlate } from "@/domain/vehicle";
 import { fmtDate } from "@/lib/format";
 import { copyText } from "@/lib/hooks";
 import { REVIEW_STATE, REVIEW_TAGS } from "@/lib/labels";
@@ -19,7 +19,7 @@ import { dropLastReviewRequest, logReviewRequest, markReviewReceived, noteOnCust
 import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
-import { ReviewLinks } from "@/features/flow/visit-links";
+import { VisitBarFor, visitTitle } from "@/features/flow/visit-bar";
 
 const STEPS = ["none", "requested", "received"].map((key) => ({ key, label: REVIEW_STATE[key].label, tone: REVIEW_STATE[key].tone }));
 const CHANNEL = { whatsapp: "WhatsApp", sms: "SMS", copy: "copiat" };
@@ -98,12 +98,13 @@ export default function ReviewSheet({ open, onOpenChange, workOrderId }) {
 			onOpenChange={onOpenChange}
 			entity={order}
 			missing="Lucrarea a fost ștearsă."
-			title="Recenzie"
-			description={order ? [customer?.name, [vehicleName(vehicle), vehicle?.plate && formatPlate(vehicle.plate)].filter(Boolean).join(" ")].filter(Boolean).join(" · ") : undefined}
+			title={visitTitle({ vehicle }, null, customer?.name ?? "Recenzie")}
+			bar={order ? <VisitBarFor from="review" record={order} /> : null}
+			make={vehicle?.make}
+			description={order ? [customer?.name, vehicle?.plate && formatPlate(vehicle.plate)].filter(Boolean).join(" · ") : undefined}
 		>
 			{order && (
 				<div className="space-y-6">
-					<ReviewLinks order={order} />
 					<FlowSteps label="Starea recenziei" steps={STEPS} current={STEPS.findIndex((step) => step.key === state)} next={next} notice={notice} />
 
 					<section aria-label="Cere părerea clientului" className="space-y-3">

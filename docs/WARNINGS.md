@@ -50,8 +50,11 @@ Order: danger, then warning, then info; within one severity, the table's order.
   A fix closes it; a fix that needs a choice opens the booking's sheet on that panel.
 - **Opening a card**: a lucrare's card (🔧, or ✓ with its job) opens the job's sheet; a booking still
   to come opens the booking's sheet.
-- **Booking sheet**: the same list, full size (44 px buttons on the phone), above the state
-  section. It replaces the generic overlap line and the "A trecut. A venit clientul?" notice.
+- **Booking sheet**: the same warnings, full size (44 px buttons on the phone), each in the section
+  it is about (docs/APPOINTMENT-SHEET.md, A2): `late`, `missed` and `unconfirmed` are the Acum
+  card itself (its sentence and its buttons), `noPhone` and the job's kinds sit under it; `overlap`,
+  `closed`, `delayOverrun` under Când; `unassigned` under Cine lucrează; `documents` as the car's
+  ITP/RCA badges. A "De rezolvat" line in the Acum card names the ones elsewhere and jumps to them.
 - **Job sheet**: the job's warnings (`pickup`, `parts`, `estimate`, `overrun`) above its steps.
 
 Every fix that changes data shows a toast with **Anulează** (undo), like every other change.

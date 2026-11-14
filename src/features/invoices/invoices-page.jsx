@@ -9,7 +9,7 @@ import { DataList, ListHeader, ListRow } from "@/components/ds/list";
 import { Page, PageHeader, Toolbar } from "@/components/ds/page";
 import { PlateTag } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
-import { StatusBadge } from "@/components/ds/tone";
+import { StateTag } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import { monthKey } from "@/domain/dates";
 import { formatInvoiceNumber } from "@/domain/invoice";
@@ -18,17 +18,17 @@ import { formatMoney } from "@/domain/money";
 import { fold, matchesTokens, queryTokens } from "@/domain/search";
 import { fmtDate, fmtRelativeTo, plural } from "@/lib/format";
 import { useOpenDetail } from "@/lib/detail-mode";
-import { INVOICE_STATE } from "@/lib/labels";
+import { invoiceLook } from "@/lib/record-state";
 import { createInvoiceDraft } from "@/lib/store/actions";
 import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
-import { selectInvoiceStates, selectInvoicesSorted } from "@/lib/store/selectors";
+import { selectInvoiceStates, selectInvoicesSorted, selectPaymentsByInvoice } from "@/lib/store/selectors";
 import { SwipeRow } from "@/components/ds/swipe-row";
 import { contactSwipeActions } from "@/features/common/swipe-actions";
 import { openSheet } from "@/lib/sheets";
 
 const FILTERS = [
 	{ value: "all", label: "Toate" },
-	{ value: "unpaid", label: "De încasat", tone: "blue", states: ["issued", "partial", "overdue"] },
+	{ value: "unpaid", label: "De încasat", tone: "yellow", states: ["issued", "partial", "overdue"] },
 	{ value: "overdue", label: "Restante", tone: "red", states: ["overdue"] },
 	{ value: "paid", label: "Plătite", tone: "green", states: ["paid"] },
 	{ value: "draft", label: "Ciorne", tone: "neutral", states: ["draft"] },
@@ -56,15 +56,18 @@ export function InvoicesPage() {
 	const rows = useMemo(() => {
 		if (!today) return [];
 		const states = selectInvoiceStates(invoices, payments, today);
+		const byInvoice = selectPaymentsByInvoice(payments);
 		return selectInvoicesSorted(invoices).map((invoice) => {
 			const info = states.get(invoice.id);
 			const customerName = customers[invoice.customerId]?.name ?? invoice.snapshot?.buyer?.name ?? "Fără client";
 			const plate = vehicles[invoice.vehicleId]?.plate ?? invoice.snapshot?.vehicle?.plate ?? null;
 			const number = formatInvoiceNumber(invoice.series, invoice.number);
 			const totals = invoice.totals ?? computeTotals(invoice.lines ?? [], { vatPayer: settings.invoicing.vatPayer });
-			return { invoice, ...info, totals, customerName, plate, number, hay: fold(`${number} ${invoice.number ?? ""} ${customerName} ${plate ?? ""} ${(plate ?? "").replace(/\s/g, "")}`) };
+			// Its state as its dot says it (docs/RECORD-COLORS.md): "Restantă de 3 zile", "Scadentă mâine".
+			const look = invoiceLook(invoice, byInvoice.get(invoice.id) ?? [], { today, currency: settings.currency });
+			return { invoice, ...info, look, totals, customerName, plate, number, hay: fold(`${number} ${invoice.number ?? ""} ${customerName} ${plate ?? ""} ${(plate ?? "").replace(/\s/g, "")}`) };
 		});
-	}, [invoices, payments, customers, vehicles, today, settings.invoicing.vatPayer]);
+	}, [invoices, payments, customers, vehicles, today, settings.invoicing.vatPayer, settings.currency]);
 
 	const stats = useMemo(() => {
 		const month = today ? monthKey(today) : "";
@@ -108,6 +111,7 @@ export function InvoicesPage() {
 		<Page>
 			<PageHeader
 				title="Facturi"
+				kind="invoice"
 				description={`${plural(counts.all, "document", "documente")} · seria ${settings.invoicing.series}`}
 				actions={
 					<Button onClick={newInvoice} className="max-md:hidden">
@@ -152,7 +156,7 @@ export function InvoicesPage() {
 					/>
 				}
 				header={
-					<ListHeader cols="md:grid-cols-[140px_minmax(0,1fr)_150px_130px_130px]">
+					<ListHeader cols="md:grid-cols-[140px_minmax(0,1fr)_200px_110px_130px]">
 						<span>Număr</span>
 						<span>Client</span>
 						<span>Stare</span>
@@ -167,7 +171,7 @@ export function InvoicesPage() {
 }
 
 function InvoiceRow({ row, first, today, onOpen }) {
-	const { invoice, state, balance, totals, customerName, plate, number } = row;
+	const { invoice, state, look, balance, totals, customerName, plate, number } = row;
 	const draft = invoice.status === "draft";
 	const { currency } = useSettings();
 	const customer = useEntity("customers", invoice.customerId);
@@ -175,7 +179,7 @@ function InvoiceRow({ row, first, today, onOpen }) {
 	const trailing = owes ? [{ key: "pay", label: "Încasează", icon: Banknote, tone: "green", onSelect: () => openSheet("payment", { invoiceId: invoice.id }) }] : [];
 	return (
 		<SwipeRow leading={contactSwipeActions(customer?.phone)} trailing={trailing} peek={first}>
-		<ListRow onClick={onOpen} className="md:grid md:grid-cols-[140px_minmax(0,1fr)_150px_130px_130px] md:gap-3">
+		<ListRow onClick={onOpen} className="md:grid md:grid-cols-[140px_minmax(0,1fr)_200px_110px_130px] md:gap-3">
 			{/* phone */}
 			<div className="min-w-0 flex-1 md:hidden">
 				<div className="flex items-baseline justify-between gap-3">
@@ -187,7 +191,7 @@ function InvoiceRow({ row, first, today, onOpen }) {
 						<span className="font-mono">{draft ? "Ciornă" : number}</span> · {fmtDate(invoice.issueDate, "d MMM")}
 						{balance > 0 && balance < totals.gross ? ` · rest ${formatMoney(balance, currency, { decimals: 0 })}` : ""}
 					</p>
-					<StatusBadge map={INVOICE_STATE} value={state} size="sm" />
+					<StateTag state={look} size="sm" />
 				</div>
 			</div>
 			{/* desktop */}
@@ -200,10 +204,11 @@ function InvoiceRow({ row, first, today, onOpen }) {
 				{plate && <PlateTag value={plate} />}
 			</div>
 			<div className="hidden md:block">
-				<StatusBadge map={INVOICE_STATE} value={state} />
+				<StateTag state={look} />
 			</div>
 			<div className="hidden text-sm text-muted-foreground md:block">
-				{state === "paid" || state === "cancelled" || state === "storno" || draft ? "—" : fmtRelativeTo(invoice.dueDate, today)}
+				{/* The date itself: how far it is, the state beside it already says. */}
+				{state === "paid" || state === "cancelled" || state === "storno" || draft || !invoice.dueDate ? "—" : fmtDate(invoice.dueDate, "d MMM yyyy")}
 			</div>
 			<div className="hidden text-right md:block">
 				<Money value={totals.gross} className="text-sm font-semibold" />

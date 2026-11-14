@@ -2,18 +2,21 @@
 
 import { memo, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Initials } from "@/components/ds/data";
+import { MakeLogo } from "@/components/ds/make-logo";
 import { canReschedule } from "@/domain/appointment";
 import { dayOfInstant, parseISODate } from "@/domain/dates";
 import { vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtTime, plural } from "@/lib/format";
 import { haptics } from "@/lib/haptics";
 import { useMediaQuery, useNowMinute } from "@/lib/hooks";
-import { APPOINTMENT_STATUS, BOOKING_MARK } from "@/lib/labels";
+import { APPOINTMENT_STATUS } from "@/lib/labels";
+import { BlockMark } from "./block-mark";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 import { DRAG_SLOP_PX, HOLD_MS, HOLD_SLOP_PX, drawSpan, edgeSpeed, shiftSpan, startAt, stretchSpan } from "@/features/dashboard/timeline-drag";
 import { centerLeft, dayAtCenter, dayAtLeft, dayWindow, daysInView, indexAt, indexOfDay, keepScroll, leftOf, nearEdge, stepDay, visibleDays, widthAt } from "./calendar-geometry";
 import { AlertSign, alertOutline, alertSummary } from "./booking-warnings";
+import { cardFacts, firstName } from "./card-facts";
 import { MechanicLabel } from "./mechanic-card";
 import { atMinute, dayCount, eventTone, hhmm, layoutEvents, minuteOfDay, toMinutes } from "./utils";
 
@@ -48,35 +51,37 @@ function rowBackground(hourPx, openMin, closeMin, closedDay) {
 }
 
 /**
- * A booking lying along its day: its mark, the time and the car, then the customer when the row is
- * tall enough; the mark (booked, job, done) in the top-left corner, the mechanic's avatar in the bottom-left.
+ * A booking lying along its day, filled with what matters most as its height allows: the mark, the
+ * time, the car (logo, make and model); who owns it and its plate; what it is in for; and the
+ * mechanic (the avatar in the bottom-left, with the name on a row of its own when there is room).
  */
 const RowEvent = memo(function RowEvent({ appointment: a, mark = "booking", left, width, top, height, toneName, lookups, past, selected, alert, dragging, movable }) {
-	const mechanic = a.staffId ? lookups.staff?.[a.staffId] : null;
-	const vehicle = lookups.vehicles[a.vehicleId];
-	const customer = lookups.customers[a.customerId];
-	const car = vehicleName(vehicle) || customer?.name || a.title || "Programare";
+	const f = cardFacts(a, lookups);
+	const mechanic = f.mechanic;
 	const time = `${fmtTime(a.start)}–${fmtTime(a.end)}`;
-	const Mark = BOOKING_MARK[mark].icon;
-	const avatar = mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="size-4 shrink-0 text-[8px]" />;
-	const second = customer && vehicleName(vehicle) ? customer.name : null;
-	// Tall enough for the avatar on a row of its own at the bottom; otherwise it starts the bottom line.
-	const roomy = height >= 64;
+	const state = lookups.states?.get(a.id) ?? null;
+	const avatar = mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="size-4 shrink-0 text-[8px] ring-1 ring-card" />;
+	// Rows: 1 (the car), 2 (+ owner and plate), 3 (+ what for), 4 (+ the mechanic, named, on a row of their own).
+	const rows = height < 38 ? 1 : height < 62 ? 2 : height < 80 ? 3 : 4;
+	// A narrow bar keeps the owner and leaves the plate out (who it is matters more than which plate).
+	const plate = width >= 180 || !f.owner ? f.plate : null;
+	const who = [f.owner, plate].filter(Boolean).join(" · ");
+	const roomy = rows === 4;
 	return (
 		<button
 			type="button"
 			data-appt={a.id}
 			data-match={lookups.match ? (lookups.match.has(a.id) ? "1" : "0") : undefined}
-			aria-label={[time, vehicleName(vehicle), customer?.name, a.title, mechanic?.name, APPOINTMENT_STATUS[a.status].label, BOOKING_MARK[mark].label, alertSummary(alert)].filter(Boolean).join(" · ")}
+			aria-label={[time, f.name, f.owner, f.plate, f.subject, mechanic?.name, state?.text ?? APPOINTMENT_STATUS[a.status].label, alertSummary(alert)].filter(Boolean).join(" · ")}
 			data-mark={mark}
 			className={cn(
 				"absolute z-[5] flex flex-col overflow-hidden rounded-md border px-1.5 text-left text-2xs leading-[15px] transition-[box-shadow,opacity] select-none [-webkit-touch-callout:none]",
 				height >= 56 ? "justify-start gap-0.5 py-1.5" : "justify-center",
-				tone(toneName).block,
+				// Outlined in their colour, white inside (very small cards, D): past, cancelled or missed ones keep it (struck through when they did not happen).
+				tone(toneName).line,
 				a.status === "scheduled" && "border-dashed",
-				past && "opacity-60",
 				lookups.match && !lookups.match.has(a.id) && "opacity-15 saturate-50",
-				(a.status === "no_show" || a.status === "cancelled") && "line-through opacity-50",
+				(a.status === "no_show" || a.status === "cancelled") && "line-through",
 				alertOutline(alert),
 				selected && "z-[6] ring-2 ring-brand shadow-md shadow-brand/25",
 				movable && "pointer-fine:cursor-grab",
@@ -85,23 +90,36 @@ const RowEvent = memo(function RowEvent({ appointment: a, mark = "booking", left
 			style={{ left: left + 1, width: Math.max(width - 2, 14), top, height }}
 		>
 			<span className="flex min-w-0 items-center gap-1">
-				<Mark aria-hidden className="size-3 shrink-0" />
+				<BlockMark state={state} mark={mark} />
+				{width >= 90 && f.make && <MakeLogo make={f.make} className="size-3 shrink-0" />}
 				<span className="min-w-0 flex-1 truncate">
-					{width >= 70 && <span className="tabular-nums opacity-80">{fmtTime(a.start)} </span>}
-					<span className="font-semibold">{car}</span>
+					{width >= 70 && <span className={cn("font-semibold tabular-nums", tone(toneName).text)}>{fmtTime(a.start)} </span>}
+					<span className="font-semibold">{f.name}</span>
+					{rows === 1 && f.owner && <span> · {f.owner}</span>}
 				</span>
 				<AlertSign alert={alert} />
-				{/* One line: the avatar at its end. */}
-				{height < 38 && avatar}
+				{/* One row: the avatar at its end. */}
+				{rows === 1 && avatar}
 			</span>
-			{height >= 38 && (second || (!roomy && avatar)) && (
+			{rows >= 2 && (who || (rows === 2 && avatar)) && (
 				<span className="flex min-w-0 items-center gap-1">
-					{!roomy && avatar}
-					{second && <span className="truncate opacity-80">{second}</span>}
+					{rows === 2 && avatar}
+					{f.owner && <span className="truncate font-medium">{f.owner}</span>}
+					{plate && <span className="shrink-0 font-mono tracking-wide">{f.owner ? "· " : ""}{plate}</span>}
 				</span>
 			)}
-			{height >= 80 && vehicle?.plate && <span className="truncate font-mono tracking-wide uppercase opacity-70">{vehicle.plate}</span>}
-			{roomy && avatar && <span className="mt-auto flex">{avatar}</span>}
+			{rows >= 3 && (f.subject || (rows === 3 && avatar)) && (
+				<span className="flex min-w-0 items-center gap-1">
+					{rows === 3 && avatar}
+					{f.subject && <span className="truncate">{f.subject}</span>}
+				</span>
+			)}
+			{roomy && mechanic && (
+				<span className="mt-auto flex min-w-0 items-center gap-1">
+					{avatar}
+					<span className="truncate">{firstName(mechanic.name)}</span>
+				</span>
+			)}
 			{movable && (
 				<>
 					<span data-edge="start" aria-hidden className="absolute inset-y-0 left-0 w-1.5 cursor-ew-resize pointer-coarse:hidden" />
@@ -113,11 +131,11 @@ const RowEvent = memo(function RowEvent({ appointment: a, mark = "booking", left
 });
 
 /** One day as a row: its name stuck to the left, its hours across, a band per mechanic in Zi, its bookings in lanes. */
-const DayRow = memo(function DayRow({ day, top, height, slim, closed, isToday, events, columns, keyOf, hourPx, label, dateWidth, openMin, closeMin, colorBy, lookups, selectedId, dragId, now, editable, centered, dim, zebra, onCreateAt, onPickDay }) {
+const DayRow = memo(function DayRow({ day, top, height, slim, closed, isToday, events, columns, keyOf, hourPx, label, dateWidth, openMin, closeMin, colorBy, lookups, selectedId, dragId, now, editable, centered, zebra, onCreateAt, onPickDay }) {
 	const width = 24 * hourPx;
 	if (slim) {
 		return (
-			<div data-day={day} data-slim className="absolute flex border-b-2 border-foreground/15" style={{ top, height, width: label + width }} title={`${fmtDate(day, "EEEE, d MMMM")} · închis`}>
+			<div data-day={day} data-slim className="absolute flex border-b-2 border-foreground/40" style={{ top, height, width: label + width }} title={`${fmtDate(day, "EEEE, d MMMM")} · închis`}>
 				<div className="sticky left-0 z-10 flex shrink-0 items-center gap-1.5 border-r bg-background px-2 text-xs text-muted-foreground" style={{ width: label }}>
 					<span className="capitalize">{fmtDate(day, "EEE")}</span>
 					<span className="font-semibold tabular-nums">{Number(day.slice(8))}</span>
@@ -135,7 +153,7 @@ const DayRow = memo(function DayRow({ day, top, height, slim, closed, isToday, e
 	const countClass = hits != null ? (hits ? "font-semibold text-brand" : "opacity-60") : !count && "opacity-60";
 	const counted = plural(count, "programare", "programări");
 	return (
-		<div data-day={day} data-dim={dim || undefined} className={cn("absolute flex border-b-2 border-foreground/15 transition-opacity duration-300", dim && "opacity-45", zebra && "bg-foreground/[0.035]")} style={{ top, height, width: label + width }}>
+		<div data-day={day} className={cn("absolute flex border-b-2 border-foreground/40", zebra && "bg-foreground/[0.035]")} style={{ top, height, width: label + width }}>
 			<div className={cn("sticky left-0 z-10 flex shrink-0 border-r bg-background", columns.length > 1 ? "flex-row" : "flex-col")} style={{ width: label }}>
 				{columns.length > 1 ? (
 					<>
@@ -159,7 +177,7 @@ const DayRow = memo(function DayRow({ day, top, height, slim, closed, isToday, e
 						{/* A band per mechanic: its name beside its band, in its colour, so a booking can fill the band. */}
 						<div className="flex min-w-0 flex-1 flex-col">
 							{columns.map((column, c) => (
-								<div key={column.key} className={cn("relative flex min-h-0 flex-1 flex-col justify-center overflow-hidden pr-1.5 pl-2.5", c > 0 && "border-t border-dashed border-border/70", tone(column.color).soft)}>
+								<div key={column.key} className={cn("relative flex min-h-0 flex-1 flex-col justify-center overflow-hidden pr-1.5 pl-2.5", c > 0 && "border-t border-dashed border-foreground/45", tone(column.color).lane, "transition-shadow hover:shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--foreground)_16%,transparent),inset_0_2px_8px_-2px_color-mix(in_oklch,var(--foreground)_22%,transparent)]")}>
 									<span aria-hidden className={cn("absolute inset-y-0 left-0 w-[3px]", tone(column.color).solid)} />
 									<MechanicLabel column={column} day={day} className="self-start" />
 								</div>
@@ -201,7 +219,7 @@ const DayRow = memo(function DayRow({ day, top, height, slim, closed, isToday, e
 								const rect = event.currentTarget.getBoundingClientRect();
 								onCreateAt(day, ((event.clientX - rect.left) / hourPx) * 60, column.staffId);
 							}}
-							className={cn("absolute inset-x-0 cursor-copy", c > 0 && "border-t border-dashed border-border/70", columns.length > 1 && tone(column.color).soft)}
+							className={cn("absolute inset-x-0 cursor-copy", c > 0 && "border-t border-dashed border-foreground/45", columns.length > 1 && tone(column.color).lane)}
 							style={{ top: `${c * band}%`, height: `${band}%` }}
 						>
 							{placed.map(({ event: a, lane, lanes }) => {
@@ -279,7 +297,6 @@ export function DayRows({ ref, view, today, settings, byDay, allByDay, columns, 
 	const [range, setRange] = useState(null);
 	const [drag, setDrag] = useState(null);
 	const [slot, setSlot] = useState(null);
-	const [focusDay, setFocusDay] = useState(initialDay); // Zi: the day in the middle, at full strength (the others fade)
 	const openMin = toMinutes(settings.hours.open);
 	const closeMin = toMinutes(settings.hours.close);
 	const openDays = settings.hours.days;
@@ -379,7 +396,6 @@ export function DayRows({ ref, view, today, settings, byDay, allByDay, columns, 
 			const first = Math.max(0, seen.first - spare);
 			const last = Math.min(lay.days.length - 1, seen.last + spare);
 			setRange((prev) => (prev && prev.first === first && prev.last === last ? prev : { first, last }));
-			if (zi) setFocusDay((prev) => (prev === day ? prev : day));
 			notify.current?.({ day, from: lay.days[seen.first], to: lay.days[seen.last], settled: false });
 		};
 		const settle = () => {
@@ -771,7 +787,6 @@ export function DayRows({ ref, view, today, settings, byDay, allByDay, columns, 
 								slim={Boolean(layout.slim[i])}
 								closed={!openDays.includes(parseISODate(day).getDay())}
 								isToday={day === today}
-								dim={zi && !drag && day !== focusDay}
 								zebra={!zi && i % 2 === 1}
 								events={list}
 								columns={columns}
@@ -813,7 +828,7 @@ function RowDragPreview({ drag, left, right, top, height }) {
 	const minutes = drag.end - drag.start;
 	return (
 		<div aria-hidden data-drag={drag.kind} data-range={range} className="pointer-events-none absolute z-[9]" style={{ left: left + 1, width: Math.max(right - left - 2, 12), top: top + 6, height: Math.max(height - 12, 16) }}>
-			<div className={cn("flex h-full items-center overflow-hidden rounded-md px-1.5 text-2xs shadow-lg", fresh ? "border-2 border-dashed border-brand bg-[color-mix(in_oklch,var(--brand)_14%,var(--card))]" : cn("border ring-2 ring-brand", tone(drag.toneName).block))}>
+			<div className={cn("flex h-full items-center overflow-hidden rounded-md px-1.5 text-2xs shadow-lg", fresh ? "border-2 border-dashed border-brand bg-[color-mix(in_oklch,var(--brand)_14%,var(--card))]" : cn("border ring-2 ring-brand", tone(drag.toneName).line))}>
 				<span className="truncate font-semibold">{fresh ? "Programare nouă" : drag.name}</span>
 			</div>
 			<span className="absolute -top-5 left-0 rounded bg-foreground px-1 text-2xs leading-4 font-semibold whitespace-nowrap text-background tabular-nums">

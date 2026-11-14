@@ -2,6 +2,8 @@
 
 **Status: plan approved by the owner on 16 Oct 2026, all six questions answered as recommended (§11). All phases (0 to 7) are 🟢 built.** What is still open: the owner's hands-on pass on the physical iPhone. What was built differently from the plan is listed at the end of §10.
 
+> **7 Nov 2026: the flow strip (R1, D1, D2) is replaced by the visit bar**, [`VISIT-BAR.md`](VISIT-BAR.md): every record of the visit in one row at the top of each record's sheet and page. The state section (R6) stays, under the bar.
+
 Words used here: a **visit** is one car's trip through the shop. It leaves up to four **records**: the **programare** (booking), the **lucrare** (job), the **factură** (invoice) and, new, the **recenzie** (review). Each record opens as a sheet from `md` up and as a full page on a phone (see DESIGN-SYSTEM.md, "Screens, not previews"). The appointment is always a sheet.
 
 ---
@@ -100,7 +102,7 @@ Recenzie        PASUL ANTERIOR
 
 **D1. The flow strip is the only place the records link to each other.** It replaces the booking's "Deschide lucrarea" button, the job's "Factură" side card and the invoice's "Legături" card (car and customer links stay where they are). Small and quiet, as asked: a caption (`text-2xs`, upper case, muted), a title, a status badge, an arrow. Left-aligned for the step before, right-aligned for the step after. Each half is one 44 px target.
 
-**D2. Forward has two forms: "do it" and "go there".** Before the next record exists, the forward link is a verb that creates it, exactly as today's buttons do:
+**D2. Forward has two forms: "do it" and "go there".** Before the next record exists, the forward link is a verb that creates it, exactly as today's buttons do. (Since 1 Nov 2026 the booking is the exception: its strip shows only once the job exists, because starting the job is its Acum card's primary action; see [`APPOINTMENT-SHEET.md`](APPOINTMENT-SHEET.md) A1.)
 
 | From | Verb | What it does |
 |---|---|---|

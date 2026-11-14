@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, ReceiptText } from "lucide-react";
-import { CardButton, CardSection, CornerButton, PartMark, SectionCard, SectionLine, capGroups } from "@/components/ds/card-section";
+import { Banknote, FileCheck, MessageCircle, ReceiptText } from "lucide-react";
+import { CardAction, CardButton, CardSection, SectionCard, capGroups } from "@/components/ds/card-section";
 import { Money } from "@/components/ds/data";
+import { kindCard } from "@/components/ds/tone";
 import { whatsappHref } from "@/domain/customer";
 import { dayOfInstant, diffDaysISO } from "@/domain/dates";
 import { formatInvoiceNumber, invoiceMessage } from "@/domain/invoice";
@@ -13,18 +14,23 @@ import { fmtDate, fmtWorkOrder, plural } from "@/lib/format";
 import { INVOICE_STATE } from "@/lib/labels";
 import { useOpenDetail } from "@/lib/detail-mode";
 import { useRouter } from "next/navigation";
+import { invoiceLook } from "@/lib/record-state";
 import { createInvoiceDraft } from "@/lib/store/actions";
+import { useCollection } from "@/lib/store/hooks";
+import { selectPaymentsByInvoice } from "@/lib/store/selectors";
 import { toast } from "@/lib/toast";
-import { tone } from "@/lib/tones";
+import { cn } from "@/lib/utils";
+import { behindOf, invoiceExtras } from "./card-extras";
 import { VisitCard } from "./visit-card";
+import { rangeText } from "./visit-ui";
 
 const MAX_CARDS = 30; // then "+N în Facturi"
 
 /** A group's name: the states, in the plural. */
 const GROUP_LABEL = { overdue: "Restante", partial: "Parțial plătite", issued: "Emise", draft: "Ciorne" };
 
-/** A card's tint: its state's tone; a draft is only outlined, as a booking still to confirm. */
-const lookOf = (state) => (state === "draft" ? "border-dashed border-foreground/30 bg-card text-foreground hover:bg-accent/60" : tone(INVOICE_STATE[state].tone).block);
+/** A card's tint: the invoices' colour (docs/RECORD-COLORS.md); a draft's border is dashed, as a booking still to confirm. */
+const lookOf = (state) => cn(kindCard("invoice"), state === "draft" && "border-dashed");
 
 /** What the clock says about an invoice: how late, when it is due, or how old the draft is. */
 function timingOf(item, today) {
@@ -43,13 +49,17 @@ function timingOf(item, today) {
  * grouped Restante · Parțial plătite · Emise · Ciorne. A card: the job's car (a receipt
  * without one), the customer, the invoice's number and plate, what it is for, how late or when
  * it is due, and what is left to pay. A reminder goes on WhatsApp from the card; everything
- * else is in the invoice's sheet. The line under it is by amount and filters the cards.
+ * else is in the invoice's sheet. Each card is in the invoices' colour with its state's dot. The states are the
+ * section's parts, by what is left to collect: chips over the cards and a half donut beside them, either of which
+ * keeps one state.
  * `data` is selectToCollect's result. Every amount comes from the domain.
  */
-export function ToCollect({ data, lookups, today }) {
+export function ToCollect({ data, lookups, today, range = null }) {
 	const openDetail = useOpenDetail();
 	const router = useRouter();
 	const [filter, setFilter] = useState(null);
+	const payments = useCollection("payments");
+	const byInvoice = selectPaymentsByInvoice(payments);
 	const { customers, vehicles, workOrders, settings } = lookups;
 	const currency = settings.currency;
 	// A filter on a state that has since gone (its last invoice was paid) is no filter.
@@ -67,24 +77,27 @@ export function ToCollect({ data, lookups, today }) {
 	const { groups, hidden } = capGroups(
 		data.groups
 			.filter((group) => !active || group.key === active)
-			.map((group) => ({ key: group.key, label: GROUP_LABEL[group.key], mark: <PartMark tone={INVOICE_STATE[group.key].tone} outline={group.key === "draft"} />, items: group.items })),
+			.map((group) => ({ key: group.key, label: GROUP_LABEL[group.key], items: group.items })),
 		MAX_CARDS,
 	);
 	const parts = data.groups.map((group) => ({
 		key: group.key,
 		label: GROUP_LABEL[group.key],
-		value: Math.max(group.amount, 1), // an empty draft still shows
+		value: group.amount,
+		count: group.items.length, // an empty draft still has its chip
 		display: formatMoney(group.amount, currency, { decimals: 0 }),
 		tone: INVOICE_STATE[group.key].tone,
 		outline: group.key === "draft",
 	}));
-	const shown = groups.reduce((sum, group) => sum + group.items.length, 0);
 
 	return (
 		<CardSection
+			large
+			gestures
 			label="Facturi"
+			kind="invoice"
+			parts={{ parts, value: active, onChange: setFilter, label: "Facturile, pe stări, după restul de încasat", unit: "în facturi", total: formatMoney(data.due + data.drafts, currency, { decimals: 0 }) }}
 			count={data.total}
-			countText={active ? `${shown + hidden} din ${data.total}` : undefined}
 			href="/invoices/"
 			aside={
 				data.total > 0 ? (
@@ -103,7 +116,7 @@ export function ToCollect({ data, lookups, today }) {
 			}
 			filter={active ? { label: GROUP_LABEL[active], onClear: () => setFilter(null) } : null}
 			groups={groups}
-			empty={{ text: "Totul e încasat: nicio factură restantă, neîncasată sau ciornă.", action: { label: "Factură nouă", icon: ReceiptText, onClick: newInvoice } }}
+			empty={{ text: range ? `Nicio factură de încasat, creată sau scadentă ${rangeText(range, today)}.` : "Totul e încasat: nicio factură restantă, neîncasată sau ciornă.", action: { label: "Factură nouă", icon: ReceiptText, onClick: newInvoice } }}
 			more={hidden > 0 ? { text: `+${hidden} în Facturi`, href: "/invoices/" } : null}
 			renderCard={(item) => {
 				const { invoice, state, balance, total } = item;
@@ -114,6 +127,7 @@ export function ToCollect({ data, lookups, today }) {
 				const number = formatInvoiceNumber(invoice.series, invoice.number);
 				const subject = (invoice.lines ?? []).map((line) => line.description).filter(Boolean).join(", ");
 				const timing = timingOf(item, today);
+				const look = invoiceLook(invoice, byInvoice.get(invoice.id) ?? [], { today, currency });
 				const facts = {
 					vehicle,
 					icon: ReceiptText,
@@ -126,32 +140,28 @@ export function ToCollect({ data, lookups, today }) {
 					anchor: state === "partial" ? `din ${formatMoney(total, currency, { decimals: 0 })}` : draft ? "neemisă" : `emisă ${fmtDate(invoice.issueDate, "d MMM")}`,
 					timing,
 					gross: balance,
+					state: look,
 				};
 				const phone = !draft ? customer?.phone : null;
-				const label = [number, facts.name, facts.number, subject, facts.customer, timing.text, `${state === "draft" ? "total" : "rest"} ${formatMoney(balance, currency)}`, INVOICE_STATE[state].label].filter(Boolean).join(" · ");
+				const label = [number, facts.name, facts.number, subject, facts.customer, timing.text, `${state === "draft" ? "total" : "rest"} ${formatMoney(balance, currency)}`, look.text].filter(Boolean).join(" · ");
+				const appointment = order?.appointmentId ? (lookups.appointments?.[order.appointmentId] ?? null) : null;
+				// The next step first, filled, and one more move (the owner's pick, 7 Nov 2026): a payment is taken on the invoice.
+				const actions = draft ? (
+					<CardAction primary icon={FileCheck} label="Emite factura" title={`Deschide ciorna ${facts.name} ca s-o emiți`} onClick={() => openDetail("invoice", invoice.id)} />
+				) : (
+					<>
+						<CardAction primary icon={Banknote} label="Încasează" title={`Încasează ${number}`} onClick={() => openDetail("invoice", invoice.id)} />
+						{phone && <CardAction icon={MessageCircle} label="Memento" title={`Trimite pe WhatsApp un memento pentru ${number}`} href={whatsappHref(phone, invoiceMessage({ invoice, balance, settings }))} />}
+					</>
+				);
 				return (
-					<SectionCard
-						key={invoice.id}
-						corner={
-							phone ? (
-								<CornerButton
-									quiet={state !== "overdue"}
-									icon={MessageCircle}
-									label={`Trimite pe WhatsApp un memento pentru ${number}`}
-									title="Memento pe WhatsApp"
-									href={whatsappHref(phone, invoiceMessage({ invoice, balance, settings }))}
-								/>
-							) : null
-						}
-					>
+					<SectionCard key={invoice.id} actions={actions} behind={behindOf("invoice", { appointment, order })} reserve={3}>
 						<CardButton data-invoice={invoice.id} onClick={() => openDetail("invoice", invoice.id)} aria-label={label} look={lookOf(state)}>
-							<VisitCard facts={facts} topPad={phone ? "pr-8" : ""} />
+							<VisitCard facts={{ ...facts, kind: "invoice" }} extras={invoiceExtras(item, { now: lookups.nowAt, today, currency })} actions />
 						</CardButton>
 					</SectionCard>
 				);
 			}}
-		>
-			<SectionLine parts={parts} value={active} onChange={setFilter} label="Arată o singură stare a facturilor" />
-		</CardSection>
+		/>
 	);
 }

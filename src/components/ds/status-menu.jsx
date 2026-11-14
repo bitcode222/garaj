@@ -3,7 +3,7 @@
 import { ChevronDown, Undo2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useConfirm } from "@/components/ds/confirm";
-import { StatusBadge, ToneDot } from "@/components/ds/tone";
+import { StateTag, StatusBadge, ToneDot } from "@/components/ds/tone";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
@@ -68,13 +68,15 @@ export function StatusMoveItems({ map, value, moves, onPick, actions = {}, destr
  * a plain badge. Safe inside a link or a clickable row: its events do not bubble.
  *
  * `actions` overrides item labels (verbs: "Confirmă"); `destructive` lists the
- * targets drawn in red.
+ * targets drawn in red. `state`: the record's state (src/lib/record-state.js), drawn instead of the bare status
+ * when the record is at hand, so the badge says what the clock says too ("Întârzie 20 min").
  */
-export function StatusMenu({ map, value, moves = [], onMove, subject, actions = {}, destructive = [], isBackward, size, icon, label = "Schimbă starea", className }) {
+export function StatusMenu({ map, value, moves = [], onMove, subject, actions = {}, destructive = [], isBackward, size, icon, label = "Schimbă starea", state, className }) {
 	const request = useStatusChange({ map, value, subject, onMove, actions, destructive, isBackward });
 	const [open, setOpen] = useState(false);
 	const touchDown = useRef(false);
-	if (!moves.length) return <StatusBadge map={map} value={value} size={size} icon={icon} className={className} />;
+	const badge = state ? <StateTag state={state} size={size === "sm" ? "sm" : "md"} /> : <StatusBadge map={map} value={value} size={size} icon={icon} />;
+	if (!moves.length) return <span className={cn("inline-flex min-w-0", className)}>{badge}</span>;
 	return (
 		<span
 			className="inline-flex"
@@ -85,7 +87,7 @@ export function StatusMenu({ map, value, moves = [], onMove, subject, actions = 
 		>
 			<DropdownMenu open={open} onOpenChange={setOpen}>
 				<DropdownMenuTrigger
-					aria-label={`${label}: ${map[value]?.label ?? value}`}
+					aria-label={`${label}: ${state?.text ?? map[value]?.label ?? value}`}
 					// Radix opens on pointerdown for every pointer type, which would pop the menu
 					// when a swipe (SwipeRow) or a scroll starts on the badge. Touch opens on tap instead.
 					onPointerDown={(event) => {
@@ -98,9 +100,9 @@ export function StatusMenu({ map, value, moves = [], onMove, subject, actions = 
 						touchDown.current = false;
 					}}
 					// Visual badge stays compact; the invisible ::before grows the touch target to ~44 px.
-					className={cn("relative inline-flex cursor-pointer items-center gap-0.5 rounded-md outline-none before:absolute before:-inset-x-1 before:-inset-y-3 focus-visible:ring-2 focus-visible:ring-ring active:scale-95", className)}
+					className={cn("relative -mx-1 inline-flex min-w-0 cursor-pointer items-center gap-0.5 rounded-md px-1 py-0.5 outline-none transition-colors before:absolute before:-inset-x-1 before:-inset-y-3 hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring active:scale-95", className)}
 				>
-					<StatusBadge map={map} value={value} size={size} icon={icon} />
+					{badge}
 					<ChevronDown className="-ml-0.5 size-3 text-muted-foreground" aria-hidden />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end" className="min-w-44">

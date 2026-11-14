@@ -35,7 +35,7 @@ export function InvoiceDocument({ invoice, snapshot, totals, currency = "RON", d
 		<article
 			data-print="document"
 			className={cn(
-				"paper relative mx-auto w-full max-w-[794px] overflow-hidden rounded-xl p-5 text-[13px] leading-relaxed shadow-paper ring-1 ring-black/5 sm:p-8 md:p-10 dark:ring-white/10",
+				"paper relative mx-auto w-full max-w-[794px] overflow-hidden rounded-xl p-5 text-[13px] leading-relaxed shadow-paper ring-1 ring-black/10 sm:p-8 md:p-10 dark:ring-white/14",
 				className,
 			)}
 		>

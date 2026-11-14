@@ -3,6 +3,8 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ArrowLeftIcon, ChevronLeftIcon, XIcon } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { MakeLogo } from "@/components/ds/make-logo";
+import { KindMark, StateTag, kindText } from "@/components/ds/tone";
 import { haptics } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
 
@@ -131,9 +133,16 @@ function bounceThroughScrollLock(el) {
 /**
  * Create/edit surface: a bottom sheet on phones, a right-hand panel from md up.
  * Focus moves to the panel, not the first input, so the iOS keyboard does not
- * pop up before the user chooses a field.
+ * pop up before the user chooses a field. A record's sheet passes its `kind` (the title in its colour, after its
+ * KindMark) and its `state` (a StateTag beside the title), docs/RECORD-COLORS.md.
  */
-export function Sheet({ open, onOpenChange, title, description, headerActions, footer, className, children }) {
+/**
+ * A side panel (a full screen on a phone). A record of a visit passes its `bar` (the visit bar, docs/VISIT-BAR.md) and
+ * its car's `make`: the bar opens the header, the title is the car with the record's number, after the maker's logo,
+ * in the text colour, and the state is a pill at the right (the sheet look the owner picked, 7 Nov 2026). Without a
+ * bar, `kind` and `state` colour and mark the title as before.
+ */
+export function Sheet({ open, onOpenChange, title, description, headerActions, kind, state, bar, make, footer, footerClassName, className, children }) {
 	const contentRef = useRef(null);
 	const depth = useContext(SheetDepth);
 	const motion = useContext(SheetMotion);
@@ -144,7 +153,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 			<DialogPrimitive.Portal>
 				{/* Radix mounts its scroll lock in the Overlay, so stacked sheets need one too (untinted) or they cannot scroll. */}
 					{/* Walking keeps one scrim: the arriving record's shows at once, the leaving one's goes at once. */}
-					<DialogPrimitive.Overlay className={cn("scrim", depth === 0 && "bg-white/10", motion.enter && "data-[state=open]:animate-none", motion.leave && "data-[state=closed]:hidden")} />
+					<DialogPrimitive.Overlay className={cn("scrim", depth === 0 && "bg-black/10 dark:bg-black/35", motion.enter && "data-[state=open]:animate-none", motion.leave && "data-[state=closed]:hidden")} />
 				<DialogPrimitive.Content
 					ref={contentRef}
 					tabIndex={-1}
@@ -160,7 +169,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 					onPointerDownOutside={(event) => event.target?.closest?.("[data-sonner-toaster]") && event.preventDefault()}
 					onInteractOutside={(event) => event.target?.closest?.("[data-sonner-toaster]") && event.preventDefault()}
 					className={cn(
-						"fixed z-50 flex flex-col bg-card text-card-foreground shadow-2xl outline-none",
+						"fixed z-50 flex flex-col bg-card text-card-foreground shadow-[0_0_96px_0_oklch(0_0_0/0.12),0_0_32px_0_oklch(0_0_0/0.06)] outline-none dark:shadow-[0_0_96px_0_rgb(0_0_0),0_0_32px_0_rgb(0_0_0)]",
 						// Phone: a full-height screen that pushes in from the right, lifted above the keyboard.
 						"inset-x-0 bottom-(--kb) h-(--vvh) max-h-dvh duration-300",
 						walked
@@ -170,7 +179,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:border-l",
 						// One width for every sheet on the web (md and up), so stacked sheets line up exactly (42 rem, 672 px).
 						"md:max-w-2xl",
-						depth > 0 && "shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.25)]",
+						depth > 0 && "shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.12)] dark:shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.25)]",
 						className,
 					)}
 				>
@@ -200,20 +209,39 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, f
 							</DialogPrimitive.Close>
 						</div>
 						<div className="mt-1 min-w-0">
-							<DialogPrimitive.Title className="text-heading">{title}</DialogPrimitive.Title>
+							{bar && <div className="-mx-1 mt-2 mb-4">{bar}</div>}
+							{bar ? (
+								<div className="flex min-w-0 items-start gap-2.5">
+									<span className="mt-px flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
+										<MakeLogo make={make} className="size-[1.125rem] text-foreground/80" />
+									</span>
+									<DialogPrimitive.Title className="min-w-0 flex-1 text-heading break-words text-foreground">{title}</DialogPrimitive.Title>
+									{state && (
+										<span className="mt-px flex shrink-0 items-center rounded-full border bg-card px-2.5 py-1">
+											<StateTag state={state} size="sm" />
+										</span>
+									)}
+								</div>
+							) : (
+								<div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1">
+									{kind && <KindMark kind={kind} size="sm" />}
+									<DialogPrimitive.Title className={cn("text-heading", kind && kindText(kind))}>{title}</DialogPrimitive.Title>
+									{state && <StateTag state={state} size="md" />}
+								</div>
+							)}
 							<DialogPrimitive.Description className={description ? "mt-0.5 text-sm text-muted-foreground" : "sr-only"}>
 								{description ?? title}
 							</DialogPrimitive.Description>
 						</div>
 					</div>
-					<div ref={bounceThroughScrollLock} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+					<div ref={bounceThroughScrollLock} className="min-h-0 flex-1 overflow-y-scroll overscroll-contain">
 						{/* 1px taller than the viewport: short content still scrolls, so WebKit rubber-bands it. */}
 						<div className="min-h-[calc(100%+1px)] px-10 pb-10">
 							<SheetDepth.Provider value={depth + 1}>{children}</SheetDepth.Provider>
 						</div>
 					</div>
 					{footer && (
-						<div className="flex shrink-0 flex-wrap justify-end gap-2 border-t bg-card px-4 pt-3 pb-[calc(0.75rem+var(--safe-bottom))] md:px-6 md:pb-5 [&>*]:max-md:flex-1">
+						<div className={cn("flex shrink-0 flex-wrap justify-end gap-2 border-t bg-card px-4 pt-3 pb-[calc(0.75rem+var(--safe-bottom))] md:px-6 md:pb-5 [&>*]:max-md:flex-1", footerClassName)}>
 							{footer}
 						</div>
 					)}

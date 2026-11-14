@@ -4,7 +4,7 @@
 
 import { vehicleName } from "@/domain/vehicle";
 import { visitSubject } from "@/domain/visit";
-import { fmtDays, fmtTime, fmtWorkOrder, plural } from "@/lib/format";
+import { fmtDate, fmtDays, fmtTime, fmtWorkOrder, plural } from "@/lib/format";
 import { VISIT_STAGE } from "@/lib/labels";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 /** Block / chip / card look of a stage: tinted like every status, outlined while the car is only booked. */
 export function stageClass(stage) {
 	const meta = VISIT_STAGE[stage];
-	if (meta.outline) return "border-dashed border-foreground/30 bg-card text-foreground hover:bg-accent/60";
+	if (meta.outline) return "border-dashed border-foreground/40 bg-card text-foreground hover:bg-accent/60";
 	return cn(tone(meta.tone).block, stage === "delivered" && "opacity-60", stage === "no_show" && "line-through opacity-60");
 }
 
@@ -28,6 +28,12 @@ export function visitText(visit, vehicle, customer) {
 		subject,
 		detail: [subject, car ? customer?.name : null].filter(Boolean).join(" · "),
 	};
+}
+
+/** The day ruler's dates in words: "azi", "pe 2 nov.", "între 30 oct. și 5 nov.". */
+export function rangeText({ from, to }, today) {
+	if (from === to) return from === today ? "azi" : `pe ${fmtDate(from, "d MMM")}`;
+	return `între ${fmtDate(from, "d MMM")} și ${fmtDate(to, "d MMM")}`;
 }
 
 /** An exact length: "45 min", "2 h", "1 h 15 min". */

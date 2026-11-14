@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 
-// The search (⌘K): open or not, and what to start with. Every opening is a new `session`,
+// The search dialog: open or not, and what to start with. Every opening is a new `session`,
 // so the search can tell it was opened again and take `seed` as its query (the home page's
 // big field opens it with what was typed there).
 let state = { open: false, session: 0, seed: "" };

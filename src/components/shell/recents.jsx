@@ -3,6 +3,7 @@
 import { formatInvoiceNumber } from "@/domain/invoice";
 import { formatPlate, vehicleName } from "@/domain/vehicle";
 import { useOpenDetail } from "@/lib/detail-mode";
+import { orderKind } from "@/lib/record-state";
 import { RECENTS_SHOWN, useRecents } from "@/lib/recents";
 import { useCollection } from "@/lib/store/hooks";
 
@@ -20,7 +21,9 @@ function describe({ kind, id }, data) {
 	}
 	if (kind === "work-order") {
 		const order = workOrders[id];
-		return order && { title: `Lucrarea #${order.number}`, subtitle: join("Lucrare", vehicleName(vehicles[order.vehicleId])) };
+		// A Deviz or a Lucrare by its stage, as its page calls it (docs/RECORD-COLORS.md).
+		const estimate = order && orderKind(order) === "estimate";
+		return order && { title: `${estimate ? "Devizul" : "Lucrarea"} #${order.number}`, subtitle: join(estimate ? "Deviz" : "Lucrare", vehicleName(vehicles[order.vehicleId])) };
 	}
 	if (kind === "invoice") {
 		const invoice = invoices[id];

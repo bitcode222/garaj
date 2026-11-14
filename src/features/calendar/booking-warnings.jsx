@@ -21,6 +21,7 @@ import {
 	ThumbsUp,
 	Timer,
 	TriangleAlert,
+	Undo2,
 	UserPlus,
 	UserX,
 	Warehouse,
@@ -68,6 +69,9 @@ const SHORT = {
 	noPhone: () => "fără telefon",
 };
 
+/** The few words a card says about one warning ("se suprapune cu o programare"). */
+export const warningWords = (w) => SHORT[w.kind]?.(w) ?? w.kind;
+
 /** "Atenție: întârzie 25 min; fără mecanic" for a card's label, or "". */
 export function alertSummary(alert) {
 	if (!alert?.list?.length) return "";
@@ -78,7 +82,12 @@ export function alertSummary(alert) {
 export function AlertSign({ alert, className }) {
 	if (!alert || alert.severity === "info") return null;
 	const Icon = alert.list[0].kind === "late" || alert.list[0].kind === "missed" ? Clock : TriangleAlert;
-	return <Icon aria-hidden data-alert={alert.severity} className={cn("size-3 shrink-0", tone(SEVERITY_TONE[alert.severity]).text, className)} />;
+	// A small solid badge with a rim in the card's colour: it reads on the white blocks and on a sheet.
+	return (
+		<span aria-hidden data-alert={alert.severity} className={cn("inline-flex size-3.5 shrink-0 items-center justify-center rounded-full ring-1 ring-card", tone(SEVERITY_TONE[alert.severity]).vivid, className)}>
+			<Icon className="size-2.5" strokeWidth={2.5} />
+		</span>
+	);
 }
 
 /** The outline a card gets for its most severe warning (nothing for info). */
@@ -121,24 +130,35 @@ function change(run, message, undo, description) {
 	}
 }
 
-/**
- * The words (title, detail lines) and the buttons for each warning of a booking or a job.
- * `onPanel(name)` opens a panel of the booking's sheet (reschedule · no_show); without it (the
- * hover card) the sheet opens on that panel. `inJob`: shown in the job's own sheet (no "Vezi lucrarea").
- */
-function describe(warnings, { appointment, order, data, now, onPanel, inJob }) {
-	const { settings, staff, bays, vehicles, customers } = data;
-	const today = dayOfInstant(now);
+/** The facts the words and the fixes share: who, which car, what to call the booking, how to open a panel. */
+function factsOf({ appointment, order, data, now, onPanel }) {
+	const { settings, vehicles, customers } = data;
 	const customer = customers[appointment?.customerId ?? order?.customerId];
 	const vehicle = vehicles[appointment?.vehicleId ?? order?.vehicleId];
-	const phone = customer?.phone;
-	const carOf = (o) => vehicleName(vehicles[o.vehicleId]) || customers[o.customerId]?.name || o.title || "o programare";
-	const subject = vehicleName(vehicle) || appointment?.title || "Programarea";
-	const money = order?.lines?.length ? formatMoney(orderTotals(order, settings).gross, settings.currency) : null;
-	const panel = (name) => (onPanel ? onPanel(name) : openSheet("appointment-view", { id: appointment.id, panel: name }));
+	return {
+		today: dayOfInstant(now),
+		customer,
+		vehicle,
+		phone: customer?.phone,
+		carOf: (o) => vehicleName(vehicles[o.vehicleId]) || customers[o.customerId]?.name || o.title || "o programare",
+		subject: vehicleName(vehicle) || appointment?.title || "Programarea",
+		money: order?.lines?.length ? formatMoney(orderTotals(order, settings).gross, settings.currency) : null,
+		panel: (name) => (onPanel ? onPanel(name) : openSheet("appointment-view", { id: appointment.id, panel: name })),
+	};
+}
+
+/**
+ * The button for a fix ({ id, ...params }, src/domain/booking-warnings.js): its label, icon and what it
+ * does (a change with its undo, a panel of the booking's sheet, a call, a prefilled message), or null
+ * when it cannot be offered (no phone, the other booking is gone). `w` is the warning it fixes, if any.
+ * Shared by the warnings and the booking's Acum card, so a fix reads and works the same everywhere.
+ */
+function fixMaker({ appointment, order, data, now, onPanel, inJob }) {
+	const { settings, staff, bays } = data;
+	const { today, customer, vehicle, phone, carOf, subject, panel } = factsOf({ appointment, order, data, now, onPanel });
 	const moved = (previous, start) => (previous.status === "confirmed" ? "Trebuie confirmată din nou: anunță clientul." : undefined) ?? (dayOfInstant(start) !== dayOfInstant(previous.start) ? "Altă zi decât înainte." : undefined);
 
-	const fixOf = (fix, w) => {
+	return (fix, w) => {
 		switch (fix.id) {
 			case "checkin":
 				return { label: "A sosit", icon: CarFront, primary: true, onClick: () => openSheet("checkin", { appointmentId: appointment.id }) };
@@ -161,7 +181,7 @@ function describe(warnings, { appointment, order, data, now, onPanel, inJob }) {
 				return {
 					label: `Mută la ${dayOfInstant(fix.start) === dayOfInstant(appointment.start) ? "" : `${fmtDate(fix.start, "EEE d MMM")}, `}${fmtTime(fix.start)}`,
 					icon: CalendarClock,
-					primary: w.kind === "delayOverrun" || w.kind === "closed",
+					primary: w?.kind === "delayOverrun" || w?.kind === "closed",
 					onClick: () => {
 						let previous;
 						return change(() => ({ previous } = rescheduleAppointmentTo(appointment.id, { start: fix.start, end: fix.end })), `${subject}: mutată la ${fmtTime(fix.start)}–${fmtTime(fix.end)}`, () => restoreAppointment(previous), moved(appointment, fix.start));
@@ -197,6 +217,10 @@ function describe(warnings, { appointment, order, data, now, onPanel, inJob }) {
 				return { label: "Alege mecanicul", icon: UserPlus, onClick: () => openSheet("appointment", { id: appointment.id }) };
 			case "confirm":
 				return { label: "Confirmă", icon: CalendarCheck, primary: true, onClick: () => change(() => setAppointmentStatus(appointment.id, "confirmed"), `${subject}: confirmată`, () => restoreAppointment(appointment)) };
+			case "unconfirm":
+				return { label: "Înapoi la Programat", icon: Undo2, onClick: () => change(() => setAppointmentStatus(appointment.id, "scheduled"), `${subject}: înapoi la programat`, () => restoreAppointment(appointment)) };
+			case "restore":
+				return { label: "Restabilește", icon: Undo2, onClick: () => change(() => setAppointmentStatus(appointment.id, "scheduled"), `${subject}: restabilită`, () => restoreAppointment(appointment)) };
 			case "remind":
 				return phone ? { label: "Cere confirmarea", icon: MessageCircle, href: whatsappHref(phone, confirmationMessage({ appointment, customer, vehicle, settings, today })), external: true } : null;
 			case "notifyReady":
@@ -225,6 +249,17 @@ function describe(warnings, { appointment, order, data, now, onPanel, inJob }) {
 				return null;
 		}
 	};
+}
+
+/**
+ * The words (title, detail lines) and the buttons for each warning of a booking or a job.
+ * `onPanel(name)` opens a panel of the booking's sheet (reschedule · no_show); without it (the
+ * hover card) the sheet opens on that panel. `inJob`: shown in the job's own sheet (no "Vezi lucrarea").
+ */
+function describe(warnings, { appointment, order, data, now, onPanel, inJob }) {
+	const { staff, bays } = data;
+	const { today, customer, phone, carOf, money } = factsOf({ appointment, order, data, now, onPanel });
+	const fixOf = fixMaker({ appointment, order, data, now, onPanel, inJob });
 
 	const words = (w) => {
 		switch (w.kind) {
@@ -285,37 +320,48 @@ function describe(warnings, { appointment, order, data, now, onPanel, inJob }) {
 	});
 }
 
+/**
+ * One fix as a button (a link for a call or a message). `variant` and `size` as Button's; `onDone`
+ * runs after it (the hover card closes).
+ */
+export function FixButton({ fix, variant = "outline", size = "sm", onDone, className }) {
+	const Icon = fix.icon;
+	const body = (
+		<>
+			{Icon && <Icon aria-hidden />} {fix.label}
+		</>
+	);
+	if (fix.href) {
+		return (
+			<Button size={size} variant={variant} className={className} asChild>
+				<a href={fix.href} target={fix.external ? "_blank" : undefined} rel={fix.external ? "noreferrer" : undefined} onClick={() => onDone?.()}>
+					{body}
+				</a>
+			</Button>
+		);
+	}
+	return (
+		<Button
+			size={size}
+			variant={variant}
+			className={className}
+			onClick={() => {
+				fix.onClick();
+				onDone?.();
+			}}
+		>
+			{body}
+		</Button>
+	);
+}
+
 /** The list itself: one tinted box per warning (sheet), or compact lines (hover card). */
-function WarningItems({ items, size, onDone, more = 0, className }) {
+export function WarningItems({ items, size, onDone, more = 0, className }) {
 	if (!items.length) return null;
 	const compact = size === "peek";
 	const button = (fix, i) => {
-		const props = {
-			key: `${fix.label}-${i}`,
-			size: "sm",
-			variant: fix.primary && i === 0 ? "default" : "outline",
-			className: cn(compact ? "h-7 gap-1 px-2 text-xs [&_svg]:size-3.5" : "max-md:h-11", !(fix.primary && i === 0) && "bg-background/80"),
-		};
-		if (fix.href) {
-			return (
-				<Button {...props} asChild>
-					<a href={fix.href} target={fix.external ? "_blank" : undefined} rel={fix.external ? "noreferrer" : undefined} onClick={() => onDone?.()}>
-						<fix.icon aria-hidden /> {fix.label}
-					</a>
-				</Button>
-			);
-		}
-		return (
-			<Button
-				{...props}
-				onClick={() => {
-					fix.onClick();
-					onDone?.();
-				}}
-			>
-				<fix.icon aria-hidden /> {fix.label}
-			</Button>
-		);
+		const lead = fix.primary && i === 0;
+		return <FixButton key={`${fix.label}-${i}`} fix={fix} variant={lead ? "default" : "outline"} onDone={onDone} className={cn(compact ? "h-7 gap-1 px-2 text-xs [&_svg]:size-3.5" : "max-md:h-11", !lead && "bg-background/80")} />;
 	};
 	return (
 		<section aria-label="Atenție" data-warnings={items.length} className={cn(compact ? "space-y-2" : "space-y-2", className)}>
@@ -341,15 +387,15 @@ function WarningItems({ items, size, onDone, more = 0, className }) {
 }
 
 /**
- * A booking's warnings, worded, with their fixes. `size`: "sheet" (full, 44 px buttons on the
- * phone) or "peek" (the hover card: compact, at most `limit`). `onPanel` opens a panel of the
- * booking's sheet; `onDone` runs after a fix (the hover card closes).
+ * A booking's warnings for its sheet: the raw list (for the domain's bookingNow), the worded items
+ * with their fixes (for WarningItems), and `fixOf` to turn any fix into a button spec. Recomputed
+ * every minute. Empty for a missing booking.
  */
-export function BookingWarnings({ appointment, size = "sheet", limit = Infinity, onPanel, onDone, className }) {
+export function useBookingWarnings(appointment, { onPanel } = {}) {
 	const data = useWarningContext();
 	const customer = useEntity("customers", appointment?.customerId);
 	const vehicle = useEntity("vehicles", appointment?.vehicleId);
-	if (!appointment) return null;
+	if (!appointment) return { warnings: [], items: [], fixOf: () => null, order: null };
 	const now = new Date().toISOString();
 	const byDay = selectAppointmentsByDay(data.appointments);
 	const order = orderOfBooking(appointment, data.workOrders);
@@ -364,7 +410,18 @@ export function BookingWarnings({ appointment, size = "sheet", limit = Infinity,
 		vehicle,
 		hours: data.settings.hours,
 	});
-	const items = describe(warnings, { appointment, order, data, now, onPanel, inJob: false });
+	const context = { appointment, order, data, now, onPanel, inJob: false };
+	return { warnings, items: describe(warnings, context), fixOf: fixMaker(context), order };
+}
+
+/**
+ * A booking's warnings, worded, with their fixes. `size`: "sheet" (full, 44 px buttons on the
+ * phone) or "peek" (the hover card: compact, at most `limit`). `onPanel` opens a panel of the
+ * booking's sheet; `onDone` runs after a fix (the hover card closes).
+ */
+export function BookingWarnings({ appointment, size = "sheet", limit = Infinity, onPanel, onDone, className }) {
+	const { items } = useBookingWarnings(appointment, { onPanel });
+	if (!appointment) return null;
 	return <WarningItems items={items.slice(0, limit)} more={Math.max(0, items.length - limit)} size={size} onDone={onDone} className={className} />;
 }
 

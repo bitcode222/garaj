@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeftRight, ArrowUpDown, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { Segmented } from "@/components/ds/inputs";
 import { Sheet } from "@/components/ds/sheet";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortc
 import { addDaysISO, dayOfInstant, isISODate } from "@/domain/dates";
 import { bookingAlert } from "@/domain/booking-warnings";
 import { bookingMark } from "@/domain/visit";
+import { visitLook } from "@/lib/record-state";
 import { fmtDate, plural } from "@/lib/format";
 import { useLocalPreference, useMediaQuery, useNowMinute } from "@/lib/hooks";
 import { useOpenDetail } from "@/lib/detail-mode";
@@ -187,12 +189,21 @@ export function CalendarPage() {
 		}
 		return map;
 	}, [allByDay, orderOf, staffMap, settings.hours, nowMinute]);
+	// Each booking's state, for the dot its block starts with (docs/RECORD-COLORS.md): its job's once it became one,
+	// else its own; once a minute, as the warnings.
+	const states = useMemo(() => {
+		const map = new Map();
+		if (nowMinute == null || !today) return map;
+		const now = new Date().toISOString();
+		for (const a of Object.values(appointmentsMap)) map.set(a.id, visitLook(a, orderOf.get(a.id) ?? null, { now, today }));
+		return map;
+	}, [appointmentsMap, orderOf, nowMinute, today]);
 	const searchIndex = useSearchIndex({ appointments: appointmentsMap, workOrders, customers, vehicles, staff: staffMap, services, orderOf });
 	const search = useCalendarSearch(searchIndex);
 	const found = search.result;
 	const lookups = useMemo(
-		() => ({ customers, vehicles, services, staff: staffMap, marks, alerts, match: found?.ids ?? null, matchOrders: found?.orders ?? null }),
-		[customers, vehicles, services, staffMap, marks, alerts, found],
+		() => ({ customers, vehicles, services, staff: staffMap, marks, states, alerts, match: found?.ids ?? null, matchOrders: found?.orders ?? null }),
+		[customers, vehicles, services, staffMap, marks, states, alerts, found],
 	);
 	// Shown under the filters (a search still finds the hidden ones, and opens them in their sheet).
 	const shownIds = useMemo(() => {
@@ -379,16 +390,87 @@ export function CalendarPage() {
 		return n;
 	})();
 	const inViewText = `${inView.label} · ${foundIn != null ? `${foundIn} din ${inView.count} găsite` : plural(inView.count, "programare", "programări")}`;
-	const titleBlock = (
-		<span className="flex min-w-0 flex-col">
-			<span aria-live="polite" className="truncate text-lg font-semibold tracking-tight first-letter:uppercase md:text-[1.75rem] md:leading-9">
-				{title}
+		// One line on a desktop (the title, and how many in view, beside it); two lines on a phone.
+		// Desktop: the title, and under it the arrows around the count. A phone: the title over the count.
+		const titleBlock = (line) =>
+			line ? (
+				<span className="inline-flex max-w-full min-w-0 flex-col items-start">
+					<span aria-live="polite" className="max-w-full truncate text-2xl leading-7 font-semibold tracking-tight first-letter:uppercase">
+						{title}
+					</span>
+					<span className="-mt-1 flex min-w-0 items-center">
+						{stepButton(-1)}
+						<span data-in-view className="truncate px-1 text-sm text-muted-foreground first-letter:uppercase">
+							{inViewText}
+						</span>
+						{stepButton(1)}
+						<span className="ml-1">{todayButton}</span>
+					</span>
+				</span>
+			) : (
+				<span className="flex min-w-0 flex-col">
+					<span aria-live="polite" className="truncate text-lg font-semibold tracking-tight first-letter:uppercase md:text-[1.75rem] md:leading-9">
+						{title}
+					</span>
+					<span data-in-view className="truncate text-xs text-muted-foreground first-letter:uppercase md:text-sm">
+						{inViewText}
+					</span>
+				</span>
+			);
+		const todayButton = (
+			<Button variant="outline" className="max-md:h-11 md:h-8" onClick={() => strip.current?.today()} title="Azi (T)">
+				Azi
+			</Button>
+		);
+		const stepButton = (dir) => (
+			<Button variant="outline" size="icon" className="size-8 shrink-0" onClick={() => strip.current?.step(dir)} aria-label={dir < 0 ? (currentView === "month" ? "Luna anterioară" : currentView === "week" ? "Săptămâna anterioară" : "Ziua anterioară") : currentView === "month" ? "Luna următoare" : currentView === "week" ? "Săptămâna următoare" : "Ziua următoare"} title={dir < 0 ? "←" : "→"}>
+				{dir < 0 ? <ChevronLeft /> : <ChevronRight />}
+			</Button>
+		);
+		const steps = (
+			<span className="flex max-sm:hidden">
+				{stepButton(-1)}
+				{stepButton(1)}
 			</span>
-			<span data-in-view className="truncate text-xs text-muted-foreground first-letter:uppercase md:text-sm">
-				{inViewText}
-			</span>
-		</span>
-	);
+		);
+		const scrollButton = (
+			<Button
+				variant="outline"
+				size="icon"
+				className="size-11 shrink-0 md:size-9"
+				onClick={() => turn(direction === "horizontal" ? "vertical" : "horizontal")}
+				aria-label={direction === "horizontal" ? "Derulare: stânga–dreapta. Schimbă în sus–jos." : "Derulare: sus–jos. Schimbă în stânga–dreapta."}
+				title={direction === "horizontal" ? "Derulare: stânga–dreapta (apasă pentru sus–jos)" : "Derulare: sus–jos (apasă pentru stânga–dreapta)"}
+				data-scroll-direction={direction}
+			>
+				{direction === "horizontal" ? <ArrowLeftRight /> : <ArrowUpDown />}
+			</Button>
+		);
+		const viewMenu = (
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button variant="outline" className="max-md:h-11 max-md:px-2.5" aria-label={`Vizualizare: ${VIEWS.find((v) => v.value === currentView).label}`}>
+						<span className="max-sm:hidden">{VIEWS.find((v) => v.value === currentView).label}</span>
+						<span className="sm:hidden">{VIEWS.find((v) => v.value === currentView).label.slice(0, 3)}</span>
+						<ChevronDown className="opacity-60" />
+					</Button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="end" className="w-48">
+					{VIEWS.map((option) => (
+						<DropdownMenuItem key={option.value} onSelect={() => changeView(option.value)}>
+							<Check className={cn(option.value !== currentView && "opacity-0")} /> {option.label}
+							<DropdownMenuShortcut>{option.key}</DropdownMenuShortcut>
+						</DropdownMenuItem>
+					))}
+				</DropdownMenuContent>
+			</DropdownMenu>
+		);
+		const miniButton = (
+			<Button variant="ghost" size="icon" className="size-9" onClick={() => setMiniPref("open")} aria-label="Arată minicalendarul" title="Arată minicalendarul">
+				<CalendarDays />
+			</Button>
+		);
+		const searchNode = (className) => <CalendarSearch search={search} shown={(id) => shownIds.has(id)} selectedId={selected} now={new Date().toISOString()} lookups={lookups} onJump={jumpTo} onShowHidden={showHidden} inputRef={searchInput} className={className} />;
 	const nothingShown = byDay.size === 0 && allByDay.size > 0;
 	const stripProps = { ref: strip, today, settings, byDay, lookups, colorBy: prefs.colorBy, selectedId: selected, initialDay, onView, onOpen: open, onCreate: create };
 
@@ -396,89 +478,67 @@ export function CalendarPage() {
 		<div className="flex h-[calc(100dvh-3.5rem-var(--safe-top)-var(--tabbar-h)-var(--safe-bottom))] md:h-dvh">
 			<h1 className="sr-only">Calendar</h1>
 			<div className="flex min-w-0 flex-1 flex-col">
-				{/* The top bar: the controls on the first line; under them the big title, then the search (and the settings, desktop). */}
-				<header className="border-b px-3 py-2 md:border-b-0 md:px-4 md:pt-3 md:pb-2">
-					<div className="flex flex-wrap items-center gap-x-1.5 gap-y-2 md:gap-x-2">
-						{!desktop && (
-							<>
+				{/* The top bar. Desktop: one line, where you are on the left (the pages, ‹ Azi ›, the title) and what you do on the right (search, how it is drawn, settings). Phone: the title, which opens the panel, and the filters; the controls; the search. */}
+				<header className="border-b px-3 py-2 md:border-b-0 md:px-4 md:py-3">
+					{desktop ? (
+						<div className="flex flex-col gap-2">
+							{/* Row 1, the page and the time: the two Programări pages on the left; ‹ Azi ›, how it is drawn and the mini month on the right. */}
+							<div className="flex items-center gap-2">
+								<ProgramariSwitch current="/calendar/" />
+								<div className="flex-1" />
+								<div className="flex items-center gap-2">
+									<span id="calendar-view-label" className="text-sm font-medium text-muted-foreground">Vizualizare</span>
+									<Segmented
+										aria-labelledby="calendar-view-label"
+										value={currentView}
+										onValueChange={changeView}
+										options={VIEWS.map((v) => ({ value: v.value, label: v.label }))}
+									/>
+								</div>
+								{scrollButton}
+								{!miniOpen && miniButton}
+							</div>
+							{/* Row 2, what is in view: its title and count, then the search and the settings for it. */}
+							<div className="flex items-center gap-2">
+								<div className="min-w-0 flex-1 pl-1">{titleBlock(true)}</div>
+								{searchNode("w-72 shrink-0 xl:w-96")}
+								<Button
+									variant={settingsOpen ? "secondary" : "outline"}
+									className="shrink-0"
+									onClick={() => setSettingsPref(settingsOpen ? "closed" : "open")}
+									aria-expanded={settingsOpen}
+									aria-controls="calendar-settings"
+									aria-label={`Setări calendar${filtersOn ? `, ${filtersOn} filtre active` : ""}`}
+									title="Mecanici, stări și afișare"
+								>
+									<SlidersHorizontal />
+									Setări
+									{filtersOn > 0 && <span className="rounded-full bg-brand px-1.5 text-[10px] leading-4 font-semibold text-brand-foreground tabular-nums">{filtersOn}</span>}
+									<ChevronDown className={cn("opacity-60 transition-transform", settingsOpen && "rotate-180")} />
+								</Button>
+							</div>
+						</div>
+					) : (
+						<>
+							<div className="flex items-center gap-1.5">
 								<button type="button" onClick={() => setPhonePanel(true)} className="-mx-1 flex min-h-11 min-w-0 flex-1 items-center gap-1 rounded-md px-1 text-left hover:bg-accent" aria-label={`${title}. Deschide luna și filtrele.`}>
-									{titleBlock}
+									{titleBlock(false)}
 									<ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
 								</button>
 								<Button variant="ghost" size="icon" className="size-11" onClick={() => setPhonePanel(true)} aria-label="Filtre și luna">
 									<SlidersHorizontal />
 									{filtersOn > 0 && <span className="sr-only">{filtersOn} filtre active</span>}
 								</Button>
-							</>
-						)}
-					<div className="flex shrink-0 items-center gap-1.5 max-md:w-full md:ml-auto">
-						<ProgramariSwitch current="/calendar/" className="max-md:flex-1 max-sm:[&_[data-label]]:sr-only" />
-						<Button
-							variant="outline"
-							size="icon"
-							className="size-11 shrink-0 md:size-9"
-							onClick={() => turn(direction === "horizontal" ? "vertical" : "horizontal")}
-							aria-label={direction === "horizontal" ? "Derulare: stânga–dreapta. Schimbă în sus–jos." : "Derulare: sus–jos. Schimbă în stânga–dreapta."}
-							title={direction === "horizontal" ? "Derulare: stânga–dreapta (apasă pentru sus–jos)" : "Derulare: sus–jos (apasă pentru stânga–dreapta)"}
-							data-scroll-direction={direction}
-						>
-							{direction === "horizontal" ? <ArrowLeftRight /> : <ArrowUpDown />}
-						</Button>
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button variant="outline" className="max-md:h-11 max-md:px-2.5" aria-label={`Vizualizare: ${VIEWS.find((v) => v.value === currentView).label}`}>
-									<span className="max-sm:hidden">{VIEWS.find((v) => v.value === currentView).label}</span>
-									<span className="sm:hidden">{VIEWS.find((v) => v.value === currentView).label.slice(0, 3)}</span>
-									<ChevronDown className="opacity-60" />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end" className="w-48">
-								{VIEWS.map((option) => (
-									<DropdownMenuItem key={option.value} onSelect={() => changeView(option.value)}>
-										<Check className={cn(option.value !== currentView && "opacity-0")} /> {option.label}
-										<DropdownMenuShortcut>{option.key}</DropdownMenuShortcut>
-									</DropdownMenuItem>
-								))}
-							</DropdownMenuContent>
-						</DropdownMenu>
-						<Button variant="outline" className="max-md:h-11" onClick={() => strip.current?.today()} title="Azi (T)">
-							Azi
-						</Button>
-						<span className="flex max-sm:hidden">
-							<Button variant="ghost" size="icon" className="size-9" onClick={() => strip.current?.step(-1)} aria-label={currentView === "month" ? "Luna anterioară" : currentView === "week" ? "Săptămâna anterioară" : "Ziua anterioară"} title="←">
-								<ChevronLeft />
-							</Button>
-							<Button variant="ghost" size="icon" className="size-9" onClick={() => strip.current?.step(1)} aria-label={currentView === "month" ? "Luna următoare" : currentView === "week" ? "Săptămâna următoare" : "Ziua următoare"} title="→">
-								<ChevronRight />
-							</Button>
-						</span>
-						{desktop && !miniOpen && (
-							<Button variant="ghost" size="icon" className="size-9" onClick={() => setMiniPref("open")} aria-label="Arată minicalendarul" title="Arată minicalendarul">
-								<CalendarDays />
-							</Button>
-						)}
-					</div>
-					</div>
-					{desktop ? (
-						<div className="mt-1 flex items-end gap-4">
-							<div className="min-w-0 shrink">{titleBlock}</div>
-							<CalendarSearch search={search} shown={(id) => shownIds.has(id)} selectedId={selected} now={new Date().toISOString()} lookups={lookups} onJump={jumpTo} onShowHidden={showHidden} inputRef={searchInput} className="mb-0.5 ml-auto w-full max-w-md" />
-							<Button
-								variant={settingsOpen ? "secondary" : "outline"}
-								className="mb-0.5 shrink-0"
-								onClick={() => setSettingsPref(settingsOpen ? "closed" : "open")}
-								aria-expanded={settingsOpen}
-								aria-controls="calendar-settings"
-								aria-label={`Setări calendar${filtersOn ? `, ${filtersOn} filtre active` : ""}`}
-								title="Mecanici, stări și afișare"
-							>
-								<SlidersHorizontal /> Setări
-								{filtersOn > 0 && <span className="rounded-full bg-brand px-1.5 text-[10px] leading-4 font-semibold text-brand-foreground tabular-nums">{filtersOn}</span>}
-								<ChevronDown className={cn("opacity-60 transition-transform", settingsOpen && "rotate-180")} />
-							</Button>
-						</div>
-					) : (
-						<CalendarSearch search={search} shown={(id) => shownIds.has(id)} selectedId={selected} now={new Date().toISOString()} lookups={lookups} onJump={jumpTo} onShowHidden={showHidden} inputRef={searchInput} className="mt-2" />
+							</div>
+							<div className="mt-2 flex items-center gap-1.5">
+								<ProgramariSwitch current="/calendar/" className="max-md:flex-1 max-sm:[&_[data-label]]:sr-only" />
+								{scrollButton}
+								{viewMenu}
+								{todayButton}
+								{steps}
+							</div>
+							{searchNode("mt-2")}
+						</>
 					)}
 				</header>
 				{/* The settings, folded under the header (desktop): the mechanics, the statuses, how it is drawn. */}
