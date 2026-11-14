@@ -1,6 +1,6 @@
 # The native iPhone app (SwiftUI): plan
 
-Status: **approved 2026-11-15**. Phase 0 built and tested on the simulator (migration verified: every record moved); first install on the iPhone pending.
+Status: **approved 2026-11-15**. Phase 0 done and on the iPhone (every record moved, checked against the old database). Phase 1 (Lucrări) done: list with totals, swipe to the next step, undo; job detail with status moves, contact (call/SMS/WhatsApp with the estimate), complaint/diagnosis, lines editor (catalog, stock, free lines), totals, notes, delete; new job. Still to come in Lucrări: check-in from a booking (with Programări), the inspection checklist, the activity history.
 
 The owner's decisions:
 

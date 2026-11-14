@@ -1,0 +1,2564 @@
+{
+ "moves": [
+  {
+   "from": "estimate",
+   "to": "estimate",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "estimate",
+   "to": "approved",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "estimate",
+   "to": "in_progress",
+   "can": true,
+   "skipped": [
+    "approved"
+   ],
+   "backward": false
+  },
+  {
+   "from": "estimate",
+   "to": "waiting_parts",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "estimate",
+   "to": "ready",
+   "can": true,
+   "skipped": [
+    "approved",
+    "in_progress"
+   ],
+   "backward": false
+  },
+  {
+   "from": "estimate",
+   "to": "delivered",
+   "can": true,
+   "skipped": [
+    "approved",
+    "in_progress",
+    "ready"
+   ],
+   "backward": false
+  },
+  {
+   "from": "estimate",
+   "to": "cancelled",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "estimate",
+   "to": "declined",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "approved",
+   "to": "estimate",
+   "can": true,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "approved",
+   "to": "approved",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "approved",
+   "to": "in_progress",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "approved",
+   "to": "waiting_parts",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "approved",
+   "to": "ready",
+   "can": true,
+   "skipped": [
+    "in_progress"
+   ],
+   "backward": false
+  },
+  {
+   "from": "approved",
+   "to": "delivered",
+   "can": true,
+   "skipped": [
+    "in_progress",
+    "ready"
+   ],
+   "backward": false
+  },
+  {
+   "from": "approved",
+   "to": "cancelled",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "approved",
+   "to": "declined",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "in_progress",
+   "to": "estimate",
+   "can": true,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "in_progress",
+   "to": "approved",
+   "can": true,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "in_progress",
+   "to": "in_progress",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "in_progress",
+   "to": "waiting_parts",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "in_progress",
+   "to": "ready",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "in_progress",
+   "to": "delivered",
+   "can": true,
+   "skipped": [
+    "ready"
+   ],
+   "backward": false
+  },
+  {
+   "from": "in_progress",
+   "to": "cancelled",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "in_progress",
+   "to": "declined",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "waiting_parts",
+   "to": "estimate",
+   "can": true,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "waiting_parts",
+   "to": "approved",
+   "can": true,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "waiting_parts",
+   "to": "in_progress",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "waiting_parts",
+   "to": "waiting_parts",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "waiting_parts",
+   "to": "ready",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "waiting_parts",
+   "to": "delivered",
+   "can": true,
+   "skipped": [
+    "ready"
+   ],
+   "backward": false
+  },
+  {
+   "from": "waiting_parts",
+   "to": "cancelled",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "waiting_parts",
+   "to": "declined",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "ready",
+   "to": "estimate",
+   "can": true,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "ready",
+   "to": "approved",
+   "can": true,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "ready",
+   "to": "in_progress",
+   "can": true,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "ready",
+   "to": "waiting_parts",
+   "can": false,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "ready",
+   "to": "ready",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "ready",
+   "to": "delivered",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "ready",
+   "to": "cancelled",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "ready",
+   "to": "declined",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "delivered",
+   "to": "estimate",
+   "can": false,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "delivered",
+   "to": "approved",
+   "can": false,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "delivered",
+   "to": "in_progress",
+   "can": false,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "delivered",
+   "to": "waiting_parts",
+   "can": false,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "delivered",
+   "to": "ready",
+   "can": true,
+   "skipped": [],
+   "backward": true
+  },
+  {
+   "from": "delivered",
+   "to": "delivered",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "delivered",
+   "to": "cancelled",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "delivered",
+   "to": "declined",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "cancelled",
+   "to": "estimate",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "cancelled",
+   "to": "approved",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "cancelled",
+   "to": "in_progress",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "cancelled",
+   "to": "waiting_parts",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "cancelled",
+   "to": "ready",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "cancelled",
+   "to": "delivered",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "cancelled",
+   "to": "cancelled",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "cancelled",
+   "to": "declined",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "declined",
+   "to": "estimate",
+   "can": true,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "declined",
+   "to": "approved",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "declined",
+   "to": "in_progress",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "declined",
+   "to": "waiting_parts",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "declined",
+   "to": "ready",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "declined",
+   "to": "delivered",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "declined",
+   "to": "cancelled",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  },
+  {
+   "from": "declined",
+   "to": "declined",
+   "can": false,
+   "skipped": [],
+   "backward": false
+  }
+ ],
+ "plates": [
+  {
+   "input": "b123abc",
+   "output": "B 123 ABC",
+   "normalized": "B123ABC"
+  },
+  {
+   "input": "B-12-XYZ",
+   "output": "B 12 XYZ",
+   "normalized": "B12XYZ"
+  },
+  {
+   "input": "cj 12 xyz",
+   "output": "CJ 12 XYZ",
+   "normalized": "CJ12XYZ"
+  },
+  {
+   "input": "IF74ZXX",
+   "output": "IF 74 ZXX",
+   "normalized": "IF74ZXX"
+  },
+  {
+   "input": "B 999",
+   "output": "B 999",
+   "normalized": "B999"
+  },
+  {
+   "input": "CT123456",
+   "output": "CT 123456",
+   "normalized": "CT123456"
+  },
+  {
+   "input": "  xyz  12 ",
+   "output": "XYZ 12",
+   "normalized": "XYZ12"
+  },
+  {
+   "input": "ABC",
+   "output": "ABC",
+   "normalized": "ABC"
+  }
+ ],
+ "phones": [
+  {
+   "input": "0722 123 456",
+   "normalized": "+40722123456",
+   "formatted": "0722 123 456"
+  },
+  {
+   "input": "+40722123456",
+   "normalized": "+40722123456",
+   "formatted": "0722 123 456"
+  },
+  {
+   "input": "0040 722 123 456",
+   "normalized": "+40722123456",
+   "formatted": "0722 123 456"
+  },
+  {
+   "input": "40722123456",
+   "normalized": "+40722123456",
+   "formatted": "0722 123 456"
+  },
+  {
+   "input": "722123456",
+   "normalized": "722123456",
+   "formatted": "722123456"
+  },
+  {
+   "input": "021-123.45.67",
+   "normalized": "+40211234567",
+   "formatted": "0211 234 567"
+  },
+  {
+   "input": "",
+   "normalized": "",
+   "formatted": ""
+  }
+ ],
+ "greetings": [
+  {
+   "customer": {
+    "id": "0mwh0r76a80pak2fl",
+    "type": "person",
+    "name": "Andreea Mocanu",
+    "phone": "0788 291 972",
+    "email": "",
+    "address": "Bd. Unirii 43",
+    "city": "București",
+    "county": "Sector 5",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Andreea"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76asgyoc6pd",
+    "type": "person",
+    "name": "Cătălin Florea",
+    "phone": "0754 301 783",
+    "email": "",
+    "address": "Str. Baba Novac 19",
+    "city": "București",
+    "county": "Sector 3",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Cătălin"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76aef9pj6iy",
+    "type": "person",
+    "name": "Andreea Toma",
+    "phone": "0755 209 921",
+    "email": "andreea.52@exemplu.ro",
+    "address": "Str. Baba Novac 78",
+    "city": "București",
+    "county": "Sector 1",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Andreea"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76abrhcm10a",
+    "type": "person",
+    "name": "Maria Toma",
+    "phone": "0738 977 282",
+    "email": "maria.34@exemplu.ro",
+    "address": "Bd. Unirii 14",
+    "city": "București",
+    "county": "Sector 5",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Maria"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76a4m99dbe1",
+    "type": "person",
+    "name": "Andreea Enache",
+    "phone": "0785 629 990",
+    "email": "andreea.51@exemplu.ro",
+    "address": "Str. Baba Novac 115",
+    "city": "București",
+    "county": "Sector 5",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Andreea"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76afzdw050n",
+    "type": "person",
+    "name": "Dan Lazăr",
+    "phone": "0779 738 296",
+    "email": "dan.69@exemplu.ro",
+    "address": "Str. Baba Novac 12",
+    "city": "București",
+    "county": "Sector 1",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Dan"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76azhqkaijc",
+    "type": "person",
+    "name": "Adrian Ciobanu",
+    "phone": "0785 256 471",
+    "email": "adrian.51@exemplu.ro",
+    "address": "Calea Dudești 109",
+    "city": "București",
+    "county": "Sector 1",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Adrian"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76aczmg6h3z",
+    "type": "person",
+    "name": "Gabriela Radu",
+    "phone": "0750 752 526",
+    "email": "gabriela.33@exemplu.ro",
+    "address": "Bd. Camil Ressu 75",
+    "city": "București",
+    "county": "Sector 2",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": false,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Gabriela"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76a0k6k93ml",
+    "type": "person",
+    "name": "Vlad Ionescu",
+    "phone": "0725 613 732",
+    "email": "vlad.35@exemplu.ro",
+    "address": "Str. Lalelelor 135",
+    "city": "București",
+    "county": "Sector 5",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": false,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Vlad"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76al53uud6s",
+    "type": "person",
+    "name": "Marius Marin",
+    "phone": "0741 805 191",
+    "email": "",
+    "address": "Str. Liviu Rebreanu 54",
+    "city": "București",
+    "county": "Sector 5",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Marius"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76anuh7jc3o",
+    "type": "person",
+    "name": "Radu Dinu",
+    "phone": "0728 245 239",
+    "email": "",
+    "address": "Str. Lalelelor 113",
+    "city": "București",
+    "county": "Sector 3",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Radu"
+  },
+  {
+   "customer": {
+    "id": "0mwh0r76atg6aj090",
+    "type": "person",
+    "name": "Radu Florea",
+    "phone": "0748 301 708",
+    "email": "radu.90@exemplu.ro",
+    "address": "Aleea Barajul Argeș 87",
+    "city": "București",
+    "county": "Sector 5",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": false,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "output": "Radu"
+  }
+ ],
+ "messages": [
+  {
+   "order": {
+    "id": "0mwh0r76bso9d5w0z",
+    "number": 1001,
+    "status": "delivered",
+    "customerId": "0mwh0r76bljzujgf7",
+    "vehicleId": "0mwh0r76bg7xkbk8d",
+    "appointmentId": null,
+    "staffId": "0mwh0r769et6esrgs",
+    "bayId": "0mwh0r769iz0b739k",
+    "mileage": 99838,
+    "fuelLevel": 4,
+    "complaint": "Schimb ulei și filtru, Înlocuire biellete antiruliu",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh0r76b8ym6ohkc",
+      "kind": "labor",
+      "refId": "0mwh0r769l9tkhh8c",
+      "description": "Schimb ulei și filtru",
+      "qty": 0.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r769et6esrgs"
+     },
+     {
+      "id": "0mwh0r76b3sbyqn09",
+      "kind": "part",
+      "refId": "0mwh0r769shkjywi8",
+      "description": "Ulei motor 5W-30 Castrol",
+      "qty": 4.5,
+      "unit": "l",
+      "unitPrice": 5700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 4200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh0r76bcgsfqx22",
+      "kind": "part",
+      "refId": "0mwh0r769j2j5m4i2",
+      "description": "Filtru ulei Mann-Filter",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 3800,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 2800,
+      "staffId": null
+     },
+     {
+      "id": "0mwh0r76b9ao8q7up",
+      "kind": "labor",
+      "refId": "0mwh0r76agxvhxxet",
+      "description": "Înlocuire biellete antiruliu",
+      "qty": 0.8,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r769et6esrgs"
+     },
+     {
+      "id": "0mwh0r76b2ee72k1f",
+      "kind": "part",
+      "refId": "0mwh0r769dio9her0",
+      "description": "Bieletă antiruliu Meyle",
+      "qty": 2,
+      "unit": "buc",
+      "unitPrice": 8400,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 6200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh0r76baxqxkq1i",
+      "kind": "fee",
+      "refId": null,
+      "description": "Materiale consumabile",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 2500,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": "urgent",
+      "note": "plăcuțe 2 mm"
+     },
+     {
+      "key": "tires",
+      "status": "attention",
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh0r76wrtd3n12y",
+    "dates": {
+     "estimate": "2025-11-15T08:30:00.000Z",
+     "approved": "2025-11-15T08:30:00.000Z",
+     "in_progress": "2025-11-15T09:00:00.000Z",
+     "ready": "2025-11-15T13:00:00.000Z",
+     "delivered": "2025-11-15T15:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-15T08:30:00.000Z",
+    "updatedAt": "2025-11-15T08:30:00.000Z"
+   },
+   "customer": {
+    "id": "0mwh0r76bljzujgf7",
+    "type": "company",
+    "name": "Construct Plus SRL",
+    "contactName": "Cristian Ilie",
+    "phone": "0772 408 789",
+    "email": "office@construct-demo.ro",
+    "address": "Bd. Theodor Pallady 51",
+    "city": "București",
+    "county": "Sector 3",
+    "cui": "RO310013900",
+    "regCom": "J40/6286/2015",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "vehicle": {
+    "id": "0mwh0r76bg7xkbk8d",
+    "customerId": "0mwh0r76bljzujgf7",
+    "plate": "B501RGB",
+    "vin": "UU1G0A5WAEVEYD09Y",
+    "make": "Dacia",
+    "model": "Sandero",
+    "engine": "0.9 TCe",
+    "fuel": "petrol",
+    "year": 2018,
+    "color": "Roșu",
+    "mileage": [
+     {
+      "date": "2025-11-15",
+      "km": 99838,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-25",
+      "km": 102268,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-02-26",
+      "km": 106080,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-02-27",
+      "km": 106158,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-04-17",
+      "km": 109388,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-26",
+      "km": 111743,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-26",
+      "km": 113722,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-21",
+      "km": 115471,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-17",
+      "km": 117024,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-22",
+      "km": 121064,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-11-15",
+      "km": 122547,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2027-12-06",
+    "rcaExpiry": "2027-02-01",
+    "serviceIntervalKm": 10000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-10-22",
+    "lastServiceKm": 121064,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "estimate": "Bună ziua, Cristian Ilie!\nDeviz pentru Dacia Sandero B 501 RGB (lucrarea 1001):\n• Schimb ulei și filtru — 0.6 h\n• Ulei motor 5W-30 Castrol — 4.5 l\n• Filtru ulei Mann-Filter — 1 buc\n• Înlocuire biellete antiruliu — 0.8 h\n• Bieletă antiruliu Meyle — 2 buc\n• Materiale consumabile — 1 buc\nTotal: 894,80 lei cu TVA.\nLa verificare am mai găsit: Frâne (urgent): plăcuțe 2 mm; Anvelope (de urmărit).\nConfirmați să începem lucrarea? Mulțumim!\nService Test",
+   "ready": "Bună ziua, Cristian Ilie! Dacia Sandero (B 501 RGB) este gata de ridicare. Program: 08:00–18:00. Service Test"
+  },
+  {
+   "order": {
+    "id": "0mwh0r76bkvvlhamh",
+    "number": 1002,
+    "status": "delivered",
+    "customerId": "0mwh0r76b9nbhu6lj",
+    "vehicleId": "0mwh0r76bx309r7vl",
+    "appointmentId": null,
+    "staffId": "0mwh0r767bualwip3",
+    "bayId": "0mwh0r7699rzvuzd0",
+    "mileage": 179096,
+    "fuelLevel": 4,
+    "complaint": "Schimb ulei și filtru",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh0r76bkxgzlpg9",
+      "kind": "labor",
+      "refId": "0mwh0r769l9tkhh8c",
+      "description": "Schimb ulei și filtru",
+      "qty": 0.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r767bualwip3"
+     },
+     {
+      "id": "0mwh0r76b3mdbt33a",
+      "kind": "part",
+      "refId": "0mwh0r769shkjywi8",
+      "description": "Ulei motor 5W-30 Castrol",
+      "qty": 4.5,
+      "unit": "l",
+      "unitPrice": 5700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 4200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh0r76bl4joc5es",
+      "kind": "part",
+      "refId": "0mwh0r769j2j5m4i2",
+      "description": "Filtru ulei Mann-Filter",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 3800,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 2800,
+      "staffId": null
+     },
+     {
+      "id": "0mwh0r76b1w05i6yj",
+      "kind": "fee",
+      "refId": null,
+      "description": "Materiale consumabile",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 2500,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh0r76wsrg3ftnn",
+    "dates": {
+     "estimate": "2025-11-17T06:45:00.000Z",
+     "approved": "2025-11-17T06:45:00.000Z",
+     "in_progress": "2025-11-17T09:00:00.000Z",
+     "ready": "2025-11-17T13:00:00.000Z",
+     "delivered": "2025-11-17T15:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-17T06:45:00.000Z",
+    "updatedAt": "2025-11-17T06:45:00.000Z"
+   },
+   "customer": {
+    "id": "0mwh0r76b9nbhu6lj",
+    "type": "company",
+    "name": "Brutăria Bunica SRL",
+    "contactName": "Mihaela Lazăr",
+    "phone": "0744 529 519",
+    "email": "office@brutaria-demo.ro",
+    "address": "Str. Baba Novac 21",
+    "city": "București",
+    "county": "Sector 3",
+    "cui": "RO310055271",
+    "regCom": "J40/17401/2008",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "vehicle": {
+    "id": "0mwh0r76bx309r7vl",
+    "customerId": "0mwh0r76b9nbhu6lj",
+    "plate": "B561UZP",
+    "vin": "WF0FMRXMNGW0VGAEB",
+    "make": "Ford",
+    "model": "Kuga",
+    "engine": "2.0 TDCi",
+    "fuel": "diesel",
+    "year": 2013,
+    "color": "Argintiu",
+    "mileage": [
+     {
+      "date": "2025-11-17",
+      "km": 179096,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-12",
+      "km": 179883,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-02-11",
+      "km": 182225,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-19",
+      "km": 185685,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-31",
+      "km": 187968,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-11",
+      "km": 188444,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-17",
+      "km": 188655,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-15",
+      "km": 190672,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2026-11-01",
+    "rcaExpiry": "2027-07-02",
+    "serviceIntervalKm": 15000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-07-31",
+    "lastServiceKm": 187968,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "estimate": "Bună ziua, Mihaela Lazăr!\nDeviz pentru Ford Kuga B 561 UZP (lucrarea 1002):\n• Schimb ulei și filtru — 0.6 h\n• Ulei motor 5W-30 Castrol — 4.5 l\n• Filtru ulei Mann-Filter — 1 buc\n• Materiale consumabile — 1 buc\nTotal: 517,28 lei cu TVA.\nConfirmați să începem lucrarea? Mulțumim!\nService Test",
+   "ready": "Bună ziua, Mihaela Lazăr! Ford Kuga (B 561 UZP) este gata de ridicare. Program: 08:00–18:00. Service Test"
+  },
+  {
+   "order": {
+    "id": "0mwh0r76brqc2g6wq",
+    "number": 1003,
+    "status": "delivered",
+    "customerId": "0mwh0r76a93e8xngz",
+    "vehicleId": "0mwh0r76az62zdhh3",
+    "appointmentId": null,
+    "staffId": "0mwh0r767bualwip3",
+    "bayId": "0mwh0r76991owd8m2",
+    "mileage": 105400,
+    "fuelLevel": 2,
+    "complaint": "Înlocuire plăcuțe frână față",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh0r76bg1m993ar",
+      "kind": "labor",
+      "refId": "0mwh0r76avvk2f1a3",
+      "description": "Înlocuire plăcuțe frână față",
+      "qty": 1,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r767bualwip3"
+     },
+     {
+      "id": "0mwh0r76b2p3o0761",
+      "kind": "part",
+      "refId": "0mwh0r769z0ox3kc9",
+      "description": "Plăcuțe frână față ATE",
+      "qty": 1,
+      "unit": "set",
+      "unitPrice": 22300,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 16500,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh0r76xxqsgv99b",
+    "dates": {
+     "estimate": "2025-11-17T09:15:00.000Z",
+     "approved": "2025-11-17T09:15:00.000Z",
+     "in_progress": "2025-11-17T09:00:00.000Z",
+     "ready": "2025-11-17T13:00:00.000Z",
+     "delivered": "2025-11-17T14:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-17T09:15:00.000Z",
+    "updatedAt": "2025-11-17T09:15:00.000Z"
+   },
+   "customer": {
+    "id": "0mwh0r76a93e8xngz",
+    "type": "person",
+    "name": "Andreea Stoica",
+    "phone": "0781 612 227",
+    "email": "",
+    "address": "Aleea Barajul Argeș 92",
+    "city": "București",
+    "county": "Sector 3",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "vehicle": {
+    "id": "0mwh0r76az62zdhh3",
+    "customerId": "0mwh0r76a93e8xngz",
+    "plate": "GR10LYC",
+    "vin": "WVWFPBYMT4MTDH5MR",
+    "make": "Volkswagen",
+    "model": "Passat",
+    "engine": "2.0 TDI",
+    "fuel": "diesel",
+    "year": 2017,
+    "color": "Roșu",
+    "mileage": [
+     {
+      "date": "2025-11-17",
+      "km": 105400,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-18",
+      "km": 107566,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-05",
+      "km": 108666,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-19",
+      "km": 119164,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-16",
+      "km": 120789,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-03",
+      "km": 122005,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-18",
+      "km": 123061,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-21",
+      "km": 123146,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-16",
+      "km": 126915,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2027-12-25",
+    "rcaExpiry": "2027-04-24",
+    "serviceIntervalKm": 15000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-08-21",
+    "lastServiceKm": 123146,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "estimate": "Bună ziua, Andreea!\nDeviz pentru Volkswagen Passat GR 10 LYC (lucrarea 1003):\n• Înlocuire plăcuțe frână față — 1 h\n• Plăcuțe frână față ATE — 1 set\nTotal: 487,63 lei cu TVA.\nConfirmați să începem lucrarea? Mulțumim!\nService Test",
+   "ready": "Bună ziua, Andreea! Volkswagen Passat (GR 10 LYC) este gata de ridicare. Program: 08:00–18:00. Service Test"
+  },
+  {
+   "order": {
+    "id": "0mwh0r76b500piruh",
+    "number": 1004,
+    "status": "delivered",
+    "customerId": "0mwh0r76amuvizu0r",
+    "vehicleId": "0mwh0r76awd4iiw77",
+    "appointmentId": null,
+    "staffId": "0mwh0r769p5fja7j9",
+    "bayId": "0mwh0r7699rzvuzd0",
+    "mileage": 221987,
+    "fuelLevel": 4,
+    "complaint": "Înlocuire discuri și plăcuțe față",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh0r76bg3sj3o62",
+      "kind": "labor",
+      "refId": "0mwh0r76af8ye416r",
+      "description": "Înlocuire discuri și plăcuțe față",
+      "qty": 1.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r769p5fja7j9"
+     },
+     {
+      "id": "0mwh0r76bnwu0nv4q",
+      "kind": "part",
+      "refId": "0mwh0r769vskbtvgd",
+      "description": "Discuri frână față Brembo",
+      "qty": 1,
+      "unit": "set",
+      "unitPrice": 52700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 39000,
+      "staffId": null
+     },
+     {
+      "id": "0mwh0r76bfgz6fytp",
+      "kind": "part",
+      "refId": "0mwh0r769z0ox3kc9",
+      "description": "Plăcuțe frână față ATE",
+      "qty": 1,
+      "unit": "set",
+      "unitPrice": 22300,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 16500,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh0r76xlkkf9khc",
+    "dates": {
+     "estimate": "2025-11-18T06:15:00.000Z",
+     "approved": "2025-11-18T06:15:00.000Z",
+     "in_progress": "2025-11-18T09:00:00.000Z",
+     "ready": "2025-11-18T13:00:00.000Z",
+     "delivered": "2025-11-18T15:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-18T06:15:00.000Z",
+    "updatedAt": "2025-11-18T06:15:00.000Z"
+   },
+   "customer": {
+    "id": "0mwh0r76amuvizu0r",
+    "type": "person",
+    "name": "Cristian Dumitru",
+    "phone": "0748 610 788",
+    "email": "cristian.58@exemplu.ro",
+    "address": "Bd. Decebal 8",
+    "city": "București",
+    "county": "Sector 4",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "vehicle": {
+    "id": "0mwh0r76awd4iiw77",
+    "customerId": "0mwh0r76amuvizu0r",
+    "plate": "AG16WCN",
+    "vin": "VF1UYN2D775BMDM1X",
+    "make": "Renault",
+    "model": "Clio",
+    "engine": "0.9 TCe",
+    "fuel": "petrol",
+    "year": 2011,
+    "color": "Alb",
+    "mileage": [
+     {
+      "date": "2025-11-18",
+      "km": 221987,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-22",
+      "km": 223683,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-28",
+      "km": 225506,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-02-26",
+      "km": 226710,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-04-18",
+      "km": 229262,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-04",
+      "km": 230133,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-11-02",
+      "km": 238713,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-11-14",
+      "km": 239386,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2027-01-31",
+    "rcaExpiry": "2027-04-13",
+    "serviceIntervalKm": 20000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-11-02",
+    "lastServiceKm": 238713,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "estimate": "Bună ziua, Cristian!\nDeviz pentru Renault Clio AG 16 WCN (lucrarea 1004):\n• Înlocuire discuri și plăcuțe față — 1.6 h\n• Discuri frână față Brembo — 1 set\n• Plăcuțe frână față ATE — 1 set\nTotal: 1.255,98 lei cu TVA.\nConfirmați să începem lucrarea? Mulțumim!\nService Test",
+   "ready": "Bună ziua, Cristian! Renault Clio (AG 16 WCN) este gata de ridicare. Program: 08:00–18:00. Service Test"
+  },
+  {
+   "order": {
+    "id": "0mwh0r76bmz8xr3ck",
+    "number": 1005,
+    "status": "delivered",
+    "customerId": "0mwh0r76aa3cosob9",
+    "vehicleId": "0mwh0r76bhxrzz2zu",
+    "appointmentId": null,
+    "staffId": "0mwh0r769dosodryc",
+    "bayId": "0mwh0r7699rzvuzd0",
+    "mileage": 137691,
+    "fuelLevel": 4,
+    "complaint": "Geometrie roți",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh0r76bz9z4xxa3",
+      "kind": "labor",
+      "refId": "0mwh0r76ap2ta5j9u",
+      "description": "Geometrie roți",
+      "qty": 0.8,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r769dosodryc"
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh0r76xbsurvyrz",
+    "dates": {
+     "estimate": "2025-11-18T07:15:00.000Z",
+     "approved": "2025-11-18T07:15:00.000Z",
+     "in_progress": "2025-11-18T09:00:00.000Z",
+     "ready": "2025-11-18T13:00:00.000Z",
+     "delivered": "2025-11-18T16:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-18T07:15:00.000Z",
+    "updatedAt": "2025-11-18T07:15:00.000Z"
+   },
+   "customer": {
+    "id": "0mwh0r76aa3cosob9",
+    "type": "company",
+    "name": "Trans Logistic SRL",
+    "contactName": "Raluca Florea",
+    "phone": "0769 891 817",
+    "email": "office@trans-demo.ro",
+    "address": "Str. Depozitelor 4",
+    "city": "Popești-Leordeni",
+    "county": "Ilfov",
+    "cui": "RO310000110",
+    "regCom": "J40/8122/2008",
+    "notes": "Flotă — facturare lunară, plată prin OP la 30 de zile.",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "vehicle": {
+    "id": "0mwh0r76bhxrzz2zu",
+    "customerId": "0mwh0r76aa3cosob9",
+    "plate": "B450SAM",
+    "vin": "WF06G057HFMC40NPA",
+    "make": "Ford",
+    "model": "Focus",
+    "engine": "1.0 EcoBoost",
+    "fuel": "petrol",
+    "year": 2011,
+    "color": "Argintiu",
+    "mileage": [
+     {
+      "date": "2025-11-18",
+      "km": 137691,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-02",
+      "km": 137900,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-08",
+      "km": 138080,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-10",
+      "km": 138118,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-08",
+      "km": 138834,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-09",
+      "km": 138894,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-05",
+      "km": 140294,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-24",
+      "km": 140647,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-04-01",
+      "km": 141023,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-04-09",
+      "km": 141108,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-02",
+      "km": 141707,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-11",
+      "km": 142057,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-16",
+      "km": 142068,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-30",
+      "km": 143960,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-04",
+      "km": 144097,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-24",
+      "km": 144511,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-09-19",
+      "km": 145395,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-14",
+      "km": 145988,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-11-05",
+      "km": 146477,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2027-12-29",
+    "rcaExpiry": "2027-02-17",
+    "serviceIntervalKm": 10000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-11-05",
+    "lastServiceKm": 146477,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "estimate": "Bună ziua, Raluca Florea!\nDeviz pentru Ford Focus B 450 SAM (lucrarea 1005):\n• Geometrie roți — 0.8 h\nTotal: 174,24 lei cu TVA.\nConfirmați să începem lucrarea? Mulțumim!\nService Test",
+   "ready": "Bună ziua, Raluca Florea! Ford Focus (B 450 SAM) este gata de ridicare. Program: 08:00–18:00. Service Test"
+  },
+  {
+   "order": {
+    "id": "0mwh0r76bhe3p81to",
+    "number": 1006,
+    "status": "delivered",
+    "customerId": "0mwh0r76bljzujgf7",
+    "vehicleId": "0mwh0r76biaboiwx8",
+    "appointmentId": null,
+    "staffId": "0mwh0r767bualwip3",
+    "bayId": "0mwh0r7699rzvuzd0",
+    "mileage": 3392,
+    "fuelLevel": 4,
+    "complaint": "Schimb ulei și filtru",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh0r76bfvka1l3m",
+      "kind": "labor",
+      "refId": "0mwh0r769l9tkhh8c",
+      "description": "Schimb ulei și filtru",
+      "qty": 0.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r767bualwip3"
+     },
+     {
+      "id": "0mwh0r76bpbhie7ns",
+      "kind": "part",
+      "refId": "0mwh0r769shkjywi8",
+      "description": "Ulei motor 5W-30 Castrol",
+      "qty": 4.5,
+      "unit": "l",
+      "unitPrice": 5700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 4200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh0r76bmce8ui9j",
+      "kind": "part",
+      "refId": "0mwh0r769j2j5m4i2",
+      "description": "Filtru ulei Mann-Filter",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 3800,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 2800,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh0r76xlfrm2xfp",
+    "dates": {
+     "estimate": "2025-11-19T06:45:00.000Z",
+     "approved": "2025-11-19T06:45:00.000Z",
+     "in_progress": "2025-11-19T09:00:00.000Z",
+     "ready": "2025-11-19T13:00:00.000Z",
+     "delivered": "2025-11-19T15:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-19T06:45:00.000Z",
+    "updatedAt": "2025-11-19T06:45:00.000Z"
+   },
+   "customer": {
+    "id": "0mwh0r76bljzujgf7",
+    "type": "company",
+    "name": "Construct Plus SRL",
+    "contactName": "Cristian Ilie",
+    "phone": "0772 408 789",
+    "email": "office@construct-demo.ro",
+    "address": "Bd. Theodor Pallady 51",
+    "city": "București",
+    "county": "Sector 3",
+    "cui": "RO310013900",
+    "regCom": "J40/6286/2015",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "vehicle": {
+    "id": "0mwh0r76biaboiwx8",
+    "customerId": "0mwh0r76bljzujgf7",
+    "plate": "B616WSD",
+    "vin": "VNKY11XZS12WF8KX3",
+    "make": "Toyota",
+    "model": "Yaris",
+    "engine": "1.5 Hybrid",
+    "fuel": "hybrid",
+    "year": 2023,
+    "color": "Negru",
+    "mileage": [
+     {
+      "date": "2025-11-19",
+      "km": 3392,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-11-27",
+      "km": 3976,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-09",
+      "km": 4920,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-13",
+      "km": 5239,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-02",
+      "km": 6885,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-15",
+      "km": 7923,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-31",
+      "km": 9463,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-17",
+      "km": 13271,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-30",
+      "km": 14232,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-01",
+      "km": 16894,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-04",
+      "km": 19623,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-17",
+      "km": 20689,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-22",
+      "km": 21039,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-08",
+      "km": 22649,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-25",
+      "km": 26435,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-26",
+      "km": 26691,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-09-04",
+      "km": 27401,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-09-28",
+      "km": 29364,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2027-05-22",
+    "rcaExpiry": "2027-08-07",
+    "serviceIntervalKm": 10000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-07-08",
+    "lastServiceKm": 22649,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "estimate": "Bună ziua, Cristian Ilie!\nDeviz pentru Toyota Yaris B 616 WSD (lucrarea 1006):\n• Schimb ulei și filtru — 0.6 h\n• Ulei motor 5W-30 Castrol — 4.5 l\n• Filtru ulei Mann-Filter — 1 buc\nTotal: 487,03 lei cu TVA.\nConfirmați să începem lucrarea? Mulțumim!\nService Test",
+   "ready": "Bună ziua, Cristian Ilie! Toyota Yaris (B 616 WSD) este gata de ridicare. Program: 08:00–18:00. Service Test"
+  },
+  {
+   "order": {
+    "id": "0mwh0r76bws5b67mi",
+    "number": 1007,
+    "status": "delivered",
+    "customerId": "0mwh0r76ajztk8e0o",
+    "vehicleId": "0mwh0r76ax11i4q7s",
+    "appointmentId": null,
+    "staffId": "0mwh0r769p5fja7j9",
+    "bayId": "0mwh0r769iz0b739k",
+    "mileage": 12266,
+    "fuelLevel": 4,
+    "complaint": "Schimb anvelope sezonier (4 buc.)",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh0r76b0cccx5un",
+      "kind": "labor",
+      "refId": "0mwh0r76aqu6zjt67",
+      "description": "Schimb anvelope sezonier (4 buc.)",
+      "qty": 0.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r769p5fja7j9"
+     },
+     {
+      "id": "0mwh0r76bnjbeomb4",
+      "kind": "fee",
+      "refId": null,
+      "description": "Materiale consumabile",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 2500,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh0r76xgdqjhr5y",
+    "dates": {
+     "estimate": "2025-11-19T07:00:00.000Z",
+     "approved": "2025-11-19T07:00:00.000Z",
+     "in_progress": "2025-11-19T09:00:00.000Z",
+     "ready": "2025-11-19T13:00:00.000Z",
+     "delivered": "2025-11-19T16:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-19T07:00:00.000Z",
+    "updatedAt": "2025-11-19T07:00:00.000Z"
+   },
+   "customer": {
+    "id": "0mwh0r76ajztk8e0o",
+    "type": "person",
+    "name": "Bogdan Mocanu",
+    "phone": "0735 940 719",
+    "email": "",
+    "address": "Str. Fizicienilor 26",
+    "city": "București",
+    "county": "Sector 6",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "vehicle": {
+    "id": "0mwh0r76ax11i4q7s",
+    "customerId": "0mwh0r76ajztk8e0o",
+    "plate": "CJ35DLP",
+    "vin": "WDBWPSSH3YL3ALJDF",
+    "make": "Mercedes-Benz",
+    "model": "Sprinter",
+    "engine": "2.1 CDI",
+    "fuel": "diesel",
+    "year": 2024,
+    "color": "Negru",
+    "mileage": [
+     {
+      "date": "2025-11-19",
+      "km": 12266,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-11-21",
+      "km": 12525,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-20",
+      "km": 16608,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-18",
+      "km": 27396,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-08",
+      "km": 35138,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2027-01-03",
+    "rcaExpiry": "2026-12-12",
+    "serviceIntervalKm": 15000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": null,
+    "lastServiceKm": null,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "estimate": "Bună ziua, Bogdan!\nDeviz pentru Mercedes-Benz Sprinter CJ 35 DLP (lucrarea 1007):\n• Schimb anvelope sezonier (4 buc.) — 0.6 h\n• Materiale consumabile — 1 buc\nTotal: 160,93 lei cu TVA.\nConfirmați să începem lucrarea? Mulțumim!\nService Test",
+   "ready": "Bună ziua, Bogdan! Mercedes-Benz Sprinter (CJ 35 DLP) este gata de ridicare. Program: 08:00–18:00. Service Test"
+  },
+  {
+   "order": {
+    "id": "0mwh0r76b2yf3cr8c",
+    "number": 1008,
+    "status": "delivered",
+    "customerId": "0mwh0r76ab2mx1jyu",
+    "vehicleId": "0mwh0r76a0vyh8vac",
+    "appointmentId": null,
+    "staffId": "0mwh0r769et6esrgs",
+    "bayId": "0mwh0r769iz0b739k",
+    "mileage": 15048,
+    "fuelLevel": 2,
+    "complaint": "Înlocuire rulment roată, Diagnoză computerizată",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh0r76b5mgcjb7u",
+      "kind": "labor",
+      "refId": "0mwh0r76awjqdr3sp",
+      "description": "Înlocuire rulment roată",
+      "qty": 1.5,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r769et6esrgs"
+     },
+     {
+      "id": "0mwh0r76bzeiexua6",
+      "kind": "part",
+      "refId": "0mwh0r7698otdvskn",
+      "description": "Kit rulment roată SKF",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 28400,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 21000,
+      "staffId": null
+     },
+     {
+      "id": "0mwh0r76bwcd2u80a",
+      "kind": "labor",
+      "refId": "0mwh0r76a14w1qizp",
+      "description": "Diagnoză computerizată",
+      "qty": 0.5,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh0r769et6esrgs"
+     },
+     {
+      "id": "0mwh0r76b7tcsr84q",
+      "kind": "fee",
+      "refId": null,
+      "description": "Materiale consumabile",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 2500,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh0r76xrgnggr1i",
+    "dates": {
+     "estimate": "2025-11-19T08:30:00.000Z",
+     "approved": "2025-11-19T08:30:00.000Z",
+     "in_progress": "2025-11-19T09:00:00.000Z",
+     "ready": "2025-11-19T13:00:00.000Z",
+     "delivered": "2025-11-19T14:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-19T08:30:00.000Z",
+    "updatedAt": "2025-11-19T08:30:00.000Z"
+   },
+   "customer": {
+    "id": "0mwh0r76ab2mx1jyu",
+    "type": "person",
+    "name": "Lucian Enache",
+    "phone": "0763 206 867",
+    "email": "lucian.57@exemplu.ro",
+    "address": "Aleea Barajul Argeș 121",
+    "city": "București",
+    "county": "Sector 6",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "vehicle": {
+    "id": "0mwh0r76a0vyh8vac",
+    "customerId": "0mwh0r76ab2mx1jyu",
+    "plate": "B538XLP",
+    "vin": "SB105CZ03NABENA85",
+    "make": "Toyota",
+    "model": "Corolla",
+    "engine": "1.8 Hybrid",
+    "fuel": "hybrid",
+    "year": 2023,
+    "color": "Alb",
+    "mileage": [
+     {
+      "date": "2025-11-19",
+      "km": 15048,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-01",
+      "km": 15653,
+      "source": "workOrder"
+     },
+     {
+      "date": "2025-12-24",
+      "km": 17060,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-02-06",
+      "km": 19524,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-02-27",
+      "km": 20717,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-25",
+      "km": 22236,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-04-24",
+      "km": 23944,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-04-30",
+      "km": 24104,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-05",
+      "km": 24451,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-26",
+      "km": 25626,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-12",
+      "km": 26539,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-23",
+      "km": 27228,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-04",
+      "km": 27832,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-05",
+      "km": 29637,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-09-03",
+      "km": 31289,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-09-21",
+      "km": 32543,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-09-30",
+      "km": 32796,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-08",
+      "km": 33300,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2027-01-14",
+    "rcaExpiry": "2027-10-29",
+    "serviceIntervalKm": 15000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-08-05",
+    "lastServiceKm": 29637,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   "estimate": "Bună ziua, Lucian!\nDeviz pentru Toyota Corolla B 538 XLP (lucrarea 1008):\n• Înlocuire rulment roată — 1.5 h\n• Kit rulment roată SKF — 1 buc\n• Diagnoză computerizată — 0.5 h\n• Materiale consumabile — 1 buc\nTotal: 809,49 lei cu TVA.\nConfirmați să începem lucrarea? Mulțumim!\nService Test",
+   "ready": "Bună ziua, Lucian! Toyota Corolla (B 538 XLP) este gata de ridicare. Program: 08:00–18:00. Service Test"
+  }
+ ],
+ "settings": {
+  "currency": "RON",
+  "shop": {
+   "name": "Service Test",
+   "legalName": "",
+   "cui": "",
+   "regCom": "",
+   "address": "",
+   "city": "",
+   "county": "",
+   "phone": "",
+   "email": "",
+   "iban": "",
+   "bank": "",
+   "logo": null
+  },
+  "invoicing": {
+   "series": "GRJ",
+   "startNumber": 1,
+   "vatPayer": true,
+   "vatRate": 21,
+   "dueDays": 14,
+   "notes": ""
+  },
+  "laborRate": 15000,
+  "partsMarkup": 35,
+  "hours": {
+   "open": "08:00",
+   "close": "18:00",
+   "days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "service": {
+   "intervalKm": 15000,
+   "intervalMonths": 12
+  },
+  "calendar": {
+   "view": "day",
+   "colorBy": "status",
+   "badge": "colored",
+   "agendaGroupBy": "date",
+   "confirmDrop": false,
+   "showService": true,
+   "defaultDuration": 60
+  },
+  "appearance": {
+   "theme": "system"
+  },
+  "reviews": {
+   "link": ""
+  }
+ }
+}

@@ -1,36 +1,56 @@
 import SwiftUI
 
-/// Lucrări: every job, newest first, searchable and filterable by status.
-/// Read-only in phase 0; editing arrives in phase 1 (docs/IOS-NATIVE.md).
+/// Lucrări: every job, newest first; search, status filter, swipe to the next step, new job.
 struct WorkOrdersView: View {
     @Environment(AppStore.self) private var store
+    @Environment(UndoCenter.self) private var undo
     @State private var query = ""
     @State private var status: String?
+    @State private var creating = false
+    @State private var path: [String] = []
+    @State private var moved = 0
+    @State private var error: String?
 
     private var rows: [WorkOrderRow.Model] {
-        let customers = Dictionary(uniqueKeysWithValues: store.all(Customer.self).map { ($0.id, $0) })
-        let vehicles = Dictionary(uniqueKeysWithValues: store.all(Vehicle.self).map { ($0.id, $0) })
+        let customers = Dictionary(store.all(Customer.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let vehicles = Dictionary(store.all(Vehicle.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         let q = query.trimmingCharacters(in: .whitespaces).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
+        let vatPayer = store.shop.vatPayer
         return store.all(WorkOrder.self)
             .filter { status == nil || $0.status == status }
-            .map { WorkOrderRow.Model(order: $0, customer: customers[$0.customerId ?? ""], vehicle: vehicles[$0.vehicleId ?? ""]) }
-            .filter { q.isEmpty || $0.searchText.contains(q) }
+            .map { WorkOrderRow.Model(order: $0, customer: customers[$0.customerId ?? ""], vehicle: vehicles[$0.vehicleId ?? ""], vatPayer: vatPayer) }
+            .filter { q.isEmpty || $0.searchText.contains(q) || $0.plateKey.contains(People.normalizePlate(q)) && !People.normalizePlate(q).isEmpty }
             .sorted { $0.order.number > $1.order.number }
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             let rows = rows
             List(rows) { row in
                 NavigationLink(value: row.order.id) {
-                    WorkOrderRow(model: row)
+                    WorkOrderRow(model: row, currency: store.currency)
+                }
+                .swipeActions(edge: .leading) {
+                    if let next = WorkOrderRules.next[row.order.status] {
+                        Button { move(row.order, to: next) } label: {
+                            Label(Labels.workOrderAction(from: row.order.status, to: next), systemImage: Labels.workOrder(next).symbol)
+                        }
+                        .tint(Labels.workOrder(next).color)
+                    }
+                }
+                .contextMenu {
+                    ForEach(WorkOrderRules.transitions[row.order.status] ?? [], id: \.self) { to in
+                        Button(role: to == "cancelled" ? .destructive : nil) { move(row.order, to: to) } label: {
+                            Label(Labels.workOrderAction(from: row.order.status, to: to), systemImage: Labels.workOrder(to).symbol)
+                        }
+                    }
                 }
             }
             .listStyle(.plain)
             .overlay {
                 if rows.isEmpty {
                     if query.isEmpty && status == nil {
-                        ContentUnavailableView("Nicio lucrare", systemImage: "wrench.and.screwdriver", description: Text("Lucrările apar aici după check-in."))
+                        ContentUnavailableView("Nicio lucrare", systemImage: "wrench.and.screwdriver", description: Text("Apasă + ca să deschizi o lucrare."))
                     } else {
                         ContentUnavailableView.search(text: query)
                     }
@@ -55,7 +75,35 @@ struct WorkOrdersView: View {
                         Label("Filtru", systemImage: status == nil ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle.fill")
                     }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { creating = true } label: { Label("Lucrare nouă", systemImage: "plus") }
+                }
             }
+            .sheet(isPresented: $creating) {
+                NewWorkOrderSheet { id in path.append(id) }
+            }
+            .sensoryFeedback(.success, trigger: moved)
+            #if DEBUG
+            // Screenshots: `-GarajOpenWorkOrder <number>` opens that job, `-GarajNewWorkOrder YES` the new-job sheet.
+            .task {
+                let d = UserDefaults.standard
+                if let n = d.string(forKey: "GarajOpenWorkOrder"), let o = store.all(WorkOrder.self).first(where: { "\($0.number)" == n }) { path = [o.id] }
+                if d.bool(forKey: "GarajNewWorkOrder") { creating = true }
+            }
+            #endif
+            .alert("Nu se poate", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
+                Button("OK", role: .cancel) {}
+            } message: { Text(error ?? "") }
+        }
+    }
+
+    private func move(_ order: WorkOrder, to: String) {
+        do {
+            let previous = try store.setWorkOrderStatus(order.id, to: to)
+            moved += 1
+            undo.show("#\(order.number): \(Labels.workOrder(to).label)") { try store.restore(previous) }
+        } catch {
+            self.error = error.localizedDescription
         }
     }
 }
@@ -65,7 +113,10 @@ struct WorkOrderRow: View {
         let order: WorkOrder
         let customer: Customer?
         let vehicle: Vehicle?
+        let vatPayer: Bool
         var id: String { order.id }
+        var gross: Int { Lines.totals(order.lines.filter { !$0.refused }, vatPayer: vatPayer).gross }
+        var plateKey: String { People.normalizePlate(vehicle?.plate ?? "") }
         var searchText: String {
             ["\(order.number)", customer?.name, vehicle?.plate, vehicle?.title, order.complaint]
                 .compactMap { $0 }.joined(separator: " ")
@@ -74,12 +125,13 @@ struct WorkOrderRow: View {
     }
 
     let model: Model
+    let currency: String
 
     var body: some View {
         let style = Labels.workOrder(model.order.status)
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .firstTextBaseline) {
-                Text(model.vehicle?.plate ?? "Fără mașină")
+                Text(model.vehicle.map { People.formatPlate($0.plate) } ?? "Fără mașină")
                     .font(.headline)
                 Spacer()
                 Text(verbatim: "#\(model.order.number)")
@@ -90,51 +142,29 @@ struct WorkOrderRow: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
-            Label(style.label, systemImage: style.symbol)
-                .font(.caption.weight(.medium))
-                .foregroundStyle(style.color)
+            HStack(alignment: .firstTextBaseline) {
+                Label(style.label, systemImage: style.symbol)
+                    .labelStyle(StatusLabelStyle())
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(style.color)
+                Spacer()
+                if !model.order.lines.isEmpty {
+                    Text(Money.format(model.gross, currency: currency))
+                        .font(.subheadline.monospacedDigit())
+                }
+            }
         }
         .padding(.vertical, 2)
+        .accessibilityElement(children: .combine)
     }
 }
 
-/// Phase 0: what the job is, read-only.
-struct WorkOrderDetailView: View {
-    @Environment(AppStore.self) private var store
-    let id: String
-
-    var body: some View {
-        if let order = store.get(WorkOrder.self, id) {
-            let vehicle = store.get(Vehicle.self, order.vehicleId)
-            let customer = store.get(Customer.self, order.customerId)
-            let style = Labels.workOrder(order.status)
-            List {
-                Section {
-                    LabeledContent("Status") { Label(style.label, systemImage: style.symbol).foregroundStyle(style.color) }
-                    if let vehicle { LabeledContent("Mașină", value: "\(vehicle.plate) · \(vehicle.title)") }
-                    if let customer { LabeledContent("Client", value: customer.name) }
-                    if let km = order.mileage { LabeledContent("Kilometraj", value: "\(km.formatted()) km") }
-                }
-                if !order.complaint.isEmpty {
-                    Section("Ce reclamă clientul") { Text(order.complaint) }
-                }
-                Section("Linii") {
-                    ForEach(order.lines) { line in
-                        HStack(alignment: .firstTextBaseline) {
-                            VStack(alignment: .leading) {
-                                Text(line.description)
-                                Text("\(Money.formatQuantity(line.qty)) \(line.unit) × \(Money.format(line.unitPrice, currency: store.currency))")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle(Text(verbatim: "Lucrarea #\(order.number)"))
-            .navigationBarTitleDisplayMode(.inline)
-        } else {
-            ContentUnavailableView("Lucrarea nu mai există", systemImage: "wrench.and.screwdriver")
+/// Icon and text close together, for status labels in rows.
+struct StatusLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 4) {
+            configuration.icon
+            configuration.title
         }
     }
 }

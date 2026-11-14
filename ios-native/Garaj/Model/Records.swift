@@ -81,6 +81,7 @@ struct Staff: Record {
 // MARK: - Lines, jobs, invoices
 
 /// One line of a job or invoice (src/domain/lines.js). Money in bani.
+/// Fields this model doesn't know (e.g. `need`, `refused` from docs/LUCRARE.md) are kept in `extra`.
 struct Line: Codable, Hashable, Identifiable, Sendable {
     var id: String
     var kind: String // labor · part · fee
@@ -93,23 +94,57 @@ struct Line: Codable, Hashable, Identifiable, Sendable {
     var vatRate: Double
     var cost: Int
     var staffId: String?
+    var extra: JSONObject = [:]
 
-    /// Writes `null` for empty optionals, as the web does (Swift would leave the key out).
-    func encode(to encoder: Encoder) throws {
-        enum Key: String, CodingKey { case id, kind, refId, description, qty, unit, unitPrice, discountPct, vatRate, cost, staffId }
-        var c = encoder.container(keyedBy: Key.self)
-        try c.encode(id, forKey: .id)
-        try c.encode(kind, forKey: .kind)
-        try c.encode(refId, forKey: .refId)
-        try c.encode(description, forKey: .description)
-        try c.encode(qty, forKey: .qty)
-        try c.encode(unit, forKey: .unit)
-        try c.encode(unitPrice, forKey: .unitPrice)
-        try c.encode(discountPct, forKey: .discountPct)
-        try c.encode(vatRate, forKey: .vatRate)
-        try c.encode(cost, forKey: .cost)
-        try c.encode(staffId, forKey: .staffId)
+    private enum Key: String, CodingKey, CaseIterable {
+        case id, kind, refId, description, qty, unit, unitPrice, discountPct, vatRate, cost, staffId
     }
+
+    init(id: String, kind: String, refId: String? = nil, description: String, qty: Double, unit: String,
+         unitPrice: Int, discountPct: Double = 0, vatRate: Double, cost: Int = 0, staffId: String? = nil) {
+        self.id = id; self.kind = kind; self.refId = refId; self.description = description; self.qty = qty
+        self.unit = unit; self.unitPrice = unitPrice; self.discountPct = discountPct; self.vatRate = vatRate
+        self.cost = cost; self.staffId = staffId
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: Key.self)
+        id = try c.decode(String.self, forKey: .id)
+        kind = try c.decodeIfPresent(String.self, forKey: .kind) ?? "labor"
+        refId = try c.decodeIfPresent(String.self, forKey: .refId)
+        description = try c.decodeIfPresent(String.self, forKey: .description) ?? ""
+        qty = try c.decodeIfPresent(Double.self, forKey: .qty) ?? 0
+        unit = try c.decodeIfPresent(String.self, forKey: .unit) ?? ""
+        unitPrice = Int(try c.decodeIfPresent(Double.self, forKey: .unitPrice) ?? 0)
+        discountPct = try c.decodeIfPresent(Double.self, forKey: .discountPct) ?? 0
+        vatRate = try c.decodeIfPresent(Double.self, forKey: .vatRate) ?? 0
+        cost = Int(try c.decodeIfPresent(Double.self, forKey: .cost) ?? 0)
+        staffId = try c.decodeIfPresent(String.self, forKey: .staffId)
+        let all = try decoder.singleValueContainer().decode(JSONObject.self)
+        let known = Set(Key.allCases.map(\.rawValue))
+        extra = all.filter { !known.contains($0.key) }
+    }
+
+    /// Writes `null` for empty optionals, as the web does, and the unknown fields back.
+    func encode(to encoder: Encoder) throws {
+        var all = extra
+        all["id"] = .string(id)
+        all["kind"] = .string(kind)
+        all["refId"] = refId.map(JSONValue.string) ?? .null
+        all["description"] = .string(description)
+        all["qty"] = .number(qty)
+        all["unit"] = .string(unit)
+        all["unitPrice"] = .number(Double(unitPrice))
+        all["discountPct"] = .number(discountPct)
+        all["vatRate"] = .number(vatRate)
+        all["cost"] = .number(Double(cost))
+        all["staffId"] = staffId.map(JSONValue.string) ?? .null
+        var c = encoder.singleValueContainer()
+        try c.encode(all)
+    }
+
+    /// The client said no to this line at approval (docs/LUCRARE.md); it is never billed.
+    var refused: Bool { extra["refused"] == .bool(true) }
 }
 
 struct WorkOrder: Record {
@@ -119,6 +154,7 @@ struct WorkOrder: Record {
         "appointmentId": .null, "staffId": .null, "bayId": .null, "mileage": .null, "fuelLevel": .null,
         "complaint": .string(""), "diagnosis": .string(""), "lines": .array([]), "notes": .string(""),
         "invoiceId": .null, "createdAt": .string(""), "updatedAt": .string(""),
+        "dates": .object([:]), "activity": .array([]), "inspection": .array([]),
     ]
     var id: String
     var number: Int
@@ -137,6 +173,9 @@ struct WorkOrder: Record {
     var invoiceId: String?
     var createdAt: String
     var updatedAt: String
+    var dates: JSONObject
+    var activity: [JSONValue]
+    var inspection: [JSONValue]
 }
 
 struct Invoice: Record {
@@ -160,4 +199,54 @@ struct Invoice: Record {
     var createdAt: String
     var stornoId: String?
     var stornoOf: String?
+}
+
+// MARK: - Catalog and bookings
+
+struct Service: Record {
+    static let collection = Collection.services
+    static let defaults: JSONObject = ["name": .string(""), "category": .string(""), "hours": .number(1), "price": .number(0), "cost": .number(0), "parts": .array([])]
+    var id: String
+    var name: String
+    var category: String
+    var hours: Double
+    var price: Int
+    var cost: Int
+    var parts: [JSONValue]
+}
+
+struct Part: Record {
+    static let collection = Collection.parts
+    static let defaults: JSONObject = [
+        "code": .string(""), "name": .string(""), "brand": .string(""), "unit": .string("buc"),
+        "cost": .number(0), "price": .number(0), "stock": .number(0), "minStock": .number(0), "location": .string(""),
+    ]
+    var id: String
+    var code: String
+    var name: String
+    var brand: String
+    var unit: String
+    var cost: Int
+    var price: Int
+    var stock: Double
+    var minStock: Double
+    var location: String
+}
+
+struct Appointment: Record {
+    static let collection = Collection.appointments
+    static let defaults: JSONObject = [
+        "start": .string(""), "end": .string(""), "customerId": .null, "vehicleId": .null, "title": .string(""),
+        "status": .string("scheduled"), "workOrderId": .null, "staffId": .null, "activity": .array([]),
+    ]
+    var id: String
+    var start: String
+    var end: String
+    var customerId: String?
+    var vehicleId: String?
+    var title: String
+    var status: String
+    var workOrderId: String?
+    var staffId: String?
+    var activity: [JSONValue]
 }
