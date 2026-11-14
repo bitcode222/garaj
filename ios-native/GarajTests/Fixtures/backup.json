@@ -1,0 +1,1761 @@
+{
+ "app": "garaj",
+ "format": 1,
+ "exportedAt": "2026-11-15T10:00:00.000Z",
+ "collections": {
+  "customers": [
+   {
+    "id": "0mwh06iuqgs7527sn",
+    "type": "person",
+    "name": "Andreea Mocanu",
+    "phone": "0788 291 972",
+    "email": "",
+    "address": "Bd. Unirii 43",
+    "city": "București",
+    "county": "Sector 5",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuqfi86c4g9",
+    "type": "person",
+    "name": "Cătălin Florea",
+    "phone": "0754 301 783",
+    "email": "",
+    "address": "Str. Baba Novac 19",
+    "city": "București",
+    "county": "Sector 3",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuq5pwgxbis",
+    "type": "person",
+    "name": "Andreea Toma",
+    "phone": "0755 209 921",
+    "email": "andreea.52@exemplu.ro",
+    "address": "Str. Baba Novac 78",
+    "city": "București",
+    "county": "Sector 1",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuqdvsh7b1k",
+    "type": "person",
+    "name": "Maria Toma",
+    "phone": "0738 977 282",
+    "email": "maria.34@exemplu.ro",
+    "address": "Bd. Unirii 14",
+    "city": "București",
+    "county": "Sector 5",
+    "cui": "",
+    "regCom": "",
+    "notes": "",
+    "marketingConsent": true,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   }
+  ],
+  "vehicles": [
+   {
+    "id": "0mwh06iuq7gqx3dur",
+    "customerId": "0mwh06iuqgs7527sn",
+    "plate": "B626KWJ",
+    "vin": "WDD7JEX2UJR06SSME",
+    "make": "Mercedes-Benz",
+    "model": "C 220",
+    "engine": "2.2 CDI",
+    "fuel": "diesel",
+    "year": 2019,
+    "color": "Roșu",
+    "mileage": [
+     {
+      "date": "2026-01-03",
+      "km": 74808,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-07",
+      "km": 74969,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-29",
+      "km": 76184,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-29",
+      "km": 75998,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-02-23",
+      "km": 77337,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-10",
+      "km": 78157,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-13",
+      "km": 78400,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-20",
+      "km": 78737,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-04-11",
+      "km": 79950,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-25",
+      "km": 83679,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-27",
+      "km": 83684,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-15",
+      "km": 84735,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-18",
+      "km": 84970,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-05",
+      "km": 85832,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2026-11-03",
+    "rcaExpiry": "2027-08-08",
+    "serviceIntervalKm": 15000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-06-27",
+    "lastServiceKm": 83684,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuqr8cm41og",
+    "customerId": "0mwh06iuqfi86c4g9",
+    "plate": "B67ZHP",
+    "vin": "TMB5LC63JLS88PLBT",
+    "make": "Skoda",
+    "model": "Octavia",
+    "engine": "1.6 TDI",
+    "fuel": "diesel",
+    "year": 2020,
+    "color": "Gri",
+    "mileage": [
+     {
+      "date": "2026-01-07",
+      "km": 77233,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-01-28",
+      "km": 77909,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-04-18",
+      "km": 81068,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-14",
+      "km": 81894,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-19",
+      "km": 82085,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-10",
+      "km": 82934,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-19",
+      "km": 85751,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-09-07",
+      "km": 86411,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-28",
+      "km": 88233,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2026-11-18",
+    "rcaExpiry": "2027-05-07",
+    "serviceIntervalKm": 20000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-09-07",
+    "lastServiceKm": 86411,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuq5ctar58z",
+    "customerId": "0mwh06iuq5pwgxbis",
+    "plate": "AG29PYG",
+    "vin": "TMBZK9CYWANGUREN2",
+    "make": "Skoda",
+    "model": "Octavia",
+    "engine": "1.6 TDI",
+    "fuel": "diesel",
+    "year": 2024,
+    "color": "Roșu",
+    "mileage": [
+     {
+      "date": "2025-12-11",
+      "km": 4205,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-02-25",
+      "km": 7675,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-19",
+      "km": 8755,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-04-27",
+      "km": 10736,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-15",
+      "km": 12845,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-27",
+      "km": 15015,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-05",
+      "km": 18315,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-27",
+      "km": 19278,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-11-15",
+      "km": 20127,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2026-11-24",
+    "rcaExpiry": "2027-10-05",
+    "serviceIntervalKm": 10000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-03-19",
+    "lastServiceKm": 8755,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuqwc24eo9f",
+    "customerId": "0mwh06iuqdvsh7b1k",
+    "plate": "AG47ULR",
+    "vin": "VF3X65XFNYE63Z39Z",
+    "make": "Peugeot",
+    "model": "308",
+    "engine": "1.5 BlueHDi",
+    "fuel": "diesel",
+    "year": 2016,
+    "color": "Negru",
+    "mileage": [
+     {
+      "date": "2025-12-31",
+      "km": 168812,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-03-14",
+      "km": 171410,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-05-04",
+      "km": 173240,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-06-06",
+      "km": 174112,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-07-30",
+      "km": 176190,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-08-06",
+      "km": 176309,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-13",
+      "km": 178846,
+      "source": "workOrder"
+     },
+     {
+      "date": "2026-10-29",
+      "km": 179194,
+      "source": "workOrder"
+     }
+    ],
+    "itpExpiry": "2026-12-03",
+    "rcaExpiry": "2026-12-13",
+    "serviceIntervalKm": 15000,
+    "serviceIntervalMonths": 12,
+    "lastServiceDate": "2026-08-06",
+    "lastServiceKm": 176309,
+    "notes": "",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   }
+  ],
+  "staff": [
+   {
+    "id": "0mwh06iunb33x20tz",
+    "name": "Andrei Popescu",
+    "role": "mechanic",
+    "color": "blue",
+    "phone": "",
+    "active": true,
+    "order": 0,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iupa20avzzd",
+    "name": "Mihai Ionescu",
+    "role": "mechanic",
+    "color": "green",
+    "phone": "",
+    "active": true,
+    "order": 1,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iupsdqlhd0q",
+    "name": "Ionuț Dumitru",
+    "role": "electrician",
+    "color": "purple",
+    "phone": "",
+    "active": true,
+    "order": 2,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iup801yn46z",
+    "name": "Cristian Stan",
+    "role": "mechanic",
+    "color": "orange",
+    "phone": "",
+    "active": true,
+    "order": 3,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   }
+  ],
+  "bays": [
+   {
+    "id": "0mwh06iup53f67xje",
+    "name": "Elevator 1",
+    "kind": "lift",
+    "active": true,
+    "order": 0,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuprxopso3d",
+    "name": "Elevator 2",
+    "kind": "lift",
+    "active": true,
+    "order": 1,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iupunf5ovdu",
+    "name": "Elevator 3",
+    "kind": "lift",
+    "active": true,
+    "order": 2,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iupr3twcd8i",
+    "name": "Geometrie",
+    "kind": "alignment",
+    "active": true,
+    "order": 3,
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   }
+  ],
+  "services": [
+   {
+    "id": "0mwh06iuqzw2fk1mq",
+    "name": "Schimb ulei și filtru",
+    "category": "maintenance",
+    "hours": 0.6,
+    "price": 10800,
+    "parts": [
+     {
+      "partId": "0mwh06iup8g8h5byw",
+      "qty": 4.5
+     },
+     {
+      "partId": "0mwh06iupgr7twpnx",
+      "qty": 1
+     }
+    ],
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuq2nb3ukwq",
+    "name": "Revizie completă (ulei și filtre)",
+    "category": "maintenance",
+    "hours": 1.5,
+    "price": 27000,
+    "parts": [
+     {
+      "partId": "0mwh06iup8g8h5byw",
+      "qty": 4.5
+     },
+     {
+      "partId": "0mwh06iupgr7twpnx",
+      "qty": 1
+     },
+     {
+      "partId": "0mwh06iup1mds0tvp",
+      "qty": 1
+     },
+     {
+      "partId": "0mwh06iup9hbjl8v4",
+      "qty": 1
+     }
+    ],
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuq9dky0kf9",
+    "name": "Înlocuire plăcuțe frână față",
+    "category": "brakes",
+    "hours": 1,
+    "price": 18000,
+    "parts": [
+     {
+      "partId": "0mwh06iupm7u7s74s",
+      "qty": 1
+     }
+    ],
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuqsq9imxe4",
+    "name": "Înlocuire plăcuțe frână spate",
+    "category": "brakes",
+    "hours": 1,
+    "price": 18000,
+    "parts": [
+     {
+      "partId": "0mwh06iupml0edgjf",
+      "qty": 1
+     }
+    ],
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   }
+  ],
+  "parts": [
+   {
+    "id": "0mwh06iup8g8h5byw",
+    "code": "CAS-EDGE-5W30",
+    "name": "Ulei motor 5W-30",
+    "brand": "Castrol",
+    "unit": "l",
+    "cost": 4200,
+    "price": 5700,
+    "stock": 38,
+    "minStock": 20,
+    "location": "A1",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iuplpkh95q0",
+    "code": "MOB-1-5W40",
+    "name": "Ulei motor 5W-40",
+    "brand": "Mobil",
+    "unit": "l",
+    "cost": 3800,
+    "price": 5100,
+    "stock": 24,
+    "minStock": 15,
+    "location": "A1",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iupgr7twpnx",
+    "code": "MANN-W712",
+    "name": "Filtru ulei",
+    "brand": "Mann-Filter",
+    "unit": "buc",
+    "cost": 2800,
+    "price": 3800,
+    "stock": 14,
+    "minStock": 6,
+    "location": "A2",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   },
+   {
+    "id": "0mwh06iup1mds0tvp",
+    "code": "MANN-C2774",
+    "name": "Filtru aer",
+    "brand": "Mann-Filter",
+    "unit": "buc",
+    "cost": 4500,
+    "price": 6100,
+    "stock": 9,
+    "minStock": 4,
+    "location": "A2",
+    "createdAt": "2025-11-15T07:00:00.000Z"
+   }
+  ],
+  "appointments": [
+   {
+    "id": "0mwh06ivaol33g3cv",
+    "start": "2026-10-16T05:30:00.000Z",
+    "end": "2026-10-16T07:30:00.000Z",
+    "customerId": "0mwh06iur74u0xhk7",
+    "vehicleId": "0mwh06iurqos19bch",
+    "title": "Înlocuire amortizoare față",
+    "serviceIds": [
+     "0mwh06iuqslepg859"
+    ],
+    "notes": "",
+    "staffId": "0mwh06iupsdqlhd0q",
+    "bayId": "0mwh06iupr3twcd8i",
+    "status": "done",
+    "workOrderId": "0mwh06ivarlsji2h8",
+    "createdAt": "2026-10-10T09:00:00.000Z",
+    "number": 1
+   },
+   {
+    "id": "0mwh06ivatbdblbts",
+    "start": "2026-10-16T05:00:00.000Z",
+    "end": "2026-10-16T07:00:00.000Z",
+    "customerId": "0mwh06iurv3eyoxlq",
+    "vehicleId": "0mwh06iurbjcv5kim",
+    "title": "Diagnoză computerizată, Revizie completă (ulei și filtre)",
+    "serviceIds": [
+     "0mwh06iuq0ag9d7il",
+     "0mwh06iuq2nb3ukwq"
+    ],
+    "notes": "",
+    "staffId": "0mwh06iupsdqlhd0q",
+    "bayId": "0mwh06iuprxopso3d",
+    "status": "done",
+    "workOrderId": "0mwh06ivanpl2krew",
+    "createdAt": "2026-10-10T09:00:00.000Z",
+    "number": 2
+   },
+   {
+    "id": "0mwh06ivatjuxln28",
+    "start": "2026-10-19T07:00:00.000Z",
+    "end": "2026-10-19T10:00:00.000Z",
+    "customerId": "0mwh06iurgedjtd7c",
+    "vehicleId": "0mwh06iurrh8gjfca",
+    "title": "Revizie completă (ulei și filtre), Înlocuire biellete antiruliu",
+    "serviceIds": [
+     "0mwh06iuq2nb3ukwq",
+     "0mwh06iuqfrvkdzxi"
+    ],
+    "notes": "",
+    "staffId": "0mwh06iunb33x20tz",
+    "bayId": "0mwh06iuprxopso3d",
+    "status": "done",
+    "workOrderId": "0mwh06ivaet3ro0qe",
+    "createdAt": "2026-10-12T09:00:00.000Z",
+    "number": 3
+   },
+   {
+    "id": "0mwh06ivatvy5pbf3",
+    "start": "2026-10-17T07:30:00.000Z",
+    "end": "2026-10-17T09:30:00.000Z",
+    "customerId": "0mwh06iuqo0qk65ui",
+    "vehicleId": "0mwh06iuqxptruvf9",
+    "title": "Înlocuire amortizoare față",
+    "serviceIds": [
+     "0mwh06iuqslepg859"
+    ],
+    "notes": "",
+    "staffId": "0mwh06iupa20avzzd",
+    "bayId": "0mwh06iupunf5ovdu",
+    "status": "done",
+    "workOrderId": "0mwh06ivatdsr5qcj",
+    "createdAt": "2026-10-13T09:00:00.000Z",
+    "number": 4
+   }
+  ],
+  "workOrders": [
+   {
+    "id": "0mwh06iur2f4ng2p6",
+    "number": 1001,
+    "status": "delivered",
+    "customerId": "0mwh06iuroyjc0oj8",
+    "vehicleId": "0mwh06iurhm47u752",
+    "appointmentId": null,
+    "staffId": "0mwh06iupa20avzzd",
+    "bayId": "0mwh06iuprxopso3d",
+    "mileage": 99838,
+    "fuelLevel": 4,
+    "complaint": "Schimb ulei și filtru, Înlocuire biellete antiruliu",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh06iur9ubq484g",
+      "kind": "labor",
+      "refId": "0mwh06iuqzw2fk1mq",
+      "description": "Schimb ulei și filtru",
+      "qty": 0.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iupa20avzzd"
+     },
+     {
+      "id": "0mwh06iurf4fqbdk3",
+      "kind": "part",
+      "refId": "0mwh06iup8g8h5byw",
+      "description": "Ulei motor 5W-30 Castrol",
+      "qty": 4.5,
+      "unit": "l",
+      "unitPrice": 5700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 4200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06iuroexvmlaf",
+      "kind": "part",
+      "refId": "0mwh06iupgr7twpnx",
+      "description": "Filtru ulei Mann-Filter",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 3800,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 2800,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06iurakshotcc",
+      "kind": "labor",
+      "refId": "0mwh06iuqfrvkdzxi",
+      "description": "Înlocuire biellete antiruliu",
+      "qty": 0.8,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iupa20avzzd"
+     },
+     {
+      "id": "0mwh06iurd6xfdq1p",
+      "kind": "part",
+      "refId": "0mwh06iuq897h2j26",
+      "description": "Bieletă antiruliu Meyle",
+      "qty": 2,
+      "unit": "buc",
+      "unitPrice": 8400,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 6200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06iurgjnocpwp",
+      "kind": "fee",
+      "refId": null,
+      "description": "Materiale consumabile",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 2500,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh06ivcbq1hvr77",
+    "dates": {
+     "estimate": "2025-11-15T08:30:00.000Z",
+     "approved": "2025-11-15T08:30:00.000Z",
+     "in_progress": "2025-11-15T09:00:00.000Z",
+     "ready": "2025-11-15T13:00:00.000Z",
+     "delivered": "2025-11-15T15:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-15T08:30:00.000Z",
+    "updatedAt": "2025-11-15T08:30:00.000Z"
+   },
+   {
+    "id": "0mwh06iur5mzs3aek",
+    "number": 1002,
+    "status": "delivered",
+    "customerId": "0mwh06iur1klsntqo",
+    "vehicleId": "0mwh06iurrjynw60c",
+    "appointmentId": null,
+    "staffId": "0mwh06iunb33x20tz",
+    "bayId": "0mwh06iupr3twcd8i",
+    "mileage": 179096,
+    "fuelLevel": 4,
+    "complaint": "Schimb ulei și filtru",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh06iur42932k4g",
+      "kind": "labor",
+      "refId": "0mwh06iuqzw2fk1mq",
+      "description": "Schimb ulei și filtru",
+      "qty": 0.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iunb33x20tz"
+     },
+     {
+      "id": "0mwh06iurawr95e5i",
+      "kind": "part",
+      "refId": "0mwh06iup8g8h5byw",
+      "description": "Ulei motor 5W-30 Castrol",
+      "qty": 4.5,
+      "unit": "l",
+      "unitPrice": 5700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 4200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06iurom92akxz",
+      "kind": "part",
+      "refId": "0mwh06iupgr7twpnx",
+      "description": "Filtru ulei Mann-Filter",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 3800,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 2800,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06iurdbqm00kv",
+      "kind": "fee",
+      "refId": null,
+      "description": "Materiale consumabile",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 2500,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh06ivdgxshlx33",
+    "dates": {
+     "estimate": "2025-11-17T06:45:00.000Z",
+     "approved": "2025-11-17T06:45:00.000Z",
+     "in_progress": "2025-11-17T09:00:00.000Z",
+     "ready": "2025-11-17T13:00:00.000Z",
+     "delivered": "2025-11-17T15:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-17T06:45:00.000Z",
+    "updatedAt": "2025-11-17T06:45:00.000Z"
+   },
+   {
+    "id": "0mwh06iur3yyrfmhz",
+    "number": 1003,
+    "status": "delivered",
+    "customerId": "0mwh06iuq9i7q497h",
+    "vehicleId": "0mwh06iurca1pk365",
+    "appointmentId": null,
+    "staffId": "0mwh06iunb33x20tz",
+    "bayId": "0mwh06iupunf5ovdu",
+    "mileage": 105400,
+    "fuelLevel": 2,
+    "complaint": "Înlocuire plăcuțe frână față",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh06iuri988xd0c",
+      "kind": "labor",
+      "refId": "0mwh06iuq9dky0kf9",
+      "description": "Înlocuire plăcuțe frână față",
+      "qty": 1,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iunb33x20tz"
+     },
+     {
+      "id": "0mwh06iurrvpit17q",
+      "kind": "part",
+      "refId": "0mwh06iupm7u7s74s",
+      "description": "Plăcuțe frână față ATE",
+      "qty": 1,
+      "unit": "set",
+      "unitPrice": 22300,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 16500,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh06ivd73pedw80",
+    "dates": {
+     "estimate": "2025-11-17T09:15:00.000Z",
+     "approved": "2025-11-17T09:15:00.000Z",
+     "in_progress": "2025-11-17T09:00:00.000Z",
+     "ready": "2025-11-17T13:00:00.000Z",
+     "delivered": "2025-11-17T14:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-17T09:15:00.000Z",
+    "updatedAt": "2025-11-17T09:15:00.000Z"
+   },
+   {
+    "id": "0mwh06iurjx6bhrzx",
+    "number": 1004,
+    "status": "delivered",
+    "customerId": "0mwh06iuqa81r8ic0",
+    "vehicleId": "0mwh06iuqyzuklkje",
+    "appointmentId": null,
+    "staffId": "0mwh06iupsdqlhd0q",
+    "bayId": "0mwh06iupr3twcd8i",
+    "mileage": 221987,
+    "fuelLevel": 4,
+    "complaint": "Înlocuire discuri și plăcuțe față",
+    "diagnosis": "",
+    "lines": [
+     {
+      "id": "0mwh06iurv9rg2kbc",
+      "kind": "labor",
+      "refId": "0mwh06iuqtg0gt4k8",
+      "description": "Înlocuire discuri și plăcuțe față",
+      "qty": 1.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iupsdqlhd0q"
+     },
+     {
+      "id": "0mwh06iur0z4u1uce",
+      "kind": "part",
+      "refId": "0mwh06iupo2h9bi8i",
+      "description": "Discuri frână față Brembo",
+      "qty": 1,
+      "unit": "set",
+      "unitPrice": 52700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 39000,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06iuruzxd25su",
+      "kind": "part",
+      "refId": "0mwh06iupm7u7s74s",
+      "description": "Plăcuțe frână față ATE",
+      "qty": 1,
+      "unit": "set",
+      "unitPrice": 22300,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 16500,
+      "staffId": null
+     }
+    ],
+    "inspection": [
+     {
+      "key": "brakes",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "tires",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "lights",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "fluids",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "wipers",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "battery",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "suspension",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "exhaust",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "belts",
+      "status": null,
+      "note": ""
+     },
+     {
+      "key": "filters",
+      "status": null,
+      "note": ""
+     }
+    ],
+    "notes": "",
+    "invoiceId": "0mwh06ivd99dfzd1s",
+    "dates": {
+     "estimate": "2025-11-18T06:15:00.000Z",
+     "approved": "2025-11-18T06:15:00.000Z",
+     "in_progress": "2025-11-18T09:00:00.000Z",
+     "ready": "2025-11-18T13:00:00.000Z",
+     "delivered": "2025-11-18T15:00:00.000Z"
+    },
+    "activity": [],
+    "createdAt": "2025-11-18T06:15:00.000Z",
+    "updatedAt": "2025-11-18T06:15:00.000Z"
+   }
+  ],
+  "invoices": [
+   {
+    "id": "0mwh06ivcbq1hvr77",
+    "status": "issued",
+    "series": "GRJ",
+    "number": 1,
+    "issueDate": "2025-11-15",
+    "dueDate": "2025-12-15",
+    "customerId": "0mwh06iuroyjc0oj8",
+    "vehicleId": "0mwh06iurhm47u752",
+    "workOrderId": "0mwh06iur2f4ng2p6",
+    "mileage": 99838,
+    "lines": [
+     {
+      "id": "0mwh06ivcvgcbwajw",
+      "kind": "labor",
+      "refId": "0mwh06iuqzw2fk1mq",
+      "description": "Schimb ulei și filtru",
+      "qty": 0.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iupa20avzzd"
+     },
+     {
+      "id": "0mwh06ivcjowo5d8p",
+      "kind": "part",
+      "refId": "0mwh06iup8g8h5byw",
+      "description": "Ulei motor 5W-30 Castrol",
+      "qty": 4.5,
+      "unit": "l",
+      "unitPrice": 5700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 4200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06ivchqv7rvqh",
+      "kind": "part",
+      "refId": "0mwh06iupgr7twpnx",
+      "description": "Filtru ulei Mann-Filter",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 3800,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 2800,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06ivcu1dsnfua",
+      "kind": "labor",
+      "refId": "0mwh06iuqfrvkdzxi",
+      "description": "Înlocuire biellete antiruliu",
+      "qty": 0.8,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iupa20avzzd"
+     },
+     {
+      "id": "0mwh06ivc7trqi9t2",
+      "kind": "part",
+      "refId": "0mwh06iuq897h2j26",
+      "description": "Bieletă antiruliu Meyle",
+      "qty": 2,
+      "unit": "buc",
+      "unitPrice": 8400,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 6200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06ivctppie0ds",
+      "kind": "fee",
+      "refId": null,
+      "description": "Materiale consumabile",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 2500,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": null
+     }
+    ],
+    "notes": "",
+    "activity": [
+     {
+      "at": "2025-11-15T14:30:00.000Z",
+      "type": "issued"
+     }
+    ],
+    "createdAt": "2025-11-15T14:00:00.000Z",
+    "totals": {
+     "net": 73950,
+     "vat": 15530,
+     "gross": 89480,
+     "byRate": [
+      {
+       "rate": 21,
+       "taxable": 73950,
+       "vat": 15530
+      }
+     ],
+     "labor": 25200,
+     "parts": 46250,
+     "fees": 2500,
+     "cost": 34100,
+     "partsMargin": 12150,
+     "laborCost": 0,
+     "laborMargin": 25200,
+     "hours": 1.4
+    },
+    "snapshot": {
+     "seller": {
+      "name": "Garaj Auto Pro SRL",
+      "brand": "Garaj Auto Pro",
+      "cui": "RO12345674",
+      "regCom": "J40/1234/2019",
+      "address": "Str. Mecanicilor 12, București, Sector 3",
+      "phone": "0722 555 010",
+      "email": "programari@garaj-demo.ro",
+      "iban": "RO49AAAA1B31007593840000",
+      "bank": "Banca Exemplu",
+      "logo": null,
+      "vatPayer": true
+     },
+     "buyer": {
+      "type": "company",
+      "name": "Construct Plus SRL",
+      "cui": "RO310013900",
+      "regCom": "J40/6286/2015",
+      "address": "Bd. Theodor Pallady 51, București, Sector 3",
+      "phone": "0772 408 789",
+      "email": "office@construct-demo.ro"
+     },
+     "vehicle": {
+      "plate": "B501RGB",
+      "make": "Dacia",
+      "model": "Sandero",
+      "vin": "UU1G0A5WAEVEYD09Y",
+      "mileage": 99838
+     }
+    },
+    "issuedAt": "2025-11-15T14:30:00.000Z",
+    "updatedAt": "2025-11-15T14:30:00.000Z"
+   },
+   {
+    "id": "0mwh06ivdgxshlx33",
+    "status": "issued",
+    "series": "GRJ",
+    "number": 2,
+    "issueDate": "2025-11-17",
+    "dueDate": "2025-12-17",
+    "customerId": "0mwh06iur1klsntqo",
+    "vehicleId": "0mwh06iurrjynw60c",
+    "workOrderId": "0mwh06iur5mzs3aek",
+    "mileage": 179096,
+    "lines": [
+     {
+      "id": "0mwh06ivdmji4e786",
+      "kind": "labor",
+      "refId": "0mwh06iuqzw2fk1mq",
+      "description": "Schimb ulei și filtru",
+      "qty": 0.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iunb33x20tz"
+     },
+     {
+      "id": "0mwh06ivd165ufgrm",
+      "kind": "part",
+      "refId": "0mwh06iup8g8h5byw",
+      "description": "Ulei motor 5W-30 Castrol",
+      "qty": 4.5,
+      "unit": "l",
+      "unitPrice": 5700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 4200,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06ivd5llg55ai",
+      "kind": "part",
+      "refId": "0mwh06iupgr7twpnx",
+      "description": "Filtru ulei Mann-Filter",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 3800,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 2800,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06ivdxjmchrvy",
+      "kind": "fee",
+      "refId": null,
+      "description": "Materiale consumabile",
+      "qty": 1,
+      "unit": "buc",
+      "unitPrice": 2500,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": null
+     }
+    ],
+    "notes": "",
+    "activity": [
+     {
+      "at": "2025-11-17T14:30:00.000Z",
+      "type": "issued"
+     }
+    ],
+    "createdAt": "2025-11-17T14:00:00.000Z",
+    "totals": {
+     "net": 42750,
+     "vat": 8978,
+     "gross": 51728,
+     "byRate": [
+      {
+       "rate": 21,
+       "taxable": 42750,
+       "vat": 8978
+      }
+     ],
+     "labor": 10800,
+     "parts": 29450,
+     "fees": 2500,
+     "cost": 21700,
+     "partsMargin": 7750,
+     "laborCost": 0,
+     "laborMargin": 10800,
+     "hours": 0.6
+    },
+    "snapshot": {
+     "seller": {
+      "name": "Garaj Auto Pro SRL",
+      "brand": "Garaj Auto Pro",
+      "cui": "RO12345674",
+      "regCom": "J40/1234/2019",
+      "address": "Str. Mecanicilor 12, București, Sector 3",
+      "phone": "0722 555 010",
+      "email": "programari@garaj-demo.ro",
+      "iban": "RO49AAAA1B31007593840000",
+      "bank": "Banca Exemplu",
+      "logo": null,
+      "vatPayer": true
+     },
+     "buyer": {
+      "type": "company",
+      "name": "Brutăria Bunica SRL",
+      "cui": "RO310055271",
+      "regCom": "J40/17401/2008",
+      "address": "Str. Baba Novac 21, București, Sector 3",
+      "phone": "0744 529 519",
+      "email": "office@brutaria-demo.ro"
+     },
+     "vehicle": {
+      "plate": "B561UZP",
+      "make": "Ford",
+      "model": "Kuga",
+      "vin": "WF0FMRXMNGW0VGAEB",
+      "mileage": 179096
+     }
+    },
+    "issuedAt": "2025-11-17T14:30:00.000Z",
+    "updatedAt": "2025-11-17T14:30:00.000Z"
+   },
+   {
+    "id": "0mwh06ivd73pedw80",
+    "status": "issued",
+    "series": "GRJ",
+    "number": 3,
+    "issueDate": "2025-11-17",
+    "dueDate": "2025-12-01",
+    "customerId": "0mwh06iuq9i7q497h",
+    "vehicleId": "0mwh06iurca1pk365",
+    "workOrderId": "0mwh06iur3yyrfmhz",
+    "mileage": 105400,
+    "lines": [
+     {
+      "id": "0mwh06ivdkq2l4x3k",
+      "kind": "labor",
+      "refId": "0mwh06iuq9dky0kf9",
+      "description": "Înlocuire plăcuțe frână față",
+      "qty": 1,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iunb33x20tz"
+     },
+     {
+      "id": "0mwh06ivdrza6mnya",
+      "kind": "part",
+      "refId": "0mwh06iupm7u7s74s",
+      "description": "Plăcuțe frână față ATE",
+      "qty": 1,
+      "unit": "set",
+      "unitPrice": 22300,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 16500,
+      "staffId": null
+     }
+    ],
+    "notes": "",
+    "activity": [
+     {
+      "at": "2025-11-17T14:30:00.000Z",
+      "type": "issued"
+     }
+    ],
+    "createdAt": "2025-11-17T14:00:00.000Z",
+    "totals": {
+     "net": 40300,
+     "vat": 8463,
+     "gross": 48763,
+     "byRate": [
+      {
+       "rate": 21,
+       "taxable": 40300,
+       "vat": 8463
+      }
+     ],
+     "labor": 18000,
+     "parts": 22300,
+     "fees": 0,
+     "cost": 16500,
+     "partsMargin": 5800,
+     "laborCost": 0,
+     "laborMargin": 18000,
+     "hours": 1
+    },
+    "snapshot": {
+     "seller": {
+      "name": "Garaj Auto Pro SRL",
+      "brand": "Garaj Auto Pro",
+      "cui": "RO12345674",
+      "regCom": "J40/1234/2019",
+      "address": "Str. Mecanicilor 12, București, Sector 3",
+      "phone": "0722 555 010",
+      "email": "programari@garaj-demo.ro",
+      "iban": "RO49AAAA1B31007593840000",
+      "bank": "Banca Exemplu",
+      "logo": null,
+      "vatPayer": true
+     },
+     "buyer": {
+      "type": "person",
+      "name": "Andreea Stoica",
+      "cui": "",
+      "regCom": "",
+      "address": "Aleea Barajul Argeș 92, București, Sector 3",
+      "phone": "0781 612 227",
+      "email": ""
+     },
+     "vehicle": {
+      "plate": "GR10LYC",
+      "make": "Volkswagen",
+      "model": "Passat",
+      "vin": "WVWFPBYMT4MTDH5MR",
+      "mileage": 105400
+     }
+    },
+    "issuedAt": "2025-11-17T14:30:00.000Z",
+    "updatedAt": "2025-11-17T14:30:00.000Z"
+   },
+   {
+    "id": "0mwh06ivd99dfzd1s",
+    "status": "issued",
+    "series": "GRJ",
+    "number": 4,
+    "issueDate": "2025-11-18",
+    "dueDate": "2025-12-02",
+    "customerId": "0mwh06iuqa81r8ic0",
+    "vehicleId": "0mwh06iuqyzuklkje",
+    "workOrderId": "0mwh06iurjx6bhrzx",
+    "mileage": 221987,
+    "lines": [
+     {
+      "id": "0mwh06ivd1vx3r455",
+      "kind": "labor",
+      "refId": "0mwh06iuqtg0gt4k8",
+      "description": "Înlocuire discuri și plăcuțe față",
+      "qty": 1.6,
+      "unit": "h",
+      "unitPrice": 18000,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 0,
+      "staffId": "0mwh06iupsdqlhd0q"
+     },
+     {
+      "id": "0mwh06ivdn332cshh",
+      "kind": "part",
+      "refId": "0mwh06iupo2h9bi8i",
+      "description": "Discuri frână față Brembo",
+      "qty": 1,
+      "unit": "set",
+      "unitPrice": 52700,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 39000,
+      "staffId": null
+     },
+     {
+      "id": "0mwh06ivdihgaj6x1",
+      "kind": "part",
+      "refId": "0mwh06iupm7u7s74s",
+      "description": "Plăcuțe frână față ATE",
+      "qty": 1,
+      "unit": "set",
+      "unitPrice": 22300,
+      "discountPct": 0,
+      "vatRate": 21,
+      "cost": 16500,
+      "staffId": null
+     }
+    ],
+    "notes": "",
+    "activity": [
+     {
+      "at": "2025-11-18T14:30:00.000Z",
+      "type": "issued"
+     }
+    ],
+    "createdAt": "2025-11-18T14:00:00.000Z",
+    "totals": {
+     "net": 103800,
+     "vat": 21798,
+     "gross": 125598,
+     "byRate": [
+      {
+       "rate": 21,
+       "taxable": 103800,
+       "vat": 21798
+      }
+     ],
+     "labor": 28800,
+     "parts": 75000,
+     "fees": 0,
+     "cost": 55500,
+     "partsMargin": 19500,
+     "laborCost": 0,
+     "laborMargin": 28800,
+     "hours": 1.6
+    },
+    "snapshot": {
+     "seller": {
+      "name": "Garaj Auto Pro SRL",
+      "brand": "Garaj Auto Pro",
+      "cui": "RO12345674",
+      "regCom": "J40/1234/2019",
+      "address": "Str. Mecanicilor 12, București, Sector 3",
+      "phone": "0722 555 010",
+      "email": "programari@garaj-demo.ro",
+      "iban": "RO49AAAA1B31007593840000",
+      "bank": "Banca Exemplu",
+      "logo": null,
+      "vatPayer": true
+     },
+     "buyer": {
+      "type": "person",
+      "name": "Cristian Dumitru",
+      "cui": "",
+      "regCom": "",
+      "address": "Bd. Decebal 8, București, Sector 4",
+      "phone": "0748 610 788",
+      "email": "cristian.58@exemplu.ro"
+     },
+     "vehicle": {
+      "plate": "AG16WCN",
+      "make": "Renault",
+      "model": "Clio",
+      "vin": "VF1UYN2D775BMDM1X",
+      "mileage": 221987
+     }
+    },
+    "issuedAt": "2025-11-18T14:30:00.000Z",
+    "updatedAt": "2025-11-18T14:30:00.000Z"
+   }
+  ],
+  "payments": [
+   {
+    "id": "0mwh06ivd0i81qy3x",
+    "invoiceId": "0mwh06ivcbq1hvr77",
+    "amount": 89480,
+    "method": "transfer",
+    "date": "2025-12-07",
+    "note": "OP",
+    "createdAt": "2025-12-07T08:00:00.000Z"
+   },
+   {
+    "id": "0mwh06ivdf2r5alt6",
+    "invoiceId": "0mwh06ivdgxshlx33",
+    "amount": 51728,
+    "method": "transfer",
+    "date": "2025-11-23",
+    "note": "OP",
+    "createdAt": "2025-11-23T08:00:00.000Z"
+   },
+   {
+    "id": "0mwh06ivdnrhvzick",
+    "invoiceId": "0mwh06ivd73pedw80",
+    "amount": 48763,
+    "method": "cash",
+    "date": "2025-11-17",
+    "note": "",
+    "createdAt": "2025-11-17T15:00:00.000Z"
+   },
+   {
+    "id": "0mwh06ivd35lzjcbl",
+    "invoiceId": "0mwh06ivd99dfzd1s",
+    "amount": 125598,
+    "method": "card",
+    "date": "2025-11-18",
+    "note": "",
+    "createdAt": "2025-11-18T15:00:00.000Z"
+   }
+  ],
+  "contacts": []
+ },
+ "meta": {
+  "settings": {
+   "currency": "RON",
+   "shop": {
+    "name": "Garaj Auto Pro",
+    "legalName": "Garaj Auto Pro SRL",
+    "cui": "RO12345674",
+    "regCom": "J40/1234/2019",
+    "address": "Str. Mecanicilor 12",
+    "city": "București",
+    "county": "Sector 3",
+    "phone": "0722 555 010",
+    "email": "programari@garaj-demo.ro",
+    "iban": "RO49AAAA1B31007593840000",
+    "bank": "Banca Exemplu",
+    "logo": null
+   },
+   "invoicing": {
+    "series": "GRJ",
+    "startNumber": 1,
+    "vatPayer": true,
+    "vatRate": 21,
+    "dueDays": 14,
+    "notes": ""
+   },
+   "laborRate": 18000,
+   "partsMarkup": 35,
+   "hours": {
+    "open": "08:00",
+    "close": "18:00",
+    "days": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   },
+   "service": {
+    "intervalKm": 15000,
+    "intervalMonths": 12
+   },
+   "calendar": {
+    "view": "day",
+    "colorBy": "status",
+    "badge": "colored",
+    "agendaGroupBy": "date",
+    "confirmDrop": false,
+    "showService": true,
+    "defaultDuration": 60
+   },
+   "appearance": {
+    "theme": "system"
+   },
+   "reviews": {
+    "link": ""
+   }
+  },
+  "counters": {
+   "invoices": {
+    "GRJ": 815
+   },
+   "workOrders": 1860,
+   "appointments": 152
+  },
+  "demo": true,
+  "schema": 1
+ }
+}
