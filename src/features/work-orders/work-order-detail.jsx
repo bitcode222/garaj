@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	ClipboardCheck,
 	EllipsisVertical,
@@ -19,6 +19,7 @@ import {
 	Wrench,
 } from "lucide-react";
 import { useRemember } from "@/lib/recents";
+import { orderKind, orderLook } from "@/lib/record-state";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -48,7 +49,7 @@ import { estimateMessage, inspectionSummary, isOpen, readyMessage } from "@/doma
 import { fmtDate, fmtHours, fmtKm, fmtWorkOrder } from "@/lib/format";
 import { printPage, shareText, useDraft, useQueryId } from "@/lib/hooks";
 import { FUEL_LEVELS, WORK_ORDER_STATUS } from "@/lib/labels";
-import { deleteWorkOrder, invoiceForWorkOrder, updateWorkOrder } from "@/lib/store/actions";
+import { deleteWorkOrder, updateWorkOrder } from "@/lib/store/actions";
 import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { selectActive } from "@/lib/store/selectors";
 import { InvoiceDocument } from "@/features/invoices/invoice-document";
@@ -56,8 +57,9 @@ import { LinesEditor } from "@/features/lines/lines-editor";
 import { TotalsBlock } from "@/features/lines/totals-block";
 import { InspectionChecklist } from "./inspection";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
-import { closeSheet, walkSheet } from "@/lib/sheets";
-import { JobLinks } from "@/features/flow/visit-links";
+import { closeSheet } from "@/lib/sheets";
+import { holdEdits } from "@/lib/pending-edits";
+import { VisitBarFor, visitTitle } from "@/features/flow/visit-bar";
 import { JobState, nextLabel, useJobMoves } from "./job-state";
 import { JobWarnings } from "@/features/calendar/booking-warnings";
 import { useWalk } from "@/features/flow/visit-links";
@@ -116,24 +118,13 @@ function WorkOrder({ order, embedded = false }) {
 	const invoice = order.invoiceId ? invoices[order.invoiceId] : null;
 	const summary = inspectionSummary(draft.inspection);
 	const message = estimateMessage({ order: draft, customer, vehicle, settings });
-	// Every status move (state section, phone bar, the strip's "Reactivează") goes through one place.
+	// Every status move (state section, phone bar) goes through one place.
 	const moves = useJobMoves({ order, invoice, appointment, beforeMove: flush });
+	// The visit bar makes the invoice from these lines: what is typed is saved first.
+	useEffect(() => holdEdits(flush), [flush]);
 	const next = moves.flow.off ? null : moves.flow.next;
 	const walk = useWalk(embedded);
 	const askReview = () => walk({ kind: "review", id: order.id, direction: "forward", props: { workOrderId: order.id } });
-
-	// The invoice is the next record of the visit: in a sheet the job's sheet walks forward to it.
-	const openInvoice = () => {
-		flush();
-		try {
-			const inv = invoiceForWorkOrder(order.id);
-			if (embedded) walkSheet("invoice-view", { id: inv.id }, "forward");
-			else router.push(`/invoices/detail/?id=${inv.id}`);
-		} catch (error) {
-			toast.error(error.message);
-		}
-	};
-	const showLines = () => document.getElementById(`job-lines-${order.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
 	const remove = async () => {
 		if (!(await confirm({ title: `Ștergi lucrarea #${order.number}?`, confirmLabel: "Șterge", destructive: true }))) return;
@@ -173,10 +164,14 @@ function WorkOrder({ order, embedded = false }) {
 			<PageHeader
 				embedded={embedded}
 				back={{ href: "/work-orders/", label: "Lucrări" }}
-				title={`Lucrarea ${fmtWorkOrder(order.number)}`}
+				title={visitTitle({ vehicle }, fmtWorkOrder(order.number), customer?.name ?? (orderKind(order) === "estimate" ? "Deviz" : "Lucrare"))}
+				kind={orderKind(order)}
+				state={today ? orderLook(order, { today, appointment }) : undefined}
+				// In a sheet the sheet's header carries the bar; on the page, the page's.
+				bar={embedded ? null : <VisitBarFor from="work-order" record={order} inSheet={false} />}
+				make={vehicle?.make}
 				meta={
 					<div className="space-y-4">
-						<JobLinks order={order} inSheet={embedded} onInvoice={openInvoice} onLines={showLines} onReactivate={() => moves.perform(moves.flow.next)} />
 						<JobWarnings order={order} />
 						<JobState order={order} moves={moves} onReview={askReview} />
 						<p className="text-xs text-muted-foreground">Deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}</p>

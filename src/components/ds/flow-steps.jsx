@@ -35,19 +35,7 @@ const HATCH = "repeating-linear-gradient(135deg, color-mix(in oklch, var(--foreg
  * pressed (a toast), which works on a phone, where tooltips do not.
  */
 export function FlowSteps({ label, steps, current, skipped = [], pause, progress, mark, onStep, help, off, notice, next, afterNext, moves = [], panel, onPanelClose, className }) {
-	// An open panel is the innermost thing: Esc closes it first, the sheet stays.
-	const panelOpen = Boolean(panel && onPanelClose);
-	useEffect(() => {
-		if (!panelOpen) return undefined;
-		const onKey = (event) => {
-			if (event.key !== "Escape") return;
-			event.stopPropagation();
-			event.preventDefault();
-			onPanelClose();
-		};
-		window.addEventListener("keydown", onKey, true);
-		return () => window.removeEventListener("keydown", onKey, true);
-	}, [panelOpen, onPanelClose]);
+	usePanelEscape(Boolean(panel && onPanelClose), onPanelClose);
 
 	return (
 		<section aria-label={label} className={cn("space-y-4", className)}>
@@ -65,6 +53,21 @@ export function FlowSteps({ label, steps, current, skipped = [], pause, progress
 			{panel}
 		</section>
 	);
+}
+
+/** An open panel is the innermost thing: Esc closes it first, the sheet around it stays. */
+export function usePanelEscape(open, onClose) {
+	useEffect(() => {
+		if (!open) return undefined;
+		const onKey = (event) => {
+			if (event.key !== "Escape") return;
+			event.stopPropagation();
+			event.preventDefault();
+			onClose();
+		};
+		window.addEventListener("keydown", onKey, true);
+		return () => window.removeEventListener("keydown", onKey, true);
+	}, [open, onClose]);
 }
 
 function Bars({ label, steps, current, skipped, pause, progress, mark, onStep }) {

@@ -443,7 +443,8 @@ export async function createWorkOrder({
 			inspection: defaultInspection(),
 			notes: "",
 			invoiceId: null,
-			dates: { estimate: t, ...(status !== "estimate" ? { [status]: t } : {}) },
+			// Only the step it opens on: a job opened straight in progress passed over the Deviz (drawn hatched, docs/VISIT-BAR.md B8).
+			dates: { [status]: t },
 			activity: [{ at: t, type: "created" }],
 			createdAt: t,
 			updatedAt: t,
@@ -471,7 +472,7 @@ export async function createWorkOrder({
  * The booked car arrived: opens its job. A booking made without a car takes the car chosen at
  * check-in (`vehicleId`), and keeps it.
  */
-export function checkInAppointment(appointmentId, { mileage, fuelLevel, complaint, operations, vehicleId = null } = {}) {
+export function checkInAppointment(appointmentId, { mileage, fuelLevel, complaint, operations, vehicleId = null, status = "estimate" } = {}) {
 	const appointment = mustGet("appointments", appointmentId, "Programarea");
 	if (appointment.workOrderId) throw new DomainError("exists", "Mașina are deja o lucrare deschisă din această programare.");
 	const car = appointment.vehicleId ?? vehicleId;
@@ -487,6 +488,7 @@ export function checkInAppointment(appointmentId, { mileage, fuelLevel, complain
 		appointmentId,
 		serviceIds: appointment.serviceIds ?? [],
 		operations: operations ?? appointment.operations ?? null,
+		status,
 	});
 }
 

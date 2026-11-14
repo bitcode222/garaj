@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useConfirm } from "@/components/ds/confirm";
+import { Money } from "@/components/ds/data";
 import { Field } from "@/components/ds/inputs";
+import { Overline } from "@/components/ds/page";
 import { Sheet } from "@/components/ds/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,11 +14,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { findConflicts } from "@/domain/appointment";
 import { combineDateTime, dayOfInstant, minutesBetween, pad2, todayISO } from "@/domain/dates";
-import { fmtTime } from "@/lib/format";
+import { operationsEstimate } from "@/domain/lines";
+import { fmtDate, fmtTime } from "@/lib/format";
 import { createAppointment, deleteAppointment, resolveOperations, saveAppointment } from "@/lib/store/actions";
 import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
 import { selectActive, selectAppointmentsByDay } from "@/lib/store/selectors";
 import { ServicesField } from "@/features/common/services-field";
+import { fmtLength } from "@/features/dashboard/visit-ui";
 import { CustomerPicker, VehiclePicker } from "@/features/pickers/entity-pickers";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
@@ -34,12 +38,25 @@ function nextSlot(settings) {
 	return `${pad2(Math.floor(clamped / 60))}:${pad2(clamped % 60)}`;
 }
 
-/** `start` (and `end`, when the interval was drawn on a calendar) and `staffId` prefill a new booking. */
+/** A group of the form, in the order of the booking's sheet: an overline, then its fields. */
+function Group({ title, first = false, children }) {
+	return (
+		<fieldset className={cn("grid min-w-0 gap-4", !first && "border-t pt-5")}>
+			{title && <Overline>{title}</Overline>}
+			{children}
+		</fieldset>
+	);
+}
+
+/**
+ * The booking's form, in the order of its sheet (docs/APPOINTMENT-SHEET.md, A6): who comes, what is done,
+ * when, who does it, notes; a summary of the whole booking in the footer.
+ * `start` (and `end`, when the interval was drawn on a calendar) and `staffId` prefill a new booking.
+ */
 export default function AppointmentSheet({ open, onOpenChange, id, start, end, staffId, vehicleId }) {
 	const confirm = useConfirm();
 	const settings = useSettings();
 	const existing = useEntity("appointments", id);
-	const services = useCollection("services");
 	const vehicles = useCollection("vehicles");
 	const staff = selectActive(useCollection("staff"));
 	const bays = selectActive(useCollection("bays"));
@@ -71,6 +88,10 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, end, s
 	const endISO = startISO ? new Date(new Date(startISO).getTime() + form.duration * 60000).toISOString() : null;
 	const candidate = { id: existing?.id, status: existing?.status ?? "scheduled", start: startISO, end: endISO, staffId: form.staffId, bayId: form.bayId };
 	const conflicts = startISO ? findConflicts(candidate, byDay.get(form.date) ?? []) : [];
+	const estimate = operationsEstimate(form.operations, { vatPayer: settings.invoicing.vatPayer, vatRate: settings.invoicing.vatRate });
+	// The operations' time on the half-hour grid, as the form fills it in when they are picked.
+	const fitted = estimate.minutes ? Math.max(30, Math.ceil(estimate.minutes / 30) * 30) : null;
+	const mechanic = staff.find((person) => person.id === form.staffId);
 
 	const onServices = (operations) => {
 		const hours = operations.reduce((sum, op) => sum + (Number(op.hours) || 0), 0);
@@ -112,7 +133,6 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, end, s
 		}
 	};
 
-
 	const remove = async () => {
 		if (!(await confirm({ title: "Ștergi programarea?", confirmLabel: "Șterge", destructive: true }))) return;
 		try {
@@ -124,7 +144,6 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, end, s
 		}
 	};
 
-
 	return (
 		<Sheet
 			open={open}
@@ -134,10 +153,20 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, end, s
 			footer={
 				<>
 					{existing && !existing.workOrderId && (
-						<Button variant="ghost" size="icon" className="mr-auto text-destructive max-md:hidden" onClick={remove} aria-label="Șterge programarea">
+						<Button variant="ghost" size="icon" className="text-destructive max-md:hidden" onClick={remove} aria-label="Șterge programarea">
 							<Trash2 />
 						</Button>
 					)}
+					{/* The booking in one line, as it will be saved. */}
+					<p className="mr-auto self-center text-xs text-muted-foreground max-md:hidden">
+						{startISO ? `${fmtDate(startISO, "EEE d MMM")}, ${form.time}–${fmtTime(endISO)}` : "Fără oră"} · {mechanic?.name ?? "fără mecanic"}
+						{estimate.gross > 0 && (
+							<>
+								{" · ~ "}
+								<Money value={estimate.gross} decimals={0} />
+							</>
+						)}
+					</p>
 					<Button variant="outline" className="max-md:h-11" onClick={() => onOpenChange(false)}>
 						Renunță
 					</Button>
@@ -147,90 +176,115 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, end, s
 				</>
 			}
 		>
-			<form id="appointment-form" onSubmit={submit} className="grid gap-4" noValidate>
-				<Field label="Client" required error={touched && !form.customerId ? "Alege clientul." : null}>
-					<CustomerPicker value={form.customerId} onChange={(customerId) => set({ customerId, vehicleId: customerId === form.customerId ? form.vehicleId : null })} />
-				</Field>
-				<Field label="Mașină">
-					<VehiclePicker value={form.vehicleId} customerId={form.customerId} onChange={(vid, v) => set({ vehicleId: vid, customerId: form.customerId ?? v.customerId })} />
-				</Field>
-				<Field label="Operațiuni">
-					<ServicesField value={form.operations} onChange={onServices} />
-				</Field>
-				<Field label="Titlu">{(fid) => <Input id={fid} value={form.title} onChange={(e) => set({ title: e.target.value })} placeholder="ex. Revizie + geometrie" />}</Field>
-				<div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-					<Field label="Data">{(fid) => <Input id={fid} type="date" value={form.date} onChange={(e) => set({ date: e.target.value })} />}</Field>
-					<Field label="Ora">{(fid) => <Input id={fid} type="time" step={900} value={form.time} onChange={(e) => set({ time: e.target.value })} />}</Field>
-					<Field label="Durată" className="col-span-2 sm:col-span-1">
-						{(fid) => (
-							<Select value={String(form.duration)} onValueChange={(v) => set({ duration: Number(v) })}>
-								<SelectTrigger id={fid} className="w-full">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									{[...new Set([...DURATIONS, form.duration])].sort((a, b) => a - b).map((m) => (
-										<SelectItem key={m} value={String(m)}>
-											{durationLabel(m)}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						)}
+			<form id="appointment-form" onSubmit={submit} className="grid gap-6" noValidate>
+				<Group title="Cine vine" first>
+					<Field label="Client" required error={touched && !form.customerId ? "Alege clientul." : null}>
+						<CustomerPicker value={form.customerId} onChange={(customerId) => set({ customerId, vehicleId: customerId === form.customerId ? form.vehicleId : null })} />
 					</Field>
-				</div>
-				<div className="grid grid-cols-2 gap-4">
-					<Field label="Mecanic">
-						{(fid) => (
-							<Select value={form.staffId ?? "none"} onValueChange={(v) => set({ staffId: v === "none" ? null : v })}>
-								<SelectTrigger id={fid} className="w-full">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="none">Nealocat</SelectItem>
-									{staff.map((s) => (
-										<SelectItem key={s.id} value={s.id}>
-											{s.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						)}
+					<Field label="Mașină">
+						<VehiclePicker value={form.vehicleId} customerId={form.customerId} onChange={(vid, v) => set({ vehicleId: vid, customerId: form.customerId ?? v.customerId })} />
 					</Field>
-					<Field label="Post">
-						{(fid) => (
-							<Select value={form.bayId ?? "none"} onValueChange={(v) => set({ bayId: v === "none" ? null : v })}>
-								<SelectTrigger id={fid} className="w-full">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="none">Nealocat</SelectItem>
-									{bays.map((b) => (
-										<SelectItem key={b.id} value={b.id}>
-											{b.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						)}
+				</Group>
+
+				<Group title="Ce se face">
+					<Field label="Operațiuni">
+						<ServicesField value={form.operations} onChange={onServices} />
 					</Field>
-				</div>
-				{conflicts.length > 0 && (
-					<div className={cn("flex items-start gap-2 rounded-lg border p-3 text-sm", tone("yellow").chip)}>
-						<TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
-						<div>
-							<p className="font-medium">Suprapunere</p>
-							<ul className="mt-0.5 text-xs">
-								{conflicts.map((c) => (
-									<li key={c.id}>
-										{fmtTime(c.start)}–{fmtTime(c.end)} · {c.title}
-										{c.staffId === form.staffId ? " · același mecanic" : " · același post"}
-									</li>
-								))}
-							</ul>
-						</div>
+					<Field label="Descriere (opțional)">{(fid) => <Input id={fid} value={form.title} onChange={(e) => set({ title: e.target.value })} placeholder="Se completează din operațiuni" />}</Field>
+				</Group>
+
+				<Group title="Când">
+					<div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+						<Field label="Data">{(fid) => <Input id={fid} type="date" value={form.date} onChange={(e) => set({ date: e.target.value })} />}</Field>
+						<Field label="Ora">{(fid) => <Input id={fid} type="time" step={900} value={form.time} onChange={(e) => set({ time: e.target.value })} />}</Field>
+						<Field label="Durată" className="col-span-2 sm:col-span-1">
+							{(fid) => (
+								<Select value={String(form.duration)} onValueChange={(v) => set({ duration: Number(v) })}>
+									<SelectTrigger id={fid} className="w-full">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										{[...new Set([...DURATIONS, form.duration])]
+											.sort((a, b) => a - b)
+											.map((m) => (
+												<SelectItem key={m} value={String(m)}>
+													{durationLabel(m)}
+												</SelectItem>
+											))}
+									</SelectContent>
+								</Select>
+							)}
+						</Field>
 					</div>
-				)}
-				<Field label="Notițe">{(fid) => <Textarea id={fid} value={form.notes} onChange={(e) => set({ notes: e.target.value })} />}</Field>
+					{fitted && fitted !== form.duration && (
+						<p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+							Operațiunile cer {fmtLength(estimate.minutes)}.
+							<Button type="button" variant="outline" size="sm" className="max-md:h-11" onClick={() => set({ duration: fitted })}>
+								Potrivește durata: {durationLabel(fitted)}
+							</Button>
+						</p>
+					)}
+					{conflicts.length > 0 && (
+						<div className={cn("flex items-start gap-2 rounded-lg border p-3 text-sm", tone("yellow").chip)}>
+							<TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
+							<div>
+								<p className="font-medium">Suprapunere</p>
+								<ul className="mt-0.5 text-xs">
+									{conflicts.map((c) => (
+										<li key={c.id}>
+											{fmtTime(c.start)}–{fmtTime(c.end)} · {c.title}
+											{c.staffId === form.staffId ? " · același mecanic" : " · același post"}
+										</li>
+									))}
+								</ul>
+							</div>
+						</div>
+					)}
+				</Group>
+
+				<Group title="Cine lucrează">
+					<div className="grid gap-4 sm:grid-cols-2">
+						<Field label="Mecanic">
+							{(fid) => (
+								<Select value={form.staffId ?? "none"} onValueChange={(v) => set({ staffId: v === "none" ? null : v })}>
+									<SelectTrigger id={fid} className="w-full">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="none">Nealocat</SelectItem>
+										{staff.map((s) => (
+											<SelectItem key={s.id} value={s.id}>
+												{s.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							)}
+						</Field>
+						<Field label="Post">
+							{(fid) => (
+								<Select value={form.bayId ?? "none"} onValueChange={(v) => set({ bayId: v === "none" ? null : v })}>
+									<SelectTrigger id={fid} className="w-full">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="none">Nealocat</SelectItem>
+										{bays.map((b) => (
+											<SelectItem key={b.id} value={b.id}>
+												{b.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							)}
+						</Field>
+					</div>
+				</Group>
+
+				<Group>
+					<Field label="Notițe">{(fid) => <Textarea id={fid} value={form.notes} onChange={(e) => set({ notes: e.target.value })} />}</Field>
+				</Group>
+
 				{existing && !existing.workOrderId && (
 					<Button type="button" variant="ghost" className="text-destructive md:hidden" onClick={remove}>
 						<Trash2 /> Șterge programarea

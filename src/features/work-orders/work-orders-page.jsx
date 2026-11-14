@@ -17,7 +17,8 @@ import { fold, matchesTokens, queryTokens } from "@/domain/search";
 import { vehicleName } from "@/domain/vehicle";
 import { OPEN_STATUSES, WO_NEXT, WO_TRANSITIONS, isBackwardMove } from "@/domain/work-order";
 import { fmtDate, fmtDays, fmtWorkOrder, plural } from "@/lib/format";
-import { WORK_ORDER_ACTIONS, WORK_ORDER_STATUS } from "@/lib/labels";
+import { RECORD_KIND, WORK_ORDER_ACTIONS, WORK_ORDER_STATUS } from "@/lib/labels";
+import { orderKind, orderLook } from "@/lib/record-state";
 import { useOpenDetail } from "@/lib/detail-mode";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
@@ -32,7 +33,7 @@ const LIST_FILTERS = [
 	{ value: "open", label: "Deschise", statuses: OPEN_STATUSES },
 	{ value: "all", label: "Toate" },
 	{ value: "delivered", label: "Predate", statuses: ["delivered"], tone: "neutral" },
-	{ value: "cancelled", label: "Anulate", statuses: ["cancelled"], tone: "red" },
+	{ value: "cancelled", label: "Anulate", statuses: ["cancelled"], tone: "neutral" },
 ];
 
 export function WorkOrdersPage() {
@@ -45,6 +46,7 @@ export function WorkOrdersPage() {
 	const customers = useCollection("customers");
 	const vehicles = useCollection("vehicles");
 	const staff = useCollection("staff");
+	const appointments = useCollection("appointments");
 	const [filter, setFilter] = useState("open");
 	const [query, setQuery] = useState("");
 	const deferredQuery = useDeferredValue(query);
@@ -64,11 +66,13 @@ export function WorkOrdersPage() {
 					vehicle,
 					customer,
 					totals,
+					// Its booking: the deadline its state is measured against (docs/RECORD-COLORS.md).
+					appointment: order.appointmentId ? (appointments[order.appointmentId] ?? null) : null,
 					mechanic: order.staffId ? staff[order.staffId] : null,
 					hay: fold(`${order.number} ${vehicle?.plate ?? ""} ${(vehicle?.plate ?? "").replace(/\s/g, "")} ${vehicleName(vehicle)} ${customer?.name ?? ""} ${order.complaint ?? ""}`),
 				};
 			}),
-		[workOrders, vehicles, customers, staff, settings.invoicing.vatPayer],
+		[workOrders, vehicles, customers, staff, appointments, settings.invoicing.vatPayer],
 	);
 
 	const visible = useMemo(() => {
@@ -87,6 +91,7 @@ export function WorkOrdersPage() {
 		<Page width="wide">
 			<PageHeader
 				title="Lucrări"
+				kind="job"
 				description={`${plural(open.length, "lucrare deschisă", "lucrări deschise")} · ${plural(readyCount, "mașină gata", "mașini gata")} de predare`}
 				actions={
 					<Button onClick={() => openSheet("checkin")} className="max-md:hidden">
@@ -120,7 +125,10 @@ export function WorkOrdersPage() {
 }
 
 function OrderRow({ row, first, today, onOpen }) {
-	const { order, vehicle, customer, totals } = row;
+	const { order, vehicle, customer, totals, appointment } = row;
+	// Its state as its dot says it, and its kind: Devize and Lucrări share this list, told apart by a stripe in their colour.
+	const look = orderLook(order, { today, appointment });
+	const kind = orderKind(order);
 	const requestMove = useStatusChange({
 		map: WORK_ORDER_STATUS,
 		value: order.status,
@@ -144,18 +152,20 @@ function OrderRow({ row, first, today, onOpen }) {
 			destructive={["cancelled"]}
 			isBackward={isBackwardMove}
 			size="sm"
+			state={look}
 		/>
 	);
 	return (
 		<SwipeRow leading={contactSwipeActions(customer?.phone)} trailing={trailing} peek={first}>
-		<ListRow onClick={onOpen} nested className="md:grid md:grid-cols-[88px_minmax(0,1.2fr)_minmax(0,1fr)_170px_120px_120px] md:gap-3">
+		<ListRow onClick={onOpen} nested className="relative md:grid md:grid-cols-[88px_minmax(0,1.2fr)_minmax(0,1fr)_170px_120px_120px] md:gap-3">
+			<span aria-hidden className={cn("absolute inset-y-2 left-0 w-1 rounded-r-full", tone(RECORD_KIND[kind].tone).bar)} />
 			<div className="min-w-0 flex-1 md:hidden">
 				<div className="flex items-center justify-between gap-3">
 					<VehicleLabel vehicle={vehicle} nameClassName="text-[15px] font-medium" />
 					<Money value={totals.gross} className="text-sm font-semibold" />
 				</div>
 				<div className="mt-1 flex items-center justify-between gap-3">
-					<span className={cn("flex min-w-0 items-center gap-1.5 truncate text-xs", stale ? cn("font-medium", tone("red").text) : "text-muted-foreground")}>
+					<span className={cn("flex min-w-0 items-center gap-1.5 truncate text-xs", stale ? cn("font-medium", tone(look.tone).text) : "text-muted-foreground")}>
 						{vehicle && <PlateTag value={vehicle.plate} />}
 						{fmtWorkOrder(order.number)} · {customer?.name} · {stale ? (age === 0 ? "azi" : fmtDays(-age)) : fmtDate(order.createdAt, "d MMM")}
 					</span>
@@ -169,7 +179,7 @@ function OrderRow({ row, first, today, onOpen }) {
 			</span>
 			<span className="hidden truncate text-sm md:block">{customer?.name}</span>
 			<span className="hidden md:block">{status}</span>
-			<span className={cn("hidden text-sm md:block", stale ? cn("font-medium", tone("red").text) : "text-muted-foreground")}>
+			<span className={cn("hidden text-sm md:block", stale ? cn("font-medium", tone(look.tone).text) : "text-muted-foreground")}>
 				{stale ? (age === 0 ? "azi" : fmtDays(-age)) : fmtDate(order.createdAt)}
 			</span>
 			<Money value={totals.gross} className="hidden text-right text-sm font-semibold md:block" />

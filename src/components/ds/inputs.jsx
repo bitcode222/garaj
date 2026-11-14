@@ -174,10 +174,14 @@ export function Segmented({ value, onValueChange, options, collapse = false, cla
 	);
 }
 
-/** Horizontally scrolling single-select pills with counts. */
-export function FilterChips({ value, onChange, options, className }) {
+/**
+ * Horizontally scrolling single-select pills with counts. An option's `tone` is its dot (`outline`: an empty ring, for
+ * what is only planned); `onPoint` hears the mouse over an option (its value, then null). A finger reaches 44 px.
+ */
+export function FilterChips({ value, onChange, options, onPoint, label, className }) {
 	return (
-		<div className={cn("no-scrollbar -mx-4 flex max-w-[calc(100%+2rem)] gap-2 overflow-x-auto overscroll-x-contain px-4 md:mx-0 md:max-w-full md:flex-wrap md:px-0", className)}>
+		// The padding, taken back by the margin, keeps a finger's reach inside the scrolling row.
+		<div role={label ? "group" : undefined} aria-label={label} className={cn("no-scrollbar -mx-4 -my-1 flex max-w-[calc(100%+2rem)] gap-2 overflow-x-auto overscroll-x-contain px-4 py-1 md:mx-0 md:max-w-full md:flex-wrap md:px-0", className)}>
 			{options.map((option) => {
 				const active = option.value === value;
 				return (
@@ -186,12 +190,14 @@ export function FilterChips({ value, onChange, options, className }) {
 						type="button"
 						aria-pressed={active}
 						onClick={() => onChange(option.value)}
+						onPointerEnter={onPoint ? (event) => event.pointerType === "mouse" && onPoint(option.value) : undefined}
+						onPointerLeave={onPoint ? () => onPoint(null) : undefined}
 						className={cn(
-							"inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors md:h-8 md:px-3",
+							"relative inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors pointer-coarse:after:absolute pointer-coarse:after:inset-x-0 pointer-coarse:after:-inset-y-1 md:h-8 md:px-3",
 							active ? "border-primary bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:text-foreground",
 						)}
 					>
-						{option.tone && <span className={cn("size-2 rounded-full", toneOf(option.tone).solid)} aria-hidden />}
+						{option.outline ? <span className="size-2 shrink-0 rounded-full border-[1.5px] border-current opacity-70" aria-hidden /> : option.tone && <span className={cn("size-2 rounded-full", toneOf(option.tone).solid)} aria-hidden />}
 						{option.label}
 						{option.count != null && <span className={cn("tabular-nums", active ? "opacity-70" : "opacity-60")}>{option.count}</span>}
 					</button>

@@ -44,7 +44,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { smsHref, whatsappHref } from "@/domain/customer";
 import { diffDaysISO } from "@/domain/dates";
 import { buildSnapshot, formatInvoiceNumber, invoiceMessage, issueProblems } from "@/domain/invoice";
-import { InvoiceLinks, useWalk } from "@/features/flow/visit-links";
+import { useWalk } from "@/features/flow/visit-links";
+import { VisitBarFor, visitTitle } from "@/features/flow/visit-bar";
 import { draftBehindOrder } from "@/domain/work-order";
 import { InvoiceState } from "./invoice-state";
 import { computeTotals } from "@/domain/lines";
@@ -68,6 +69,7 @@ import { LinesEditor } from "@/features/lines/lines-editor";
 import { TotalsBlock } from "@/features/lines/totals-block";
 import { CustomerPicker, VehiclePicker } from "@/features/pickers/entity-pickers";
 import { InvoiceDocument } from "./invoice-document";
+import { invoiceLook } from "@/lib/record-state";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 
@@ -191,11 +193,14 @@ function DraftInvoice({ invoice, embedded = false }) {
 			<PageHeader
 				embedded={embedded}
 				back={{ href: "/invoices/", label: "Facturi" }}
-				title="Factură nouă"
+				title={visitTitle({ vehicle }, "ciornă", customer?.name ?? "Factură nouă")}
+				kind="invoice"
+				state={today ? invoiceLook(invoice, [], { today, currency: settings.currency }) : undefined}
+				bar={embedded ? null : <VisitBarFor from="invoice" record={invoice} inSheet={false} />}
+				make={vehicle?.make}
 				description={`Seria ${draft.series} · numărul se alocă la emitere`}
 				meta={
 					<div className="space-y-4">
-						<InvoiceLinks invoice={invoice} inSheet={embedded} />
 						<InvoiceState invoice={draft} today={today} customer={customer} behind={behind} handlers={{ issue, issueAndPay, remove, fix, refresh }} />
 					</div>
 				}
@@ -438,10 +443,13 @@ function IssuedInvoice({ invoice, embedded = false }) {
 			<PageHeader
 				embedded={embedded}
 				back={{ href: "/invoices/", label: "Facturi" }}
-				title={invoice.stornoOf ? `Stornare ${number}` : `Factura ${number}`}
+				title={visitTitle({ vehicle }, invoice.stornoOf ? `stornare ${number}` : number, customer?.name ?? `Factura ${number}`)}
+				kind="invoice"
+				state={today ? invoiceLook(invoice, list, { today, currency: settings.currency }) : undefined}
+				bar={embedded ? null : <VisitBarFor from="invoice" record={invoice} inSheet={false} />}
+				make={vehicle?.make}
 				meta={
 					<div className="space-y-4">
-						<InvoiceLinks invoice={invoice} inSheet={embedded} />
 						<InvoiceState
 							invoice={invoice}
 							payments={list}

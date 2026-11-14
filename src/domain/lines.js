@@ -136,3 +136,14 @@ export function operationVatRate(op, { vatPayer = true, vatRate = 0 } = {}) {
 	if (!vatPayer) return 0;
 	return op.vatRate == null ? Number(vatRate) || 0 : Number(op.vatRate) || 0;
 }
+
+/** What a booking's operations add up to: their time in minutes and their price with VAT in bani. */
+export function operationsEstimate(operations = [], { vatPayer = true, vatRate = 0 } = {}) {
+	let minutes = 0;
+	let gross = 0;
+	for (const op of operations) {
+		minutes += Math.round((Number(op.hours) || 0) * 60);
+		gross += operationFigures(op, operationVatRate(op, { vatPayer, vatRate })).gross;
+	}
+	return { minutes, gross };
+}

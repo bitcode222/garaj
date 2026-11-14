@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { MakeLogo } from "@/components/ds/make-logo";
+import { KindMark, StateTag, kindText } from "@/components/ds/tone";
 import { cn } from "@/lib/utils";
 
 const WIDTHS = {
@@ -19,8 +21,13 @@ export function Page({ width = "default", embedded = false, className, children 
 	);
 }
 
-/** Title block: optional back link, title, description, actions, extra meta row. */
-export function PageHeader({ title, description, back, actions, meta, embedded = false, className }) {
+/**
+ * Title block: optional back link, title, description, actions, extra meta row. A record's page passes its `kind`
+ * (the title in its colour, after its KindMark) and its `state` (the StateTag beside the title), docs/RECORD-COLORS.md.
+ * A record of a visit passes its `bar` and its car's `make` instead, as its sheet does: the bar first, then the maker's
+ * logo, the title in the text colour and the state as a pill.
+ */
+export function PageHeader({ title, description, back, actions, meta, kind, state, bar, make, embedded = false, className }) {
 	// Embedded: the sheet's own header carries the title and back/close controls.
 	if (embedded) {
 		return (
@@ -41,9 +48,27 @@ export function PageHeader({ title, description, back, actions, meta, embedded =
 					{back.label}
 				</Link>
 			)}
+			{bar && <div className="-mx-1 max-w-3xl">{bar}</div>}
 			<div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
 				<div className="min-w-0 space-y-1">
-					<h1 className="text-[1.375rem] leading-7 font-semibold tracking-tight md:text-title">{title}</h1>
+					<div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5">
+						{bar ? (
+							<span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+								<MakeLogo make={make} className="text-foreground/80" />
+							</span>
+						) : (
+							kind && <KindMark kind={kind} />
+						)}
+						<h1 className={cn("text-[1.375rem] leading-7 font-semibold tracking-tight md:text-title", !bar && kind && kindText(kind))}>{title}</h1>
+						{state &&
+							(bar ? (
+								<span className="flex shrink-0 items-center rounded-full border bg-card px-3 py-1">
+									<StateTag state={state} size="md" />
+								</span>
+							) : (
+								<StateTag state={state} size="lg" />
+							))}
+					</div>
 					{description && <p className="text-sm text-muted-foreground">{description}</p>}
 				</div>
 				{actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}

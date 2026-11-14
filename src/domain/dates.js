@@ -71,3 +71,13 @@ export function timeOfInstant(instant) {
 	const d = new Date(instant);
 	return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
+
+/**
+ * Where an interval stands against `now`: "ahead" (minutes until it starts), "now" (minutes since
+ * it began) or "past" (minutes since it ended).
+ */
+export function relativeTo(start, end, now) {
+	if (start > now) return { kind: "ahead", minutes: minutesBetween(now, start) };
+	if (end > now) return { kind: "now", minutes: minutesBetween(start, now) };
+	return { kind: "past", minutes: minutesBetween(end, now) };
+}

@@ -7,13 +7,13 @@ import { Button } from "@/components/ui/button";
 import { invoiceFlow } from "@/domain/flow";
 import { formatInvoiceNumber, issueChecklist } from "@/domain/invoice";
 import { fmtDate, formatMoney } from "@/lib/format";
-import { PAYMENT_METHODS } from "@/lib/labels";
+import { INVOICE_STATE, PAYMENT_METHODS } from "@/lib/labels";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 
 const STEPS = [
 	{ key: "draft", label: "Ciornă", tone: "neutral" },
-	{ key: "issued", label: "Emisă", tone: "blue" },
+	{ key: "issued", label: "Emisă", tone: INVOICE_STATE.issued.tone },
 	{ key: "paid", label: "Încasată", tone: "green" },
 ];
 

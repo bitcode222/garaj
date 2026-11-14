@@ -86,3 +86,20 @@ export function greetingName(customer) {
 	if (customer.type === "company") return customer.contactName || customer.name;
 	return String(customer.name ?? "").trim().split(/\s+/)[0] ?? "";
 }
+
+/**
+ * What the shop knows about a customer at the desk: their visits (jobs handed over), when the
+ * last one was (its handover, else its opening), and how many bookings they missed.
+ */
+export function customerFacts(customerId, { appointments = [], workOrders = [] } = {}) {
+	let visits = 0;
+	let lastVisit = null;
+	for (const order of workOrders) {
+		if (order.customerId !== customerId || order.status !== "delivered") continue;
+		visits += 1;
+		const at = order.dates?.delivered ?? order.createdAt;
+		if (at && (!lastVisit || at > lastVisit)) lastVisit = at;
+	}
+	const noShows = appointments.filter((a) => a.customerId === customerId && a.status === "no_show").length;
+	return { visits, lastVisit, noShows };
+}

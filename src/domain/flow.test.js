@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 
 import { announceDelay, callOffAppointment, delayOverruns, numberAppointments, rescheduleAppointment, setAppointmentStatus, statusBeforeCheckIn } from "./appointment.js";
-import { appointmentFlow, invoiceFlow, jobFlow, skippedSteps } from "./flow.js";
+import { appointmentFlow, invoiceFlow, jobFlow, skippedSteps, visitBar } from "./flow.js";
 import { arrivalDelay, buildVisits, visitTiming } from "./visit.js";
 import { canTransition, draftBehindOrder, skippedStages, transition } from "./work-order.js";
 import { issueChecklist } from "./invoice.js";
@@ -322,5 +322,80 @@ describe("reviews", () => {
 		assert.match(text, /Garaj Test pentru Dacia Logan/);
 		assert.match(text, /https:\/\/g\.page\/r\/x/);
 		assert.doesNotMatch(reviewMessage({ customer: null, vehicle: null, settings: { shop: { name: "G" }, reviews: { link: "" } } }), /http/);
+	});
+});
+
+describe("visit bar", () => {
+	const order = (fields = {}) => ({ id: "w1", number: 7, status: "estimate", lines: [{ id: "l1" }], dates: { estimate: at(DAY, 9) }, ...fields });
+	const issued = (fields = {}) => ({ id: "i1", status: "issued", totals: { gross: 10000 }, dueDate: "2026-10-20", ...fields });
+	const key = (bar, k) => bar.sections.find((s) => s.key === k);
+
+	test("a confirmed booking with no job: it is current; Deviz and Lucrare are check-in, the rest waits for the job", () => {
+		const bar = visitBar({ appointment: booking({ status: "confirmed" }), today: DAY, from: "appointment" });
+		assert.equal(bar.current, 0);
+		assert.deepEqual(key(bar, "appointment").arcs, ["done", "now", "ahead", "ahead"]);
+		assert.equal(key(bar, "appointment").tap.kind, "none");
+		assert.deepEqual(key(bar, "estimate").tap, { kind: "create", action: "checkin", allowed: true, status: "estimate" });
+		assert.equal(key(bar, "job").tap.status, "in_progress");
+		assert.deepEqual([key(bar, "invoice").tap.reason, key(bar, "invoice").tap.fix], ["Începe întâi lucrarea.", "checkin"]);
+		assert.deepEqual([key(bar, "review").tap.reason, key(bar, "review").tap.fix], ["Recenzia se cere după lucrare.", "checkin"]);
+	});
+
+	test("a cancelled booking: its ring is off, and the job waits for a new date", () => {
+		const bar = visitBar({ appointment: booking({ status: "cancelled" }), today: DAY, from: "appointment" });
+		assert.deepEqual(key(bar, "appointment").arcs, ["off", "off", "off", "off"]);
+		assert.deepEqual([key(bar, "estimate").tap.allowed, key(bar, "estimate").tap.reason, key(bar, "estimate").tap.fix], [false, "Programarea e anulată.", "reschedule"]);
+		assert.equal(key(bar, "invoice").tap.kind, "none");
+	});
+
+	test("a Deviz not approved: Lucrare starts it, passing over Aprobat", () => {
+		const bar = visitBar({ appointment: booking({ status: "arrived" }), order: order(), today: DAY, from: "work-order" });
+		assert.equal(bar.current, 1);
+		assert.deepEqual(key(bar, "estimate").arcs, ["now", "ahead"]);
+		assert.deepEqual(key(bar, "job").tap, { kind: "create", action: "start", allowed: true, skips: true });
+		assert.equal(key(bar, "invoice").tap.action, "invoice");
+		assert.equal(key(bar, "review").tap.action, "review");
+	});
+
+	test("a job opened straight in progress: the Deviz is passed over, and is the same work order", () => {
+		const bar = visitBar({ appointment: booking({ status: "arrived" }), order: order({ status: "in_progress", dates: { in_progress: at(DAY, 9) } }), today: DAY, from: "work-order" });
+		assert.equal(bar.current, 2);
+		assert.deepEqual(key(bar, "estimate").arcs, ["skipped", "skipped"]);
+		assert.equal(key(bar, "estimate").tap.kind, "here");
+		assert.deepEqual(key(bar, "job").arcs, ["now", "ahead", "ahead"]);
+	});
+
+	test("waiting for parts is a pause on the job; a job with no lines cannot be invoiced", () => {
+		const bar = visitBar({ order: order({ status: "waiting_parts", lines: [], dates: { estimate: at(DAY, 9), in_progress: at(DAY, 10) } }), today: DAY, from: "work-order" });
+		assert.equal(key(bar, "job").paused, true);
+		assert.deepEqual([key(bar, "invoice").tap.reason, key(bar, "invoice").tap.fix], ["Adaugă o operațiune ca să facturezi.", "lines"]);
+		assert.equal(key(bar, "appointment").tap.reason, "Fără programare.");
+	});
+
+	test("a Deviz cancelled: its ring is off, and the job asks to reactivate it", () => {
+		const bar = visitBar({ order: order({ status: "cancelled" }), today: DAY, from: "work-order" });
+		assert.equal(key(bar, "estimate").off, true);
+		assert.deepEqual([key(bar, "job").tap.reason, key(bar, "job").tap.fix], ["Devizul e anulat.", "reactivate"]);
+		assert.deepEqual([key(bar, "invoice").tap.reason, key(bar, "invoice").tap.fix], ["Lucrarea e anulată.", "reactivate"]);
+	});
+
+	test("an invoice: issued and late is on its second step, part paid on its third, paid is done", () => {
+		const delivered = order({ status: "delivered", dates: { estimate: at(DAY, 9), approved: at(DAY, 9), in_progress: at(DAY, 9), ready: at(DAY, 12), delivered: at(DAY, 13) } });
+		const late = visitBar({ order: delivered, invoice: issued(), today: "2026-10-25", from: "invoice" });
+		assert.equal(late.current, 3);
+		assert.deepEqual(key(late, "invoice").arcs, ["done", "now", "ahead"]);
+		assert.deepEqual(key(late, "job").arcs, ["done", "done", "done"]);
+		const part = visitBar({ order: delivered, invoice: issued(), payments: [{ amount: 4000 }], today: DAY, from: "invoice" });
+		assert.deepEqual(key(part, "invoice").arcs, ["done", "done", "now"]);
+		const paid = visitBar({ order: delivered, invoice: issued(), payments: [{ amount: 10000 }], today: DAY, from: "invoice" });
+		assert.deepEqual(key(paid, "invoice").arcs, ["done", "done", "done"]);
+	});
+
+	test("a review asked for: on its second step; the sheet of one not made yet is current anyway", () => {
+		const asked = visitBar({ order: order({ status: "delivered" }), review: { workOrderId: "w1", requests: [{ at: at(DAY, 14) }], receivedAt: null }, today: DAY, from: "review" });
+		assert.deepEqual(key(asked, "review").arcs, ["done", "now", "ahead"]);
+		const fresh = visitBar({ order: order({ status: "delivered" }), today: DAY, from: "review" });
+		assert.equal(fresh.current, 4);
+		assert.equal(key(fresh, "review").exists, false);
 	});
 });

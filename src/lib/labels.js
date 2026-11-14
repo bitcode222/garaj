@@ -1,48 +1,94 @@
 // Every user-facing name of a domain value, with its tone and icon.
 // Single source for badges, filters, boards and the calendar.
+// Colours (docs/RECORD-COLORS.md): a record's kind has its own colour (RECORD_KIND); a status or state has a
+// signal colour: red (late, missed), amber (waiting on someone, due), green (agreed, ready, paid), grey (not
+// started or closed), or its kind's own colour while it is under way.
 
 import {
 	Banknote,
 	CalendarCheck,
 	CalendarClock,
 	CalendarDays,
-	Check,
+	CalendarX2,
 	CarFront,
+	Check,
 	CircleCheck,
 	CircleDashed,
 	CircleX,
+	Clock,
 	CreditCard,
 	FilePen,
-	FileText,
+	Hourglass,
 	KeyRound,
 	Landmark,
 	Package,
 	PackageSearch,
 	Receipt,
+	ReceiptText,
 	Shield,
 	ShieldCheck,
+	Star,
 	ThumbsUp,
-	TriangleAlert,
 	Undo2,
 	UserX,
 	Wrench,
 } from "lucide-react";
 
+/** What a record is, and its colour everywhere: the card's fill, the title of its page and sheet, the calendar, the day ruler. */
+export const RECORD_KIND = {
+	appointment: { label: "Programare", plural: "Programări", tone: "teal", icon: CalendarDays },
+	estimate: { label: "Deviz", plural: "Devize", tone: "purple", icon: FilePen },
+	job: { label: "Lucrare", plural: "Lucrări", tone: "orange", icon: Wrench },
+	invoice: { label: "Factură", plural: "Facturi", tone: "blue", icon: ReceiptText },
+	// The visit's last record (docs/VISIT-BAR.md B5): pink, a star.
+	review: { label: "Recenzie", plural: "Recenzii", tone: "pink", icon: Star },
+};
+
+/** The icon in a state's dot, by the state's key (src/domain/record-state.js). */
+export const STATE_ICON = {
+	// Programare
+	cancelled: CircleX,
+	no_show: UserX,
+	done: CircleCheck,
+	arrived: CarFront,
+	missed: CalendarX2,
+	late: Clock,
+	to_confirm: CalendarClock,
+	confirmed: CalendarCheck,
+	// Deviz, Lucrare
+	overdue: Clock,
+	awaiting_approval: Hourglass,
+	approved: ThumbsUp,
+	in_progress: Wrench,
+	waiting_parts: PackageSearch,
+	parts_late: PackageSearch,
+	ready: CircleCheck,
+	not_collected: KeyRound,
+	delivered: KeyRound,
+	// Factură
+	draft: FilePen,
+	stornoed: Undo2,
+	storno: Undo2,
+	paid: CircleCheck,
+	partial: CircleDashed,
+	due: Clock,
+};
+
 /** What a booking's card on the calendar is marked as, in its top-left corner (src/domain/visit.js bookingMark). */
 export const BOOKING_MARK = {
-	booking: { label: "Programare", tone: "blue", icon: CalendarDays },
+	booking: { label: "Programare", tone: "teal", icon: CalendarDays },
 	job: { label: "Lucrare", tone: "orange", icon: Wrench },
 	done: { label: "Finalizată", tone: "green", icon: Check },
 };
 
 export const WORK_ORDER_STATUS = {
-	estimate: { label: "Deviz", tone: "blue", icon: FilePen, hint: "Așteaptă aprobarea clientului" },
-	approved: { label: "Aprobat", tone: "purple", icon: ThumbsUp, hint: "Aprobat, încă neînceput" },
+	estimate: { label: "Deviz", tone: "yellow", icon: Hourglass, hint: "Așteaptă aprobarea clientului" },
+	approved: { label: "Aprobat", tone: "green", icon: ThumbsUp, hint: "Aprobat, încă neînceput" },
 	in_progress: { label: "În lucru", tone: "orange", icon: Wrench, hint: "Mecanicul lucrează" },
 	waiting_parts: { label: "Așteaptă piese", tone: "yellow", icon: PackageSearch, hint: "Blocat până vin piesele" },
 	ready: { label: "Gata", tone: "green", icon: CircleCheck, hint: "Gata de predare" },
 	delivered: { label: "Predat", tone: "neutral", icon: KeyRound, hint: "Mașina a fost predată" },
-	cancelled: { label: "Anulat", tone: "red", icon: CircleX, hint: "Lucrare anulată" },
+	cancelled: { label: "Anulat", tone: "neutral", icon: CircleX, hint: "Lucrare anulată" },
 };
 
 export const WORK_ORDER_ACTIONS = {
@@ -56,10 +102,10 @@ export const WORK_ORDER_ACTIONS = {
 };
 
 export const APPOINTMENT_STATUS = {
-	scheduled: { label: "Programat", tone: "blue", icon: CalendarClock },
-	confirmed: { label: "Confirmat", tone: "purple", icon: CalendarCheck },
-	arrived: { label: "Sosit", tone: "orange", icon: CarFront },
-	done: { label: "Finalizat", tone: "green", icon: CircleCheck },
+	scheduled: { label: "Programat", tone: "yellow", icon: CalendarClock },
+	confirmed: { label: "Confirmat", tone: "green", icon: CalendarCheck },
+	arrived: { label: "Sosit", tone: "teal", icon: CarFront },
+	done: { label: "Finalizat", tone: "neutral", icon: CircleCheck },
 	no_show: { label: "Neprezentat", tone: "red", icon: UserX },
 	cancelled: { label: "Anulat", tone: "neutral", icon: CircleX },
 };
@@ -104,10 +150,10 @@ export const REVIEW_TAGS = {
 
 export const INVOICE_STATE = {
 	draft: { label: "Ciornă", tone: "neutral", icon: FilePen },
-	issued: { label: "Emisă", tone: "blue", icon: FileText },
+	issued: { label: "Emisă", tone: "yellow", icon: Clock },
 	partial: { label: "Parțial plătită", tone: "yellow", icon: CircleDashed },
 	paid: { label: "Plătită", tone: "green", icon: CircleCheck },
-	overdue: { label: "Restantă", tone: "red", icon: TriangleAlert },
+	overdue: { label: "Restantă", tone: "red", icon: Clock },
 	cancelled: { label: "Stornată", tone: "neutral", icon: Undo2 },
 	storno: { label: "Stornare", tone: "neutral", icon: Undo2 },
 };

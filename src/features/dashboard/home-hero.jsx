@@ -1,18 +1,24 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { CalendarPlus, FilePlus2, Search, Wrench } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Command as CommandPrimitive } from "cmdk";
+import { CalendarPlus, FilePlus2, Plus, Search, Wrench } from "lucide-react";
 import { Kbd } from "@/components/ds/data";
 import { ToneDot } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
+import { CommandList } from "@/components/ui/command";
 import { parseISODate } from "@/domain/dates";
 import { fmtDate } from "@/lib/format";
 import { openSheet } from "@/lib/sheets";
 import { createInvoiceDraft } from "@/lib/store/actions";
 import { toast } from "@/lib/toast";
-import { openCommandMenu } from "@/components/shell/command-state";
+import { useAccount } from "@/components/shell/account-menu";
+import { SearchResults, useSearch } from "@/components/shell/command-results";
 import { toMinutes } from "@/features/calendar/utils";
+
+// The three starts under the search: taller and roomier, with a plus in front of each one's icon.
+const ACTION = "h-11 rounded-full px-5 text-base md:h-12 max-sm:flex-1 [&_svg]:size-5";
 
 const greeting = (minute) => (minute < 11 * 60 ? "Bună dimineața" : minute < 18 * 60 ? "Bună ziua" : "Bună seara");
 
@@ -25,18 +31,21 @@ function hoursText(settings, today, minute) {
 	return { text: `deschis până la ${close}`, open: true };
 }
 
-/** A key that types a character, not a shortcut. */
-const typesText = (event) => event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey;
-
 /**
  * The top of Azi (docs/HOME-PAGE.md D1, D2), as Cloudflare's home: a pill with the day, a
- * centred question, one big search, and the three things started most. The search is the
- * app's own (⌘K): pressing the field opens it, typing in it opens it with what was typed,
- * and "/" opens it from anywhere on the page that is not a field.
+   * centred question, one big search, and the three things started most. The search is the
+ * field itself: typing in it shows the matches in a panel right under it (the same rows as
+ * the search dialog), "/" puts the cursor in it from anywhere on the page that is not a field, and Esc or
+ * a click away closes the panel.
  */
 export function HomeHero({ settings, today, minute }) {
 	const router = useRouter();
+	const { member } = useAccount();
 	const hours = hoursText(settings, today, minute);
+	const [query, setQuery] = useState("");
+	const [open, setOpen] = useState(false);
+	const input = useRef(null);
+	const search = useSearch(query);
 
 	useEffect(() => {
 		const onKey = (event) => {
@@ -44,18 +53,32 @@ export function HomeHero({ settings, today, minute }) {
 			const target = event.target;
 			if (target.closest?.("input, textarea, select, [contenteditable=true], [role=dialog]")) return;
 			event.preventDefault();
-			openCommandMenu();
+			input.current?.focus();
 		};
 		window.addEventListener("keydown", onKey);
 		return () => window.removeEventListener("keydown", onKey);
 	}, []);
 
-	const newInvoice = () => {
-		try {
-			const draft = createInvoiceDraft();
-			router.push(`/invoices/detail/?id=${draft.id}`);
-		} catch (error) {
-			toast.error(error.message);
+	const close = () => {
+		setOpen(false);
+		setQuery("");
+		input.current?.blur();
+	};
+	const go = (href) => {
+		close();
+		router.push(href);
+	};
+	const create = (type) => {
+		close();
+		if (type === "invoice") {
+			try {
+				const draft = createInvoiceDraft();
+				router.push(`/invoices/detail/?id=${draft.id}`);
+			} catch (error) {
+				toast.error(error.message);
+			}
+		} else {
+			openSheet(type);
 		}
 	};
 
@@ -75,42 +98,73 @@ export function HomeHero({ settings, today, minute }) {
 					{hours.text}
 				</span>
 			</p>
-			<h1 className="text-[1.75rem] leading-tight font-semibold tracking-tight md:text-4xl">Ce e pe agendă azi?</h1>
-			{/* The field: a soft halo around a white field, as Cloudflare's. It is a button: the search itself opens over the page. */}
-			<div className="w-full max-w-3xl rounded-2xl border bg-muted/40 p-1.5">
-				<button
-					type="button"
-					data-home-search
-					onClick={() => openCommandMenu()}
-					onKeyDown={(event) => {
-						// "/" is the shortcut itself (handled for the whole page), not text.
-						if (!typesText(event) || event.key === "/") return;
-						event.preventDefault();
-						openCommandMenu(event.key);
-					}}
-					aria-label="Caută o mașină, un client, o lucrare sau o factură"
-					aria-keyshortcuts="Meta+K /"
-					className="flex h-14 w-full items-center gap-3 rounded-xl border bg-card px-4 text-left text-base text-muted-foreground shadow-sm transition-[box-shadow,border-color] hover:border-foreground/20 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
-				>
-					<Search className="size-5 shrink-0" aria-hidden />
-					<span className="min-w-0 flex-1 truncate">Caută o mașină, un client, o factură…</span>
-					<span className="hidden shrink-0 items-center gap-1 pointer-fine:flex" aria-hidden>
-						<Kbd className="px-2 py-1 text-xs">⌘</Kbd>
-						<Kbd className="px-2 py-1 text-xs">K</Kbd>
-					</span>
-				</button>
-			</div>
+			{/* Named once an account is chosen (the account menu); until then the question stands. */}
+			<h1 className="text-[1.75rem] leading-tight font-semibold tracking-tight md:text-4xl">
+				{member ? `${greeting(minute)}, ${member.name.split(" ")[0]}` : "Ce e pe agendă azi?"}
+			</h1>
+			{/* The field and its suggestions are one unit: the panel hangs under the field, the same width. */}
+			<CommandPrimitive
+				shouldFilter={false}
+				onKeyDown={(event) => {
+					if (event.key === "Escape") close();
+				}}
+				onBlur={(event) => {
+					if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+				}}
+				className="relative w-full max-w-3xl overflow-visible rounded-none bg-transparent text-left"
+			>
+				<div>
+					<div
+						onClick={() => input.current?.focus()}
+						className="flex h-14 w-full cursor-text items-center gap-3 rounded-xl border bg-card px-4 text-muted-foreground shadow-sm transition-[box-shadow,border-color] hover:border-foreground/25 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/50 focus-within:text-foreground"
+					>
+						<Search className="size-5 shrink-0" aria-hidden />
+						<CommandPrimitive.Input
+							ref={input}
+							data-home-search
+							value={query}
+							onValueChange={(value) => {
+								setQuery(value);
+								setOpen(true);
+							}}
+							onFocus={() => setOpen(true)}
+							placeholder="Caută o mașină, un client, o factură…"
+							aria-label="Caută o mașină, un client, o lucrare sau o factură"
+							aria-keyshortcuts="/"
+							enterKeyHint="search"
+							className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground"
+						/>
+						{!open && (
+							<span className="hidden shrink-0 items-center gap-1 pointer-fine:flex" aria-hidden>
+								<Kbd className="px-2 py-1 text-xs">/</Kbd>
+							</span>
+						)}
+					</div>
+				</div>
+				{open && (
+					// Mousedown is kept from moving the focus, so a click on a row lands before the field lets go of it.
+					<div onMouseDown={(event) => event.preventDefault()} className="absolute inset-x-0 top-full z-50 mt-2 overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-lg">
+						<CommandList className="max-h-[min(60vh,440px)] p-1">
+							<SearchResults search={search} onGo={go} onCreate={create} />
+						</CommandList>
+					</div>
+				)}
+			</CommandPrimitive>
 			<div className="flex w-full flex-wrap justify-center gap-2">
-				<Button variant="outline" className="rounded-full max-md:h-11 max-sm:flex-1" onClick={() => openSheet("appointment")}>
+				<Button variant="outline" className={ACTION} onClick={() => openSheet("appointment")}>
+					<Plus />
 					<CalendarPlus /> Programare
 				</Button>
-				<Button variant="outline" className="rounded-full max-md:h-11 max-sm:flex-1" onClick={() => openSheet("checkin")}>
+				<Button variant="outline" className={ACTION} onClick={() => openSheet("checkin")}>
+					<Plus />
 					<Wrench /> Primire mașină
 				</Button>
-				<Button variant="outline" className="rounded-full max-md:h-11 max-sm:flex-1" onClick={newInvoice}>
+				<Button variant="outline" className={ACTION} onClick={() => create("invoice")}>
+					<Plus />
 					<FilePlus2 /> Factură
 				</Button>
 			</div>
+			
 		</header>
 	);
 }

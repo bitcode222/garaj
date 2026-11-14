@@ -2,7 +2,7 @@
 // replaced (never mutated) on change, so a selector recomputes only when one
 // of its inputs actually changed — and every component shares the result.
 
-import { bookingsToConfirm, invoicesToCollect } from "@/domain/agenda";
+import { ESTIMATE_STAGES, JOB_STAGES, bookingsToConfirm, dayMarks, invoicesToCollect, jobsToShow } from "@/domain/agenda";
 import { homeAnalytics } from "@/domain/analytics";
 import { dayOfInstant } from "@/domain/dates";
 import { invoiceBalance, invoiceState, sumPayments } from "@/domain/invoice";
@@ -209,9 +209,22 @@ export const selectSearchIndex = memo((customers, vehicles, workOrders, invoices
 
 /** The home page's "De confirmat" (src/domain/agenda.js); `now` is an instant, a new one each minute. */
 export const selectToConfirm = memo((appointments, now) => bookingsToConfirm(Object.values(appointments), { now }));
+/** The dashboard's bookings for the ruler's dates (`from`–`to`): every booking of those days, not only the unconfirmed ones (see bookingsToConfirm). */
+export const selectWeekBookings = memo((appointments, now, from, to) => bookingsToConfirm(Object.values(appointments), { now, all: true, from, to }));
 
 /** The home page's "Facturi": what is not collected yet, grouped, with amounts. */
-export const selectToCollect = memo((invoices, payments, today) => invoicesToCollect(Object.values(invoices), selectPaymentsByInvoice(payments), { today }));
+export const selectToCollect = memo((invoices, payments, today, from = null, to = null) => invoicesToCollect(Object.values(invoices), selectPaymentsByInvoice(payments), { today, from, to }));
+
+/** The home page's "Lucrări": the jobs created in the ruler's dates or due in them, grouped by stage, with amounts. */
+export const selectJobs = memo((workOrders, appointments, from, to, settings) => jobsToShow(Object.values(workOrders), { from, to, stages: JOB_STAGES, settings, appointments }));
+
+/** The home page's "Devize": the estimates created in the ruler's dates or due in them, waiting or approved, with amounts. */
+export const selectEstimates = memo((workOrders, appointments, from, to, settings) => jobsToShow(Object.values(workOrders), { from, to, stages: ESTIMATE_STAGES, settings, appointments }));
+
+/** The day ruler's bullets: what falls on each day (src/domain/agenda.js, dayMarks). */
+export const selectDayMarks = memo((appointments, workOrders, invoices, payments, today) =>
+	dayMarks({ appointments: Object.values(appointments), workOrders: Object.values(workOrders), invoices: Object.values(invoices), paymentsByInvoice: selectPaymentsByInvoice(payments), today }),
+);
 
 /** The home page's "Analiză" for a period ending today ("7d", "30d", "12m"). */
 export const selectHomeAnalytics = memo((payments, workOrders, invoices, appointments, today, period) =>

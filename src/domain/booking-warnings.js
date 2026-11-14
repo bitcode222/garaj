@@ -17,6 +17,12 @@ const SEVERITY = { danger: 0, warning: 1, info: 2 };
 export const WARNING_KINDS = ["missed", "late", "overlap", "delayOverrun", "unassigned", "unconfirmed", "closed", "pickup", "parts", "estimate", "overrun", "documents", "noPhone"];
 const CONTACT_KINDS = ["missed", "late", "unconfirmed"];
 
+// Where each warning sits on the booking's sheet (docs/APPOINTMENT-SHEET.md, A2): next to what it is about.
+const SECTION = { overlap: "time", closed: "time", delayOverrun: "time", unassigned: "staff", documents: "car" };
+
+/** The section of the booking's sheet a warning belongs to: "now" (the Acum card), "time", "staff" or "car". */
+export const warningSection = (kind) => SECTION[kind] ?? "now";
+
 const addMinutes = (instant, minutes) => new Date(new Date(instant).getTime() + minutes * 60_000).toISOString();
 const toMinutes = (hhmm) => {
 	const [h, m] = String(hhmm).split(":").map(Number);

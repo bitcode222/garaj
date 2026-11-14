@@ -5,12 +5,14 @@ import { createPortal } from "react-dom";
 import { Clock } from "lucide-react";
 import { Initials, Money } from "@/components/ds/data";
 import { PlateTag, VehicleLabel } from "@/components/ds/make-logo";
-import { StatusBadge } from "@/components/ds/tone";
-import { minutesBetween } from "@/domain/dates";
+import { KindMark, StateTag, kindText } from "@/components/ds/tone";
+import { minutesBetween, todayISO } from "@/domain/dates";
 import { bookingMark } from "@/domain/visit";
 import { orderTotals } from "@/domain/work-order";
 import { fmtDate, fmtTime, fmtWorkOrder } from "@/lib/format";
-import { APPOINTMENT_STATUS, BOOKING_MARK, WORK_ORDER_STATUS } from "@/lib/labels";
+import { RECORD_KIND } from "@/lib/labels";
+import { orderKind, visitLook } from "@/lib/record-state";
+import { cn } from "@/lib/utils";
 import { useCollection, useEntity, useSettings } from "@/lib/store/hooks";
 import { CustomerNote } from "@/features/reviews/customer-note";
 import { BookingWarnings } from "./booking-warnings";
@@ -68,6 +70,9 @@ function PeekCard({ id, rect, controls }) {
 	const mark = bookingMark(a, order);
 	// The state beside what it is: the job's once the car is in, the booking's until then.
 	const byOrder = mark !== "booking" && order;
+	// What it is, in its kind's colour, and how it stands (docs/RECORD-COLORS.md).
+	const kind = byOrder ? orderKind(order) : "appointment";
+	const look = visitLook(a, byOrder ? order : null, { now: new Date().toISOString(), today: todayISO() });
 	const totals = order?.lines?.length ? orderTotals(order, settings) : null;
 	const serviceNames = a.operations ? a.operations.map((op) => op.name).filter(Boolean) : a.serviceIds?.map((sid) => services[sid]?.name).filter(Boolean);
 	const active = a.status !== "cancelled" && a.status !== "no_show";
@@ -88,8 +93,9 @@ function PeekCard({ id, rect, controls }) {
 			style={{ left: -9999, top: 0, visibility: "hidden" }}
 		>
 			<div className="flex items-center gap-1.5">
-				<StatusBadge map={BOOKING_MARK} value={mark} size="sm" />
-				{byOrder ? <StatusBadge map={WORK_ORDER_STATUS} value={order.status} size="sm" icon={false} /> : <StatusBadge map={APPOINTMENT_STATUS} value={a.status} size="sm" icon={false} />}
+				<KindMark kind={kind} size="sm" className="size-6 rounded-md [&>svg]:size-3.5" />
+				<span className={cn("text-xs font-semibold", kindText(kind))}>{byOrder ? `${RECORD_KIND[kind].label} ${fmtWorkOrder(order.number)}` : RECORD_KIND.appointment.label}</span>
+				<StateTag state={look} size="sm" className="ml-1" />
 				{a.number != null && <span className="ml-auto text-xs text-muted-foreground tabular-nums">#{a.number}</span>}
 			</div>
 			<div className="mt-2.5 flex items-center justify-between gap-2">
