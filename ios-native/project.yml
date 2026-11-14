@@ -1,0 +1,56 @@
+# The native iPhone app (docs/IOS-NATIVE.md). Generate the Xcode project with:
+#   cd ios-native && xcodegen
+name: Garaj
+options:
+  bundleIdPrefix: com.albertoparos
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    DEVELOPMENT_TEAM: 7363RX85BF
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "2.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  Garaj:
+    type: application
+    platform: iOS
+    sources: [Garaj]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.albertoparos.garaj
+        PRODUCT_NAME: Garaj
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Garaj
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.business
+        INFOPLIST_KEY_UISupportsDocumentBrowser: NO
+  GarajTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: GarajTests
+        excludes: [Fixtures]
+      - path: GarajTests/Fixtures
+        buildPhase: resources
+    dependencies:
+      - target: Garaj
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.albertoparos.garaj.tests
+schemes:
+  Garaj:
+    build:
+      targets:
+        Garaj: all
+        GarajTests: [test]
+    test:
+      targets: [GarajTests]

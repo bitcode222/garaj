@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Build Garaj and install it on the connected iPhone.
-#   npm run ios:device                                   -> bundled, works offline
-#   CAP_SERVER_URL=http://<mac-ip>:3000 npm run ios:device -> live reload from `npm run dev -- -H 0.0.0.0`
+# Build the native Garaj app (SwiftUI, ios-native/, docs/IOS-NATIVE.md) and install it on the connected iPhone.
+#   npm run ios:device
 #   bash scripts/ios-device.sh --check                   -> exit 0 if a paired iPhone is found, 3 if none (used by CI)
 #   IOS_LAUNCH=0 …                                       -> install only, do not open the app (used by CI)
 set -euo pipefail
@@ -9,7 +8,7 @@ cd "$(dirname "$0")/.."
 
 TEAM_ID="${TEAM_ID:-7363RX85BF}"
 BUNDLE_ID="com.albertoparos.garaj"
-DERIVED="ios/App/build"
+DERIVED="ios-native/build"
 
 if [ -z "${DEVICE_ID:-}" ]; then
   tmp="$(mktemp)"
@@ -31,21 +30,16 @@ fi
 echo "→ Device $DEVICE_ID"
 [ "${1:-}" = "--check" ] && exit 0
 
-if [ -z "${CAP_SERVER_URL:-}" ]; then
-  echo "→ Building static site"
-  npx next build
-fi
-
-echo "→ Syncing web assets into the iOS project"
-npx cap sync ios
+echo "→ Generating the Xcode project"
+(cd ios-native && xcodegen --quiet)
 
 echo "→ Building the app"
-xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \
+xcodebuild -project ios-native/Garaj.xcodeproj -scheme Garaj -configuration Debug \
   -destination "id=$DEVICE_ID" -derivedDataPath "$DERIVED" \
   -allowProvisioningUpdates DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic \
   -quiet build
 
-APP="$DERIVED/Build/Products/Debug-iphoneos/App.app"
+APP="$DERIVED/Build/Products/Debug-iphoneos/Garaj.app"
 echo "→ Installing"
 xcrun devicectl device install app --device "$DEVICE_ID" "$APP" >/dev/null
 if [ "${IOS_LAUNCH:-1}" = "0" ]; then

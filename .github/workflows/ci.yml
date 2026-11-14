@@ -79,7 +79,7 @@ jobs:
             | grep -vE '^(latest|ci)$' | tail -n +6 | xargs -I{} docker rmi "garaj-web:{}" || true
           docker image prune -f
 
-  # Builds the iPhone app and installs it, when a paired iPhone is reachable.
+  # Tests the native iPhone app (ios-native/) on a simulator, then builds and installs it, when a paired iPhone is reachable.
   # No phone connected = skipped (green), never a failed pipeline. Only from main.
   ios:
     needs: [check]
@@ -108,10 +108,10 @@ jobs:
           else
             exit "$code"
           fi
+      - name: Swift tests (simulator)
+        run: bash scripts/ios-test.sh
       - name: Build and install on the iPhone
         if: steps.device.outputs.found == 'true'
         env:
           IOS_LAUNCH: "0"
-        run: |
-          npm ci --no-audit --no-fund
-          bash scripts/ios-device.sh
+        run: bash scripts/ios-device.sh

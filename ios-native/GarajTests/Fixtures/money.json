@@ -1,0 +1,393 @@
+{
+ "parse": [
+  {
+   "input": "0",
+   "output": 0
+  },
+  {
+   "input": "1",
+   "output": 100
+  },
+  {
+   "input": "12",
+   "output": 1200
+  },
+  {
+   "input": "12,5",
+   "output": 1250
+  },
+  {
+   "input": "12.5",
+   "output": 1250
+  },
+  {
+   "input": "12,50 lei",
+   "output": 1250
+  },
+  {
+   "input": "1.234,56",
+   "output": 123456
+  },
+  {
+   "input": "1,234.56",
+   "output": 123456
+  },
+  {
+   "input": "1 234,56",
+   "output": 123456
+  },
+  {
+   "input": "1.234",
+   "output": 123400
+  },
+  {
+   "input": "1.234.567",
+   "output": 123456700
+  },
+  {
+   "input": "1,234,567",
+   "output": 123456700
+  },
+  {
+   "input": "1234.5678",
+   "output": 123457
+  },
+  {
+   "input": "0,005",
+   "output": 1
+  },
+  {
+   "input": "0,004",
+   "output": 0
+  },
+  {
+   "input": "0,015",
+   "output": 2
+  },
+  {
+   "input": "-12,34",
+   "output": -1234
+  },
+  {
+   "input": "-0",
+   "output": 0
+  },
+  {
+   "input": ",5",
+   "output": 50
+  },
+  {
+   "input": ".5",
+   "output": 50
+  },
+  {
+   "input": "5.",
+   "output": 500
+  },
+  {
+   "input": "abc",
+   "output": null
+  },
+  {
+   "input": "",
+   "output": null
+  },
+  {
+   "input": "  ",
+   "output": null
+  },
+  {
+   "input": "12,3,4",
+   "output": null
+  },
+  {
+   "input": "1.23.4",
+   "output": null
+  },
+  {
+   "input": "€ 99",
+   "output": 9900
+  },
+  {
+   "input": "99 ron",
+   "output": 9900
+  },
+  {
+   "input": "1'234,50",
+   "output": 123450
+  },
+  {
+   "input": "1 234,50",
+   "output": 123450
+  },
+  {
+   "input": "1 234,50",
+   "output": 123450
+  },
+  {
+   "input": "12.34.56",
+   "output": null
+  },
+  {
+   "input": "007",
+   "output": 700
+  },
+  {
+   "input": "9.99",
+   "output": 999
+  },
+  {
+   "input": "1.000,",
+   "output": 100000
+  },
+  {
+   "input": "100 EUR",
+   "output": 10000
+  }
+ ],
+ "percentOf": [
+  {
+   "amount": 10000,
+   "rate": 21,
+   "output": 2100
+  },
+  {
+   "amount": 12345,
+   "rate": 19,
+   "output": 2346
+  },
+  {
+   "amount": 99,
+   "rate": 21,
+   "output": 21
+  },
+  {
+   "amount": -12345,
+   "rate": 21,
+   "output": -2592
+  },
+  {
+   "amount": 15,
+   "rate": 50,
+   "output": 8
+  },
+  {
+   "amount": 5,
+   "rate": 10,
+   "output": 1
+  },
+  {
+   "amount": -5,
+   "rate": 10,
+   "output": -1
+  },
+  {
+   "amount": 73950,
+   "rate": 21,
+   "output": 15530
+  },
+  {
+   "amount": 100,
+   "rate": 9.5,
+   "output": 10
+  },
+  {
+   "amount": 1,
+   "rate": 33.33,
+   "output": 0
+  }
+ ],
+ "divRound": [
+  {
+   "num": 5,
+   "den": 2,
+   "output": 3
+  },
+  {
+   "num": -5,
+   "den": 2,
+   "output": -3
+  },
+  {
+   "num": 7,
+   "den": 3,
+   "output": 2
+  },
+  {
+   "num": -7,
+   "den": 3,
+   "output": -2
+  },
+  {
+   "num": 1,
+   "den": 2,
+   "output": 1
+  },
+  {
+   "num": -1,
+   "den": 2,
+   "output": -1
+  },
+  {
+   "num": 10,
+   "den": 4,
+   "output": 3
+  },
+  {
+   "num": -10,
+   "den": 4,
+   "output": -3
+  },
+  {
+   "num": 0,
+   "den": 3,
+   "output": 0
+  }
+ ],
+ "format": [
+  {
+   "minor": 0,
+   "output": "0,00 lei",
+   "signed": "0,00 lei",
+   "input": "0,00"
+  },
+  {
+   "minor": 1,
+   "output": "0,01 lei",
+   "signed": "+0,01 lei",
+   "input": "0,01"
+  },
+  {
+   "minor": 99,
+   "output": "0,99 lei",
+   "signed": "+0,99 lei",
+   "input": "0,99"
+  },
+  {
+   "minor": 100,
+   "output": "1,00 lei",
+   "signed": "+1,00 lei",
+   "input": "1,00"
+  },
+  {
+   "minor": 123456,
+   "output": "1.234,56 lei",
+   "signed": "+1.234,56 lei",
+   "input": "1234,56"
+  },
+  {
+   "minor": -123456,
+   "output": "-1.234,56 lei",
+   "signed": "-1.234,56 lei",
+   "input": "-1234,56"
+  },
+  {
+   "minor": 100000000,
+   "output": "1.000.000,00 lei",
+   "signed": "+1.000.000,00 lei",
+   "input": "1000000,00"
+  },
+  {
+   "minor": 5,
+   "output": "0,05 lei",
+   "signed": "+0,05 lei",
+   "input": "0,05"
+  },
+  {
+   "minor": -5,
+   "output": "-0,05 lei",
+   "signed": "-0,05 lei",
+   "input": "-0,05"
+  },
+  {
+   "minor": 1999999,
+   "output": "19.999,99 lei",
+   "signed": "+19.999,99 lei",
+   "input": "19999,99"
+  }
+ ],
+ "parseQuantity": [
+  {
+   "input": "1",
+   "output": 1
+  },
+  {
+   "input": "1,5",
+   "output": 1.5
+  },
+  {
+   "input": "0.25",
+   "output": 0.25
+  },
+  {
+   "input": "1,23456",
+   "output": 1.235
+  },
+  {
+   "input": "-2",
+   "output": -2
+  },
+  {
+   "input": ".5",
+   "output": 0.5
+  },
+  {
+   "input": "5.",
+   "output": 5
+  },
+  {
+   "input": "-.5",
+   "output": -0.5
+  },
+  {
+   "input": "",
+   "output": null
+  },
+  {
+   "input": "-",
+   "output": null
+  },
+  {
+   "input": "abc",
+   "output": null
+  },
+  {
+   "input": "1.2.3",
+   "output": null
+  },
+  {
+   "input": "0,0005",
+   "output": 0.001
+  },
+  {
+   "input": "0,0015",
+   "output": 0.002
+  }
+ ],
+ "formatQuantity": [
+  {
+   "qty": 0,
+   "output": "0"
+  },
+  {
+   "qty": 1,
+   "output": "1"
+  },
+  {
+   "qty": 1.5,
+   "output": "1,5"
+  },
+  {
+   "qty": 0.125,
+   "output": "0,125"
+  },
+  {
+   "qty": 1234.5,
+   "output": "1.234,5"
+  },
+  {
+   "qty": 2.0005,
+   "output": "2,001"
+  }
+ ]
+}
