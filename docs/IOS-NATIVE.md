@@ -69,3 +69,13 @@ The native app takes over the same bundle id, so the old app's web storage is st
 - **Size**: ~16,000 lines of feature UI and ~5,700 lines of rules; many weeks. The calendar is the largest single piece.
 - **Gaps until parity**: screens not yet rebuilt are missing on the phone; use the web version (desktop or Safari) for them meanwhile.
 - **CI**: GitHub's `check` job can't build iOS; Swift tests run on the Mac runner with the `ios` job, which first needs its signing fix (Xcode account on the runner).
+
+## 7. The look: variant A, one to one (picked 15 Nov 2026)
+
+The owner compared six looks on a board (https://claude.ai/artifact/PAWzmYUBS3yBvLiMgny3qp) and picked **A · Nativ iOS** with the orange palette; the app is being made to match that board screen by screen. A sets the layout and the look; what the app does that A does not show stays, lower on the screen or in a menu. Shared pieces live in `ios-native/Garaj/Views/Components.swift` (`StatusPill`, `StatTile`, `QuickAction`, `IconSquare`/`IconRowLabel`, `TimeColumn`, `CapsHeader`).
+
+| PR | Screens | Status |
+|---|---|---|
+| 1 | Status capsules everywhere, Azi (greeting + day, 4 shortcuts, 4 number tiles, rows for in service / to confirm / to collect, analytics), Mai mult (Settings-style icon squares with counts) | in progress |
+| 2 | Lucrări (search, filters with counts, rows), Lucrare (header card with plate, next-step button, complaint, lines, total), Facturi (2 tiles, filters, rows by month), Factură (the document on screen, collect + WhatsApp buttons, payments) | next |
+| 3 | Programări (list/calendar switch under the title, time column rows), Calendar (mechanic colors), Clienți (avatars), Mașini (plate rows, ITP/RCA capsules), De contactat, Catalog, Rapoarte, Setări | after |

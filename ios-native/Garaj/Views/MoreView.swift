@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 /// Mai mult: the screens that don't have their own tab.
 struct MoreView: View {
+    @Environment(AppStore.self) private var store
     #if DEBUG
     @State private var debugPage: String?
     #endif
@@ -11,16 +12,16 @@ struct MoreView: View {
         NavigationStack {
             List {
                 Section {
-                    NavigationLink { CustomersView() } label: { Label("Clienți", systemImage: "person.2") }
-                    NavigationLink { VehiclesView() } label: { Label("Mașini", systemImage: "car") }
-                    NavigationLink { RemindersView() } label: { Label("De contactat", systemImage: "bell") }
+                    NavigationLink { CustomersView() } label: { IconRowLabel(title: "Clienți", symbol: "person.2.fill", color: .blue, value: store.count(.customers).formatted()) }
+                    NavigationLink { VehiclesView() } label: { IconRowLabel(title: "Mașini", symbol: "car.fill", color: .green, value: store.count(.vehicles).formatted()) }
+                    NavigationLink { RemindersView() } label: { IconRowLabel(title: "De contactat", symbol: "bell.fill", color: .red, value: store.reminders().count.formatted()) }
                 }
                 Section {
-                    NavigationLink { CatalogView() } label: { Label("Catalog", systemImage: "shippingbox") }
-                    NavigationLink { ReportsView() } label: { Label("Rapoarte", systemImage: "chart.bar") }
+                    NavigationLink { CatalogView() } label: { IconRowLabel(title: "Catalog", symbol: "shippingbox.fill", color: .orange) }
+                    NavigationLink { ReportsView() } label: { IconRowLabel(title: "Rapoarte", symbol: "chart.bar.fill", color: .purple) }
                 }
                 Section {
-                    NavigationLink { SettingsView() } label: { Label("Setări", systemImage: "gearshape") }
+                    NavigationLink { SettingsView() } label: { IconRowLabel(title: "Setări", symbol: "gearshape.fill", color: .gray) }
                 }
             }
             .navigationTitle("Mai mult")

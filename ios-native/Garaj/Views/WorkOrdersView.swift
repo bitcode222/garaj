@@ -143,10 +143,7 @@ struct WorkOrderRow: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
             HStack(alignment: .firstTextBaseline) {
-                Label(style.label, systemImage: style.symbol)
-                    .labelStyle(StatusLabelStyle())
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(style.color)
+                StatusPill(style: style)
                 Spacer()
                 if !model.order.lines.isEmpty {
                     Text(Money.format(model.gross, currency: currency))
