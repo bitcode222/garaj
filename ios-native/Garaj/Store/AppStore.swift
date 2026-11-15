@@ -84,10 +84,13 @@ final class AppStore {
     /// Saves a typed record over its stored JSON (unknown fields are kept).
     func save<T: Record>(_ record: T) {
         guard case .object(let typed) = (try? JSONValue.from(record)) ?? .null else { return }
-        var stored = collections[T.collection]?[record.id]?.object ?? [:]
+        let existing = collections[T.collection]?[record.id]?.object
+        let isNew = existing == nil
+        var stored = existing ?? [:]
         stored.merge(typed) { _, new in new }
-        // An optional set to nil is left out by Swift's encoder; store it as null, like the web.
-        for key in T.defaults.keys where typed[key] == nil { stored[key] = .null }
+        // Swift's encoder leaves out an empty optional. A new record gets it as null (like the web
+        // writes it); an existing one is cleared only where it had the key.
+        for key in T.defaults.keys where typed[key] == nil && (isNew || stored[key] != nil) { stored[key] = .null }
         collections[T.collection, default: [:]][record.id] = .object(stored)
         cache[T.collection] = nil
         scheduleSave()

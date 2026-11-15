@@ -57,6 +57,26 @@ enum Labels {
         workOrderStatus[status] ?? .init(label: status, symbol: "questionmark.circle", color: .gray)
     }
 
+    static let invoiceState: [String: StatusStyle] = [
+        "draft": .init(label: "Ciornă", symbol: "square.and.pencil", color: .gray),
+        "issued": .init(label: "Emisă", symbol: "clock", color: .yellow),
+        "partial": .init(label: "Parțial plătită", symbol: "circle.dashed", color: .yellow),
+        "paid": .init(label: "Plătită", symbol: "checkmark.circle", color: .green),
+        "overdue": .init(label: "Restantă", symbol: "exclamationmark.circle", color: .red),
+        "cancelled": .init(label: "Stornată", symbol: "arrow.uturn.backward", color: .gray),
+        "storno": .init(label: "Stornare", symbol: "arrow.uturn.backward", color: .gray),
+    ]
+
+    static func invoice(_ state: String) -> StatusStyle {
+        invoiceState[state] ?? .init(label: state, symbol: "doc", color: .gray)
+    }
+
+    static let paymentMethods: [(key: String, label: String, symbol: String)] = [
+        ("cash", "Numerar", "banknote"), ("card", "Card", "creditcard"), ("transfer", "Transfer bancar", "building.columns"),
+    ]
+
+    static func paymentMethod(_ key: String) -> String { paymentMethods.first { $0.key == key }?.label ?? key }
+
     /// The order the statuses are listed in filters.
     static let workOrderOrder = ["estimate", "approved", "in_progress", "waiting_parts", "ready", "delivered", "cancelled"]
 }

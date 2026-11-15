@@ -12,6 +12,7 @@ const wo = await import("../src/domain/work-order.js");
 const customer = await import("../src/domain/customer.js");
 const vehicle = await import("../src/domain/vehicle.js");
 const { DEFAULT_SETTINGS } = await import("../src/lib/store/defaults.js");
+const invoice = await import("../src/domain/invoice.js");
 
 const OUT = new URL("../ios-native/GarajTests/Fixtures/", import.meta.url);
 mkdirSync(OUT, { recursive: true });
@@ -72,6 +73,47 @@ write("rules.json", {
 	})),
 	settings,
 });
+
+// Invoices: displayed state, what blocks issuing, issuing, storno, payments, the share message.
+{
+	const today = "2026-11-15";
+	const payments = demoAll.collections.payments;
+	const byInvoice = (id) => payments.filter((p) => p.invoiceId === id);
+	const all = demoAll.collections.invoices;
+	const sample = [...all.slice(0, 30), ...all.filter((i) => i.stornoOf || i.status === "cancelled").slice(0, 6), ...all.slice(-30)];
+	const shop = { ...DEFAULT_SETTINGS.shop, name: "Service Test", legalName: "Service Test SRL", cui: "RO123", regCom: "J40/1/2020", address: "Str. Lungă 1", city: "București", iban: "RO49AAAA1B31007593840000", bank: "Banca Test" };
+	const settingsVat = { ...DEFAULT_SETTINGS, shop };
+	const settingsNoVat = { ...settingsVat, invoicing: { ...settingsVat.invoicing, vatPayer: false } };
+	const now = "2026-11-15T10:00:00.000Z";
+	const drafts = demoAll.collections.workOrders.filter((o) => o.lines.length).slice(0, 6).map((o, i) => ({
+		id: `draft${i}`, status: "draft", series: "GRJ", number: null, issueDate: today, dueDate: "2026-11-29",
+		customerId: o.customerId, vehicleId: o.vehicleId, workOrderId: o.id, mileage: o.mileage ?? null,
+		lines: o.lines, notes: "", activity: [], createdAt: now, updatedAt: now,
+	}));
+	const issues = drafts.flatMap((d, i) => [settingsVat, settingsNoVat].map((settings) => {
+		const customer = customers[d.customerId];
+		const issued = invoice.issueInvoice(d, { settings, customer, vehicle: vehicles[d.vehicleId], number: 100 + i, now });
+		const storno = invoice.buildStorno(issued, { number: 200 + i, today, now });
+		return { draft: d, settings, customer, vehicle: vehicles[d.vehicleId], number: 100 + i, issued, storno };
+	}));
+	const company = { ...demoAll.collections.customers[0], type: "company", cui: "" };
+	const blank = { id: "b", status: "draft", series: "GRJ", lines: [], issueDate: "", dueDate: "2026-01-01" };
+	const badLine = { ...blank, issueDate: "2026-02-01", lines: [{ id: "l", kind: "part", description: "", qty: 0, unit: "buc", unitPrice: 100, discountPct: 0, vatRate: 21, cost: 0 }] };
+	const issuedOne = issues[0].issued;
+	write("invoices.json", {
+		today,
+		states: sample.map((inv) => ({ invoice: inv, payments: byInvoice(inv.id), state: invoice.invoiceState(inv, byInvoice(inv.id), today), label: invoice.formatInvoiceNumber(inv.series, inv.number) })),
+		checklists: [
+			{ draft: blank, customer: null },
+			{ draft: blank, customer: company },
+			{ draft: badLine, customer: demoAll.collections.customers[1] },
+			{ draft: drafts[0], customer: customers[drafts[0].customerId] },
+		].map((c) => ({ ...c, problems: invoice.issueChecklist(c.draft, { customer: c.customer }) })),
+		issues,
+		payments: [0, -5, 1, 100, issuedOne.totals.gross, issuedOne.totals.gross + 1].map((amount) => ({ amount, problem: invoice.paymentProblem(amount, { invoice: issuedOne, payments: [{ amount: 100 }] }) })),
+		messages: [0, 100, issuedOne.totals.gross].map((paid) => ({ invoice: issuedOne, balance: issuedOne.totals.gross - paid, settings: settingsVat, text: invoice.invoiceMessage({ invoice: issuedOne, balance: issuedOne.totals.gross - paid, settings: settingsVat }) })),
+	});
+}
 
 // A small backup: the demo data, a few records per collection.
 const demo = buildDemoData("2026-11-15");

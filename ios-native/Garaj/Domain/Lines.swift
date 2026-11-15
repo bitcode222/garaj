@@ -21,6 +21,20 @@ struct Totals: Codable, Hashable, Sendable {
     var laborCost = 0
     var laborMargin = 0
     var hours = 0.0
+
+    init() {}
+
+    /// Older invoices may lack some figures; they read as zero instead of failing.
+    init(from decoder: Decoder) throws {
+        enum K: String, CodingKey { case net, vat, gross, byRate, labor, parts, fees, cost, partsMargin, laborCost, laborMargin, hours }
+        let c = try decoder.container(keyedBy: K.self)
+        func int(_ k: K) -> Int { Int((try? c.decodeIfPresent(Double.self, forKey: k)) ?? 0) }
+        net = int(.net); vat = int(.vat); gross = int(.gross)
+        byRate = (try? c.decodeIfPresent([Rate].self, forKey: .byRate)) ?? []
+        labor = int(.labor); parts = int(.parts); fees = int(.fees); cost = int(.cost)
+        partsMargin = int(.partsMargin); laborCost = int(.laborCost); laborMargin = int(.laborMargin)
+        hours = (try? c.decodeIfPresent(Double.self, forKey: .hours)) ?? 0
+    }
 }
 
 enum Lines {
