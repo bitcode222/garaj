@@ -79,3 +79,15 @@ The owner compared six looks on a board (https://claude.ai/artifact/PAWzmYUBS3yB
 | 1 | Status capsules everywhere, Azi (greeting + day, 4 shortcuts, 4 number tiles, rows for in service / to confirm / to collect, analytics), Mai mult (Settings-style icon squares with counts) | merged (#39) |
 | 2 | Lucrări (search, filters with counts, rows), Lucrare (header card with plate, next-step button, complaint, lines, total), Facturi (2 tiles, filters, rows by month), Factură (the document on screen, collect + WhatsApp buttons, payments) | merged (#40) |
 | 3 | Programări (list/calendar switch under the title, time column rows), Calendar (mechanic colors), Clienți (avatars), Mașini (plate rows, ITP/RCA capsules), De contactat, Catalog, Rapoarte, Setări | in progress |
+
+## 8. Look 2 "Pată de culoare" and the editing round (picked 16 Nov 2026)
+
+Round-2 board: https://claude.ai/artifact/G3kDyaAPJFpQeoYgkCEs13. The owner picked **2 · Pată de culoare** (orange) and asked for everything to feel native, plus much more editing: operations on a booking that can be tapped, edited, reordered and priced; sorting and editing on every list.
+
+| PR | What | Status |
+|---|---|---|
+| 1 | The band (`Views/Look.swift`: accent band with soft circles behind the title, follows the scroll, never shorter than the bar so the inline title stays white on orange), car make logos (`npm run ios:logos` writes template SVG image sets from `src/lib/car-logo-paths.js`; `MakeLogo` with brand colors), work-kind icons (`WorkKind`, by catalog category or words) on job lines | in progress |
+| 2 | Booking operations: list with icon, duration, mechanic, price; edit sheet (kind, name, duration and quantity steppers, price from the labor rate, mechanic, parts); reorder, delete, add from catalog or free; total with VAT; saved in the web's `operations` shape | next |
+| 3 | Sort and group menus on every list (remembered), swipe Editează, reorder where order matters | after |
+
+The status bar text is left to the system (iOS 26 picks it from what is behind it; black on this orange reads well).

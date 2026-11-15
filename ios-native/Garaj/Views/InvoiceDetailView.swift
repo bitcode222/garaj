@@ -205,6 +205,7 @@ struct InvoiceDetailView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .band(150)
         .navigationTitle(Text(verbatim: isDraft ? "Ciornă" : invoice.label))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

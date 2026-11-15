@@ -37,6 +37,7 @@ struct HomeView: View {
                 }
                 .listStyle(.insetGrouped)
                 .listSectionSpacing(20)
+                .band(query.isEmpty ? 300 : 0)
                 #if DEBUG
                 // Screenshots: `-GarajHomeSection collect` scrolls there.
                 .task {
@@ -154,7 +155,7 @@ struct HomeView: View {
                 ForEach(g.items) { order in
                     let vehicle = vehicles[order.vehicleId ?? ""]
                     Button { path.append(.job(order.id)) } label: {
-                        HomeRow(title: [vehicle?.title, vehicle.map { People.formatPlate($0.plate) }].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
+                        HomeRow(make: vehicle?.make, title: [vehicle?.title, vehicle.map { People.formatPlate($0.plate) }].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
                                 subtitle: [customers[order.customerId ?? ""]?.name, staff[order.staffId ?? ""]?.name].compactMap { $0 }.joined(separator: " · "),
                                 pill: Labels.workOrder(order.status),
                                 value: amount(Lines.totals(order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross))
@@ -369,6 +370,7 @@ struct HomeView: View {
 
 /// A list row of look A: title, a muted line, the status capsule, the amount on the right.
 struct HomeRow: View {
+    var make: String? = nil
     let title: String
     let subtitle: String
     let pill: StatusStyle
@@ -376,6 +378,7 @@ struct HomeRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
+            if let make { MakeLogo(make: make) }
             VStack(alignment: .leading, spacing: 3) {
                 Text(title).lineLimit(1)
                 if !subtitle.isEmpty { Text(subtitle).font(.subheadline).foregroundStyle(.secondary).lineLimit(1) }

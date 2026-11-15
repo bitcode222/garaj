@@ -24,6 +24,7 @@ struct MoreView: View {
                     NavigationLink { SettingsView() } label: { IconRowLabel(title: "Setări", symbol: "gearshape.fill", color: .gray) }
                 }
             }
+            .band(210)
             .navigationTitle("Mai mult")
             #if DEBUG
             // Screenshots: `-GarajMore clienti|masini`, `-GarajOpenVehicle <id>`, `-GarajOpenCustomer <id>`.
@@ -109,6 +110,7 @@ struct DataView: View {
         .alert(notice ?? "", isPresented: Binding(get: { notice != nil }, set: { if !$0 { notice = nil } })) {
             Button("OK", role: .cancel) {}
         }
+        .band(180)
         .navigationTitle("Date și backup")
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             do {

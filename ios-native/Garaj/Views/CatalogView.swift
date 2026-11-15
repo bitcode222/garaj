@@ -19,6 +19,7 @@ struct CatalogView: View {
                     Text("Piese").tag("parts")
                 }
                 .pickerStyle(.segmented)
+                .onBand()
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
             }
@@ -76,6 +77,7 @@ struct CatalogView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .band(200)
         .navigationTitle("Catalog")
         .searchable(text: $query, prompt: tab == "services" ? "Caută o operație" : "Caută o piesă, cod, raft")
         .toolbar {

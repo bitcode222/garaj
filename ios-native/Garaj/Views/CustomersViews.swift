@@ -43,6 +43,7 @@ struct CustomersView: View {
             }
         }
         .overlay { if customers.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView("Niciun client", systemImage: "person.2")) : AnyView(ContentUnavailableView.search(text: query)) } }
+        .band(200)
         .navigationTitle("Clienți")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Nume, telefon, număr, CUI")
         .toolbar { Button { creating = store.newCustomer() } label: { Label("Client nou", systemImage: "plus") } }
@@ -160,6 +161,7 @@ struct CustomerDetailView: View {
             Section { Button("Șterge clientul", role: .destructive) { confirmDelete = true } }
         }
         .listStyle(.insetGrouped)
+        .band(200)
         .navigationTitle(c.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { Button("Editează") { editing = c } }

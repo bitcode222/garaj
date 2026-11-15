@@ -40,6 +40,7 @@ struct RemindersView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .band(180)
         .overlay {
             if reminders.isEmpty {
                 ContentUnavailableView("Nimeni de contactat azi", systemImage: "checkmark.circle", description: Text("ITP-uri, RCA-uri, revizii, restanțe și mașini de ridicat apar aici când e momentul."))

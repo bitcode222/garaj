@@ -105,6 +105,7 @@ struct AppointmentDetailView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .band(150)
         .navigationTitle(Text(verbatim: a.number.map { "Programarea #\($0)" } ?? "Programare"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
