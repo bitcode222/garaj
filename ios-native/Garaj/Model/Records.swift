@@ -260,8 +260,9 @@ struct Appointment: Record {
     static let defaults: JSONObject = [
         "start": .string(""), "end": .string(""), "customerId": .null, "vehicleId": .null, "title": .string(""),
         "status": .string("scheduled"), "workOrderId": .null, "staffId": .null, "bayId": .null, "activity": .array([]),
-        "expectedAt": .null, "notes": .string(""),
+        "expectedAt": .null, "notes": .string(""), "serviceIds": .array([]), "createdAt": .string(""),
     ]
+    // `operations` (edited services, newer bookings) is only there when the web wrote it.
     var id: String
     var start: String
     var end: String
@@ -275,5 +276,21 @@ struct Appointment: Record {
     var activity: [JSONValue]
     var expectedAt: String?
     var notes: String
+    var serviceIds: [String]
+    var createdAt: String
     var number: Int? = nil
+    var operations: [JSONValue]? = nil
+    var cancelReason: JSONValue? = nil
+
+    var isActive: Bool { status != "cancelled" && status != "no_show" }
+}
+
+struct Bay: Record {
+    static let collection = Collection.bays
+    static let defaults: JSONObject = ["name": .string(""), "kind": .string(""), "active": .bool(true), "order": .number(0)]
+    var id: String
+    var name: String
+    var kind: String
+    var active: Bool
+    var order: Double
 }

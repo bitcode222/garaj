@@ -5,7 +5,7 @@ import SwiftUI
 /// the bookings to confirm, the invoices to collect, and the analytics. One tap acts where it
 /// can (confirm, check in, collect, remind); everything else opens the record.
 struct HomeView: View {
-    enum Route: Hashable { case job(String), invoice(String) }
+    enum Route: Hashable { case job(String), invoice(String), appointment(String) }
 
     @Environment(AppStore.self) private var store
     @Environment(UndoCenter.self) private var undo
@@ -53,6 +53,7 @@ struct HomeView: View {
                 switch route {
                 case .job(let id): WorkOrderDetailView(id: id)
                 case .invoice(let id): InvoiceDetailView(id: id)
+                case .appointment(let id): AppointmentDetailView(id: id)
                 }
             }
             .sheet(isPresented: $creatingJob) { NewWorkOrderSheet { path.append(.job($0)) } }
@@ -145,6 +146,7 @@ struct HomeView: View {
                                         confirm: { act("Confirmată") { try store.setAppointmentStatus(a.id, to: "confirmed") } },
                                         arrived: { checkIn(a) },
                                         noShow: { act("Neprezentat") { try store.markNoShow(a.id) } })
+                                .onTapGesture { path.append(.appointment(a.id)) }
                         }
                     }
                 }

@@ -17,6 +17,9 @@ const { DEFAULT_SETTINGS } = await import("../src/lib/store/defaults.js");
 const invoice = await import("../src/domain/invoice.js");
 const agenda = await import("../src/domain/agenda.js");
 const analytics = await import("../src/domain/analytics.js");
+const alist = await import("../src/domain/appointment-list.js");
+const appt = await import("../src/domain/appointment.js");
+const search = await import("../src/domain/search.js");
 
 const OUT = new URL("../ios-native/GarajTests/Fixtures/", import.meta.url);
 mkdirSync(OUT, { recursive: true });
@@ -158,6 +161,43 @@ write("rules.json", {
 			const m = (x) => ({ value: x.value, points: x.points, empty: x.empty, change: x.change });
 			return { period, window: h.window, collected: m(h.collected), received: m(h.received), ticket: m(h.ticket), show: m(h.show), stay: m(h.stay), hours: m(h.hours) };
 		}),
+	}, { compact: true });
+}
+
+// Toate programările: list, counts, groups, stats, conflicts, search folding.
+{
+	const today = "2026-11-15";
+	const now = new Date("2026-11-15T11:20:00").toISOString();
+	const c = demoAll.collections;
+	const appointments = c.appointments.map((a, i) => (i % 9 === 0 ? { ...a, number: undefined } : a)).map((a) => JSON.parse(JSON.stringify(a)));
+	const pick = (o, keys) => Object.fromEntries(keys.map((k) => [k, o[k]]));
+	const customers = c.customers.map((x) => pick(x, ["id", "type", "name", "phone"]));
+	const vehicles = c.vehicles.map((x) => pick(x, ["id", "plate", "make", "model"]));
+	const services = c.services.map((x) => pick(x, ["id", "name", "hours", "price"]));
+	const byId = (list) => Object.fromEntries(list.map((x) => [x.id, x]));
+	const lookups = { customers: byId(customers), vehicles: byId(vehicles), services: byId(services) };
+	const staff = c.staff[0].id;
+	const queries = ["", "dacia", "B 1", "ștefan", "#1", "07", "revizie ulei"];
+	const cases = [];
+	for (const status of alist.STATUS_FILTERS)
+		for (const period of ["upcoming", "today", "next7", "week", "month", "past", "all"]) cases.push({ status, period, staff: "all", query: "", sort: "time" });
+	for (const query of queries) cases.push({ status: "all", period: "all", staff: "all", query, sort: "time" });
+	for (const sort of ["time", "created", "customer"]) cases.push({ status: "all", period: "past", staff, query: "", sort }, { status: "all", period: "upcoming", staff: "none", query: "", sort });
+	const results = cases.map((k) => {
+		const r = alist.listAppointments(appointments, { ...k, tokens: search.queryTokens(k.query), today, now, lookups });
+		return { ...k, ids: r.rows.map((a) => a.id), counts: r.counts };
+	});
+	const all = alist.listAppointments(appointments, { status: "all", period: "all", today, now, lookups }).rows;
+	const groups = alist.groupByDay(all).map((g) => ({ day: g.day, ids: g.items.map((a) => a.id), minutes: g.minutes }));
+	const hours = DEFAULT_SETTINGS.hours;
+	const stats = alist.appointmentStats(appointments, { today, now, staff: c.staff, hours });
+	const conflicts = appointments.slice(0, 40).map((a) => ({ id: a.id, ids: appt.findConflicts(a, appointments).map((o) => o.id) }));
+	write("appointments.json", {
+		today, now, appointments, customers, vehicles, services, staffCount: c.staff.length, hours,
+		results, groups, stats: { todayCount: stats.today.count, nextId: stats.today.next?.id ?? null, toConfirm: stats.toConfirm, noShow: stats.noShow, booked: stats.load.booked, capacity: stats.load.capacity },
+		conflicts,
+		folds: ["Ștefan Ionescu", "ȘȚĂÂÎ șțăâî", "Brutăria Bunica SRL", "B 123, abc"].map((input) => ({ input, fold: search.fold(input), tokens: search.queryTokens(input) })),
+		ranges: ["upcoming", "today", "next7", "week", "month", "past", "all"].flatMap((period) => ["2026-11-15", "2026-11-16", "2026-02-28", "2026-12-31"].map((t) => ({ period, today: t, range: alist.periodRange(period, t) }))),
 	}, { compact: true });
 }
 
