@@ -12,6 +12,8 @@ struct AppointmentDetailView: View {
     @State private var cancelling: Appointment?
     @State private var openJob: String?
     @State private var confirmDelete = false
+    @State private var editingOperation: OperationSheet.Target?
+    @State private var pickingServices = false
     @State private var done = 0
     @State private var error: String?
 
@@ -72,12 +74,14 @@ struct AppointmentDetailView: View {
                 if let n = a.number { LabeledContent("Număr", value: "#\(n)") }
             }
 
-            if !a.title.isEmpty || !ops.isEmpty || !a.notes.isEmpty {
-                Section("Ce are de făcut") {
-                    if !a.title.isEmpty { Text(a.title) }
-                    ForEach(ops.filter { $0 != a.title }, id: \.self) { Label($0, systemImage: "wrench.and.screwdriver").font(.subheadline) }
+            OperationsSection(appointment: a, editable: a.workOrderId == nil && ["scheduled", "confirmed", "arrived"].contains(a.status),
+                              editing: $editingOperation, picking: $pickingServices)
+
+            if !a.notes.isEmpty || (!a.title.isEmpty && a.title != ops.joined(separator: ", ")) {
+                Section {
+                    if !a.title.isEmpty && a.title != ops.joined(separator: ", ") { Text(a.title) }
                     if !a.notes.isEmpty { Text(a.notes).font(.subheadline).foregroundStyle(.secondary) }
-                }
+                } header: { CapsHeader("Note") }
             }
 
             if let job = store.get(WorkOrder.self, a.workOrderId) {
@@ -116,6 +120,13 @@ struct AppointmentDetailView: View {
         .navigationDestination(item: $openJob) { WorkOrderDetailView(id: $0) }
         .sheet(item: $editing) { BookingForm(target: $0) }
         .sheet(item: $cancelling) { CancelSheet(appointment: $0) }
+        .sheet(item: $editingOperation) { OperationSheet(target: $0, appointmentId: a.id) }
+        .sheet(isPresented: $pickingServices) {
+            ServicePicker { picked in
+                let rate = store.shop.laborRate
+                store.setOperations(a.id, store.operations(of: a.id) + picked.map { Operations.fromService($0, laborRate: rate) })
+            }
+        }
         .confirmationDialog("Ștergi programarea?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Șterge", role: .destructive) {
                 do { try store.deleteAppointment(a.id); dismiss() } catch { self.error = error.localizedDescription }

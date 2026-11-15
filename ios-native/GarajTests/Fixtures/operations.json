@@ -1,0 +1,1185 @@
+{
+ "laborRate": 18000,
+ "services": [
+  {
+   "id": "0mwifurd5ipuj1xik",
+   "name": "Schimb ulei și filtru",
+   "category": "maintenance",
+   "hours": 0.6,
+   "price": 10800,
+   "parts": [
+    {
+     "partId": "0mwifurd5sirbuf2k",
+     "qty": 4.5
+    },
+    {
+     "partId": "0mwifurd5kupwp1nf",
+     "qty": 1
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd55vgmtify",
+   "name": "Revizie completă (ulei și filtre)",
+   "category": "maintenance",
+   "hours": 1.5,
+   "price": 27000,
+   "parts": [
+    {
+     "partId": "0mwifurd5sirbuf2k",
+     "qty": 4.5
+    },
+    {
+     "partId": "0mwifurd5kupwp1nf",
+     "qty": 1
+    },
+    {
+     "partId": "0mwifurd530zdndej",
+     "qty": 1
+    },
+    {
+     "partId": "0mwifurd57mw11x67",
+     "qty": 1
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd532w50mec",
+   "name": "Înlocuire plăcuțe frână față",
+   "category": "brakes",
+   "hours": 1,
+   "price": 18000,
+   "parts": [
+    {
+     "partId": "0mwifurd57kg7lh7p",
+     "qty": 1
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd5f2qffa99",
+   "name": "Înlocuire plăcuțe frână spate",
+   "category": "brakes",
+   "hours": 1,
+   "price": 18000,
+   "parts": [
+    {
+     "partId": "0mwifurd5ep9q74k0",
+     "qty": 1
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd5onx0d947",
+   "name": "Înlocuire discuri și plăcuțe față",
+   "category": "brakes",
+   "hours": 1.6,
+   "price": 28800,
+   "parts": [
+    {
+     "partId": "0mwifurd54ytgvtbn",
+     "qty": 1
+    },
+    {
+     "partId": "0mwifurd57kg7lh7p",
+     "qty": 1
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd5uh87vdwx",
+   "name": "Înlocuire lichid de frână",
+   "category": "brakes",
+   "hours": 0.7,
+   "price": 12600,
+   "parts": [
+    {
+     "partId": "0mwifurd56igjxar6",
+     "qty": 1
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd5pryo5jdc",
+   "name": "Înlocuire kit distribuție și pompă apă",
+   "category": "engine",
+   "hours": 4,
+   "price": 72000,
+   "parts": [
+    {
+     "partId": "0mwifurd5k4ajj1gb",
+     "qty": 1
+    },
+    {
+     "partId": "0mwifurd50rzxq51m",
+     "qty": 3
+    },
+    {
+     "partId": "0mwifurd55z1s7az1",
+     "qty": 1
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd5ek4xz1ld",
+   "name": "Înlocuire bujii",
+   "category": "engine",
+   "hours": 0.6,
+   "price": 10800,
+   "parts": [
+    {
+     "partId": "0mwifurd59nsl1sr9",
+     "qty": 4
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd55b3zmce3",
+   "name": "Diagnoză computerizată",
+   "category": "diagnostics",
+   "hours": 0.5,
+   "price": 9000,
+   "parts": [],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd5b4oy31eh",
+   "name": "Înlocuire acumulator",
+   "category": "electrical",
+   "hours": 0.3,
+   "price": 5400,
+   "parts": [
+    {
+     "partId": "0mwifurd5v18i9gmv",
+     "qty": 1
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd66znh4cyo",
+   "name": "Înlocuire bec far",
+   "category": "electrical",
+   "hours": 0.3,
+   "price": 5400,
+   "parts": [
+    {
+     "partId": "0mwifurd51uumfav7",
+     "qty": 1
+    }
+   ],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "0mwifurd6071wj6g6",
+   "name": "Geometrie roți",
+   "category": "tires",
+   "hours": 0.8,
+   "price": 14400,
+   "parts": [],
+   "createdAt": "2025-11-15T07:00:00.000Z"
+  },
+  {
+   "id": "free",
+   "name": "Gratuit",
+   "hours": 0,
+   "price": 0,
+   "cost": 0
+  },
+  {
+   "id": "odd",
+   "name": "Ciudat",
+   "hours": 0.33,
+   "price": 0,
+   "cost": 1234
+  }
+ ],
+ "fromService": [
+  {
+   "serviceId": "0mwifurd5ipuj1xik",
+   "name": "Schimb ulei și filtru",
+   "hours": 0.6,
+   "price": 10800,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd55vgmtify",
+   "name": "Revizie completă (ulei și filtre)",
+   "hours": 1.5,
+   "price": 27000,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd532w50mec",
+   "name": "Înlocuire plăcuțe frână față",
+   "hours": 1,
+   "price": 18000,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd5f2qffa99",
+   "name": "Înlocuire plăcuțe frână spate",
+   "hours": 1,
+   "price": 18000,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd5onx0d947",
+   "name": "Înlocuire discuri și plăcuțe față",
+   "hours": 1.6,
+   "price": 28800,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd5uh87vdwx",
+   "name": "Înlocuire lichid de frână",
+   "hours": 0.7,
+   "price": 12600,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd5pryo5jdc",
+   "name": "Înlocuire kit distribuție și pompă apă",
+   "hours": 4,
+   "price": 72000,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd5ek4xz1ld",
+   "name": "Înlocuire bujii",
+   "hours": 0.6,
+   "price": 10800,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd55b3zmce3",
+   "name": "Diagnoză computerizată",
+   "hours": 0.5,
+   "price": 9000,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd5b4oy31eh",
+   "name": "Înlocuire acumulator",
+   "hours": 0.3,
+   "price": 5400,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd66znh4cyo",
+   "name": "Înlocuire bec far",
+   "hours": 0.3,
+   "price": 5400,
+   "cost": 0
+  },
+  {
+   "serviceId": "0mwifurd6071wj6g6",
+   "name": "Geometrie roți",
+   "hours": 0.8,
+   "price": 14400,
+   "cost": 0
+  },
+  {
+   "serviceId": "free",
+   "name": "Gratuit",
+   "hours": 1,
+   "price": 18000,
+   "cost": 0
+  },
+  {
+   "serviceId": "odd",
+   "name": "Ciudat",
+   "hours": 0.33,
+   "price": 5940,
+   "cost": 1234
+  }
+ ],
+ "ops": [
+  {
+   "id": "op0",
+   "serviceId": "0mwifurd5ipuj1xik",
+   "name": "Schimb ulei și filtru",
+   "hours": 0.6,
+   "price": 10800,
+   "cost": 0
+  },
+  {
+   "id": "op1",
+   "serviceId": "0mwifurd55vgmtify",
+   "name": "Revizie completă (ulei și filtre)",
+   "hours": 1.5,
+   "price": 27000,
+   "cost": 0
+  },
+  {
+   "id": "op2",
+   "serviceId": "0mwifurd532w50mec",
+   "name": "Înlocuire plăcuțe frână față",
+   "hours": 1,
+   "price": 18000,
+   "cost": 0
+  },
+  {
+   "id": "op3",
+   "serviceId": "0mwifurd5f2qffa99",
+   "name": "Înlocuire plăcuțe frână spate",
+   "hours": 1,
+   "price": 18000,
+   "cost": 0
+  },
+  {
+   "id": "op4",
+   "serviceId": "0mwifurd5onx0d947",
+   "name": "Înlocuire discuri și plăcuțe față",
+   "hours": 1.6,
+   "price": 28800,
+   "cost": 0
+  },
+  {
+   "id": "op5",
+   "serviceId": "0mwifurd5uh87vdwx",
+   "name": "Înlocuire lichid de frână",
+   "hours": 0.7,
+   "price": 12600,
+   "cost": 0
+  },
+  {
+   "id": "op6",
+   "serviceId": "0mwifurd5pryo5jdc",
+   "name": "Înlocuire kit distribuție și pompă apă",
+   "hours": 4,
+   "price": 72000,
+   "cost": 0
+  },
+  {
+   "id": "op7",
+   "serviceId": "0mwifurd5ek4xz1ld",
+   "name": "Înlocuire bujii",
+   "hours": 0.6,
+   "price": 10800,
+   "cost": 0
+  },
+  {
+   "id": "op8",
+   "serviceId": "0mwifurd55b3zmce3",
+   "name": "Diagnoză computerizată",
+   "hours": 0.5,
+   "price": 9000,
+   "cost": 0
+  },
+  {
+   "id": "op9",
+   "serviceId": "0mwifurd5b4oy31eh",
+   "name": "Înlocuire acumulator",
+   "hours": 0.3,
+   "price": 5400,
+   "cost": 0
+  },
+  {
+   "id": "op10",
+   "serviceId": "0mwifurd66znh4cyo",
+   "name": "Înlocuire bec far",
+   "hours": 0.3,
+   "price": 5400,
+   "cost": 0
+  },
+  {
+   "id": "op11",
+   "serviceId": "0mwifurd6071wj6g6",
+   "name": "Geometrie roți",
+   "hours": 0.8,
+   "price": 14400,
+   "cost": 0
+  },
+  {
+   "id": "op12",
+   "serviceId": "free",
+   "name": "Gratuit",
+   "hours": 1,
+   "price": 18000,
+   "cost": 0
+  },
+  {
+   "id": "op13",
+   "serviceId": "odd",
+   "name": "Ciudat",
+   "hours": 0.33,
+   "price": 5940,
+   "cost": 1234
+  },
+  {
+   "id": "x1",
+   "name": "Liberă",
+   "hours": 1.25,
+   "price": 22550,
+   "cost": 9000
+  },
+  {
+   "id": "x2",
+   "name": "TVA redus",
+   "hours": 0.5,
+   "price": 10001,
+   "cost": 0,
+   "vatRate": 9
+  },
+  {
+   "id": "x3",
+   "name": "Fără TVA",
+   "hours": 2,
+   "price": 33333,
+   "cost": 50000,
+   "vatRate": 0
+  },
+  {
+   "id": "x4",
+   "name": "Negativ",
+   "hours": 1,
+   "price": -500,
+   "cost": -10
+  }
+ ],
+ "figures": [
+  {
+   "id": "op0",
+   "rate": 21,
+   "net": 10800,
+   "vat": 2268,
+   "gross": 13068,
+   "cost": 0,
+   "margin": 10800,
+   "marginPct": 100
+  },
+  {
+   "id": "op0",
+   "rate": 9,
+   "net": 10800,
+   "vat": 972,
+   "gross": 11772,
+   "cost": 0,
+   "margin": 10800,
+   "marginPct": 100
+  },
+  {
+   "id": "op0",
+   "rate": 0,
+   "net": 10800,
+   "vat": 0,
+   "gross": 10800,
+   "cost": 0,
+   "margin": 10800,
+   "marginPct": 100
+  },
+  {
+   "id": "op1",
+   "rate": 21,
+   "net": 27000,
+   "vat": 5670,
+   "gross": 32670,
+   "cost": 0,
+   "margin": 27000,
+   "marginPct": 100
+  },
+  {
+   "id": "op1",
+   "rate": 9,
+   "net": 27000,
+   "vat": 2430,
+   "gross": 29430,
+   "cost": 0,
+   "margin": 27000,
+   "marginPct": 100
+  },
+  {
+   "id": "op1",
+   "rate": 0,
+   "net": 27000,
+   "vat": 0,
+   "gross": 27000,
+   "cost": 0,
+   "margin": 27000,
+   "marginPct": 100
+  },
+  {
+   "id": "op2",
+   "rate": 21,
+   "net": 18000,
+   "vat": 3780,
+   "gross": 21780,
+   "cost": 0,
+   "margin": 18000,
+   "marginPct": 100
+  },
+  {
+   "id": "op2",
+   "rate": 9,
+   "net": 18000,
+   "vat": 1620,
+   "gross": 19620,
+   "cost": 0,
+   "margin": 18000,
+   "marginPct": 100
+  },
+  {
+   "id": "op2",
+   "rate": 0,
+   "net": 18000,
+   "vat": 0,
+   "gross": 18000,
+   "cost": 0,
+   "margin": 18000,
+   "marginPct": 100
+  },
+  {
+   "id": "op3",
+   "rate": 21,
+   "net": 18000,
+   "vat": 3780,
+   "gross": 21780,
+   "cost": 0,
+   "margin": 18000,
+   "marginPct": 100
+  },
+  {
+   "id": "op3",
+   "rate": 9,
+   "net": 18000,
+   "vat": 1620,
+   "gross": 19620,
+   "cost": 0,
+   "margin": 18000,
+   "marginPct": 100
+  },
+  {
+   "id": "op3",
+   "rate": 0,
+   "net": 18000,
+   "vat": 0,
+   "gross": 18000,
+   "cost": 0,
+   "margin": 18000,
+   "marginPct": 100
+  },
+  {
+   "id": "op4",
+   "rate": 21,
+   "net": 28800,
+   "vat": 6048,
+   "gross": 34848,
+   "cost": 0,
+   "margin": 28800,
+   "marginPct": 100
+  },
+  {
+   "id": "op4",
+   "rate": 9,
+   "net": 28800,
+   "vat": 2592,
+   "gross": 31392,
+   "cost": 0,
+   "margin": 28800,
+   "marginPct": 100
+  },
+  {
+   "id": "op4",
+   "rate": 0,
+   "net": 28800,
+   "vat": 0,
+   "gross": 28800,
+   "cost": 0,
+   "margin": 28800,
+   "marginPct": 100
+  },
+  {
+   "id": "op5",
+   "rate": 21,
+   "net": 12600,
+   "vat": 2646,
+   "gross": 15246,
+   "cost": 0,
+   "margin": 12600,
+   "marginPct": 100
+  },
+  {
+   "id": "op5",
+   "rate": 9,
+   "net": 12600,
+   "vat": 1134,
+   "gross": 13734,
+   "cost": 0,
+   "margin": 12600,
+   "marginPct": 100
+  },
+  {
+   "id": "op5",
+   "rate": 0,
+   "net": 12600,
+   "vat": 0,
+   "gross": 12600,
+   "cost": 0,
+   "margin": 12600,
+   "marginPct": 100
+  },
+  {
+   "id": "op6",
+   "rate": 21,
+   "net": 72000,
+   "vat": 15120,
+   "gross": 87120,
+   "cost": 0,
+   "margin": 72000,
+   "marginPct": 100
+  },
+  {
+   "id": "op6",
+   "rate": 9,
+   "net": 72000,
+   "vat": 6480,
+   "gross": 78480,
+   "cost": 0,
+   "margin": 72000,
+   "marginPct": 100
+  },
+  {
+   "id": "op6",
+   "rate": 0,
+   "net": 72000,
+   "vat": 0,
+   "gross": 72000,
+   "cost": 0,
+   "margin": 72000,
+   "marginPct": 100
+  },
+  {
+   "id": "op7",
+   "rate": 21,
+   "net": 10800,
+   "vat": 2268,
+   "gross": 13068,
+   "cost": 0,
+   "margin": 10800,
+   "marginPct": 100
+  },
+  {
+   "id": "op7",
+   "rate": 9,
+   "net": 10800,
+   "vat": 972,
+   "gross": 11772,
+   "cost": 0,
+   "margin": 10800,
+   "marginPct": 100
+  },
+  {
+   "id": "op7",
+   "rate": 0,
+   "net": 10800,
+   "vat": 0,
+   "gross": 10800,
+   "cost": 0,
+   "margin": 10800,
+   "marginPct": 100
+  },
+  {
+   "id": "op8",
+   "rate": 21,
+   "net": 9000,
+   "vat": 1890,
+   "gross": 10890,
+   "cost": 0,
+   "margin": 9000,
+   "marginPct": 100
+  },
+  {
+   "id": "op8",
+   "rate": 9,
+   "net": 9000,
+   "vat": 810,
+   "gross": 9810,
+   "cost": 0,
+   "margin": 9000,
+   "marginPct": 100
+  },
+  {
+   "id": "op8",
+   "rate": 0,
+   "net": 9000,
+   "vat": 0,
+   "gross": 9000,
+   "cost": 0,
+   "margin": 9000,
+   "marginPct": 100
+  },
+  {
+   "id": "op9",
+   "rate": 21,
+   "net": 5400,
+   "vat": 1134,
+   "gross": 6534,
+   "cost": 0,
+   "margin": 5400,
+   "marginPct": 100
+  },
+  {
+   "id": "op9",
+   "rate": 9,
+   "net": 5400,
+   "vat": 486,
+   "gross": 5886,
+   "cost": 0,
+   "margin": 5400,
+   "marginPct": 100
+  },
+  {
+   "id": "op9",
+   "rate": 0,
+   "net": 5400,
+   "vat": 0,
+   "gross": 5400,
+   "cost": 0,
+   "margin": 5400,
+   "marginPct": 100
+  },
+  {
+   "id": "op10",
+   "rate": 21,
+   "net": 5400,
+   "vat": 1134,
+   "gross": 6534,
+   "cost": 0,
+   "margin": 5400,
+   "marginPct": 100
+  },
+  {
+   "id": "op10",
+   "rate": 9,
+   "net": 5400,
+   "vat": 486,
+   "gross": 5886,
+   "cost": 0,
+   "margin": 5400,
+   "marginPct": 100
+  },
+  {
+   "id": "op10",
+   "rate": 0,
+   "net": 5400,
+   "vat": 0,
+   "gross": 5400,
+   "cost": 0,
+   "margin": 5400,
+   "marginPct": 100
+  },
+  {
+   "id": "op11",
+   "rate": 21,
+   "net": 14400,
+   "vat": 3024,
+   "gross": 17424,
+   "cost": 0,
+   "margin": 14400,
+   "marginPct": 100
+  },
+  {
+   "id": "op11",
+   "rate": 9,
+   "net": 14400,
+   "vat": 1296,
+   "gross": 15696,
+   "cost": 0,
+   "margin": 14400,
+   "marginPct": 100
+  },
+  {
+   "id": "op11",
+   "rate": 0,
+   "net": 14400,
+   "vat": 0,
+   "gross": 14400,
+   "cost": 0,
+   "margin": 14400,
+   "marginPct": 100
+  },
+  {
+   "id": "op12",
+   "rate": 21,
+   "net": 18000,
+   "vat": 3780,
+   "gross": 21780,
+   "cost": 0,
+   "margin": 18000,
+   "marginPct": 100
+  },
+  {
+   "id": "op12",
+   "rate": 9,
+   "net": 18000,
+   "vat": 1620,
+   "gross": 19620,
+   "cost": 0,
+   "margin": 18000,
+   "marginPct": 100
+  },
+  {
+   "id": "op12",
+   "rate": 0,
+   "net": 18000,
+   "vat": 0,
+   "gross": 18000,
+   "cost": 0,
+   "margin": 18000,
+   "marginPct": 100
+  },
+  {
+   "id": "op13",
+   "rate": 21,
+   "net": 5940,
+   "vat": 1247,
+   "gross": 7187,
+   "cost": 1234,
+   "margin": 4706,
+   "marginPct": 79.2
+  },
+  {
+   "id": "op13",
+   "rate": 9,
+   "net": 5940,
+   "vat": 535,
+   "gross": 6475,
+   "cost": 1234,
+   "margin": 4706,
+   "marginPct": 79.2
+  },
+  {
+   "id": "op13",
+   "rate": 0,
+   "net": 5940,
+   "vat": 0,
+   "gross": 5940,
+   "cost": 1234,
+   "margin": 4706,
+   "marginPct": 79.2
+  },
+  {
+   "id": "x1",
+   "rate": 21,
+   "net": 22550,
+   "vat": 4736,
+   "gross": 27286,
+   "cost": 9000,
+   "margin": 13550,
+   "marginPct": 60.1
+  },
+  {
+   "id": "x1",
+   "rate": 9,
+   "net": 22550,
+   "vat": 2030,
+   "gross": 24580,
+   "cost": 9000,
+   "margin": 13550,
+   "marginPct": 60.1
+  },
+  {
+   "id": "x1",
+   "rate": 0,
+   "net": 22550,
+   "vat": 0,
+   "gross": 22550,
+   "cost": 9000,
+   "margin": 13550,
+   "marginPct": 60.1
+  },
+  {
+   "id": "x2",
+   "rate": 21,
+   "net": 10001,
+   "vat": 2100,
+   "gross": 12101,
+   "cost": 0,
+   "margin": 10001,
+   "marginPct": 100
+  },
+  {
+   "id": "x2",
+   "rate": 9,
+   "net": 10001,
+   "vat": 900,
+   "gross": 10901,
+   "cost": 0,
+   "margin": 10001,
+   "marginPct": 100
+  },
+  {
+   "id": "x2",
+   "rate": 0,
+   "net": 10001,
+   "vat": 0,
+   "gross": 10001,
+   "cost": 0,
+   "margin": 10001,
+   "marginPct": 100
+  },
+  {
+   "id": "x3",
+   "rate": 21,
+   "net": 33333,
+   "vat": 7000,
+   "gross": 40333,
+   "cost": 50000,
+   "margin": -16667,
+   "marginPct": -50
+  },
+  {
+   "id": "x3",
+   "rate": 9,
+   "net": 33333,
+   "vat": 3000,
+   "gross": 36333,
+   "cost": 50000,
+   "margin": -16667,
+   "marginPct": -50
+  },
+  {
+   "id": "x3",
+   "rate": 0,
+   "net": 33333,
+   "vat": 0,
+   "gross": 33333,
+   "cost": 50000,
+   "margin": -16667,
+   "marginPct": -50
+  },
+  {
+   "id": "x4",
+   "rate": 21,
+   "net": 0,
+   "vat": 0,
+   "gross": 0,
+   "cost": 0,
+   "margin": 0,
+   "marginPct": 0
+  },
+  {
+   "id": "x4",
+   "rate": 9,
+   "net": 0,
+   "vat": 0,
+   "gross": 0,
+   "cost": 0,
+   "margin": 0,
+   "marginPct": 0
+  },
+  {
+   "id": "x4",
+   "rate": 0,
+   "net": 0,
+   "vat": 0,
+   "gross": 0,
+   "cost": 0,
+   "margin": 0,
+   "marginPct": 0
+  }
+ ],
+ "vatRates": [
+  {
+   "id": "op0",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op0",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op1",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op1",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op2",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op2",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op3",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op3",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op4",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op4",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op5",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op5",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op6",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op6",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op7",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op7",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op8",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op8",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op9",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op9",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op10",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op10",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op11",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op11",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op12",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op12",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "op13",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "op13",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "x1",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "x1",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "x2",
+   "vatPayer": true,
+   "rate": 9
+  },
+  {
+   "id": "x2",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "x3",
+   "vatPayer": true,
+   "rate": 0
+  },
+  {
+   "id": "x3",
+   "vatPayer": false,
+   "rate": 0
+  },
+  {
+   "id": "x4",
+   "vatPayer": true,
+   "rate": 21
+  },
+  {
+   "id": "x4",
+   "vatPayer": false,
+   "rate": 0
+  }
+ ],
+ "estimate": [
+  {
+   "vatPayer": true,
+   "minutes": 1139,
+   "gross": 381449
+  },
+  {
+   "vatPayer": false,
+   "minutes": 1139,
+   "gross": 322024
+  }
+ ]
+}

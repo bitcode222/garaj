@@ -316,6 +316,27 @@ write("rules.json", {
 	}, { compact: true });
 }
 
+// Operations on a booking or job form (lines.js): from the catalog, figures, VAT rate, estimate.
+{
+	const services = [...demoAll.collections.services.slice(0, 12), { id: "free", name: "Gratuit", hours: 0, price: 0, cost: 0 }, { id: "odd", name: "Ciudat", hours: 0.33, price: 0, cost: 1234 }];
+	const ops = [
+		...services.map((sv, i) => ({ id: `op${i}`, ...lines.operationFromService(sv, 18000) })),
+		{ id: "x1", name: "Liberă", hours: 1.25, price: 22550, cost: 9000 },
+		{ id: "x2", name: "TVA redus", hours: 0.5, price: 10001, cost: 0, vatRate: 9 },
+		{ id: "x3", name: "Fără TVA", hours: 2, price: 33333, cost: 50000, vatRate: 0 },
+		{ id: "x4", name: "Negativ", hours: 1, price: -500, cost: -10 },
+	];
+	write("operations.json", {
+		laborRate: 18000,
+		services,
+		fromService: services.map((sv) => lines.operationFromService(sv, 18000)),
+		ops,
+		figures: ops.flatMap((op) => [21, 9, 0].map((rate) => ({ id: op.id, rate, ...lines.operationFigures(op, rate) }))),
+		vatRates: ops.flatMap((op) => [true, false].map((vatPayer) => ({ id: op.id, vatPayer, rate: lines.operationVatRate(op, { vatPayer, vatRate: 21 }) }))),
+		estimate: [true, false].map((vatPayer) => ({ vatPayer, ...lines.operationsEstimate(ops, { vatPayer, vatRate: 21 }) })),
+	});
+}
+
 // A small backup: the demo data, a few records per collection.
 const demo = buildDemoData("2026-11-15");
 const collections = Object.fromEntries(Object.entries(demo.collections).map(([k, v]) => [k, v.slice(0, 4)]));
