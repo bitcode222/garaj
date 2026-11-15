@@ -33,25 +33,23 @@ struct AppointmentsView: View {
             let groups = sort == "time" ? AppointmentList.groupByDay(result.rows) : [AppointmentList.DayGroup(day: "", items: result.rows, minutes: 0)]
             Group {
             if mode == "calendar" {
-                CalendarDayView(day: $calendarDay, open: { path.append(.appointment($0)) }, book: { editing = .newAt($0, $1) })
+                VStack(spacing: 8) {
+                    modePicker.padding(.horizontal, 16)
+                    CalendarDayView(day: $calendarDay, open: { path.append(.appointment($0)) }, book: { editing = .newAt($0, $1) })
+                }
             } else {
             List {
+                Section { modePicker }.bareRow().listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
                 if query.isEmpty {
-                    Section { StatsRow(status: $status, period: $period) }
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
+                    Section { StatsRow(status: $status, period: $period) }.bareRow()
                     Section {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(AppointmentList.statusFilters, id: \.self) { key in
-                                    FilterChip(title: Self.statusLabel[key] ?? key, count: result.counts[key] ?? 0, on: status == key) { status = key }
-                                }
+                        ChipRow {
+                            ForEach(AppointmentList.statusFilters, id: \.self) { key in
+                                CountChip(title: Self.statusLabel[key] ?? key, count: result.counts[key] ?? 0, on: status == key) { status = key }
                             }
-                            .padding(.horizontal, 16)
                         }
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
                     }
+                    .bareRow()
                 }
                 ForEach(groups) { group in
                     Section {
@@ -82,17 +80,10 @@ struct AppointmentsView: View {
             .searchable(text: $query, prompt: "Număr, client, telefon, mașină")
             }
             }
-            .navigationTitle("Programări")
+            .navigationTitle(mode == "calendar" ? "Calendar" : "Programări")
             .navigationBarTitleDisplayMode(mode == "calendar" ? .inline : .large)
+            .sensoryFeedback(.selection, trigger: mode)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Picker("Vedere", selection: $mode) {
-                        Label("Listă", systemImage: "list.bullet").tag("list")
-                        Label("Calendar", systemImage: "calendar").tag("calendar")
-                    }
-                    .pickerStyle(.segmented)
-                    .frame(width: 180)
-                }
                 if mode == "calendar" && calendarDay != Dates.today() {
                     ToolbarItem(placement: .topBarLeading) { Button("Azi") { calendarDay = Dates.today() } }
                 }
@@ -143,6 +134,15 @@ struct AppointmentsView: View {
                 Button("OK", role: .cancel) {}
             } message: { Text(error ?? "") }
         }
+    }
+
+    /// Listă / Calendar, under the title (look A).
+    private var modePicker: some View {
+        Picker("Vedere", selection: $mode) {
+            Text("Listă").tag("list")
+            Text("Calendar").tag("calendar")
+        }
+        .pickerStyle(.segmented)
     }
 
     @ViewBuilder private func leadingActions(_ a: Appointment) -> some View {
@@ -199,65 +199,20 @@ private struct StatsRow: View {
         let s = AppointmentList.stats(store.all(Appointment.self), today: Dates.today(), now: Dates.instant(),
                                       staffCount: store.all(Staff.self).filter(\.active).count, open: shop.hoursOpen, close: shop.hoursClose, days: days)
         let next = store.get(Appointment.self, s.nextId)
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-            Tile(title: "Azi", value: "\(s.todayCount)", detail: next.map { "următoarea la \(Dates.timeOfInstant($0.start))" } ?? "nimic de acum încolo") {
+        TileGrid {
+            StatTile(label: "Azi", value: "\(s.todayCount)", detail: next.map { "următoarea la \(Dates.timeOfInstant($0.start))" } ?? "nimic de acum încolo") {
                 status = "all"; period = "today"
             }
-            Tile(title: "De confirmat", value: "\(s.toConfirm)", detail: "7 zile + întârziate", tint: s.toConfirm > 0 ? .orange : nil) { status = "to-confirm" }
-            Tile(title: "Neprezentări", value: s.noShow.map { "\(Int(Money.jsRound($0 * 100)))%" } ?? "—", detail: "ultimele 30 de zile") {
+            StatTile(label: "De confirmat", value: "\(s.toConfirm)", detail: "7 zile + întârziate", detailColor: s.toConfirm > 0 ? .orange : nil) { status = "to-confirm" }
+            StatTile(label: "Neprezentări", value: s.noShow.map { "\(Int(Money.jsRound($0 * 100)))%" } ?? "—", detail: "ultimele 30 de zile") {
                 status = "no_show"; period = "past"
             }
-            Tile(title: "Ocupare", value: s.share.map { "\(Int(Money.jsRound($0 * 100)))%" } ?? "—", detail: "săptămâna asta, \(s.booked / 60) h din \(s.capacity / 60) h") {
+            StatTile(label: "Ocupare", value: s.share.map { "\(Int(Money.jsRound($0 * 100)))%" } ?? "—", detail: "săptămâna asta, \(s.booked / 60) h din \(s.capacity / 60) h") {
                 status = "all"; period = "week"
             }
         }
     }
 
-    private struct Tile: View {
-        let title: String
-        let value: String
-        let detail: String
-        var tint: Color?
-        let action: () -> Void
-
-        var body: some View {
-            Button(action: action) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.subheadline).foregroundStyle(.secondary)
-                    Text(value).font(.title2.weight(.semibold).monospacedDigit()).foregroundStyle(tint ?? .primary)
-                    Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.8)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(12)
-                .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 14))
-            }
-            .buttonStyle(.plain)
-        }
-    }
-}
-
-private struct FilterChip: View {
-    let title: String
-    let count: Int
-    let on: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 4) {
-                Text(title)
-                Text("\(count)").monospacedDigit().foregroundStyle(on ? .white.opacity(0.85) : .secondary)
-            }
-            .font(.subheadline.weight(.medium))
-            .padding(.horizontal, 12)
-            .frame(minHeight: 36)
-            .foregroundStyle(on ? .white : .primary)
-            .background(on ? Color.accentColor : Color(.secondarySystemGroupedBackground), in: .capsule)
-        }
-        .buttonStyle(.plain)
-        .frame(minHeight: 44)
-        .accessibilityAddTraits(on ? .isSelected : [])
-    }
 }
 
 private struct DayHeader: View {
@@ -273,6 +228,9 @@ private struct DayHeader: View {
             Spacer()
             if minutes > 0 { Text(Self.duration(minutes)).monospacedDigit() }
         }
+        .font(.footnote)
+        .foregroundStyle(.secondary)
+        .textCase(.uppercase)
     }
 
     static func duration(_ m: Int) -> String {
@@ -288,28 +246,23 @@ struct AppointmentRow: View {
     var showDay = false
 
     var body: some View {
-        let style = AppointmentRules.style(appointment.status)
+        let length = Dates.minutesBetween(appointment.start, appointment.end)
         HStack(alignment: .top, spacing: 12) {
-            VStack(alignment: .trailing, spacing: 2) {
-                if showDay { Text(Dates.display(Dates.dayOfInstant(appointment.start))).font(.caption2).foregroundStyle(.secondary) }
-                Text(Dates.timeOfInstant(appointment.start)).font(.subheadline.weight(.semibold).monospacedDigit())
-                Text(Dates.timeOfInstant(appointment.end)).font(.caption.monospacedDigit()).foregroundStyle(.secondary)
-            }
-            .frame(minWidth: 48, alignment: .trailing)
+            TimeColumn(time: Dates.timeOfInstant(appointment.start),
+                       detail: showDay ? Dates.display(Dates.dayOfInstant(appointment.start)) : DayHeader.duration(max(0, length)))
             VStack(alignment: .leading, spacing: 3) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(vehicle.map { People.formatPlate($0.plate) } ?? "Mașină nealeasă").font(.headline)
-                    Spacer()
-                    if let n = appointment.number { Text(verbatim: "#\(n)").font(.caption.monospacedDigit()).foregroundStyle(.secondary) }
-                }
-                Text([customer?.name, vehicle?.title].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+                Text(customer?.name ?? "Client necunoscut").lineLimit(1)
+                Text([vehicle.map { People.formatPlate($0.plate) }, appointment.title.isEmpty ? vehicle?.title : appointment.title]
+                        .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
                     .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
-                if !appointment.title.isEmpty { Text(appointment.title).font(.caption).foregroundStyle(.secondary).lineLimit(1) }
-                HStack {
-                    StatusPill(style: style)
-                    if let staff { Text("· \(staff.name)").font(.caption).foregroundStyle(.secondary) }
+                HStack(spacing: 6) {
+                    StatusPill(style: AppointmentRules.style(appointment.status))
+                    if let staff { Text(staff.name).font(.caption).foregroundStyle(.secondary) }
                 }
+                .padding(.top, 2)
             }
+            Spacer(minLength: 4)
+            if let n = appointment.number { Text(verbatim: "#\(n)").font(.caption).monospacedDigit().foregroundStyle(.secondary) }
         }
         .padding(.vertical, 2)
         .accessibilityElement(children: .combine)

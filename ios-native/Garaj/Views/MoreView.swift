@@ -70,7 +70,7 @@ struct DataView: View {
                     LabeledContent(label, value: store.count(collection).formatted())
                 }
             } header: {
-                Text("Pe acest iPhone")
+                CapsHeader("Pe acest iPhone")
             } footer: {
                 Text(store.origin)
             }

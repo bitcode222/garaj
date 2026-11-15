@@ -8,6 +8,8 @@ struct CustomersView: View {
 
     var body: some View {
         let vehiclesByOwner = Dictionary(grouping: store.all(Vehicle.self), by: { $0.customerId ?? "" })
+        let visits = Dictionary(grouping: store.all(WorkOrder.self).filter { $0.status != "cancelled" }, by: { $0.customerId ?? "" }).mapValues(\.count)
+        let overdue = overdueByCustomer
         let tokens = Search.tokens(query)
         let customers = store.all(Customer.self)
             .filter { c in
@@ -17,35 +19,65 @@ struct CustomersView: View {
             .sorted { $0.name.compare($1.name, locale: Locale(identifier: "ro")) == .orderedAscending }
         List(customers) { c in
             NavigationLink { CustomerDetailView(id: c.id) } label: {
+                let cars = vehiclesByOwner[c.id] ?? []
                 HStack(spacing: 12) {
-                    Avatar(text: People.initials(c.name), company: c.isCompany)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(c.name).font(.body.weight(.medium))
-                        Text([People.formatPhone(c.phone), (vehiclesByOwner[c.id] ?? []).map { People.formatPlate($0.plate) }.joined(separator: ", ")]
+                    Avatar(text: People.initials(c.name), company: c.isCompany, tint: Avatar.tint(for: c.id))
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(c.name).lineLimit(1)
+                        Text([c.isCompany && !c.cui.isEmpty ? "CUI \(c.cui)" : People.formatPhone(c.phone),
+                              cars.count == 1 ? cars[0].title.nonEmpty ?? People.formatPlate(cars[0].plate) : cars.count > 1 ? "\(cars.count) mașini" : ""]
                             .filter { !$0.isEmpty }.joined(separator: " · "))
-                            .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                            .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                    }
+                    Spacer(minLength: 4)
+                    if let debt = overdue[c.id], debt > 0 {
+                        VStack(alignment: .trailing, spacing: 1) {
+                            Text(Money.format(debt, currency: store.currency, decimals: 0)).font(.body.weight(.semibold)).monospacedDigit().foregroundStyle(.red)
+                            Text("restanță").font(.caption).foregroundStyle(.secondary)
+                        }
+                    } else {
+                        let n = visits[c.id] ?? 0
+                        Text(n == 1 ? "1 vizită" : "\(n) vizite").foregroundStyle(.secondary).monospacedDigit()
                     }
                 }
             }
         }
         .overlay { if customers.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView("Niciun client", systemImage: "person.2")) : AnyView(ContentUnavailableView.search(text: query)) } }
         .navigationTitle("Clienți")
-        .searchable(text: $query, prompt: "Nume, telefon, număr, CUI")
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Nume, telefon, număr, CUI")
         .toolbar { Button { creating = store.newCustomer() } label: { Label("Client nou", systemImage: "plus") } }
         .sheet(item: $creating) { CustomerForm(customer: $0, isNew: true) }
     }
+
+    /// What each client owes on invoices past their due date.
+    private var overdueByCustomer: [String: Int] {
+        let today = Dates.today()
+        let pays = Dictionary(grouping: store.all(Payment.self), by: \.invoiceId)
+        var out: [String: Int] = [:]
+        for inv in store.all(Invoice.self) where InvoiceRules.state(inv, payments: pays[inv.id] ?? [], today: today) == "overdue" {
+            out[inv.customerId ?? "", default: 0] += InvoiceRules.balance(inv, pays[inv.id] ?? [])
+        }
+        return out
+    }
 }
 
+/// Initials on a tinted circle (a square for a company), in a color that stays the same per client.
 struct Avatar: View {
     let text: String
     var company = false
+    var tint: Color = .accentColor
     var body: some View {
         Text(text)
             .font(.subheadline.weight(.semibold))
-            .foregroundStyle(.white)
-            .frame(width: 40, height: 40)
-            .background(company ? Color.indigo : Color.accentColor, in: company ? AnyShape(.rect(cornerRadius: 10)) : AnyShape(.circle))
+            .foregroundStyle(tint)
+            .frame(width: 38, height: 38)
+            .background(tint.opacity(0.15), in: company ? AnyShape(.rect(cornerRadius: 10)) : AnyShape(.circle))
             .accessibilityHidden(true)
+    }
+
+    static func tint(for id: String) -> Color {
+        let palette: [Color] = [.blue, .purple, .orange, .green, .pink, .teal, .indigo, .brown]
+        return palette[Int(id.unicodeScalars.reduce(0) { ($0 &* 31 &+ Int($1.value)) & 0x7fffffff }) % palette.count]
     }
 }
 
@@ -96,7 +128,7 @@ struct CustomerDetailView: View {
                 if facts.noShows > 0 { LabeledContent("Neprezentări") { Text("\(facts.noShows)").foregroundStyle(.red) } }
                 LabeledContent("De încasat") { Text(Money.format(balance, currency: currency)).foregroundStyle(balance > 0 ? .orange : .secondary).monospacedDigit() }
             }
-            Section("Contact") {
+            Section(header: CapsHeader("Contact")) {
                 if !c.phone.isEmpty { LabeledContent("Telefon", value: People.formatPhone(c.phone)) }
                 if !c.email.isEmpty { LabeledContent("Email", value: c.email) }
                 if c.isCompany && !c.contactName.isEmpty { LabeledContent("Persoană de contact", value: c.contactName) }
@@ -109,9 +141,9 @@ struct CustomerDetailView: View {
                     NavigationLink { VehicleDetailView(id: v.id) } label: { VehicleRow(vehicle: v) }
                 }
                 Button { addingCar = store.newVehicle(customerId: c.id) } label: { Label("Adaugă o mașină", systemImage: "plus.circle.fill") }
-            } header: { Text("Mașini") }
+            } header: { CapsHeader("Mașini") }
             if !orders.isEmpty {
-                Section("Lucrări") {
+                Section(header: CapsHeader("Lucrări")) {
                     ForEach(orders.prefix(20)) { o in
                         NavigationLink { WorkOrderDetailView(id: o.id) } label: {
                             LabeledContent {
@@ -124,7 +156,7 @@ struct CustomerDetailView: View {
                     }
                 }
             }
-            if !c.notes.isEmpty { Section("Note") { Text(c.notes) } }
+            if !c.notes.isEmpty { Section(header: CapsHeader("Note")) { Text(c.notes) } }
             Section { Button("Șterge clientul", role: .destructive) { confirmDelete = true } }
         }
         .listStyle(.insetGrouped)
@@ -174,7 +206,7 @@ struct CustomerForm: View {
                         TextField("Nr. Registrul Comerțului", text: $customer.regCom).textInputAutocapitalization(.characters)
                     } footer: { if cuiBad { Text("CUI-ul nu trece verificarea cifrei de control.").foregroundStyle(.orange) } }
                 }
-                Section("Adresă") {
+                Section(header: CapsHeader("Adresă")) {
                     TextField("Stradă, număr", text: $customer.address).textContentType(.fullStreetAddress)
                     TextField("Oraș", text: $customer.city).textContentType(.addressCity)
                     TextField("Județ", text: $customer.county).textContentType(.addressState)

@@ -121,7 +121,7 @@ struct CalendarDayView: View {
         let customer = store.get(Customer.self, a.customerId)
         let vehicle = store.get(Vehicle.self, a.vehicleId)
 
-        EventBlock(appointment: a, customer: customer, vehicle: vehicle, height: height,
+        EventBlock(appointment: a, customer: customer, vehicle: vehicle, tint: columns[column].color, height: height,
                    selected: selected == a.id, lifted: state != nil && state?.resizing == false)
             .frame(width: laneWidth - 2, height: height)
             .overlay(alignment: .bottom) {
@@ -341,12 +341,14 @@ private struct EventBlock: View {
     let appointment: Appointment
     let customer: Customer?
     let vehicle: Vehicle?
+    /// The mechanic's color (look A); a booking without a mechanic keeps its status color.
+    let tint: Color
     let height: CGFloat
     let selected: Bool
     let lifted: Bool
 
     var body: some View {
-        let style = AppointmentRules.style(appointment.status)
+        let style = StatusStyle(label: "", symbol: "", color: tint)
         let faded = appointment.status == "no_show" || appointment.status == "done"
         VStack(alignment: .leading, spacing: 1) {
             Text(vehicle.map { People.formatPlate($0.plate) } ?? Dates.timeOfInstant(appointment.start))
