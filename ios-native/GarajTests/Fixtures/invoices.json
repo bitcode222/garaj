@@ -3,21 +3,21 @@
  "states": [
   {
    "invoice": {
-    "id": "0mwh2uy8fvnlub2af",
+    "id": "0mwh3hbwr28xvphd5",
     "status": "issued",
     "series": "GRJ",
     "number": 1,
     "issueDate": "2025-11-15",
     "dueDate": "2025-12-15",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
-    "workOrderId": "0mwh2uy7qxrdqaahz",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
+    "workOrderId": "0mwh3hbw5trl6ld7x",
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy8fmgbxmsvi",
+      "id": "0mwh3hbwrlk2x322g",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -25,12 +25,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8f0w1q1yqj",
+      "id": "0mwh3hbwrtxjagyo0",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -41,9 +41,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f7knko42v",
+      "id": "0mwh3hbwr4eb695lo",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -54,9 +54,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fx4i2c7cm",
+      "id": "0mwh3hbwrr4f92v8i",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -64,12 +64,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8fcvq4v8i4",
+      "id": "0mwh3hbwrk3bgzqod",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -80,7 +80,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f5bmvemg2",
+      "id": "0mwh3hbwr4xuxm46g",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -157,8 +157,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8f7ijqiqdk",
-     "invoiceId": "0mwh2uy8fvnlub2af",
+     "id": "0mwh3hbwrzob3ntpw",
+     "invoiceId": "0mwh3hbwr28xvphd5",
      "amount": 89480,
      "method": "transfer",
      "date": "2025-12-07",
@@ -171,21 +171,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8f1yzz5131",
+    "id": "0mwh3hbwr16aiyktx",
     "status": "issued",
     "series": "GRJ",
     "number": 2,
     "issueDate": "2025-11-17",
     "dueDate": "2025-12-17",
-    "customerId": "0mwh2uy7pl7kwcqu2",
-    "vehicleId": "0mwh2uy7qicftdftg",
-    "workOrderId": "0mwh2uy7q65w8gwzj",
+    "customerId": "0mwh3hbw5ird6iltq",
+    "vehicleId": "0mwh3hbw558d53kce",
+    "workOrderId": "0mwh3hbw5ftxw0pwc",
     "mileage": 179096,
     "lines": [
      {
-      "id": "0mwh2uy8fgk830pnw",
+      "id": "0mwh3hbwr53debjgs",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -193,12 +193,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8fbafeq6wq",
+      "id": "0mwh3hbwrxr5yfc8z",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -209,9 +209,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fu2sb3c6p",
+      "id": "0mwh3hbwrnwfvtnzs",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -222,7 +222,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fr15vi2i0",
+      "id": "0mwh3hbwrlpjrepo9",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -299,8 +299,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8ffbr4t1ep",
-     "invoiceId": "0mwh2uy8f1yzz5131",
+     "id": "0mwh3hbwr3ygquvi7",
+     "invoiceId": "0mwh3hbwr16aiyktx",
      "amount": 51728,
      "method": "transfer",
      "date": "2025-11-23",
@@ -313,21 +313,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8flieotvrx",
+    "id": "0mwh3hbwrfqagh3tt",
     "status": "issued",
     "series": "GRJ",
     "number": 3,
     "issueDate": "2025-11-17",
     "dueDate": "2025-12-01",
-    "customerId": "0mwh2uy7p6eouaj21",
-    "vehicleId": "0mwh2uy7pok1meai0",
-    "workOrderId": "0mwh2uy7qotslzp32",
+    "customerId": "0mwh3hbw5lvjz841e",
+    "vehicleId": "0mwh3hbw5oirh7j3o",
+    "workOrderId": "0mwh3hbw506qj0vvv",
     "mileage": 105400,
     "lines": [
      {
-      "id": "0mwh2uy8fs7gk4cnj",
+      "id": "0mwh3hbwr2hlybg77",
       "kind": "labor",
-      "refId": "0mwh2uy7pensnsah7",
+      "refId": "0mwh3hbw44x0o2mx9",
       "description": "Înlocuire plăcuțe frână față",
       "qty": 1,
       "unit": "h",
@@ -335,12 +335,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8fx63w89ur",
+      "id": "0mwh3hbwrqas4ud1t",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -415,8 +415,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8f54fw9riz",
-     "invoiceId": "0mwh2uy8flieotvrx",
+     "id": "0mwh3hbwrgeye1v5w",
+     "invoiceId": "0mwh3hbwrfqagh3tt",
      "amount": 48763,
      "method": "cash",
      "date": "2025-11-17",
@@ -429,21 +429,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fse03q0zs",
+    "id": "0mwh3hbwrx7t1rwmp",
     "status": "issued",
     "series": "GRJ",
     "number": 4,
     "issueDate": "2025-11-18",
     "dueDate": "2025-12-02",
-    "customerId": "0mwh2uy7p3ks7u2ib",
-    "vehicleId": "0mwh2uy7prb4naord",
-    "workOrderId": "0mwh2uy7qreqzrf2e",
+    "customerId": "0mwh3hbw40hsf7id5",
+    "vehicleId": "0mwh3hbw4t3xsql8m",
+    "workOrderId": "0mwh3hbw5h79i1vds",
     "mileage": 221987,
     "lines": [
      {
-      "id": "0mwh2uy8fajw94xjl",
+      "id": "0mwh3hbwrt9j5uuxi",
       "kind": "labor",
-      "refId": "0mwh2uy7ppckvygvx",
+      "refId": "0mwh3hbw4752dkaz4",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": 1.6,
       "unit": "h",
@@ -451,12 +451,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8ff9fk0cy6",
+      "id": "0mwh3hbwr4z9v1x7c",
       "kind": "part",
-      "refId": "0mwh2uy7oogk8rnun",
+      "refId": "0mwh3hbw4ywxgk7u3",
       "description": "Discuri frână față Brembo",
       "qty": 1,
       "unit": "set",
@@ -467,9 +467,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fcncyobdf",
+      "id": "0mwh3hbwr62gizoaz",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -544,8 +544,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8foycbd3fn",
-     "invoiceId": "0mwh2uy8fse03q0zs",
+     "id": "0mwh3hbwrprnbjsqm",
+     "invoiceId": "0mwh3hbwrx7t1rwmp",
      "amount": 125598,
      "method": "card",
      "date": "2025-11-18",
@@ -558,21 +558,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fmb2xgs9l",
+    "id": "0mwh3hbwryg19qxe3",
     "status": "issued",
     "series": "GRJ",
     "number": 5,
     "issueDate": "2025-11-18",
     "dueDate": "2025-12-18",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pmob0d4fl",
-    "workOrderId": "0mwh2uy7qs2ibpg8r",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5azv16wz3",
+    "workOrderId": "0mwh3hbw5zmdodp10",
     "mileage": 137691,
     "lines": [
      {
-      "id": "0mwh2uy8f2g9hk7r0",
+      "id": "0mwh3hbwryoe9ts0n",
       "kind": "labor",
-      "refId": "0mwh2uy7pts6qz3qh",
+      "refId": "0mwh3hbw4wkf66aoy",
       "description": "Geometrie roți",
       "qty": 0.8,
       "unit": "h",
@@ -580,7 +580,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      }
     ],
     "notes": "",
@@ -647,8 +647,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fly02468d",
-     "invoiceId": "0mwh2uy8fmb2xgs9l",
+     "id": "0mwh3hbwrmo72rhuh",
+     "invoiceId": "0mwh3hbwryg19qxe3",
      "amount": 17424,
      "method": "transfer",
      "date": "2025-12-06",
@@ -661,21 +661,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8ftplfdkri",
+    "id": "0mwh3hbwr4k3ntwwu",
     "status": "issued",
     "series": "GRJ",
     "number": 6,
     "issueDate": "2025-11-19",
     "dueDate": "2025-12-19",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pkgsqdw3v",
-    "workOrderId": "0mwh2uy7qqn8km56a",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw5kc8mlbsr",
+    "workOrderId": "0mwh3hbw567slk9q2",
     "mileage": 3392,
     "lines": [
      {
-      "id": "0mwh2uy8fer2zqyj0",
+      "id": "0mwh3hbwrml05g32r",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -683,12 +683,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8fe76s7iup",
+      "id": "0mwh3hbwr8m4cfzly",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -699,9 +699,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f5bulwde3",
+      "id": "0mwh3hbwrwpa4fo9h",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -776,8 +776,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8f5e7bmg0i",
-     "invoiceId": "0mwh2uy8ftplfdkri",
+     "id": "0mwh3hbwrnzmq8tof",
+     "invoiceId": "0mwh3hbwr4k3ntwwu",
      "amount": 48703,
      "method": "transfer",
      "date": "2025-12-03",
@@ -790,21 +790,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fat6jjban",
+    "id": "0mwh3hbwrhc8vojm1",
     "status": "issued",
     "series": "GRJ",
     "number": 7,
     "issueDate": "2025-11-19",
     "dueDate": "2025-12-03",
-    "customerId": "0mwh2uy7pf1twe6ew",
-    "vehicleId": "0mwh2uy7pnylzksp0",
-    "workOrderId": "0mwh2uy7qe8zgpy9u",
+    "customerId": "0mwh3hbw53r4886ht",
+    "vehicleId": "0mwh3hbw5ko0qq09z",
+    "workOrderId": "0mwh3hbw5efn3acru",
     "mileage": 12266,
     "lines": [
      {
-      "id": "0mwh2uy8fejhy6y4x",
+      "id": "0mwh3hbwr52df1ci7",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -812,10 +812,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8fwls0osr8",
+      "id": "0mwh3hbwr977x6bo0",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -892,8 +892,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8f31uslvfq",
-     "invoiceId": "0mwh2uy8fat6jjban",
+     "id": "0mwh3hbwrne0rqcjd",
+     "invoiceId": "0mwh3hbwrhc8vojm1",
      "amount": 16093,
      "method": "cash",
      "date": "2025-11-19",
@@ -906,21 +906,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fh5sjimyj",
+    "id": "0mwh3hbwr2prcdc1j",
     "status": "issued",
     "series": "GRJ",
     "number": 8,
     "issueDate": "2025-11-19",
     "dueDate": "2025-12-03",
-    "customerId": "0mwh2uy7pro320hnr",
-    "vehicleId": "0mwh2uy7pin05j3r5",
-    "workOrderId": "0mwh2uy7qokmy54pl",
+    "customerId": "0mwh3hbw5ui17kyi6",
+    "vehicleId": "0mwh3hbw5ywyr5id1",
+    "workOrderId": "0mwh3hbw531dyg1ow",
     "mileage": 15048,
     "lines": [
      {
-      "id": "0mwh2uy8fvma8q2x7",
+      "id": "0mwh3hbwr0c71p6yt",
       "kind": "labor",
-      "refId": "0mwh2uy7pdi4ctfqx",
+      "refId": "0mwh3hbw4sbkhq55c",
       "description": "Înlocuire rulment roată",
       "qty": 1.5,
       "unit": "h",
@@ -928,12 +928,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8f5k8l9sfo",
+      "id": "0mwh3hbwr8yphi45p",
       "kind": "part",
-      "refId": "0mwh2uy7oaiiv70s7",
+      "refId": "0mwh3hbw46l1ffd9s",
       "description": "Kit rulment roată SKF",
       "qty": 1,
       "unit": "buc",
@@ -944,9 +944,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fdv432201",
+      "id": "0mwh3hbwrad8l22mw",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -954,10 +954,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8fawhr0spz",
+      "id": "0mwh3hbwrsk5l2ltj",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -1034,8 +1034,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8f3ir6hbjc",
-     "invoiceId": "0mwh2uy8fh5sjimyj",
+     "id": "0mwh3hbwr4w34fbrs",
+     "invoiceId": "0mwh3hbwr2prcdc1j",
      "amount": 80949,
      "method": "card",
      "date": "2025-11-19",
@@ -1048,21 +1048,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fuhy0n0hf",
+    "id": "0mwh3hbwr9cfxiv74",
     "status": "issued",
     "series": "GRJ",
     "number": 9,
     "issueDate": "2025-11-20",
     "dueDate": "2025-12-04",
-    "customerId": "0mwh2uy7pgaiyrs3c",
-    "vehicleId": "0mwh2uy7pp6mcmhnb",
-    "workOrderId": "0mwh2uy7qfw62dgue",
+    "customerId": "0mwh3hbw40ife3av6",
+    "vehicleId": "0mwh3hbw41smr1fzc",
+    "workOrderId": "0mwh3hbw6j835qlfe",
     "mileage": 96434,
     "lines": [
      {
-      "id": "0mwh2uy8fs4vscigp",
+      "id": "0mwh3hbwrg2k5wi9t",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -1070,7 +1070,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      }
     ],
     "notes": "",
@@ -1137,8 +1137,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fqanjxtat",
-     "invoiceId": "0mwh2uy8fuhy0n0hf",
+     "id": "0mwh3hbwrqkpgjvxc",
+     "invoiceId": "0mwh3hbwr9cfxiv74",
      "amount": 13068,
      "method": "card",
      "date": "2025-11-20",
@@ -1151,21 +1151,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fflvvneh4",
+    "id": "0mwh3hbwrythp1xwj",
     "status": "issued",
     "series": "GRJ",
     "number": 10,
     "issueDate": "2025-11-20",
     "dueDate": "2025-12-04",
-    "customerId": "0mwh2uy7p2v9fmwys",
-    "vehicleId": "0mwh2uy7p7vde79c3",
-    "workOrderId": "0mwh2uy7qilypb1jp",
+    "customerId": "0mwh3hbw414fgqjpn",
+    "vehicleId": "0mwh3hbw4egigd9b2",
+    "workOrderId": "0mwh3hbw6plrfnjvh",
     "mileage": 127502,
     "lines": [
      {
-      "id": "0mwh2uy8fh1e093kx",
+      "id": "0mwh3hbwsspgnxxgc",
       "kind": "labor",
-      "refId": "0mwh2uy7pensnsah7",
+      "refId": "0mwh3hbw44x0o2mx9",
       "description": "Înlocuire plăcuțe frână față",
       "qty": 1,
       "unit": "h",
@@ -1173,12 +1173,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8fe3z7l451",
+      "id": "0mwh3hbwspulmz1jl",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -1189,7 +1189,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fg2hduhjl",
+      "id": "0mwh3hbwstq4p4liz",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -1266,8 +1266,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fzu50quzr",
-     "invoiceId": "0mwh2uy8fflvvneh4",
+     "id": "0mwh3hbwsa2qi0p9h",
+     "invoiceId": "0mwh3hbwrythp1xwj",
      "amount": 51788,
      "method": "card",
      "date": "2025-11-20",
@@ -1280,21 +1280,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fsqbknxd5",
+    "id": "0mwh3hbwsod0y5nif",
     "status": "issued",
     "series": "GRJ",
     "number": 11,
     "issueDate": "2025-11-21",
     "dueDate": "2025-12-21",
-    "customerId": "0mwh2uy7q8ne1bcro",
-    "vehicleId": "0mwh2uy7qf1qpznul",
-    "workOrderId": "0mwh2uy7qwd5k1ll4",
+    "customerId": "0mwh3hbw5fggpj1wk",
+    "vehicleId": "0mwh3hbw57givvcwk",
+    "workOrderId": "0mwh3hbw6nu3kmt4b",
     "mileage": 13452,
     "lines": [
      {
-      "id": "0mwh2uy8f77io8ht3",
+      "id": "0mwh3hbwsx90f59iu",
       "kind": "labor",
-      "refId": "0mwh2uy7p3ksd5idu",
+      "refId": "0mwh3hbw4n2knhq74",
       "description": "Înlocuire bujii",
       "qty": 0.6,
       "unit": "h",
@@ -1302,12 +1302,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8f0l022ctq",
+      "id": "0mwh3hbwsno5265lw",
       "kind": "part",
-      "refId": "0mwh2uy7oq0osp20f",
+      "refId": "0mwh3hbw43benjfa2",
       "description": "Bujie NGK",
       "qty": 4,
       "unit": "buc",
@@ -1382,8 +1382,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8f5elvfeup",
-     "invoiceId": "0mwh2uy8fsqbknxd5",
+     "id": "0mwh3hbwsl9xgntpa",
+     "invoiceId": "0mwh3hbwsod0y5nif",
      "amount": 33880,
      "method": "transfer",
      "date": "2025-12-01",
@@ -1396,21 +1396,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fb2q3c200",
+    "id": "0mwh3hbws8cpvngio",
     "status": "issued",
     "series": "GRJ",
     "number": 12,
     "issueDate": "2025-11-21",
     "dueDate": "2025-12-05",
-    "customerId": "0mwh2uy7pl0zvti28",
-    "vehicleId": "0mwh2uy7p0vtey746",
-    "workOrderId": "0mwh2uy7qyzwxumfp",
+    "customerId": "0mwh3hbw5rty5fh77",
+    "vehicleId": "0mwh3hbw5965bsoud",
+    "workOrderId": "0mwh3hbw6gua10izf",
     "mileage": 74688,
     "lines": [
      {
-      "id": "0mwh2uy8fhmwmu7jt",
+      "id": "0mwh3hbwser9c2igz",
       "kind": "labor",
-      "refId": "0mwh2uy7pt0iuycq8",
+      "refId": "0mwh3hbw40z6wincx",
       "description": "Curățare filtru de particule (DPF)",
       "qty": 1.5,
       "unit": "h",
@@ -1418,12 +1418,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8fbjk7iugv",
+      "id": "0mwh3hbws262qqsru",
       "kind": "part",
-      "refId": "0mwh2uy7pa5r59ufk",
+      "refId": "0mwh3hbw4gqyx8v1m",
       "description": "Soluție curățare DPF Liqui Moly",
       "qty": 1,
       "unit": "buc",
@@ -1498,8 +1498,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fx09kt7lh",
-     "invoiceId": "0mwh2uy8fb2q3c200",
+     "id": "0mwh3hbws0zni71zo",
+     "invoiceId": "0mwh3hbws8cpvngio",
      "amount": 52272,
      "method": "card",
      "date": "2025-11-21",
@@ -1512,21 +1512,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fw3mc7x3l",
+    "id": "0mwh3hbwslr1rsdv5",
     "status": "issued",
     "series": "GRJ",
     "number": 13,
     "issueDate": "2025-11-21",
     "dueDate": "2025-12-21",
-    "customerId": "0mwh2uy7qq2tazlsb",
-    "vehicleId": "0mwh2uy7q6yak4wqp",
-    "workOrderId": "0mwh2uy7qrqtsx5pm",
+    "customerId": "0mwh3hbw56mq00fwv",
+    "vehicleId": "0mwh3hbw5t4kj263h",
+    "workOrderId": "0mwh3hbw6qmw0gclo",
     "mileage": 20439,
     "lines": [
      {
-      "id": "0mwh2uy8f4x48m3eq",
+      "id": "0mwh3hbwsel1z3ul0",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -1534,12 +1534,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8fp6n4nw1l",
+      "id": "0mwh3hbwsvv7ujf7z",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -1550,9 +1550,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fr0lh3u19",
+      "id": "0mwh3hbwsf2yeb6we",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -1627,8 +1627,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fpjkux6a0",
-     "invoiceId": "0mwh2uy8fw3mc7x3l",
+     "id": "0mwh3hbwskbaq436b",
+     "invoiceId": "0mwh3hbwslr1rsdv5",
      "amount": 48703,
      "method": "transfer",
      "date": "2025-12-22",
@@ -1641,21 +1641,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8f4la1yc3t",
+    "id": "0mwh3hbwsivjgdl8f",
     "status": "issued",
     "series": "GRJ",
     "number": 14,
     "issueDate": "2025-11-21",
     "dueDate": "2025-12-05",
-    "customerId": "0mwh2uy7pf1twe6ew",
-    "vehicleId": "0mwh2uy7pnylzksp0",
-    "workOrderId": "0mwh2uy7qqry7ndql",
+    "customerId": "0mwh3hbw53r4886ht",
+    "vehicleId": "0mwh3hbw5ko0qq09z",
+    "workOrderId": "0mwh3hbw6r2yinr5c",
     "mileage": 12525,
     "lines": [
      {
-      "id": "0mwh2uy8fywshimto",
+      "id": "0mwh3hbws370ko7ab",
       "kind": "labor",
-      "refId": "0mwh2uy7pdi4ctfqx",
+      "refId": "0mwh3hbw4sbkhq55c",
       "description": "Înlocuire rulment roată",
       "qty": 1.5,
       "unit": "h",
@@ -1663,12 +1663,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8fzi0btea2",
+      "id": "0mwh3hbwsjyt7sbgk",
       "kind": "part",
-      "refId": "0mwh2uy7oaiiv70s7",
+      "refId": "0mwh3hbw46l1ffd9s",
       "description": "Kit rulment roată SKF",
       "qty": 1,
       "unit": "buc",
@@ -1743,8 +1743,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fb019omym",
-     "invoiceId": "0mwh2uy8f4la1yc3t",
+     "id": "0mwh3hbwsic8ml2m8",
+     "invoiceId": "0mwh3hbwsivjgdl8f",
      "amount": 67034,
      "method": "card",
      "date": "2025-11-21",
@@ -1757,21 +1757,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fcou02c62",
+    "id": "0mwh3hbwswc1bsix9",
     "status": "issued",
     "series": "GRJ",
     "number": 15,
     "issueDate": "2025-11-22",
     "dueDate": "2025-12-06",
-    "customerId": "0mwh2uy7puhg2a22o",
-    "vehicleId": "0mwh2uy7pl4z1euwo",
-    "workOrderId": "0mwh2uy7qz08aisvj",
+    "customerId": "0mwh3hbw4cna4drt1",
+    "vehicleId": "0mwh3hbw4h6is9lg4",
+    "workOrderId": "0mwh3hbw6cmors2px",
     "mileage": 93741,
     "lines": [
      {
-      "id": "0mwh2uy8f8xyvgvfj",
+      "id": "0mwh3hbws3ycmjoq7",
       "kind": "labor",
-      "refId": "0mwh2uy7pq7psdgwu",
+      "refId": "0mwh3hbw4vf804pd7",
       "description": "Înlocuire acumulator",
       "qty": 0.3,
       "unit": "h",
@@ -1779,12 +1779,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8fisu3ia5r",
+      "id": "0mwh3hbwsmtupeqdl",
       "kind": "part",
-      "refId": "0mwh2uy7od5gt8zo0",
+      "refId": "0mwh3hbw4622cba5t",
       "description": "Acumulator 74 Ah 680 A Varta",
       "qty": 1,
       "unit": "buc",
@@ -1795,7 +1795,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fo828it69",
+      "id": "0mwh3hbwswpu35ra0",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -1872,8 +1872,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fuk1zuk20",
-     "invoiceId": "0mwh2uy8fcou02c62",
+     "id": "0mwh3hbws3ebv3yu4",
+     "invoiceId": "0mwh3hbwswc1bsix9",
      "amount": 94501,
      "method": "card",
      "date": "2025-11-22",
@@ -1886,21 +1886,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8f7hicolm8",
+    "id": "0mwh3hbws05wxv7t2",
     "status": "issued",
     "series": "GRJ",
     "number": 16,
     "issueDate": "2025-11-22",
     "dueDate": "2025-12-06",
-    "customerId": "0mwh2uy7pv12jjq1i",
-    "vehicleId": "0mwh2uy7puuet63s1",
-    "workOrderId": "0mwh2uy7qjsfoo97j",
+    "customerId": "0mwh3hbw5dkrv05f6",
+    "vehicleId": "0mwh3hbw5btzia36h",
+    "workOrderId": "0mwh3hbw61hy9w3o3",
     "mileage": 112042,
     "lines": [
      {
-      "id": "0mwh2uy8f858q7mey",
+      "id": "0mwh3hbwsj3kt72in",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -1908,10 +1908,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8fkhw258nb",
+      "id": "0mwh3hbwsdhe98s3p",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -1988,8 +1988,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fl7ckhnzm",
-     "invoiceId": "0mwh2uy8f7hicolm8",
+     "id": "0mwh3hbwscx6hf4dx",
+     "invoiceId": "0mwh3hbws05wxv7t2",
      "amount": 16093,
      "method": "card",
      "date": "2025-11-22",
@@ -2002,21 +2002,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8flc9kpr9p",
+    "id": "0mwh3hbwsyqvxpz4x",
     "status": "issued",
     "series": "GRJ",
     "number": 17,
     "issueDate": "2025-11-24",
     "dueDate": "2025-12-08",
-    "customerId": "0mwh2uy7pto0yypns",
-    "vehicleId": "0mwh2uy7pr8aismrs",
-    "workOrderId": "0mwh2uy7qzs1whd4n",
+    "customerId": "0mwh3hbw4roeku8ik",
+    "vehicleId": "0mwh3hbw4a7iyrrr2",
+    "workOrderId": "0mwh3hbw6tx7jouna",
     "mileage": 169740,
     "lines": [
      {
-      "id": "0mwh2uy8fkppeike8",
+      "id": "0mwh3hbwskutooq5b",
       "kind": "labor",
-      "refId": "0mwh2uy7ptu2z0tzn",
+      "refId": "0mwh3hbw481vu4odo",
       "description": "Înlocuire plăcuțe frână spate",
       "qty": 1,
       "unit": "h",
@@ -2024,12 +2024,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8f5xmnp1bm",
+      "id": "0mwh3hbws2wyjyyfr",
       "kind": "part",
-      "refId": "0mwh2uy7oy9ljkanq",
+      "refId": "0mwh3hbw4pm16l48w",
       "description": "Plăcuțe frână spate TRW",
       "qty": 1,
       "unit": "set",
@@ -2040,9 +2040,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fh0j5zg2f",
+      "id": "0mwh3hbws2nb72d2a",
       "kind": "labor",
-      "refId": "0mwh2uy7pqvnl29y5",
+      "refId": "0mwh3hbw4zhip8e0q",
       "description": "Revizie completă (ulei și filtre)",
       "qty": 1.5,
       "unit": "h",
@@ -2050,12 +2050,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8flf5wpht6",
+      "id": "0mwh3hbwst6wvyx1p",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -2066,9 +2066,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f6wwgh6cv",
+      "id": "0mwh3hbwsxlpeww76",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -2079,9 +2079,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fahiv6epk",
+      "id": "0mwh3hbws1f5d3uen",
       "kind": "part",
-      "refId": "0mwh2uy7oc2mig0j6",
+      "refId": "0mwh3hbw4mqog98y4",
       "description": "Filtru aer Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -2092,9 +2092,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fsz439ho0",
+      "id": "0mwh3hbws7gjtxxsz",
       "kind": "part",
-      "refId": "0mwh2uy7orbl4oz98",
+      "refId": "0mwh3hbw41fhtg0h2",
       "description": "Filtru polen cu carbon activ Bosch",
       "qty": 1,
       "unit": "buc",
@@ -2169,8 +2169,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fcba71p7b",
-     "invoiceId": "0mwh2uy8flc9kpr9p",
+     "id": "0mwh3hbwsj4cgdg4c",
+     "invoiceId": "0mwh3hbwsyqvxpz4x",
      "amount": 127716,
      "method": "card",
      "date": "2025-11-24",
@@ -2183,21 +2183,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fgr8mwsbm",
+    "id": "0mwh3hbwsas220dze",
     "status": "issued",
     "series": "GRJ",
     "number": 18,
     "issueDate": "2025-11-24",
     "dueDate": "2025-12-08",
-    "customerId": "0mwh2uy7pw4ilgjyc",
-    "vehicleId": "0mwh2uy7plprenc31",
-    "workOrderId": "0mwh2uy7r9mat4p35",
+    "customerId": "0mwh3hbw5627qm0tp",
+    "vehicleId": "0mwh3hbw5e509qsun",
+    "workOrderId": "0mwh3hbw6hgy9nbpy",
     "mileage": 25355,
     "lines": [
      {
-      "id": "0mwh2uy8fl18dk4w5",
+      "id": "0mwh3hbwsy2otlf19",
       "kind": "labor",
-      "refId": "0mwh2uy7pc51jpc8g",
+      "refId": "0mwh3hbw43wdc5tzd",
       "description": "Încărcare freon AC",
       "qty": 0.7,
       "unit": "h",
@@ -2205,12 +2205,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8fhg0ro4y6",
+      "id": "0mwh3hbwslz2utfpi",
       "kind": "part",
-      "refId": "0mwh2uy7o0pvu84ru",
+      "refId": "0mwh3hbw4xdas9ids",
       "description": "Freon R1234yf Honeywell",
       "qty": 5,
       "unit": "100 g",
@@ -2221,9 +2221,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fyn0de745",
+      "id": "0mwh3hbwsmjgp0err",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -2231,7 +2231,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      }
     ],
     "notes": "",
@@ -2298,8 +2298,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fm2qphjhs",
-     "invoiceId": "0mwh2uy8fgr8mwsbm",
+     "id": "0mwh3hbws30tiixsk",
+     "invoiceId": "0mwh3hbwsas220dze",
      "amount": 99946,
      "method": "card",
      "date": "2025-11-24",
@@ -2312,21 +2312,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fv6mtqvpi",
+    "id": "0mwh3hbwsqfxtlw66",
     "status": "issued",
     "series": "GRJ",
     "number": 19,
     "issueDate": "2025-11-25",
     "dueDate": "2025-12-09",
-    "customerId": "0mwh2uy7pto0yypns",
-    "vehicleId": "0mwh2uy7pr8aismrs",
-    "workOrderId": "0mwh2uy7rji5ztg7p",
+    "customerId": "0mwh3hbw4roeku8ik",
+    "vehicleId": "0mwh3hbw4a7iyrrr2",
+    "workOrderId": "0mwh3hbw6xtcgu1ps",
     "mileage": 169656,
     "lines": [
      {
-      "id": "0mwh2uy8fwtjua328",
+      "id": "0mwh3hbwsjfkghgmb",
       "kind": "labor",
-      "refId": "0mwh2uy7pqvnl29y5",
+      "refId": "0mwh3hbw4zhip8e0q",
       "description": "Revizie completă (ulei și filtre)",
       "qty": 1.5,
       "unit": "h",
@@ -2334,12 +2334,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8fva4ylwfm",
+      "id": "0mwh3hbws0ihn5hip",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -2350,9 +2350,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f2cp1puzr",
+      "id": "0mwh3hbwshxuf5jex",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -2363,9 +2363,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f9uoxpd87",
+      "id": "0mwh3hbwsd47fpl88",
       "kind": "part",
-      "refId": "0mwh2uy7oc2mig0j6",
+      "refId": "0mwh3hbw4mqog98y4",
       "description": "Filtru aer Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -2376,9 +2376,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fglsuqfsq",
+      "id": "0mwh3hbwsrmgjabna",
       "kind": "part",
-      "refId": "0mwh2uy7orbl4oz98",
+      "refId": "0mwh3hbw41fhtg0h2",
       "description": "Filtru polen cu carbon activ Bosch",
       "qty": 1,
       "unit": "buc",
@@ -2389,9 +2389,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f2ev2xc5l",
+      "id": "0mwh3hbwsptr366sq",
       "kind": "labor",
-      "refId": "0mwh2uy7pzjp7af3z",
+      "refId": "0mwh3hbw49wmwf2s5",
       "description": "Înlocuire kit distribuție și pompă apă",
       "qty": 4,
       "unit": "h",
@@ -2399,12 +2399,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8ffea4ygdc",
+      "id": "0mwh3hbwsr6j0cboh",
       "kind": "part",
-      "refId": "0mwh2uy7oz87mchz4",
+      "refId": "0mwh3hbw4idw7xktu",
       "description": "Kit distribuție cu pompă de apă Gates",
       "qty": 1,
       "unit": "set",
@@ -2415,9 +2415,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f7y245pq7",
+      "id": "0mwh3hbws315q4obq",
       "kind": "part",
-      "refId": "0mwh2uy7oir1g04k2",
+      "refId": "0mwh3hbw43oh2fjbm",
       "description": "Antigel G12+ concentrat Valvoline",
       "qty": 3,
       "unit": "l",
@@ -2428,9 +2428,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fi74hygf5",
+      "id": "0mwh3hbws7s43uf6r",
       "kind": "part",
-      "refId": "0mwh2uy7omuca3ulw",
+      "refId": "0mwh3hbw4xjpvxlas",
       "description": "Curea accesorii Contitech",
       "qty": 1,
       "unit": "buc",
@@ -2505,8 +2505,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fam9fdv7x",
-     "invoiceId": "0mwh2uy8fv6mtqvpi",
+     "id": "0mwh3hbwsgi22npbm",
+     "invoiceId": "0mwh3hbwsqfxtlw66",
      "amount": 336804,
      "method": "cash",
      "date": "2025-11-25",
@@ -2519,21 +2519,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fsf5l35uy",
+    "id": "0mwh3hbwsvgeplmod",
     "status": "issued",
     "series": "GRJ",
     "number": 20,
     "issueDate": "2025-11-25",
     "dueDate": "2025-12-09",
-    "customerId": "0mwh2uy7p8ag717tz",
-    "vehicleId": "0mwh2uy7pu7u0ffp2",
-    "workOrderId": "0mwh2uy7rh4tfmdvi",
+    "customerId": "0mwh3hbw53thp3fgc",
+    "vehicleId": "0mwh3hbw519f0uzc4",
+    "workOrderId": "0mwh3hbw63hfsf92b",
     "mileage": 80572,
     "lines": [
      {
-      "id": "0mwh2uy8fldls3x8o",
+      "id": "0mwh3hbwshdjn8l7y",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -2541,12 +2541,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8flz594mbb",
+      "id": "0mwh3hbws71qofpax",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -2557,9 +2557,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fhjbass15",
+      "id": "0mwh3hbwsnent1ttq",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -2570,9 +2570,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fp7lzj4h1",
+      "id": "0mwh3hbwswfjnw7uu",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -2580,10 +2580,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8fw22waq0r",
+      "id": "0mwh3hbwssfoxcgfd",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -2660,8 +2660,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8f5muxrqqo",
-     "invoiceId": "0mwh2uy8fsf5l35uy",
+     "id": "0mwh3hbwsgwxjh0hv",
+     "invoiceId": "0mwh3hbwsvgeplmod",
      "amount": 62618,
      "method": "card",
      "date": "2025-11-25",
@@ -2674,21 +2674,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fuu9y3x2w",
+    "id": "0mwh3hbwsdqhzs0xx",
     "status": "issued",
     "series": "GRJ",
     "number": 21,
     "issueDate": "2025-11-25",
     "dueDate": "2025-12-09",
-    "customerId": "0mwh2uy7pqst0a51u",
-    "vehicleId": "0mwh2uy7psv2zy7fq",
-    "workOrderId": "0mwh2uy7r15ff1yxx",
+    "customerId": "0mwh3hbw5nsgaw374",
+    "vehicleId": "0mwh3hbw505albbt2",
+    "workOrderId": "0mwh3hbw6w9m52ko6",
     "mileage": 41767,
     "lines": [
      {
-      "id": "0mwh2uy8fklz1cmja",
+      "id": "0mwh3hbwssda1bo5g",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -2696,10 +2696,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8f1x8tvhht",
+      "id": "0mwh3hbwscjf63oh8",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -2776,8 +2776,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fowslhsnu",
-     "invoiceId": "0mwh2uy8fuu9y3x2w",
+     "id": "0mwh3hbwsq8qi87ny",
+     "invoiceId": "0mwh3hbwsdqhzs0xx",
      "amount": 16093,
      "method": "card",
      "date": "2025-11-25",
@@ -2790,21 +2790,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8f430tq3cs",
+    "id": "0mwh3hbwso5htbr6k",
     "status": "issued",
     "series": "GRJ",
     "number": 22,
     "issueDate": "2025-11-25",
     "dueDate": "2025-12-25",
-    "customerId": "0mwh2uy7p48maapuk",
-    "vehicleId": "0mwh2uy7pj0jl1o1t",
-    "workOrderId": "0mwh2uy7rkfpkq14k",
+    "customerId": "0mwh3hbw50at21anr",
+    "vehicleId": "0mwh3hbw5a32rshrz",
+    "workOrderId": "0mwh3hbw69b3se65n",
     "mileage": 44950,
     "lines": [
      {
-      "id": "0mwh2uy8fvnsik3a1",
+      "id": "0mwh3hbws2u91y173",
       "kind": "labor",
-      "refId": "0mwh2uy7p3ksd5idu",
+      "refId": "0mwh3hbw4n2knhq74",
       "description": "Înlocuire bujii",
       "qty": 0.6,
       "unit": "h",
@@ -2812,12 +2812,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8f4qn57rk2",
+      "id": "0mwh3hbwsooxojqvh",
       "kind": "part",
-      "refId": "0mwh2uy7oq0osp20f",
+      "refId": "0mwh3hbw43benjfa2",
       "description": "Bujie NGK",
       "qty": 4,
       "unit": "buc",
@@ -2892,8 +2892,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fao7pfnac",
-     "invoiceId": "0mwh2uy8f430tq3cs",
+     "id": "0mwh3hbwsf3oblbqd",
+     "invoiceId": "0mwh3hbwso5htbr6k",
      "amount": 33880,
      "method": "transfer",
      "date": "2025-12-09",
@@ -2906,21 +2906,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fm1xxukwd",
+    "id": "0mwh3hbws8z0g4ufv",
     "status": "issued",
     "series": "GRJ",
     "number": 23,
     "issueDate": "2025-11-25",
     "dueDate": "2025-12-25",
-    "customerId": "0mwh2uy7q8ne1bcro",
-    "vehicleId": "0mwh2uy7qf1qpznul",
-    "workOrderId": "0mwh2uy7r9jrq65zl",
+    "customerId": "0mwh3hbw5fggpj1wk",
+    "vehicleId": "0mwh3hbw57givvcwk",
+    "workOrderId": "0mwh3hbw6ef8yz26v",
     "mileage": 13739,
     "lines": [
      {
-      "id": "0mwh2uy8fzub6aqrn",
+      "id": "0mwh3hbwsgs9umgsc",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -2928,7 +2928,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      }
     ],
     "notes": "",
@@ -2995,8 +2995,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fvxbb61xj",
-     "invoiceId": "0mwh2uy8fm1xxukwd",
+     "id": "0mwh3hbws73bipjhz",
+     "invoiceId": "0mwh3hbws8z0g4ufv",
      "amount": 10890,
      "method": "transfer",
      "date": "2025-12-27",
@@ -3009,21 +3009,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8f8675d6fw",
+    "id": "0mwh3hbwsal6b5o37",
     "status": "issued",
     "series": "GRJ",
     "number": 24,
     "issueDate": "2025-11-26",
     "dueDate": "2025-12-10",
-    "customerId": "0mwh2uy7pdk5i96xv",
-    "vehicleId": "0mwh2uy7p8xsevgf1",
-    "workOrderId": "0mwh2uy7rwk30movf",
+    "customerId": "0mwh3hbw5knw8ej6e",
+    "vehicleId": "0mwh3hbw5qoql2mva",
+    "workOrderId": "0mwh3hbw6gxja8z4x",
     "mileage": 105263,
     "lines": [
      {
-      "id": "0mwh2uy8fj9k1yuts",
+      "id": "0mwh3hbwsg5ioi8oq",
       "kind": "labor",
-      "refId": "0mwh2uy7pqvnl29y5",
+      "refId": "0mwh3hbw4zhip8e0q",
       "description": "Revizie completă (ulei și filtre)",
       "qty": 1.5,
       "unit": "h",
@@ -3031,12 +3031,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8f3ii2wa8r",
+      "id": "0mwh3hbwsu7z97ff4",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -3047,9 +3047,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fsa0in16z",
+      "id": "0mwh3hbws53le3t9w",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -3060,9 +3060,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8frv7wibli",
+      "id": "0mwh3hbws5pu1copo",
       "kind": "part",
-      "refId": "0mwh2uy7oc2mig0j6",
+      "refId": "0mwh3hbw4mqog98y4",
       "description": "Filtru aer Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -3073,9 +3073,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f4trw7y9k",
+      "id": "0mwh3hbws6zab0ep2",
       "kind": "part",
-      "refId": "0mwh2uy7orbl4oz98",
+      "refId": "0mwh3hbw41fhtg0h2",
       "description": "Filtru polen cu carbon activ Bosch",
       "qty": 1,
       "unit": "buc",
@@ -3150,8 +3150,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8ftgglfja0",
-     "invoiceId": "0mwh2uy8f8675d6fw",
+     "id": "0mwh3hbwsxdinnbf8",
+     "invoiceId": "0mwh3hbwsal6b5o37",
      "amount": 84640,
      "method": "cash",
      "date": "2025-11-26",
@@ -3164,21 +3164,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8f90vbojig",
+    "id": "0mwh3hbwsa0e6qtrx",
     "status": "issued",
     "series": "GRJ",
     "number": 25,
     "issueDate": "2025-11-26",
     "dueDate": "2025-12-26",
-    "customerId": "0mwh2uy7qq2tazlsb",
-    "vehicleId": "0mwh2uy7qedpzftyn",
-    "workOrderId": "0mwh2uy7rxldridw5",
+    "customerId": "0mwh3hbw56mq00fwv",
+    "vehicleId": "0mwh3hbw5034vmrws",
+    "workOrderId": "0mwh3hbw6sro5eeuq",
     "mileage": 77572,
     "lines": [
      {
-      "id": "0mwh2uy8f0jpy0ngt",
+      "id": "0mwh3hbwsq6g0snzw",
       "kind": "labor",
-      "refId": "0mwh2uy7ptu2z0tzn",
+      "refId": "0mwh3hbw481vu4odo",
       "description": "Înlocuire plăcuțe frână spate",
       "qty": 1,
       "unit": "h",
@@ -3186,12 +3186,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8fz2y3vcht",
+      "id": "0mwh3hbwsu1lcdyd3",
       "kind": "part",
-      "refId": "0mwh2uy7oy9ljkanq",
+      "refId": "0mwh3hbw4pm16l48w",
       "description": "Plăcuțe frână spate TRW",
       "qty": 1,
       "unit": "set",
@@ -3266,8 +3266,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8f4uadqjx2",
-     "invoiceId": "0mwh2uy8f90vbojig",
+     "id": "0mwh3hbwseh118p4a",
+     "invoiceId": "0mwh3hbwsa0e6qtrx",
      "amount": 43076,
      "method": "transfer",
      "date": "2025-12-21",
@@ -3280,21 +3280,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fk8vcrjqs",
+    "id": "0mwh3hbwsxuecxiij",
     "status": "issued",
     "series": "GRJ",
     "number": 26,
     "issueDate": "2025-11-26",
     "dueDate": "2025-12-10",
-    "customerId": "0mwh2uy7pspm4u9t2",
-    "vehicleId": "0mwh2uy7pcy69w1pr",
-    "workOrderId": "0mwh2uy7r1ejem9e3",
+    "customerId": "0mwh3hbw5gx2dnhxb",
+    "vehicleId": "0mwh3hbw5k91im1po",
+    "workOrderId": "0mwh3hbw67ugpy7az",
     "mileage": 261303,
     "lines": [
      {
-      "id": "0mwh2uy8ftf2k84j8",
+      "id": "0mwh3hbws78l3jvuy",
       "kind": "labor",
-      "refId": "0mwh2uy7pt0iuycq8",
+      "refId": "0mwh3hbw40z6wincx",
       "description": "Curățare filtru de particule (DPF)",
       "qty": 1.5,
       "unit": "h",
@@ -3302,12 +3302,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8f4sdmkio6",
+      "id": "0mwh3hbws4q32md49",
       "kind": "part",
-      "refId": "0mwh2uy7pa5r59ufk",
+      "refId": "0mwh3hbw4gqyx8v1m",
       "description": "Soluție curățare DPF Liqui Moly",
       "qty": 1,
       "unit": "buc",
@@ -3318,7 +3318,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f05lmb394",
+      "id": "0mwh3hbwsewzzdf7w",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -3395,8 +3395,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8f54uflpgn",
-     "invoiceId": "0mwh2uy8fk8vcrjqs",
+     "id": "0mwh3hbwsprkxj0od",
+     "invoiceId": "0mwh3hbwsxuecxiij",
      "amount": 55297,
      "method": "cash",
      "date": "2025-11-26",
@@ -3409,21 +3409,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8f9g7juq52",
+    "id": "0mwh3hbwsww9f4c3k",
     "status": "issued",
     "series": "GRJ",
     "number": 27,
     "issueDate": "2025-11-27",
     "dueDate": "2025-12-27",
-    "customerId": "0mwh2uy7p48maapuk",
-    "vehicleId": "0mwh2uy7pe30de67u",
-    "workOrderId": "0mwh2uy7r3fsg2769",
+    "customerId": "0mwh3hbw50at21anr",
+    "vehicleId": "0mwh3hbw5rphbwg2a",
+    "workOrderId": "0mwh3hbw6rq2yokg6",
     "mileage": 59659,
     "lines": [
      {
-      "id": "0mwh2uy8fyufwzumr",
+      "id": "0mwh3hbwsfcinvq8z",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -3431,7 +3431,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      }
     ],
     "notes": "",
@@ -3498,8 +3498,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fs3pwouc5",
-     "invoiceId": "0mwh2uy8f9g7juq52",
+     "id": "0mwh3hbwsttdy3v3q",
+     "invoiceId": "0mwh3hbwsww9f4c3k",
      "amount": 13068,
      "method": "transfer",
      "date": "2025-12-07",
@@ -3512,21 +3512,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8fkb18fppt",
+    "id": "0mwh3hbwsy6gaafho",
     "status": "issued",
     "series": "GRJ",
     "number": 28,
     "issueDate": "2025-11-27",
     "dueDate": "2025-12-27",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pkgsqdw3v",
-    "workOrderId": "0mwh2uy7rx2tuqewg",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw5kc8mlbsr",
+    "workOrderId": "0mwh3hbw649r42mjm",
     "mileage": 3976,
     "lines": [
      {
-      "id": "0mwh2uy8fl59un1e4",
+      "id": "0mwh3hbwsrcwbsi2t",
       "kind": "labor",
-      "refId": "0mwh2uy7pqvnl29y5",
+      "refId": "0mwh3hbw4zhip8e0q",
       "description": "Revizie completă (ulei și filtre)",
       "qty": 1.5,
       "unit": "h",
@@ -3534,12 +3534,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8fgag8snjz",
+      "id": "0mwh3hbwsa6cpw9rn",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -3550,9 +3550,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f4kvhhcy3",
+      "id": "0mwh3hbwsgs456pa3",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -3563,9 +3563,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8f7hdymnv6",
+      "id": "0mwh3hbwsx3xz40sn",
       "kind": "part",
-      "refId": "0mwh2uy7oc2mig0j6",
+      "refId": "0mwh3hbw4mqog98y4",
       "description": "Filtru aer Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -3576,9 +3576,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8fj7m3xkrb",
+      "id": "0mwh3hbwsg7uuhtw8",
       "kind": "part",
-      "refId": "0mwh2uy7orbl4oz98",
+      "refId": "0mwh3hbw41fhtg0h2",
       "description": "Filtru polen cu carbon activ Bosch",
       "qty": 1,
       "unit": "buc",
@@ -3653,8 +3653,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8ftshss8x6",
-     "invoiceId": "0mwh2uy8fkb18fppt",
+     "id": "0mwh3hbwswesotti9",
+     "invoiceId": "0mwh3hbwsy6gaafho",
      "amount": 84640,
      "method": "transfer",
      "date": "2025-12-15",
@@ -3667,21 +3667,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8flzz7nkla",
+    "id": "0mwh3hbwscu8tv72u",
     "status": "issued",
     "series": "GRJ",
     "number": 29,
     "issueDate": "2025-11-28",
     "dueDate": "2025-12-28",
-    "customerId": "0mwh2uy7q8ne1bcro",
-    "vehicleId": "0mwh2uy7qf1qpznul",
-    "workOrderId": "0mwh2uy7rlz7tgxra",
+    "customerId": "0mwh3hbw5fggpj1wk",
+    "vehicleId": "0mwh3hbw57givvcwk",
+    "workOrderId": "0mwh3hbw6fneff3rl",
     "mileage": 13991,
     "lines": [
      {
-      "id": "0mwh2uy8fbkgl1jc5",
+      "id": "0mwh3hbwsjqizj2rl",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -3689,12 +3689,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8fe6v16fbu",
+      "id": "0mwh3hbwspp9b5yhv",
       "kind": "labor",
-      "refId": "0mwh2uy7p23nf8uwt",
+      "refId": "0mwh3hbw43j524qqz",
       "description": "Înlocuire bec far",
       "qty": 0.3,
       "unit": "h",
@@ -3702,12 +3702,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8fiwvtl2ze",
+      "id": "0mwh3hbwsrjr927o7",
       "kind": "part",
-      "refId": "0mwh2uy7o9dhdbe30",
+      "refId": "0mwh3hbw4pe9g378i",
       "description": "Bec H7 Philips",
       "qty": 1,
       "unit": "buc",
@@ -3782,8 +3782,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fzyt9thrd",
-     "invoiceId": "0mwh2uy8flzz7nkla",
+     "id": "0mwh3hbwsz2fk9nk6",
+     "invoiceId": "0mwh3hbwscu8tv72u",
      "amount": 23232,
      "method": "transfer",
      "date": "2026-01-01",
@@ -3796,21 +3796,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8f2rzceyc4",
+    "id": "0mwh3hbwseibsnobi",
     "status": "issued",
     "series": "GRJ",
     "number": 30,
     "issueDate": "2025-11-28",
     "dueDate": "2025-12-12",
-    "customerId": "0mwh2uy7pto0yypns",
-    "vehicleId": "0mwh2uy7pr8aismrs",
-    "workOrderId": "0mwh2uy7rgikajga1",
+    "customerId": "0mwh3hbw4roeku8ik",
+    "vehicleId": "0mwh3hbw4a7iyrrr2",
+    "workOrderId": "0mwh3hbw62zoz4pus",
     "mileage": 169947,
     "lines": [
      {
-      "id": "0mwh2uy8fndg1ppqg",
+      "id": "0mwh3hbwsopljcrd3",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -3818,10 +3818,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8f0mqmjlil",
+      "id": "0mwh3hbwsgb27ygra",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -3898,8 +3898,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8fzcuja370",
-     "invoiceId": "0mwh2uy8f2rzceyc4",
+     "id": "0mwh3hbwsmwbkj2ya",
+     "invoiceId": "0mwh3hbwseibsnobi",
      "amount": 13915,
      "method": "cash",
      "date": "2025-11-28",
@@ -3912,21 +3912,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8iaav45j5t",
+    "id": "0mwh3hbwux5guvfqq",
     "status": "cancelled",
     "series": "GRJ",
     "number": 244,
     "issueDate": "2026-03-04",
     "dueDate": "2026-03-18",
-    "customerId": "0mwh2uy7pg82lfdis",
-    "vehicleId": "0mwh2uy7pwdude36w",
-    "workOrderId": "0mwh2uy7xndc2msud",
+    "customerId": "0mwh3hbw4nh8im7s8",
+    "vehicleId": "0mwh3hbw5zex093cj",
+    "workOrderId": "0mwh3hbwccyj1z89c",
     "mileage": 206287,
     "lines": [
      {
-      "id": "0mwh2uy8i2iqynurb",
+      "id": "0mwh3hbwu3gor1j4b",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -3934,7 +3934,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      }
     ],
     "notes": "",
@@ -3998,7 +3998,7 @@
     },
     "issuedAt": "2026-03-04T14:30:00.000Z",
     "updatedAt": "2026-03-04T14:30:00.000Z",
-    "stornoId": "0mwh2uy8qq0or2fab"
+    "stornoId": "0mwh3hbx1xvto285e"
    },
    "payments": [],
    "state": "cancelled",
@@ -4006,21 +4006,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8n9qzft0n6",
+    "id": "0mwh3hbwzb3uo09jg",
     "status": "cancelled",
     "series": "GRJ",
     "number": 585,
     "issueDate": "2026-08-04",
     "dueDate": "2026-08-18",
-    "customerId": "0mwh2uy7p8t13ak3m",
-    "vehicleId": "0mwh2uy7ps4am6rn6",
-    "workOrderId": "0mwh2uy87dhocx8iz",
+    "customerId": "0mwh3hbw5depwfrpj",
+    "vehicleId": "0mwh3hbw5k613qaxl",
+    "workOrderId": "0mwh3hbwli5anb1vu",
     "mileage": 128412,
     "lines": [
      {
-      "id": "0mwh2uy8np5c5xsbp",
+      "id": "0mwh3hbwzlknz34aw",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -4028,12 +4028,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8nx2xyh75i",
+      "id": "0mwh3hbwzvh5pco2f",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -4044,9 +4044,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8nor0hbu3o",
+      "id": "0mwh3hbwzyj2v45jk",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -4118,7 +4118,7 @@
     },
     "issuedAt": "2026-08-04T13:30:00.000Z",
     "updatedAt": "2026-08-04T13:30:00.000Z",
-    "stornoId": "0mwh2uy8qicc61hzf"
+    "stornoId": "0mwh3hbx1qxfwktnq"
    },
    "payments": [],
    "state": "cancelled",
@@ -4126,21 +4126,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qq0or2fab",
+    "id": "0mwh3hbx1xvto285e",
     "status": "issued",
     "series": "GRJ",
     "number": 813,
     "issueDate": "2026-03-06",
     "dueDate": "2026-03-06",
-    "customerId": "0mwh2uy7pg82lfdis",
-    "vehicleId": "0mwh2uy7pwdude36w",
+    "customerId": "0mwh3hbw4nh8im7s8",
+    "vehicleId": "0mwh3hbw5zex093cj",
     "workOrderId": null,
     "mileage": 206287,
     "lines": [
      {
-      "id": "0mwh2uy8qdw9cxb3h",
+      "id": "0mwh3hbx1fspz8cbm",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": -0.6,
       "unit": "h",
@@ -4148,7 +4148,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      }
     ],
     "totals": {
@@ -4202,7 +4202,7 @@
       "mileage": 206287
      }
     },
-    "stornoOf": "0mwh2uy8iaav45j5t",
+    "stornoOf": "0mwh3hbwux5guvfqq",
     "notes": "Stornare integrală a facturii GRJ 0244 din 2026-03-04.",
     "issuedAt": "2026-03-06T08:00:00.000Z",
     "activity": [
@@ -4220,21 +4220,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qicc61hzf",
+    "id": "0mwh3hbx1qxfwktnq",
     "status": "issued",
     "series": "GRJ",
     "number": 814,
     "issueDate": "2026-08-06",
     "dueDate": "2026-08-06",
-    "customerId": "0mwh2uy7p8t13ak3m",
-    "vehicleId": "0mwh2uy7ps4am6rn6",
+    "customerId": "0mwh3hbw5depwfrpj",
+    "vehicleId": "0mwh3hbw5k613qaxl",
     "workOrderId": null,
     "mileage": 128412,
     "lines": [
      {
-      "id": "0mwh2uy8qo986ukto",
+      "id": "0mwh3hbx11dytt99e",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": -0.6,
       "unit": "h",
@@ -4242,12 +4242,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8qjyk23m7t",
+      "id": "0mwh3hbx166hufn2r",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": -4.5,
       "unit": "l",
@@ -4258,9 +4258,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q17fzdjfi",
+      "id": "0mwh3hbx1t382x4in",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": -1,
       "unit": "buc",
@@ -4322,7 +4322,7 @@
       "mileage": 128412
      }
     },
-    "stornoOf": "0mwh2uy8n9qzft0n6",
+    "stornoOf": "0mwh3hbwzb3uo09jg",
     "notes": "Stornare integrală a facturii GRJ 0585 din 2026-08-04.",
     "issuedAt": "2026-08-06T07:00:00.000Z",
     "activity": [
@@ -4340,21 +4340,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q2rtdq973",
+    "id": "0mwh3hbx18vsn0wgg",
     "status": "issued",
     "series": "GRJ",
     "number": 785,
     "issueDate": "2026-11-03",
     "dueDate": "2026-11-17",
-    "customerId": "0mwh2uy7p6eouaj21",
-    "vehicleId": "0mwh2uy7pxf7y2n4m",
-    "workOrderId": "0mwh2uy8dcthhdba0",
+    "customerId": "0mwh3hbw5lvjz841e",
+    "vehicleId": "0mwh3hbw5hg4l8izl",
+    "workOrderId": "0mwh3hbwqv873x6jc",
     "mileage": 140768,
     "lines": [
      {
-      "id": "0mwh2uy8qv19m2awa",
+      "id": "0mwh3hbx1nv770218",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -4362,12 +4362,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8qu0jvye2j",
+      "id": "0mwh3hbx1esk6qe0g",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -4378,9 +4378,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qo2dz0m9r",
+      "id": "0mwh3hbx1jsg1k3pd",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -4391,9 +4391,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qmg4kbsjh",
+      "id": "0mwh3hbx1dyjow1ff",
       "kind": "labor",
-      "refId": "0mwh2uy7pb2gk39a2",
+      "refId": "0mwh3hbw4y2kxgrp5",
       "description": "Înlocuire capete de bară",
       "qty": 1,
       "unit": "h",
@@ -4401,12 +4401,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8qvqyzfov9",
+      "id": "0mwh3hbx1bv001qct",
       "kind": "part",
-      "refId": "0mwh2uy7oimuj8ttr",
+      "refId": "0mwh3hbw4qol2spog",
       "description": "Cap de bară Lemförder",
       "qty": 2,
       "unit": "buc",
@@ -4417,7 +4417,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q19pcudan",
+      "id": "0mwh3hbx1j2bt7rxo",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -4494,8 +4494,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qfu0y836h",
-     "invoiceId": "0mwh2uy8q2rtdq973",
+     "id": "0mwh3hbx107gwhirh",
+     "invoiceId": "0mwh3hbx18vsn0wgg",
      "amount": 102306,
      "method": "cash",
      "date": "2026-11-03",
@@ -4508,21 +4508,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qvznyn3jn",
+    "id": "0mwh3hbx12c5luwld",
     "status": "issued",
     "series": "GRJ",
     "number": 786,
     "issueDate": "2026-11-04",
     "dueDate": "2026-11-18",
-    "customerId": "0mwh2uy7plojjuxjl",
-    "vehicleId": "0mwh2uy7prwholzp0",
-    "workOrderId": "0mwh2uy8dys6til6c",
+    "customerId": "0mwh3hbw5ndhbix80",
+    "vehicleId": "0mwh3hbw552vjyrkp",
+    "workOrderId": "0mwh3hbwq6drj1khv",
     "mileage": 200067,
     "lines": [
      {
-      "id": "0mwh2uy8qyznf07rk",
+      "id": "0mwh3hbx15eubdz7m",
       "kind": "labor",
-      "refId": "0mwh2uy7ppckvygvx",
+      "refId": "0mwh3hbw4752dkaz4",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": 1.6,
       "unit": "h",
@@ -4530,12 +4530,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8qf8ki8cv4",
+      "id": "0mwh3hbx1023w083v",
       "kind": "part",
-      "refId": "0mwh2uy7oogk8rnun",
+      "refId": "0mwh3hbw4ywxgk7u3",
       "description": "Discuri frână față Brembo",
       "qty": 1,
       "unit": "set",
@@ -4546,9 +4546,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8ql99abq43",
+      "id": "0mwh3hbx1lhfdzdly",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -4623,8 +4623,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qbofhann2",
-     "invoiceId": "0mwh2uy8qvznyn3jn",
+     "id": "0mwh3hbx15kcuyr67",
+     "invoiceId": "0mwh3hbx12c5luwld",
      "amount": 125598,
      "method": "card",
      "date": "2026-11-04",
@@ -4637,21 +4637,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qkusgzhgc",
+    "id": "0mwh3hbx1zl2ecrou",
     "status": "issued",
     "series": "GRJ",
     "number": 787,
     "issueDate": "2026-11-04",
     "dueDate": "2026-11-18",
-    "customerId": "0mwh2uy7pln1u2hxl",
-    "vehicleId": "0mwh2uy7p5er5a28c",
-    "workOrderId": "0mwh2uy8d5277z11m",
+    "customerId": "0mwh3hbw4jf2celhi",
+    "vehicleId": "0mwh3hbw42ijvlzln",
+    "workOrderId": "0mwh3hbwqv9ykno7y",
     "mileage": 54864,
     "lines": [
      {
-      "id": "0mwh2uy8qsoi80zol",
+      "id": "0mwh3hbx1c7wesaw7",
       "kind": "labor",
-      "refId": "0mwh2uy7pqvnl29y5",
+      "refId": "0mwh3hbw4zhip8e0q",
       "description": "Revizie completă (ulei și filtre)",
       "qty": 1.5,
       "unit": "h",
@@ -4659,12 +4659,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8q0efu1ikk",
+      "id": "0mwh3hbx1b5s3w1np",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -4675,9 +4675,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qsttwajg8",
+      "id": "0mwh3hbx1l1n0dhmw",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -4688,9 +4688,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q3fdh1b1z",
+      "id": "0mwh3hbx1gt5fdube",
       "kind": "part",
-      "refId": "0mwh2uy7oc2mig0j6",
+      "refId": "0mwh3hbw4mqog98y4",
       "description": "Filtru aer Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -4701,9 +4701,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qpe5jb04s",
+      "id": "0mwh3hbx1x4vn3lgx",
       "kind": "part",
-      "refId": "0mwh2uy7orbl4oz98",
+      "refId": "0mwh3hbw41fhtg0h2",
       "description": "Filtru polen cu carbon activ Bosch",
       "qty": 1,
       "unit": "buc",
@@ -4778,8 +4778,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8q5qbvtbag",
-     "invoiceId": "0mwh2uy8qkusgzhgc",
+     "id": "0mwh3hbx1zavu0ft3",
+     "invoiceId": "0mwh3hbx1zl2ecrou",
      "amount": 84640,
      "method": "cash",
      "date": "2026-11-04",
@@ -4792,21 +4792,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q16nco1a0",
+    "id": "0mwh3hbx1175rxx1v",
     "status": "issued",
     "series": "GRJ",
     "number": 788,
     "issueDate": "2026-11-04",
     "dueDate": "2026-11-18",
-    "customerId": "0mwh2uy7pv12jjq1i",
-    "vehicleId": "0mwh2uy7pyzoykqjm",
-    "workOrderId": "0mwh2uy8d69duvr63",
+    "customerId": "0mwh3hbw5dkrv05f6",
+    "vehicleId": "0mwh3hbw5uah3a9d5",
+    "workOrderId": "0mwh3hbwq4idudxo2",
     "mileage": 53656,
     "lines": [
      {
-      "id": "0mwh2uy8qkg5110st",
+      "id": "0mwh3hbx1tnhxvvpe",
       "kind": "labor",
-      "refId": "0mwh2uy7pqvnl29y5",
+      "refId": "0mwh3hbw4zhip8e0q",
       "description": "Revizie completă (ulei și filtre)",
       "qty": 1.5,
       "unit": "h",
@@ -4814,12 +4814,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8qsl269k47",
+      "id": "0mwh3hbx11iruucy7",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -4830,9 +4830,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qku5hek1n",
+      "id": "0mwh3hbx1rsafdo10",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -4843,9 +4843,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q7op30cmk",
+      "id": "0mwh3hbx10a3xr2is",
       "kind": "part",
-      "refId": "0mwh2uy7oc2mig0j6",
+      "refId": "0mwh3hbw4mqog98y4",
       "description": "Filtru aer Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -4856,9 +4856,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qa53ihm0d",
+      "id": "0mwh3hbx18n0ec677",
       "kind": "part",
-      "refId": "0mwh2uy7orbl4oz98",
+      "refId": "0mwh3hbw41fhtg0h2",
       "description": "Filtru polen cu carbon activ Bosch",
       "qty": 1,
       "unit": "buc",
@@ -4933,8 +4933,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qlvktdx4k",
-     "invoiceId": "0mwh2uy8q16nco1a0",
+     "id": "0mwh3hbx1nxxkbdw3",
+     "invoiceId": "0mwh3hbx1175rxx1v",
      "amount": 84640,
      "method": "card",
      "date": "2026-11-04",
@@ -4947,21 +4947,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q42f8e0md",
+    "id": "0mwh3hbx1tkl43kuq",
     "status": "issued",
     "series": "GRJ",
     "number": 789,
     "issueDate": "2026-11-05",
     "dueDate": "2026-11-19",
-    "customerId": "0mwh2uy7pv12jjq1i",
-    "vehicleId": "0mwh2uy7pyzoykqjm",
-    "workOrderId": "0mwh2uy8drp95rgxn",
+    "customerId": "0mwh3hbw5dkrv05f6",
+    "vehicleId": "0mwh3hbw5uah3a9d5",
+    "workOrderId": "0mwh3hbwq18769jam",
     "mileage": 53796,
     "lines": [
      {
-      "id": "0mwh2uy8qr34sgjn4",
+      "id": "0mwh3hbx1rzfbhuns",
       "kind": "labor",
-      "refId": "0mwh2uy7pts6qz3qh",
+      "refId": "0mwh3hbw4wkf66aoy",
       "description": "Geometrie roți",
       "qty": 0.8,
       "unit": "h",
@@ -4969,7 +4969,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      }
     ],
     "notes": "",
@@ -5036,8 +5036,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8q372f9kq4",
-     "invoiceId": "0mwh2uy8q42f8e0md",
+     "id": "0mwh3hbx13hv3yyd1",
+     "invoiceId": "0mwh3hbx1tkl43kuq",
      "amount": 17424,
      "method": "cash",
      "date": "2026-11-05",
@@ -5050,21 +5050,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qn24xcaxe",
+    "id": "0mwh3hbx14qpz3ty2",
     "status": "issued",
     "series": "GRJ",
     "number": 790,
     "issueDate": "2026-11-05",
     "dueDate": "2026-11-19",
-    "customerId": "0mwh2uy7py6uldbun",
-    "vehicleId": "0mwh2uy7pwdgj5k0s",
-    "workOrderId": "0mwh2uy8d1rs610sk",
+    "customerId": "0mwh3hbw5nzuhwn4u",
+    "vehicleId": "0mwh3hbw50oiqyzsy",
+    "workOrderId": "0mwh3hbwqk355qyxo",
     "mileage": 212006,
     "lines": [
      {
-      "id": "0mwh2uy8q5hq0sdmy",
+      "id": "0mwh3hbx1krwjf541",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -5072,12 +5072,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8qqpoo8n2z",
+      "id": "0mwh3hbx1qean0n9b",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -5088,9 +5088,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qoxm0g2m1",
+      "id": "0mwh3hbx1gxgu9mm3",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -5101,7 +5101,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qe0ffxyc4",
+      "id": "0mwh3hbx120snu5wp",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -5178,8 +5178,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qdhgb5sdc",
-     "invoiceId": "0mwh2uy8qn24xcaxe",
+     "id": "0mwh3hbx1lgahr65z",
+     "invoiceId": "0mwh3hbx14qpz3ty2",
      "amount": 51728,
      "method": "card",
      "date": "2026-11-05",
@@ -5192,21 +5192,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qcdfoyd0c",
+    "id": "0mwh3hbx1y9lvjeqt",
     "status": "issued",
     "series": "GRJ",
     "number": 791,
     "issueDate": "2026-11-05",
     "dueDate": "2026-11-19",
-    "customerId": "0mwh2uy7puhg2a22o",
-    "vehicleId": "0mwh2uy7pkemxd90j",
-    "workOrderId": "0mwh2uy8d7upp504i",
+    "customerId": "0mwh3hbw4cna4drt1",
+    "vehicleId": "0mwh3hbw45tgtatz1",
+    "workOrderId": "0mwh3hbwq5znm560w",
     "mileage": 43972,
     "lines": [
      {
-      "id": "0mwh2uy8qhpg5yw54",
+      "id": "0mwh3hbx1lov2vyiw",
       "kind": "labor",
-      "refId": "0mwh2uy7pqvnl29y5",
+      "refId": "0mwh3hbw4zhip8e0q",
       "description": "Revizie completă (ulei și filtre)",
       "qty": 1.5,
       "unit": "h",
@@ -5214,12 +5214,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8qd0ic5utu",
+      "id": "0mwh3hbx151py0ygx",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -5230,9 +5230,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qqboo8p3c",
+      "id": "0mwh3hbx1xz0mfv81",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -5243,9 +5243,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qdh3vn16z",
+      "id": "0mwh3hbx13p0jj4x8",
       "kind": "part",
-      "refId": "0mwh2uy7oc2mig0j6",
+      "refId": "0mwh3hbw4mqog98y4",
       "description": "Filtru aer Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -5256,9 +5256,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q55fos0zd",
+      "id": "0mwh3hbx1voz57l1w",
       "kind": "part",
-      "refId": "0mwh2uy7orbl4oz98",
+      "refId": "0mwh3hbw41fhtg0h2",
       "description": "Filtru polen cu carbon activ Bosch",
       "qty": 1,
       "unit": "buc",
@@ -5269,7 +5269,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qk0xp88v3",
+      "id": "0mwh3hbx1p2izcp1n",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -5346,8 +5346,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qp91qzhqc",
-     "invoiceId": "0mwh2uy8qcdfoyd0c",
+     "id": "0mwh3hbx1twp49tgb",
+     "invoiceId": "0mwh3hbx1y9lvjeqt",
      "amount": 87665,
      "method": "cash",
      "date": "2026-11-05",
@@ -5360,21 +5360,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q3br13b4e",
+    "id": "0mwh3hbx1p84jujkp",
     "status": "issued",
     "series": "GRJ",
     "number": 792,
     "issueDate": "2026-11-05",
     "dueDate": "2026-12-05",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pmob0d4fl",
-    "workOrderId": "0mwh2uy8dwtb287ax",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5azv16wz3",
+    "workOrderId": "0mwh3hbwq9wt3rqfi",
     "mileage": 146477,
     "lines": [
      {
-      "id": "0mwh2uy8q6a8aahnf",
+      "id": "0mwh3hbx188ux6pda",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -5382,12 +5382,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8qxl9vxexe",
+      "id": "0mwh3hbx1yuz0hqw8",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -5398,9 +5398,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qmd5h5os8",
+      "id": "0mwh3hbx1lx26q79a",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -5411,9 +5411,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q6lczfvuz",
+      "id": "0mwh3hbx1po64vk02",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -5421,10 +5421,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8q82zle3ay",
+      "id": "0mwh3hbx1knr1tl29",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -5505,21 +5505,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qcr88x1ws",
+    "id": "0mwh3hbx11yb5hhve",
     "status": "issued",
     "series": "GRJ",
     "number": 793,
     "issueDate": "2026-11-06",
     "dueDate": "2026-11-20",
-    "customerId": "0mwh2uy7pspm4u9t2",
-    "vehicleId": "0mwh2uy7pcy69w1pr",
-    "workOrderId": "0mwh2uy8dbkb0oefo",
+    "customerId": "0mwh3hbw5gx2dnhxb",
+    "vehicleId": "0mwh3hbw5k91im1po",
+    "workOrderId": "0mwh3hbwqbn11zmn5",
     "mileage": 279261,
     "lines": [
      {
-      "id": "0mwh2uy8qohyuvjkc",
+      "id": "0mwh3hbx17x1630ap",
       "kind": "labor",
-      "refId": "0mwh2uy7p9vaiwja1",
+      "refId": "0mwh3hbw4glqa319b",
       "description": "Înlocuire lichid de frână",
       "qty": 0.7,
       "unit": "h",
@@ -5527,12 +5527,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8qtop573p0",
+      "id": "0mwh3hbx15draqvzi",
       "kind": "part",
-      "refId": "0mwh2uy7o5a09d0js",
+      "refId": "0mwh3hbw4p454m7pu",
       "description": "Lichid frână DOT 4 ATE",
       "qty": 1,
       "unit": "l",
@@ -5607,8 +5607,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qb22fnesy",
-     "invoiceId": "0mwh2uy8qcr88x1ws",
+     "id": "0mwh3hbx1jic9ocki",
+     "invoiceId": "0mwh3hbx11yb5hhve",
      "amount": 22627,
      "method": "card",
      "date": "2026-11-06",
@@ -5621,21 +5621,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q9e2ham12",
+    "id": "0mwh3hbx1bnc97oiz",
     "status": "issued",
     "series": "GRJ",
     "number": 794,
     "issueDate": "2026-11-06",
     "dueDate": "2026-11-20",
-    "customerId": "0mwh2uy7pl27ug0dg",
-    "vehicleId": "0mwh2uy7p6e8nv870",
-    "workOrderId": "0mwh2uy8dt4nhd25v",
+    "customerId": "0mwh3hbw5au79x1k7",
+    "vehicleId": "0mwh3hbw5pw7udgk9",
+    "workOrderId": "0mwh3hbwqg3g3ii0m",
     "mileage": 33616,
     "lines": [
      {
-      "id": "0mwh2uy8qq2bomd1z",
+      "id": "0mwh3hbx1unpkz55n",
       "kind": "labor",
-      "refId": "0mwh2uy7pt0iuycq8",
+      "refId": "0mwh3hbw40z6wincx",
       "description": "Curățare filtru de particule (DPF)",
       "qty": 1.5,
       "unit": "h",
@@ -5643,12 +5643,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8qb73t2ctz",
+      "id": "0mwh3hbx1smc0nhgo",
       "kind": "part",
-      "refId": "0mwh2uy7pa5r59ufk",
+      "refId": "0mwh3hbw4gqyx8v1m",
       "description": "Soluție curățare DPF Liqui Moly",
       "qty": 1,
       "unit": "buc",
@@ -5659,9 +5659,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q9cm7w1ud",
+      "id": "0mwh3hbx1m05eqnza",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -5669,7 +5669,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      }
     ],
     "notes": "",
@@ -5736,8 +5736,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qf4gp1imz",
-     "invoiceId": "0mwh2uy8q9e2ham12",
+     "id": "0mwh3hbx119kxra7t",
+     "invoiceId": "0mwh3hbx1bnc97oiz",
      "amount": 65340,
      "method": "card",
      "date": "2026-11-06",
@@ -5750,21 +5750,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qpt56n4kz",
+    "id": "0mwh3hbx15hsok4g4",
     "status": "issued",
     "series": "GRJ",
     "number": 795,
     "issueDate": "2026-11-06",
     "dueDate": "2026-11-20",
-    "customerId": "0mwh2uy7pln1u2hxl",
-    "vehicleId": "0mwh2uy7p5er5a28c",
-    "workOrderId": "0mwh2uy8ddvpcsvw8",
+    "customerId": "0mwh3hbw4jf2celhi",
+    "vehicleId": "0mwh3hbw42ijvlzln",
+    "workOrderId": "0mwh3hbwq7dlfcopi",
     "mileage": 55159,
     "lines": [
      {
-      "id": "0mwh2uy8qo7m2yofj",
+      "id": "0mwh3hbx1t1f45o3o",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -5772,12 +5772,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8qjkdrh1im",
+      "id": "0mwh3hbx19fopc4om",
       "kind": "labor",
-      "refId": "0mwh2uy7pc51jpc8g",
+      "refId": "0mwh3hbw43wdc5tzd",
       "description": "Încărcare freon AC",
       "qty": 0.7,
       "unit": "h",
@@ -5785,12 +5785,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8qfkca9ka3",
+      "id": "0mwh3hbx1mrnarmyd",
       "kind": "part",
-      "refId": "0mwh2uy7o0pvu84ru",
+      "refId": "0mwh3hbw4xdas9ids",
       "description": "Freon R1234yf Honeywell",
       "qty": 5,
       "unit": "100 g",
@@ -5865,8 +5865,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8q9d9g9zil",
-     "invoiceId": "0mwh2uy8qpt56n4kz",
+     "id": "0mwh3hbx1k1mjlmcs",
+     "invoiceId": "0mwh3hbx15hsok4g4",
      "amount": 99946,
      "method": "card",
      "date": "2026-11-06",
@@ -5879,21 +5879,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qngedtjxl",
+    "id": "0mwh3hbx1hywcl3wc",
     "status": "issued",
     "series": "GRJ",
     "number": 796,
     "issueDate": "2026-11-06",
     "dueDate": "2026-11-20",
-    "customerId": "0mwh2uy7pgbeuzyzb",
-    "vehicleId": "0mwh2uy7p5d6gg1s4",
-    "workOrderId": "0mwh2uy8dmr2qwb40",
+    "customerId": "0mwh3hbw4tgnf6aa6",
+    "vehicleId": "0mwh3hbw4x26epix6",
+    "workOrderId": "0mwh3hbwqtvxy8993",
     "mileage": 214425,
     "lines": [
      {
-      "id": "0mwh2uy8q14g03kzo",
+      "id": "0mwh3hbx1111nzgkf",
       "kind": "labor",
-      "refId": "0mwh2uy7pq7psdgwu",
+      "refId": "0mwh3hbw4vf804pd7",
       "description": "Înlocuire acumulator",
       "qty": 0.3,
       "unit": "h",
@@ -5901,12 +5901,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8qfq2e6myp",
+      "id": "0mwh3hbx1u50dvhna",
       "kind": "part",
-      "refId": "0mwh2uy7od5gt8zo0",
+      "refId": "0mwh3hbw4622cba5t",
       "description": "Acumulator 74 Ah 680 A Varta",
       "qty": 1,
       "unit": "buc",
@@ -5981,8 +5981,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8q40hnhgsu",
-     "invoiceId": "0mwh2uy8qngedtjxl",
+     "id": "0mwh3hbx17x8555l4",
+     "invoiceId": "0mwh3hbx1hywcl3wc",
      "amount": 91476,
      "method": "cash",
      "date": "2026-11-06",
@@ -5995,21 +5995,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qhn4rqw5o",
+    "id": "0mwh3hbx15js0861m",
     "status": "issued",
     "series": "GRJ",
     "number": 797,
     "issueDate": "2026-11-07",
     "dueDate": "2026-11-21",
-    "customerId": "0mwh2uy7pv12jjq1i",
-    "vehicleId": "0mwh2uy7puuet63s1",
-    "workOrderId": "0mwh2uy8dyrwwodzg",
+    "customerId": "0mwh3hbw5dkrv05f6",
+    "vehicleId": "0mwh3hbw5btzia36h",
+    "workOrderId": "0mwh3hbwqivuc59u7",
     "mileage": 130366,
     "lines": [
      {
-      "id": "0mwh2uy8qvqd2ihal",
+      "id": "0mwh3hbx14cs07yoq",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -6017,12 +6017,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8qru7z87ts",
+      "id": "0mwh3hbx1bhnd0r46",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -6033,9 +6033,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q0mdix2jf",
+      "id": "0mwh3hbx16jx3apqi",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -6046,7 +6046,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qsqw69500",
+      "id": "0mwh3hbx13wws41zq",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -6123,8 +6123,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qv2e239du",
-     "invoiceId": "0mwh2uy8qhn4rqw5o",
+     "id": "0mwh3hbx1b3k1ife8",
+     "invoiceId": "0mwh3hbx15js0861m",
      "amount": 51728,
      "method": "card",
      "date": "2026-11-07",
@@ -6137,21 +6137,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qmmrlgzt8",
+    "id": "0mwh3hbx1ze7rnknf",
     "status": "issued",
     "series": "GRJ",
     "number": 798,
     "issueDate": "2026-11-09",
     "dueDate": "2026-11-23",
-    "customerId": "0mwh2uy7pc1ibs482",
-    "vehicleId": "0mwh2uy7prsy41n5t",
-    "workOrderId": "0mwh2uy8e5ppkcnot",
+    "customerId": "0mwh3hbw5aqz5f5mu",
+    "vehicleId": "0mwh3hbw5912ya6ka",
+    "workOrderId": "0mwh3hbwqup4qai6b",
     "mileage": 120152,
     "lines": [
      {
-      "id": "0mwh2uy8qhd0kzf7g",
+      "id": "0mwh3hbx1zww3fdb1",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -6159,10 +6159,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8qu6gkc9r4",
+      "id": "0mwh3hbx1qyinqftd",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -6239,8 +6239,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qhgyvyry1",
-     "invoiceId": "0mwh2uy8qmmrlgzt8",
+     "id": "0mwh3hbx1dqxxe354",
+     "invoiceId": "0mwh3hbx1ze7rnknf",
      "amount": 13915,
      "method": "card",
      "date": "2026-11-09",
@@ -6253,21 +6253,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q0155l02r",
+    "id": "0mwh3hbx191t7lm42",
     "status": "issued",
     "series": "GRJ",
     "number": 799,
     "issueDate": "2026-11-09",
     "dueDate": "2026-11-23",
-    "customerId": "0mwh2uy7psd83xfmr",
-    "vehicleId": "0mwh2uy7p69zl0ejh",
-    "workOrderId": "0mwh2uy8et2a97hho",
+    "customerId": "0mwh3hbw5c21lzs79",
+    "vehicleId": "0mwh3hbw5dgr7vybf",
+    "workOrderId": "0mwh3hbwqv1rxr4sc",
     "mileage": 182801,
     "lines": [
      {
-      "id": "0mwh2uy8qmobqf5q5",
+      "id": "0mwh3hbx146s0vngj",
       "kind": "labor",
-      "refId": "0mwh2uy7pt0iuycq8",
+      "refId": "0mwh3hbw40z6wincx",
       "description": "Curățare filtru de particule (DPF)",
       "qty": 1.5,
       "unit": "h",
@@ -6275,12 +6275,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8qafwks1x5",
+      "id": "0mwh3hbx1m8do64cr",
       "kind": "part",
-      "refId": "0mwh2uy7pa5r59ufk",
+      "refId": "0mwh3hbw4gqyx8v1m",
       "description": "Soluție curățare DPF Liqui Moly",
       "qty": 1,
       "unit": "buc",
@@ -6291,9 +6291,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qwtqf95gs",
+      "id": "0mwh3hbx1s04t2xtb",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -6301,10 +6301,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8qlfz3m7ig",
+      "id": "0mwh3hbx1i6xgnxrb",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -6381,8 +6381,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qydxzakak",
-     "invoiceId": "0mwh2uy8q0155l02r",
+     "id": "0mwh3hbx1kr6najq7",
+     "invoiceId": "0mwh3hbx191t7lm42",
      "amount": 66187,
      "method": "card",
      "date": "2026-11-09",
@@ -6395,21 +6395,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q7iczlxig",
+    "id": "0mwh3hbx1pps1udmu",
     "status": "issued",
     "series": "GRJ",
     "number": 800,
     "issueDate": "2026-11-10",
     "dueDate": "2026-11-24",
-    "customerId": "0mwh2uy7pl0zvti28",
-    "vehicleId": "0mwh2uy7p0vtey746",
-    "workOrderId": "0mwh2uy8e6b03etvf",
+    "customerId": "0mwh3hbw5rty5fh77",
+    "vehicleId": "0mwh3hbw5965bsoud",
+    "workOrderId": "0mwh3hbwq4fe5n4ki",
     "mileage": 85935,
     "lines": [
      {
-      "id": "0mwh2uy8qox9jnbf5",
+      "id": "0mwh3hbx1hxuwbz0j",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -6417,12 +6417,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8q1d5i1hdu",
+      "id": "0mwh3hbx1v4s7620h",
       "kind": "labor",
-      "refId": "0mwh2uy7pdp9mchbg",
+      "refId": "0mwh3hbw43451eooq",
       "description": "Verificare pre-ITP",
       "qty": 0.5,
       "unit": "h",
@@ -6430,10 +6430,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8qyu290oa1",
+      "id": "0mwh3hbx1v7fhkadt",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -6510,8 +6510,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qvsw0m1zk",
-     "invoiceId": "0mwh2uy8q7iczlxig",
+     "id": "0mwh3hbx1uo7f1w01",
+     "invoiceId": "0mwh3hbx1pps1udmu",
      "amount": 26983,
      "method": "cash",
      "date": "2026-11-10",
@@ -6524,21 +6524,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qh295w04g",
+    "id": "0mwh3hbx13e7kq6uj",
     "status": "issued",
     "series": "GRJ",
     "number": 801,
     "issueDate": "2026-11-10",
     "dueDate": "2026-12-10",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pbcv9gdnr",
-    "workOrderId": "0mwh2uy8evtuexs2c",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5z1pqz89h",
+    "workOrderId": "0mwh3hbwql6awgy5c",
     "mileage": 126548,
     "lines": [
      {
-      "id": "0mwh2uy8qvrftcb76",
+      "id": "0mwh3hbx1dx87q0zi",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -6546,12 +6546,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8q7m5w3hdx",
+      "id": "0mwh3hbx1cbbygsiu",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -6562,9 +6562,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qxsajr20m",
+      "id": "0mwh3hbx10219dqk9",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -6643,21 +6643,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qr95o2m66",
+    "id": "0mwh3hbx1eu3qhri5",
     "status": "issued",
     "series": "GRJ",
     "number": 802,
     "issueDate": "2026-11-11",
     "dueDate": "2026-11-25",
-    "customerId": "0mwh2uy7pf1twe6ew",
-    "vehicleId": "0mwh2uy7pzexyls4w",
-    "workOrderId": "0mwh2uy8eonfnn2es",
+    "customerId": "0mwh3hbw53r4886ht",
+    "vehicleId": "0mwh3hbw5841eh0t4",
+    "workOrderId": "0mwh3hbwr4uannutm",
     "mileage": 52541,
     "lines": [
      {
-      "id": "0mwh2uy8q7w1y4lt1",
+      "id": "0mwh3hbx15wpxwhcg",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -6665,12 +6665,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8qmfzx0knx",
+      "id": "0mwh3hbx1k30s02p0",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -6681,9 +6681,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q0abql0ra",
+      "id": "0mwh3hbx1mq9e1n5w",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -6694,9 +6694,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qsv71fu4u",
+      "id": "0mwh3hbx10zuvpwa9",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -6704,7 +6704,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      }
     ],
     "notes": "",
@@ -6771,8 +6771,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8q8t63fsra",
-     "invoiceId": "0mwh2uy8qr95o2m66",
+     "id": "0mwh3hbx1pym3a5st",
+     "invoiceId": "0mwh3hbx1eu3qhri5",
      "amount": 61771,
      "method": "card",
      "date": "2026-11-11",
@@ -6785,21 +6785,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qzpbjjyfz",
+    "id": "0mwh3hbx1qlr91s9x",
     "status": "issued",
     "series": "GRJ",
     "number": 803,
     "issueDate": "2026-11-11",
     "dueDate": "2026-12-11",
-    "customerId": "0mwh2uy7q8ne1bcro",
-    "vehicleId": "0mwh2uy7qn4pln9n3",
-    "workOrderId": "0mwh2uy8ec50qart3",
+    "customerId": "0mwh3hbw5fggpj1wk",
+    "vehicleId": "0mwh3hbw59tnkz1lr",
+    "workOrderId": "0mwh3hbwqc3hqyifx",
     "mileage": 128178,
     "lines": [
      {
-      "id": "0mwh2uy8qrxyqkpre",
+      "id": "0mwh3hbx1atz937a4",
       "kind": "labor",
-      "refId": "0mwh2uy7pts6qz3qh",
+      "refId": "0mwh3hbw4wkf66aoy",
       "description": "Geometrie roți",
       "qty": 0.8,
       "unit": "h",
@@ -6807,10 +6807,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8qf5000ugq",
+      "id": "0mwh3hbx1gb83gq3t",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -6891,21 +6891,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q5t7jkwyy",
+    "id": "0mwh3hbx15n1iwphb",
     "status": "issued",
     "series": "GRJ",
     "number": 804,
     "issueDate": "2026-11-11",
     "dueDate": "2026-11-25",
-    "customerId": "0mwh2uy7p0lvzp88q",
-    "vehicleId": "0mwh2uy7pl2tr8768",
-    "workOrderId": "0mwh2uy8eo2l582sr",
+    "customerId": "0mwh3hbw558u3cgw5",
+    "vehicleId": "0mwh3hbw5g2yd5e2l",
+    "workOrderId": "0mwh3hbwqz4stb8xg",
     "mileage": 33739,
     "lines": [
      {
-      "id": "0mwh2uy8qryznh91k",
+      "id": "0mwh3hbx1uyij8jxk",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -6913,12 +6913,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8qb909cdp6",
+      "id": "0mwh3hbx1p5g7g30m",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -6929,9 +6929,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qkeitx3qn",
+      "id": "0mwh3hbx1wtda057m",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -6942,9 +6942,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qccakfnnk",
+      "id": "0mwh3hbx1jbwk8oip",
       "kind": "labor",
-      "refId": "0mwh2uy7p9vaiwja1",
+      "refId": "0mwh3hbw4glqa319b",
       "description": "Înlocuire lichid de frână",
       "qty": 0.7,
       "unit": "h",
@@ -6952,12 +6952,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8qh4l5e7xs",
+      "id": "0mwh3hbx18930rfq2",
       "kind": "part",
-      "refId": "0mwh2uy7o5a09d0js",
+      "refId": "0mwh3hbw4p454m7pu",
       "description": "Lichid frână DOT 4 ATE",
       "qty": 1,
       "unit": "l",
@@ -6968,7 +6968,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q7z9nnwc6",
+      "id": "0mwh3hbx1rllt6drs",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -7045,8 +7045,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8q131dhxol",
-     "invoiceId": "0mwh2uy8q5t7jkwyy",
+     "id": "0mwh3hbx18r3358mp",
+     "invoiceId": "0mwh3hbx15n1iwphb",
      "amount": 74355,
      "method": "card",
      "date": "2026-11-11",
@@ -7059,21 +7059,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qc1ski65e",
+    "id": "0mwh3hbx1zjqkkfvq",
     "status": "issued",
     "series": "GRJ",
     "number": 805,
     "issueDate": "2026-11-12",
     "dueDate": "2026-12-12",
-    "customerId": "0mwh2uy7qq2tazlsb",
-    "vehicleId": "0mwh2uy7qedpzftyn",
-    "workOrderId": "0mwh2uy8ef1kaw36s",
+    "customerId": "0mwh3hbw56mq00fwv",
+    "vehicleId": "0mwh3hbw5034vmrws",
+    "workOrderId": "0mwh3hbwr29d3wh2i",
     "mileage": 101675,
     "lines": [
      {
-      "id": "0mwh2uy8q1vkm9qvh",
+      "id": "0mwh3hbx1fw6twtsb",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -7081,10 +7081,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8q7yvxfhkv",
+      "id": "0mwh3hbx15kyulair",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -7165,21 +7165,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qo0anoxaw",
+    "id": "0mwh3hbx1k4obml93",
     "status": "issued",
     "series": "GRJ",
     "number": 806,
     "issueDate": "2026-11-12",
     "dueDate": "2026-11-26",
-    "customerId": "0mwh2uy7pw4ilgjyc",
-    "vehicleId": "0mwh2uy7plprenc31",
-    "workOrderId": "0mwh2uy8e3on0r0st",
+    "customerId": "0mwh3hbw5627qm0tp",
+    "vehicleId": "0mwh3hbw5e509qsun",
+    "workOrderId": "0mwh3hbwrk69xp7xu",
     "mileage": 37169,
     "lines": [
      {
-      "id": "0mwh2uy8qklulh60p",
+      "id": "0mwh3hbx1iocd6zwi",
       "kind": "labor",
-      "refId": "0mwh2uy7p3ksd5idu",
+      "refId": "0mwh3hbw4n2knhq74",
       "description": "Înlocuire bujii",
       "qty": 0.6,
       "unit": "h",
@@ -7187,12 +7187,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8q4rzp284x",
+      "id": "0mwh3hbx1dgbyagcx",
       "kind": "part",
-      "refId": "0mwh2uy7oq0osp20f",
+      "refId": "0mwh3hbw43benjfa2",
       "description": "Bujie NGK",
       "qty": 4,
       "unit": "buc",
@@ -7267,8 +7267,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qqkhen2h7",
-     "invoiceId": "0mwh2uy8qo0anoxaw",
+     "id": "0mwh3hbx16kj2vb5l",
+     "invoiceId": "0mwh3hbx1k4obml93",
      "amount": 33880,
      "method": "card",
      "date": "2026-11-12",
@@ -7281,21 +7281,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qmw6j3alu",
+    "id": "0mwh3hbx1p6se2ktl",
     "status": "issued",
     "series": "GRJ",
     "number": 807,
     "issueDate": "2026-11-12",
     "dueDate": "2026-11-26",
-    "customerId": "0mwh2uy7poi0iocrm",
-    "vehicleId": "0mwh2uy7pa44rkoxv",
-    "workOrderId": "0mwh2uy8e23qi1h35",
+    "customerId": "0mwh3hbw4l7yeasdp",
+    "vehicleId": "0mwh3hbw4zcwetoqe",
+    "workOrderId": "0mwh3hbwr7egmc9q2",
     "mileage": 88725,
     "lines": [
      {
-      "id": "0mwh2uy8q1dvrmct0",
+      "id": "0mwh3hbx1uz5tt3o8",
       "kind": "labor",
-      "refId": "0mwh2uy7pq7psdgwu",
+      "refId": "0mwh3hbw4vf804pd7",
       "description": "Înlocuire acumulator",
       "qty": 0.3,
       "unit": "h",
@@ -7303,12 +7303,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8q8u1ee2ww",
+      "id": "0mwh3hbx1mv35umve",
       "kind": "part",
-      "refId": "0mwh2uy7od5gt8zo0",
+      "refId": "0mwh3hbw4622cba5t",
       "description": "Acumulator 74 Ah 680 A Varta",
       "qty": 1,
       "unit": "buc",
@@ -7319,7 +7319,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q7ur7n28y",
+      "id": "0mwh3hbx11ew8gqf3",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -7396,8 +7396,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8q8x2bhgsr",
-     "invoiceId": "0mwh2uy8qmw6j3alu",
+     "id": "0mwh3hbx1xi18v17d",
+     "invoiceId": "0mwh3hbx1p6se2ktl",
      "amount": 37800,
      "method": "cash",
      "date": "2026-11-12",
@@ -7410,21 +7410,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q9kouwaxx",
+    "id": "0mwh3hbx1hfdarqpx",
     "status": "issued",
     "series": "GRJ",
     "number": 808,
     "issueDate": "2026-11-13",
     "dueDate": "2026-12-13",
-    "customerId": "0mwh2uy7p48maapuk",
-    "vehicleId": "0mwh2uy7p484x0ey4",
-    "workOrderId": "0mwh2uy8ee3sxun6s",
+    "customerId": "0mwh3hbw50at21anr",
+    "vehicleId": "0mwh3hbw59cqs8b49",
+    "workOrderId": "0mwh3hbwr5woauxte",
     "mileage": 83521,
     "lines": [
      {
-      "id": "0mwh2uy8qvo75wd4l",
+      "id": "0mwh3hbx1a5gtnjt5",
       "kind": "labor",
-      "refId": "0mwh2uy7ppckvygvx",
+      "refId": "0mwh3hbw4752dkaz4",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": 1.6,
       "unit": "h",
@@ -7432,12 +7432,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8q5rktf3wx",
+      "id": "0mwh3hbx1r35eo0s4",
       "kind": "part",
-      "refId": "0mwh2uy7oogk8rnun",
+      "refId": "0mwh3hbw4ywxgk7u3",
       "description": "Discuri frână față Brembo",
       "qty": 1,
       "unit": "set",
@@ -7448,9 +7448,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qu3xdiqqi",
+      "id": "0mwh3hbx1nd80gqpo",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -7461,9 +7461,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qvt3budgd",
+      "id": "0mwh3hbx1r9ah5j5u",
       "kind": "labor",
-      "refId": "0mwh2uy7ptu2z0tzn",
+      "refId": "0mwh3hbw481vu4odo",
       "description": "Înlocuire plăcuțe frână spate",
       "qty": 1,
       "unit": "h",
@@ -7471,12 +7471,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      },
      {
-      "id": "0mwh2uy8qt6o8mau1",
+      "id": "0mwh3hbx14k4830nd",
       "kind": "part",
-      "refId": "0mwh2uy7oy9ljkanq",
+      "refId": "0mwh3hbw4pm16l48w",
       "description": "Plăcuțe frână spate TRW",
       "qty": 1,
       "unit": "set",
@@ -7487,7 +7487,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qvbx9nfsp",
+      "id": "0mwh3hbx1gbh6p3th",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -7568,21 +7568,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qz3klggu7",
+    "id": "0mwh3hbx1dhz2c0va",
     "status": "issued",
     "series": "GRJ",
     "number": 809,
     "issueDate": "2026-11-13",
     "dueDate": "2026-12-13",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pu5y3440g",
-    "workOrderId": "0mwh2uy8e045y1c96",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5xduz07vt",
+    "workOrderId": "0mwh3hbwrhp0k5mbt",
     "mileage": 136759,
     "lines": [
      {
-      "id": "0mwh2uy8qk52odcmh",
+      "id": "0mwh3hbx1nia3ywmi",
       "kind": "labor",
-      "refId": "0mwh2uy7pqvnl29y5",
+      "refId": "0mwh3hbw4zhip8e0q",
       "description": "Revizie completă (ulei și filtre)",
       "qty": 1.5,
       "unit": "h",
@@ -7590,12 +7590,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8qyy3wb3ey",
+      "id": "0mwh3hbx1nhg7uelb",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -7606,9 +7606,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qa7m2rts1",
+      "id": "0mwh3hbx1btfmieen",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -7619,9 +7619,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q9nazr08x",
+      "id": "0mwh3hbx1m0l900bm",
       "kind": "part",
-      "refId": "0mwh2uy7oc2mig0j6",
+      "refId": "0mwh3hbw4mqog98y4",
       "description": "Filtru aer Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -7632,9 +7632,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8qku0oayes",
+      "id": "0mwh3hbx1ho7v26ve",
       "kind": "part",
-      "refId": "0mwh2uy7orbl4oz98",
+      "refId": "0mwh3hbw41fhtg0h2",
       "description": "Filtru polen cu carbon activ Bosch",
       "qty": 1,
       "unit": "buc",
@@ -7645,9 +7645,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q622hm52k",
+      "id": "0mwh3hbx1y2rvdxnd",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -7655,7 +7655,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      }
     ],
     "notes": "",
@@ -7726,21 +7726,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qc7s7yclv",
+    "id": "0mwh3hbx1twv6apcr",
     "status": "issued",
     "series": "GRJ",
     "number": 810,
     "issueDate": "2026-11-13",
     "dueDate": "2026-12-13",
-    "customerId": "0mwh2uy7p4m3cn71n",
-    "vehicleId": "0mwh2uy7p8l6uq8d0",
-    "workOrderId": "0mwh2uy8e8tr9bh2k",
+    "customerId": "0mwh3hbw5d35dms40",
+    "vehicleId": "0mwh3hbw54w85sy4a",
+    "workOrderId": "0mwh3hbwrmud96402",
     "mileage": 102763,
     "lines": [
      {
-      "id": "0mwh2uy8qk1dhpg75",
+      "id": "0mwh3hbx15nxnt03x",
       "kind": "labor",
-      "refId": "0mwh2uy7pzx9qbfkt",
+      "refId": "0mwh3hbw4ske1uj2t",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -7748,7 +7748,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      }
     ],
     "notes": "",
@@ -7819,21 +7819,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8q9efsgfxk",
+    "id": "0mwh3hbx1jst9w4ie",
     "status": "issued",
     "series": "GRJ",
     "number": 811,
     "issueDate": "2026-11-14",
     "dueDate": "2026-12-14",
-    "customerId": "0mwh2uy7p4m3cn71n",
-    "vehicleId": "0mwh2uy7p8l6uq8d0",
-    "workOrderId": "0mwh2uy8el6tw6h2w",
+    "customerId": "0mwh3hbw5d35dms40",
+    "vehicleId": "0mwh3hbw54w85sy4a",
+    "workOrderId": "0mwh3hbwr9kyhkjy7",
     "mileage": 102754,
     "lines": [
      {
-      "id": "0mwh2uy8quoae95vz",
+      "id": "0mwh3hbx1tc3zjtdk",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -7841,12 +7841,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8q4eeua5t9",
+      "id": "0mwh3hbx1ve2bc9n4",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -7857,9 +7857,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q29ojcqjs",
+      "id": "0mwh3hbx1kxd711es",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -7867,7 +7867,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      }
     ],
     "notes": "",
@@ -7938,21 +7938,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qw7wv3rwv",
+    "id": "0mwh3hbx1wt82x0cb",
     "status": "issued",
     "series": "GRJ",
     "number": 812,
     "issueDate": "2026-11-14",
     "dueDate": "2026-11-28",
-    "customerId": "0mwh2uy7pgaiyrs3c",
-    "vehicleId": "0mwh2uy7pp6mcmhnb",
-    "workOrderId": "0mwh2uy8efuvxdkzx",
+    "customerId": "0mwh3hbw40ife3av6",
+    "vehicleId": "0mwh3hbw41smr1fzc",
+    "workOrderId": "0mwh3hbwr9r7p8al8",
     "mileage": 106953,
     "lines": [
      {
-      "id": "0mwh2uy8qpwh5kra1",
+      "id": "0mwh3hbx1332xibek",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -7960,7 +7960,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      }
     ],
     "notes": "",
@@ -8027,8 +8027,8 @@
    },
    "payments": [
     {
-     "id": "0mwh2uy8qf40uwyqx",
-     "invoiceId": "0mwh2uy8qw7wv3rwv",
+     "id": "0mwh3hbx1yk0eziq4",
+     "invoiceId": "0mwh3hbx1wt82x0cb",
      "amount": 13068,
      "method": "card",
      "date": "2026-11-14",
@@ -8041,21 +8041,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qq0or2fab",
+    "id": "0mwh3hbx1xvto285e",
     "status": "issued",
     "series": "GRJ",
     "number": 813,
     "issueDate": "2026-03-06",
     "dueDate": "2026-03-06",
-    "customerId": "0mwh2uy7pg82lfdis",
-    "vehicleId": "0mwh2uy7pwdude36w",
+    "customerId": "0mwh3hbw4nh8im7s8",
+    "vehicleId": "0mwh3hbw5zex093cj",
     "workOrderId": null,
     "mileage": 206287,
     "lines": [
      {
-      "id": "0mwh2uy8qdw9cxb3h",
+      "id": "0mwh3hbx1fspz8cbm",
       "kind": "labor",
-      "refId": "0mwh2uy7p25856hu7",
+      "refId": "0mwh3hbw4op4v3gnc",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": -0.6,
       "unit": "h",
@@ -8063,7 +8063,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      }
     ],
     "totals": {
@@ -8117,7 +8117,7 @@
       "mileage": 206287
      }
     },
-    "stornoOf": "0mwh2uy8iaav45j5t",
+    "stornoOf": "0mwh3hbwux5guvfqq",
     "notes": "Stornare integrală a facturii GRJ 0244 din 2026-03-04.",
     "issuedAt": "2026-03-06T08:00:00.000Z",
     "activity": [
@@ -8135,21 +8135,21 @@
   },
   {
    "invoice": {
-    "id": "0mwh2uy8qicc61hzf",
+    "id": "0mwh3hbx1qxfwktnq",
     "status": "issued",
     "series": "GRJ",
     "number": 814,
     "issueDate": "2026-08-06",
     "dueDate": "2026-08-06",
-    "customerId": "0mwh2uy7p8t13ak3m",
-    "vehicleId": "0mwh2uy7ps4am6rn6",
+    "customerId": "0mwh3hbw5depwfrpj",
+    "vehicleId": "0mwh3hbw5k613qaxl",
     "workOrderId": null,
     "mileage": 128412,
     "lines": [
      {
-      "id": "0mwh2uy8qo986ukto",
+      "id": "0mwh3hbx11dytt99e",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": -0.6,
       "unit": "h",
@@ -8157,12 +8157,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8qjyk23m7t",
+      "id": "0mwh3hbx166hufn2r",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": -4.5,
       "unit": "l",
@@ -8173,9 +8173,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8q17fzdjfi",
+      "id": "0mwh3hbx1t382x4in",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": -1,
       "unit": "buc",
@@ -8237,7 +8237,7 @@
       "mileage": 128412
      }
     },
-    "stornoOf": "0mwh2uy8n9qzft0n6",
+    "stornoOf": "0mwh3hbwzb3uo09jg",
     "notes": "Stornare integrală a facturii GRJ 0585 din 2026-08-04.",
     "issuedAt": "2026-08-06T07:00:00.000Z",
     "activity": [
@@ -8290,7 +8290,7 @@
     "dueDate": "2026-01-01"
    },
    "customer": {
-    "id": "0mwh2uy7p9f3z6wkt",
+    "id": "0mwh3hbw4by4w8kq0",
     "type": "company",
     "name": "Andreea Mocanu",
     "phone": "0788 291 972",
@@ -8341,7 +8341,7 @@
     "dueDate": "2026-01-01"
    },
    "customer": {
-    "id": "0mwh2uy7pfj0zz4m0",
+    "id": "0mwh3hbw4r86xj20e",
     "type": "person",
     "name": "Cătălin Florea",
     "phone": "0754 301 783",
@@ -8374,15 +8374,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
-    "workOrderId": "0mwh2uy7qxrdqaahz",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
+    "workOrderId": "0mwh3hbw5trl6ld7x",
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy7qzvk3bwa8",
+      "id": "0mwh3hbw5fytgq590",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -8390,12 +8390,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qwuev6tk1",
+      "id": "0mwh3hbw5c54nyw1k",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -8406,9 +8406,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqwb1jkm0",
+      "id": "0mwh3hbw5qi9xo3ql",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -8419,9 +8419,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qi5k0dvjj",
+      "id": "0mwh3hbw5vmpcyk1r",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -8429,12 +8429,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qx5iv6ci7",
+      "id": "0mwh3hbw5m8isieaw",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -8445,7 +8445,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qpw2hueqi",
+      "id": "0mwh3hbw5jgpmxnlr",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -8464,7 +8464,7 @@
     "updatedAt": "2026-11-15T10:00:00.000Z"
    },
    "customer": {
-    "id": "0mwh2uy7pw69i8qb8",
+    "id": "0mwh3hbw5m96j98ok",
     "type": "company",
     "name": "Construct Plus SRL",
     "contactName": "Cristian Ilie",
@@ -8491,15 +8491,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
-    "workOrderId": "0mwh2uy7qxrdqaahz",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
+    "workOrderId": "0mwh3hbw5trl6ld7x",
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy7qzvk3bwa8",
+      "id": "0mwh3hbw5fytgq590",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -8507,12 +8507,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qwuev6tk1",
+      "id": "0mwh3hbw5c54nyw1k",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -8523,9 +8523,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqwb1jkm0",
+      "id": "0mwh3hbw5qi9xo3ql",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -8536,9 +8536,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qi5k0dvjj",
+      "id": "0mwh3hbw5vmpcyk1r",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -8546,12 +8546,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qx5iv6ci7",
+      "id": "0mwh3hbw5m8isieaw",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -8562,7 +8562,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qpw2hueqi",
+      "id": "0mwh3hbw5jgpmxnlr",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -8639,7 +8639,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7pw69i8qb8",
+    "id": "0mwh3hbw5m96j98ok",
     "type": "company",
     "name": "Construct Plus SRL",
     "contactName": "Cristian Ilie",
@@ -8655,8 +8655,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7pf8op50i3",
-    "customerId": "0mwh2uy7pw69i8qb8",
+    "id": "0mwh3hbw50bin0ltg",
+    "customerId": "0mwh3hbw5m96j98ok",
     "plate": "B501RGB",
     "vin": "UU1G0A5WAEVEYD09Y",
     "make": "Dacia",
@@ -8739,15 +8739,15 @@
     "number": 100,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
-    "workOrderId": "0mwh2uy7qxrdqaahz",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
+    "workOrderId": "0mwh3hbw5trl6ld7x",
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy7qzvk3bwa8",
+      "id": "0mwh3hbw5fytgq590",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -8755,12 +8755,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qwuev6tk1",
+      "id": "0mwh3hbw5c54nyw1k",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -8771,9 +8771,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqwb1jkm0",
+      "id": "0mwh3hbw5qi9xo3ql",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -8784,9 +8784,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qi5k0dvjj",
+      "id": "0mwh3hbw5vmpcyk1r",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -8794,12 +8794,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qx5iv6ci7",
+      "id": "0mwh3hbw5m8isieaw",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -8810,7 +8810,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qpw2hueqi",
+      "id": "0mwh3hbw5jgpmxnlr",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -8886,21 +8886,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vzmcz5psu",
+    "id": "0mwh3hbx5u1z7m859",
     "status": "issued",
     "series": "GRJ",
     "number": 200,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
     "workOrderId": null,
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy8vwd7xym2y",
+      "id": "0mwh3hbx5hcfyjxil",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": -0.6,
       "unit": "h",
@@ -8908,12 +8908,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8vhm2zmv1g",
+      "id": "0mwh3hbx53by7dle0",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": -4.5,
       "unit": "l",
@@ -8924,9 +8924,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8vlcit93k2",
+      "id": "0mwh3hbx5fb4s1lum",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": -1,
       "unit": "buc",
@@ -8937,9 +8937,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8v45xarp6g",
+      "id": "0mwh3hbx5sc07o12f",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": -0.8,
       "unit": "h",
@@ -8947,12 +8947,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8venxru2mo",
+      "id": "0mwh3hbx5emx2pzr0",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": -2,
       "unit": "buc",
@@ -8963,7 +8963,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8vgc0x5c0z",
+      "id": "0mwh3hbx555p9cpla",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -9048,15 +9048,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
-    "workOrderId": "0mwh2uy7qxrdqaahz",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
+    "workOrderId": "0mwh3hbw5trl6ld7x",
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy7qzvk3bwa8",
+      "id": "0mwh3hbw5fytgq590",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -9064,12 +9064,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qwuev6tk1",
+      "id": "0mwh3hbw5c54nyw1k",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -9080,9 +9080,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqwb1jkm0",
+      "id": "0mwh3hbw5qi9xo3ql",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -9093,9 +9093,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qi5k0dvjj",
+      "id": "0mwh3hbw5vmpcyk1r",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -9103,12 +9103,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qx5iv6ci7",
+      "id": "0mwh3hbw5m8isieaw",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -9119,7 +9119,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qpw2hueqi",
+      "id": "0mwh3hbw5jgpmxnlr",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -9196,7 +9196,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7pw69i8qb8",
+    "id": "0mwh3hbw5m96j98ok",
     "type": "company",
     "name": "Construct Plus SRL",
     "contactName": "Cristian Ilie",
@@ -9212,8 +9212,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7pf8op50i3",
-    "customerId": "0mwh2uy7pw69i8qb8",
+    "id": "0mwh3hbw50bin0ltg",
+    "customerId": "0mwh3hbw5m96j98ok",
     "plate": "B501RGB",
     "vin": "UU1G0A5WAEVEYD09Y",
     "make": "Dacia",
@@ -9296,15 +9296,15 @@
     "number": 100,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
-    "workOrderId": "0mwh2uy7qxrdqaahz",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
+    "workOrderId": "0mwh3hbw5trl6ld7x",
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy7qzvk3bwa8",
+      "id": "0mwh3hbw5fytgq590",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -9312,12 +9312,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qwuev6tk1",
+      "id": "0mwh3hbw5c54nyw1k",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -9328,9 +9328,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqwb1jkm0",
+      "id": "0mwh3hbw5qi9xo3ql",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -9341,9 +9341,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qi5k0dvjj",
+      "id": "0mwh3hbw5vmpcyk1r",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -9351,12 +9351,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qx5iv6ci7",
+      "id": "0mwh3hbw5m8isieaw",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -9367,7 +9367,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qpw2hueqi",
+      "id": "0mwh3hbw5jgpmxnlr",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -9443,21 +9443,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8v7gbt6atu",
+    "id": "0mwh3hbx535gkdebz",
     "status": "issued",
     "series": "GRJ",
     "number": 200,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
     "workOrderId": null,
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy8v5kv860x7",
+      "id": "0mwh3hbx5mbrtlor3",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": -0.6,
       "unit": "h",
@@ -9465,12 +9465,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8vpw3tfq91",
+      "id": "0mwh3hbx5sg3ajwgd",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": -4.5,
       "unit": "l",
@@ -9481,9 +9481,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8v55q1di9q",
+      "id": "0mwh3hbx5cj8cyblt",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": -1,
       "unit": "buc",
@@ -9494,9 +9494,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8v5pzhgjcy",
+      "id": "0mwh3hbx5ex328y1h",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": -0.8,
       "unit": "h",
@@ -9504,12 +9504,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy8v1t07mxi5",
+      "id": "0mwh3hbx5iyg6sm4e",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": -2,
       "unit": "buc",
@@ -9520,7 +9520,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8v4294pq9a",
+      "id": "0mwh3hbx59esf0qew",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -9605,15 +9605,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pl7kwcqu2",
-    "vehicleId": "0mwh2uy7qicftdftg",
-    "workOrderId": "0mwh2uy7q65w8gwzj",
+    "customerId": "0mwh3hbw5ird6iltq",
+    "vehicleId": "0mwh3hbw558d53kce",
+    "workOrderId": "0mwh3hbw5ftxw0pwc",
     "mileage": 179096,
     "lines": [
      {
-      "id": "0mwh2uy7qymi9ooz1",
+      "id": "0mwh3hbw5bo1asaj8",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -9621,12 +9621,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7qtuwtwp7o",
+      "id": "0mwh3hbw5w8plq6g1",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -9637,9 +9637,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7q3u0dl60j",
+      "id": "0mwh3hbw5t0yitpv5",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -9650,7 +9650,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qyj2zkzab",
+      "id": "0mwh3hbw5527pfhun",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -9727,7 +9727,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7pl7kwcqu2",
+    "id": "0mwh3hbw5ird6iltq",
     "type": "company",
     "name": "Brutăria Bunica SRL",
     "contactName": "Mihaela Lazăr",
@@ -9743,8 +9743,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7qicftdftg",
-    "customerId": "0mwh2uy7pl7kwcqu2",
+    "id": "0mwh3hbw558d53kce",
+    "customerId": "0mwh3hbw5ird6iltq",
     "plate": "B561UZP",
     "vin": "WF0FMRXMNGW0VGAEB",
     "make": "Ford",
@@ -9812,15 +9812,15 @@
     "number": 101,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pl7kwcqu2",
-    "vehicleId": "0mwh2uy7qicftdftg",
-    "workOrderId": "0mwh2uy7q65w8gwzj",
+    "customerId": "0mwh3hbw5ird6iltq",
+    "vehicleId": "0mwh3hbw558d53kce",
+    "workOrderId": "0mwh3hbw5ftxw0pwc",
     "mileage": 179096,
     "lines": [
      {
-      "id": "0mwh2uy7qymi9ooz1",
+      "id": "0mwh3hbw5bo1asaj8",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -9828,12 +9828,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7qtuwtwp7o",
+      "id": "0mwh3hbw5w8plq6g1",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -9844,9 +9844,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7q3u0dl60j",
+      "id": "0mwh3hbw5t0yitpv5",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -9857,7 +9857,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qyj2zkzab",
+      "id": "0mwh3hbw5527pfhun",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -9933,21 +9933,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vayh5bzg0",
+    "id": "0mwh3hbx5p0ti1fxs",
     "status": "issued",
     "series": "GRJ",
     "number": 201,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7pl7kwcqu2",
-    "vehicleId": "0mwh2uy7qicftdftg",
+    "customerId": "0mwh3hbw5ird6iltq",
+    "vehicleId": "0mwh3hbw558d53kce",
     "workOrderId": null,
     "mileage": 179096,
     "lines": [
      {
-      "id": "0mwh2uy8vyixy2tz6",
+      "id": "0mwh3hbx5yg3e15zp",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": -0.6,
       "unit": "h",
@@ -9955,12 +9955,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8v3gqruhps",
+      "id": "0mwh3hbx5omm7jgzt",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": -4.5,
       "unit": "l",
@@ -9971,9 +9971,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8vv2r1id0c",
+      "id": "0mwh3hbx530qksz5r",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": -1,
       "unit": "buc",
@@ -9984,7 +9984,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8volp3f7qh",
+      "id": "0mwh3hbx59uvft60z",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -10069,15 +10069,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pl7kwcqu2",
-    "vehicleId": "0mwh2uy7qicftdftg",
-    "workOrderId": "0mwh2uy7q65w8gwzj",
+    "customerId": "0mwh3hbw5ird6iltq",
+    "vehicleId": "0mwh3hbw558d53kce",
+    "workOrderId": "0mwh3hbw5ftxw0pwc",
     "mileage": 179096,
     "lines": [
      {
-      "id": "0mwh2uy7qymi9ooz1",
+      "id": "0mwh3hbw5bo1asaj8",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -10085,12 +10085,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7qtuwtwp7o",
+      "id": "0mwh3hbw5w8plq6g1",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -10101,9 +10101,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7q3u0dl60j",
+      "id": "0mwh3hbw5t0yitpv5",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -10114,7 +10114,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qyj2zkzab",
+      "id": "0mwh3hbw5527pfhun",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -10191,7 +10191,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7pl7kwcqu2",
+    "id": "0mwh3hbw5ird6iltq",
     "type": "company",
     "name": "Brutăria Bunica SRL",
     "contactName": "Mihaela Lazăr",
@@ -10207,8 +10207,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7qicftdftg",
-    "customerId": "0mwh2uy7pl7kwcqu2",
+    "id": "0mwh3hbw558d53kce",
+    "customerId": "0mwh3hbw5ird6iltq",
     "plate": "B561UZP",
     "vin": "WF0FMRXMNGW0VGAEB",
     "make": "Ford",
@@ -10276,15 +10276,15 @@
     "number": 101,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pl7kwcqu2",
-    "vehicleId": "0mwh2uy7qicftdftg",
-    "workOrderId": "0mwh2uy7q65w8gwzj",
+    "customerId": "0mwh3hbw5ird6iltq",
+    "vehicleId": "0mwh3hbw558d53kce",
+    "workOrderId": "0mwh3hbw5ftxw0pwc",
     "mileage": 179096,
     "lines": [
      {
-      "id": "0mwh2uy7qymi9ooz1",
+      "id": "0mwh3hbw5bo1asaj8",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -10292,12 +10292,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7qtuwtwp7o",
+      "id": "0mwh3hbw5w8plq6g1",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -10308,9 +10308,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7q3u0dl60j",
+      "id": "0mwh3hbw5t0yitpv5",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -10321,7 +10321,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qyj2zkzab",
+      "id": "0mwh3hbw5527pfhun",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -10397,21 +10397,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vmpabnzum",
+    "id": "0mwh3hbx5zgy8muj8",
     "status": "issued",
     "series": "GRJ",
     "number": 201,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7pl7kwcqu2",
-    "vehicleId": "0mwh2uy7qicftdftg",
+    "customerId": "0mwh3hbw5ird6iltq",
+    "vehicleId": "0mwh3hbw558d53kce",
     "workOrderId": null,
     "mileage": 179096,
     "lines": [
      {
-      "id": "0mwh2uy8v69li8cs9",
+      "id": "0mwh3hbx5ao2riuzw",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": -0.6,
       "unit": "h",
@@ -10419,12 +10419,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8vmfacigds",
+      "id": "0mwh3hbx5r91b5lrm",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": -4.5,
       "unit": "l",
@@ -10435,9 +10435,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8vd0pbg3dw",
+      "id": "0mwh3hbx5raiu29bj",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": -1,
       "unit": "buc",
@@ -10448,7 +10448,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8vmc9asvf6",
+      "id": "0mwh3hbx5f8yfd6ex",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -10533,15 +10533,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p6eouaj21",
-    "vehicleId": "0mwh2uy7pok1meai0",
-    "workOrderId": "0mwh2uy7qotslzp32",
+    "customerId": "0mwh3hbw5lvjz841e",
+    "vehicleId": "0mwh3hbw5oirh7j3o",
+    "workOrderId": "0mwh3hbw506qj0vvv",
     "mileage": 105400,
     "lines": [
      {
-      "id": "0mwh2uy7qr1gmdxlc",
+      "id": "0mwh3hbw5288afua4",
       "kind": "labor",
-      "refId": "0mwh2uy7pensnsah7",
+      "refId": "0mwh3hbw44x0o2mx9",
       "description": "Înlocuire plăcuțe frână față",
       "qty": 1,
       "unit": "h",
@@ -10549,12 +10549,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7q958a31ke",
+      "id": "0mwh3hbw5ejpqvu81",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -10629,7 +10629,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7p6eouaj21",
+    "id": "0mwh3hbw5lvjz841e",
     "type": "person",
     "name": "Andreea Stoica",
     "phone": "0781 612 227",
@@ -10644,8 +10644,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7pok1meai0",
-    "customerId": "0mwh2uy7p6eouaj21",
+    "id": "0mwh3hbw5oirh7j3o",
+    "customerId": "0mwh3hbw5lvjz841e",
     "plate": "GR10LYC",
     "vin": "WVWFPBYMT4MTDH5MR",
     "make": "Volkswagen",
@@ -10718,15 +10718,15 @@
     "number": 102,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p6eouaj21",
-    "vehicleId": "0mwh2uy7pok1meai0",
-    "workOrderId": "0mwh2uy7qotslzp32",
+    "customerId": "0mwh3hbw5lvjz841e",
+    "vehicleId": "0mwh3hbw5oirh7j3o",
+    "workOrderId": "0mwh3hbw506qj0vvv",
     "mileage": 105400,
     "lines": [
      {
-      "id": "0mwh2uy7qr1gmdxlc",
+      "id": "0mwh3hbw5288afua4",
       "kind": "labor",
-      "refId": "0mwh2uy7pensnsah7",
+      "refId": "0mwh3hbw44x0o2mx9",
       "description": "Înlocuire plăcuțe frână față",
       "qty": 1,
       "unit": "h",
@@ -10734,12 +10734,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7q958a31ke",
+      "id": "0mwh3hbw5ejpqvu81",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -10813,21 +10813,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vti7m55cz",
+    "id": "0mwh3hbx5nymorlnp",
     "status": "issued",
     "series": "GRJ",
     "number": 202,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7p6eouaj21",
-    "vehicleId": "0mwh2uy7pok1meai0",
+    "customerId": "0mwh3hbw5lvjz841e",
+    "vehicleId": "0mwh3hbw5oirh7j3o",
     "workOrderId": null,
     "mileage": 105400,
     "lines": [
      {
-      "id": "0mwh2uy8vcz6h29wh",
+      "id": "0mwh3hbx537fzul2b",
       "kind": "labor",
-      "refId": "0mwh2uy7pensnsah7",
+      "refId": "0mwh3hbw44x0o2mx9",
       "description": "Înlocuire plăcuțe frână față",
       "qty": -1,
       "unit": "h",
@@ -10835,12 +10835,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8vp6j7nwzo",
+      "id": "0mwh3hbx5rjd6ezlk",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": -1,
       "unit": "set",
@@ -10923,15 +10923,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p6eouaj21",
-    "vehicleId": "0mwh2uy7pok1meai0",
-    "workOrderId": "0mwh2uy7qotslzp32",
+    "customerId": "0mwh3hbw5lvjz841e",
+    "vehicleId": "0mwh3hbw5oirh7j3o",
+    "workOrderId": "0mwh3hbw506qj0vvv",
     "mileage": 105400,
     "lines": [
      {
-      "id": "0mwh2uy7qr1gmdxlc",
+      "id": "0mwh3hbw5288afua4",
       "kind": "labor",
-      "refId": "0mwh2uy7pensnsah7",
+      "refId": "0mwh3hbw44x0o2mx9",
       "description": "Înlocuire plăcuțe frână față",
       "qty": 1,
       "unit": "h",
@@ -10939,12 +10939,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7q958a31ke",
+      "id": "0mwh3hbw5ejpqvu81",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -11019,7 +11019,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7p6eouaj21",
+    "id": "0mwh3hbw5lvjz841e",
     "type": "person",
     "name": "Andreea Stoica",
     "phone": "0781 612 227",
@@ -11034,8 +11034,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7pok1meai0",
-    "customerId": "0mwh2uy7p6eouaj21",
+    "id": "0mwh3hbw5oirh7j3o",
+    "customerId": "0mwh3hbw5lvjz841e",
     "plate": "GR10LYC",
     "vin": "WVWFPBYMT4MTDH5MR",
     "make": "Volkswagen",
@@ -11108,15 +11108,15 @@
     "number": 102,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p6eouaj21",
-    "vehicleId": "0mwh2uy7pok1meai0",
-    "workOrderId": "0mwh2uy7qotslzp32",
+    "customerId": "0mwh3hbw5lvjz841e",
+    "vehicleId": "0mwh3hbw5oirh7j3o",
+    "workOrderId": "0mwh3hbw506qj0vvv",
     "mileage": 105400,
     "lines": [
      {
-      "id": "0mwh2uy7qr1gmdxlc",
+      "id": "0mwh3hbw5288afua4",
       "kind": "labor",
-      "refId": "0mwh2uy7pensnsah7",
+      "refId": "0mwh3hbw44x0o2mx9",
       "description": "Înlocuire plăcuțe frână față",
       "qty": 1,
       "unit": "h",
@@ -11124,12 +11124,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7q958a31ke",
+      "id": "0mwh3hbw5ejpqvu81",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -11203,21 +11203,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vr067yeer",
+    "id": "0mwh3hbx56cpq5yzx",
     "status": "issued",
     "series": "GRJ",
     "number": 202,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7p6eouaj21",
-    "vehicleId": "0mwh2uy7pok1meai0",
+    "customerId": "0mwh3hbw5lvjz841e",
+    "vehicleId": "0mwh3hbw5oirh7j3o",
     "workOrderId": null,
     "mileage": 105400,
     "lines": [
      {
-      "id": "0mwh2uy8v5d80wtvt",
+      "id": "0mwh3hbx5qo3y6kg7",
       "kind": "labor",
-      "refId": "0mwh2uy7pensnsah7",
+      "refId": "0mwh3hbw44x0o2mx9",
       "description": "Înlocuire plăcuțe frână față",
       "qty": -1,
       "unit": "h",
@@ -11225,12 +11225,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8vn2vrt4ux",
+      "id": "0mwh3hbx5uig5i905",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": -1,
       "unit": "set",
@@ -11313,15 +11313,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p3ks7u2ib",
-    "vehicleId": "0mwh2uy7prb4naord",
-    "workOrderId": "0mwh2uy7qreqzrf2e",
+    "customerId": "0mwh3hbw40hsf7id5",
+    "vehicleId": "0mwh3hbw4t3xsql8m",
+    "workOrderId": "0mwh3hbw5h79i1vds",
     "mileage": 221987,
     "lines": [
      {
-      "id": "0mwh2uy7qx6ctvlyd",
+      "id": "0mwh3hbw5ve3zc75f",
       "kind": "labor",
-      "refId": "0mwh2uy7ppckvygvx",
+      "refId": "0mwh3hbw4752dkaz4",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": 1.6,
       "unit": "h",
@@ -11329,12 +11329,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy7q0jjq6db3",
+      "id": "0mwh3hbw5cl5aaewn",
       "kind": "part",
-      "refId": "0mwh2uy7oogk8rnun",
+      "refId": "0mwh3hbw4ywxgk7u3",
       "description": "Discuri frână față Brembo",
       "qty": 1,
       "unit": "set",
@@ -11345,9 +11345,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qfeh1oj9e",
+      "id": "0mwh3hbw5ousdriby",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -11422,7 +11422,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7p3ks7u2ib",
+    "id": "0mwh3hbw40hsf7id5",
     "type": "person",
     "name": "Cristian Dumitru",
     "phone": "0748 610 788",
@@ -11437,8 +11437,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7prb4naord",
-    "customerId": "0mwh2uy7p3ks7u2ib",
+    "id": "0mwh3hbw4t3xsql8m",
+    "customerId": "0mwh3hbw40hsf7id5",
     "plate": "AG16WCN",
     "vin": "VF1UYN2D775BMDM1X",
     "make": "Renault",
@@ -11506,15 +11506,15 @@
     "number": 103,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p3ks7u2ib",
-    "vehicleId": "0mwh2uy7prb4naord",
-    "workOrderId": "0mwh2uy7qreqzrf2e",
+    "customerId": "0mwh3hbw40hsf7id5",
+    "vehicleId": "0mwh3hbw4t3xsql8m",
+    "workOrderId": "0mwh3hbw5h79i1vds",
     "mileage": 221987,
     "lines": [
      {
-      "id": "0mwh2uy7qx6ctvlyd",
+      "id": "0mwh3hbw5ve3zc75f",
       "kind": "labor",
-      "refId": "0mwh2uy7ppckvygvx",
+      "refId": "0mwh3hbw4752dkaz4",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": 1.6,
       "unit": "h",
@@ -11522,12 +11522,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy7q0jjq6db3",
+      "id": "0mwh3hbw5cl5aaewn",
       "kind": "part",
-      "refId": "0mwh2uy7oogk8rnun",
+      "refId": "0mwh3hbw4ywxgk7u3",
       "description": "Discuri frână față Brembo",
       "qty": 1,
       "unit": "set",
@@ -11538,9 +11538,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qfeh1oj9e",
+      "id": "0mwh3hbw5ousdriby",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -11614,21 +11614,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vramwdwxh",
+    "id": "0mwh3hbx5mf7vuvoh",
     "status": "issued",
     "series": "GRJ",
     "number": 203,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7p3ks7u2ib",
-    "vehicleId": "0mwh2uy7prb4naord",
+    "customerId": "0mwh3hbw40hsf7id5",
+    "vehicleId": "0mwh3hbw4t3xsql8m",
     "workOrderId": null,
     "mileage": 221987,
     "lines": [
      {
-      "id": "0mwh2uy8v9x3m7lf1",
+      "id": "0mwh3hbx5qeauhw8u",
       "kind": "labor",
-      "refId": "0mwh2uy7ppckvygvx",
+      "refId": "0mwh3hbw4752dkaz4",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": -1.6,
       "unit": "h",
@@ -11636,12 +11636,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8vzw2r20gh",
+      "id": "0mwh3hbx59ao8l7c1",
       "kind": "part",
-      "refId": "0mwh2uy7oogk8rnun",
+      "refId": "0mwh3hbw4ywxgk7u3",
       "description": "Discuri frână față Brembo",
       "qty": -1,
       "unit": "set",
@@ -11652,9 +11652,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8v3hpy92mh",
+      "id": "0mwh3hbx5ktjbvd1m",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": -1,
       "unit": "set",
@@ -11737,15 +11737,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p3ks7u2ib",
-    "vehicleId": "0mwh2uy7prb4naord",
-    "workOrderId": "0mwh2uy7qreqzrf2e",
+    "customerId": "0mwh3hbw40hsf7id5",
+    "vehicleId": "0mwh3hbw4t3xsql8m",
+    "workOrderId": "0mwh3hbw5h79i1vds",
     "mileage": 221987,
     "lines": [
      {
-      "id": "0mwh2uy7qx6ctvlyd",
+      "id": "0mwh3hbw5ve3zc75f",
       "kind": "labor",
-      "refId": "0mwh2uy7ppckvygvx",
+      "refId": "0mwh3hbw4752dkaz4",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": 1.6,
       "unit": "h",
@@ -11753,12 +11753,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy7q0jjq6db3",
+      "id": "0mwh3hbw5cl5aaewn",
       "kind": "part",
-      "refId": "0mwh2uy7oogk8rnun",
+      "refId": "0mwh3hbw4ywxgk7u3",
       "description": "Discuri frână față Brembo",
       "qty": 1,
       "unit": "set",
@@ -11769,9 +11769,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qfeh1oj9e",
+      "id": "0mwh3hbw5ousdriby",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -11846,7 +11846,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7p3ks7u2ib",
+    "id": "0mwh3hbw40hsf7id5",
     "type": "person",
     "name": "Cristian Dumitru",
     "phone": "0748 610 788",
@@ -11861,8 +11861,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7prb4naord",
-    "customerId": "0mwh2uy7p3ks7u2ib",
+    "id": "0mwh3hbw4t3xsql8m",
+    "customerId": "0mwh3hbw40hsf7id5",
     "plate": "AG16WCN",
     "vin": "VF1UYN2D775BMDM1X",
     "make": "Renault",
@@ -11930,15 +11930,15 @@
     "number": 103,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p3ks7u2ib",
-    "vehicleId": "0mwh2uy7prb4naord",
-    "workOrderId": "0mwh2uy7qreqzrf2e",
+    "customerId": "0mwh3hbw40hsf7id5",
+    "vehicleId": "0mwh3hbw4t3xsql8m",
+    "workOrderId": "0mwh3hbw5h79i1vds",
     "mileage": 221987,
     "lines": [
      {
-      "id": "0mwh2uy7qx6ctvlyd",
+      "id": "0mwh3hbw5ve3zc75f",
       "kind": "labor",
-      "refId": "0mwh2uy7ppckvygvx",
+      "refId": "0mwh3hbw4752dkaz4",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": 1.6,
       "unit": "h",
@@ -11946,12 +11946,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy7q0jjq6db3",
+      "id": "0mwh3hbw5cl5aaewn",
       "kind": "part",
-      "refId": "0mwh2uy7oogk8rnun",
+      "refId": "0mwh3hbw4ywxgk7u3",
       "description": "Discuri frână față Brembo",
       "qty": 1,
       "unit": "set",
@@ -11962,9 +11962,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qfeh1oj9e",
+      "id": "0mwh3hbw5ousdriby",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -12038,21 +12038,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vms4521yp",
+    "id": "0mwh3hbx5lhhzj4bl",
     "status": "issued",
     "series": "GRJ",
     "number": 203,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7p3ks7u2ib",
-    "vehicleId": "0mwh2uy7prb4naord",
+    "customerId": "0mwh3hbw40hsf7id5",
+    "vehicleId": "0mwh3hbw4t3xsql8m",
     "workOrderId": null,
     "mileage": 221987,
     "lines": [
      {
-      "id": "0mwh2uy8vfz88064n",
+      "id": "0mwh3hbx5wn21u5r9",
       "kind": "labor",
-      "refId": "0mwh2uy7ppckvygvx",
+      "refId": "0mwh3hbw4752dkaz4",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": -1.6,
       "unit": "h",
@@ -12060,12 +12060,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7o2ol65s17"
+      "staffId": "0mwh3hbw48dsa525q"
      },
      {
-      "id": "0mwh2uy8vno2hmkgd",
+      "id": "0mwh3hbx5345002c4",
       "kind": "part",
-      "refId": "0mwh2uy7oogk8rnun",
+      "refId": "0mwh3hbw4ywxgk7u3",
       "description": "Discuri frână față Brembo",
       "qty": -1,
       "unit": "set",
@@ -12076,9 +12076,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8v9rb7oups",
+      "id": "0mwh3hbx5synw7xih",
       "kind": "part",
-      "refId": "0mwh2uy7omxieah4n",
+      "refId": "0mwh3hbw4e7q1vkot",
       "description": "Plăcuțe frână față ATE",
       "qty": -1,
       "unit": "set",
@@ -12161,15 +12161,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pmob0d4fl",
-    "workOrderId": "0mwh2uy7qs2ibpg8r",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5azv16wz3",
+    "workOrderId": "0mwh3hbw5zmdodp10",
     "mileage": 137691,
     "lines": [
      {
-      "id": "0mwh2uy7qnmqmrjpd",
+      "id": "0mwh3hbw55rf75efb",
       "kind": "labor",
-      "refId": "0mwh2uy7pts6qz3qh",
+      "refId": "0mwh3hbw4wkf66aoy",
       "description": "Geometrie roți",
       "qty": 0.8,
       "unit": "h",
@@ -12177,7 +12177,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      }
     ],
     "notes": "",
@@ -12244,7 +12244,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7p4g6dezc5",
+    "id": "0mwh3hbw5bsr1fgcl",
     "type": "company",
     "name": "Trans Logistic SRL",
     "contactName": "Raluca Florea",
@@ -12260,8 +12260,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7pmob0d4fl",
-    "customerId": "0mwh2uy7p4g6dezc5",
+    "id": "0mwh3hbw5azv16wz3",
+    "customerId": "0mwh3hbw5bsr1fgcl",
     "plate": "B450SAM",
     "vin": "WF06G057HFMC40NPA",
     "make": "Ford",
@@ -12384,15 +12384,15 @@
     "number": 104,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pmob0d4fl",
-    "workOrderId": "0mwh2uy7qs2ibpg8r",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5azv16wz3",
+    "workOrderId": "0mwh3hbw5zmdodp10",
     "mileage": 137691,
     "lines": [
      {
-      "id": "0mwh2uy7qnmqmrjpd",
+      "id": "0mwh3hbw55rf75efb",
       "kind": "labor",
-      "refId": "0mwh2uy7pts6qz3qh",
+      "refId": "0mwh3hbw4wkf66aoy",
       "description": "Geometrie roți",
       "qty": 0.8,
       "unit": "h",
@@ -12400,7 +12400,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      }
     ],
     "notes": "",
@@ -12466,21 +12466,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vyzt6i374",
+    "id": "0mwh3hbx5vvk6m58b",
     "status": "issued",
     "series": "GRJ",
     "number": 204,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pmob0d4fl",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5azv16wz3",
     "workOrderId": null,
     "mileage": 137691,
     "lines": [
      {
-      "id": "0mwh2uy8vtzdmp2a8",
+      "id": "0mwh3hbx5dtpt5shv",
       "kind": "labor",
-      "refId": "0mwh2uy7pts6qz3qh",
+      "refId": "0mwh3hbw4wkf66aoy",
       "description": "Geometrie roți",
       "qty": -0.8,
       "unit": "h",
@@ -12488,7 +12488,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      }
     ],
     "totals": {
@@ -12563,15 +12563,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pmob0d4fl",
-    "workOrderId": "0mwh2uy7qs2ibpg8r",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5azv16wz3",
+    "workOrderId": "0mwh3hbw5zmdodp10",
     "mileage": 137691,
     "lines": [
      {
-      "id": "0mwh2uy7qnmqmrjpd",
+      "id": "0mwh3hbw55rf75efb",
       "kind": "labor",
-      "refId": "0mwh2uy7pts6qz3qh",
+      "refId": "0mwh3hbw4wkf66aoy",
       "description": "Geometrie roți",
       "qty": 0.8,
       "unit": "h",
@@ -12579,7 +12579,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      }
     ],
     "notes": "",
@@ -12646,7 +12646,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7p4g6dezc5",
+    "id": "0mwh3hbw5bsr1fgcl",
     "type": "company",
     "name": "Trans Logistic SRL",
     "contactName": "Raluca Florea",
@@ -12662,8 +12662,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7pmob0d4fl",
-    "customerId": "0mwh2uy7p4g6dezc5",
+    "id": "0mwh3hbw5azv16wz3",
+    "customerId": "0mwh3hbw5bsr1fgcl",
     "plate": "B450SAM",
     "vin": "WF06G057HFMC40NPA",
     "make": "Ford",
@@ -12786,15 +12786,15 @@
     "number": 104,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pmob0d4fl",
-    "workOrderId": "0mwh2uy7qs2ibpg8r",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5azv16wz3",
+    "workOrderId": "0mwh3hbw5zmdodp10",
     "mileage": 137691,
     "lines": [
      {
-      "id": "0mwh2uy7qnmqmrjpd",
+      "id": "0mwh3hbw55rf75efb",
       "kind": "labor",
-      "refId": "0mwh2uy7pts6qz3qh",
+      "refId": "0mwh3hbw4wkf66aoy",
       "description": "Geometrie roți",
       "qty": 0.8,
       "unit": "h",
@@ -12802,7 +12802,7 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      }
     ],
     "notes": "",
@@ -12868,21 +12868,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vm9pm2xx0",
+    "id": "0mwh3hbx57bi84iyt",
     "status": "issued",
     "series": "GRJ",
     "number": 204,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7p4g6dezc5",
-    "vehicleId": "0mwh2uy7pmob0d4fl",
+    "customerId": "0mwh3hbw5bsr1fgcl",
+    "vehicleId": "0mwh3hbw5azv16wz3",
     "workOrderId": null,
     "mileage": 137691,
     "lines": [
      {
-      "id": "0mwh2uy8vflvefanc",
+      "id": "0mwh3hbx50a3h4dxh",
       "kind": "labor",
-      "refId": "0mwh2uy7pts6qz3qh",
+      "refId": "0mwh3hbw4wkf66aoy",
       "description": "Geometrie roți",
       "qty": -0.8,
       "unit": "h",
@@ -12890,7 +12890,7 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7ogxhgvt3p"
+      "staffId": "0mwh3hbw4yug9lrcv"
      }
     ],
     "totals": {
@@ -12965,15 +12965,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pkgsqdw3v",
-    "workOrderId": "0mwh2uy7qqn8km56a",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw5kc8mlbsr",
+    "workOrderId": "0mwh3hbw567slk9q2",
     "mileage": 3392,
     "lines": [
      {
-      "id": "0mwh2uy7q8az8f88v",
+      "id": "0mwh3hbw5w1iocb6e",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -12981,12 +12981,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7qezwttn9v",
+      "id": "0mwh3hbw5k63n5jzq",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -12997,9 +12997,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqeab0zas",
+      "id": "0mwh3hbw52r7smynr",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -13074,7 +13074,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7pw69i8qb8",
+    "id": "0mwh3hbw5m96j98ok",
     "type": "company",
     "name": "Construct Plus SRL",
     "contactName": "Cristian Ilie",
@@ -13090,8 +13090,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7pkgsqdw3v",
-    "customerId": "0mwh2uy7pw69i8qb8",
+    "id": "0mwh3hbw5kc8mlbsr",
+    "customerId": "0mwh3hbw5m96j98ok",
     "plate": "B616WSD",
     "vin": "VNKY11XZS12WF8KX3",
     "make": "Toyota",
@@ -13209,15 +13209,15 @@
     "number": 105,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pkgsqdw3v",
-    "workOrderId": "0mwh2uy7qqn8km56a",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw5kc8mlbsr",
+    "workOrderId": "0mwh3hbw567slk9q2",
     "mileage": 3392,
     "lines": [
      {
-      "id": "0mwh2uy7q8az8f88v",
+      "id": "0mwh3hbw5w1iocb6e",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -13225,12 +13225,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7qezwttn9v",
+      "id": "0mwh3hbw5k63n5jzq",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -13241,9 +13241,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqeab0zas",
+      "id": "0mwh3hbw52r7smynr",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -13317,21 +13317,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vbfeg8z15",
+    "id": "0mwh3hbx50bf7kaav",
     "status": "issued",
     "series": "GRJ",
     "number": 205,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pkgsqdw3v",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw5kc8mlbsr",
     "workOrderId": null,
     "mileage": 3392,
     "lines": [
      {
-      "id": "0mwh2uy8v2jxj01dc",
+      "id": "0mwh3hbx5orjakfz0",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": -0.6,
       "unit": "h",
@@ -13339,12 +13339,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8vj28gddep",
+      "id": "0mwh3hbx5nspf9nok",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": -4.5,
       "unit": "l",
@@ -13355,9 +13355,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8vu27vj9rc",
+      "id": "0mwh3hbx5c1j96xqa",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": -1,
       "unit": "buc",
@@ -13440,15 +13440,15 @@
     "number": null,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pkgsqdw3v",
-    "workOrderId": "0mwh2uy7qqn8km56a",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw5kc8mlbsr",
+    "workOrderId": "0mwh3hbw567slk9q2",
     "mileage": 3392,
     "lines": [
      {
-      "id": "0mwh2uy7q8az8f88v",
+      "id": "0mwh3hbw5w1iocb6e",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -13456,12 +13456,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7qezwttn9v",
+      "id": "0mwh3hbw5k63n5jzq",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -13472,9 +13472,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqeab0zas",
+      "id": "0mwh3hbw52r7smynr",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -13549,7 +13549,7 @@
     }
    },
    "customer": {
-    "id": "0mwh2uy7pw69i8qb8",
+    "id": "0mwh3hbw5m96j98ok",
     "type": "company",
     "name": "Construct Plus SRL",
     "contactName": "Cristian Ilie",
@@ -13565,8 +13565,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwh2uy7pkgsqdw3v",
-    "customerId": "0mwh2uy7pw69i8qb8",
+    "id": "0mwh3hbw5kc8mlbsr",
+    "customerId": "0mwh3hbw5m96j98ok",
     "plate": "B616WSD",
     "vin": "VNKY11XZS12WF8KX3",
     "make": "Toyota",
@@ -13684,15 +13684,15 @@
     "number": 105,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pkgsqdw3v",
-    "workOrderId": "0mwh2uy7qqn8km56a",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw5kc8mlbsr",
+    "workOrderId": "0mwh3hbw567slk9q2",
     "mileage": 3392,
     "lines": [
      {
-      "id": "0mwh2uy7q8az8f88v",
+      "id": "0mwh3hbw5w1iocb6e",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -13700,12 +13700,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy7qezwttn9v",
+      "id": "0mwh3hbw5k63n5jzq",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -13716,9 +13716,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqeab0zas",
+      "id": "0mwh3hbw52r7smynr",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -13792,21 +13792,21 @@
     "issuedAt": "2026-11-15T10:00:00.000Z"
    },
    "storno": {
-    "id": "0mwh2uy8vq281d0ge",
+    "id": "0mwh3hbx5f689tojn",
     "status": "issued",
     "series": "GRJ",
     "number": 205,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-15",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pkgsqdw3v",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw5kc8mlbsr",
     "workOrderId": null,
     "mileage": 3392,
     "lines": [
      {
-      "id": "0mwh2uy8vewmmm0wy",
+      "id": "0mwh3hbx5cq5tod2g",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": -0.6,
       "unit": "h",
@@ -13814,12 +13814,12 @@
       "discountPct": 0,
       "vatRate": 0,
       "cost": 0,
-      "staffId": "0mwh2uy7mtz6ii156"
+      "staffId": "0mwh3hbw2pvuyxruu"
      },
      {
-      "id": "0mwh2uy8vxgnmy1z0",
+      "id": "0mwh3hbx5nyzyik9f",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": -4.5,
       "unit": "l",
@@ -13830,9 +13830,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy8v650rk5tx",
+      "id": "0mwh3hbx5645bg8dx",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": -1,
       "unit": "buc",
@@ -13943,15 +13943,15 @@
     "number": 100,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
-    "workOrderId": "0mwh2uy7qxrdqaahz",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
+    "workOrderId": "0mwh3hbw5trl6ld7x",
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy7qzvk3bwa8",
+      "id": "0mwh3hbw5fytgq590",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -13959,12 +13959,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qwuev6tk1",
+      "id": "0mwh3hbw5c54nyw1k",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -13975,9 +13975,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqwb1jkm0",
+      "id": "0mwh3hbw5qi9xo3ql",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -13988,9 +13988,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qi5k0dvjj",
+      "id": "0mwh3hbw5vmpcyk1r",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -13998,12 +13998,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qx5iv6ci7",
+      "id": "0mwh3hbw5m8isieaw",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -14014,7 +14014,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qpw2hueqi",
+      "id": "0mwh3hbw5jgpmxnlr",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -14158,15 +14158,15 @@
     "number": 100,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
-    "workOrderId": "0mwh2uy7qxrdqaahz",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
+    "workOrderId": "0mwh3hbw5trl6ld7x",
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy7qzvk3bwa8",
+      "id": "0mwh3hbw5fytgq590",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -14174,12 +14174,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qwuev6tk1",
+      "id": "0mwh3hbw5c54nyw1k",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -14190,9 +14190,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqwb1jkm0",
+      "id": "0mwh3hbw5qi9xo3ql",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -14203,9 +14203,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qi5k0dvjj",
+      "id": "0mwh3hbw5vmpcyk1r",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -14213,12 +14213,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qx5iv6ci7",
+      "id": "0mwh3hbw5m8isieaw",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -14229,7 +14229,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qpw2hueqi",
+      "id": "0mwh3hbw5jgpmxnlr",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -14373,15 +14373,15 @@
     "number": 100,
     "issueDate": "2026-11-15",
     "dueDate": "2026-11-29",
-    "customerId": "0mwh2uy7pw69i8qb8",
-    "vehicleId": "0mwh2uy7pf8op50i3",
-    "workOrderId": "0mwh2uy7qxrdqaahz",
+    "customerId": "0mwh3hbw5m96j98ok",
+    "vehicleId": "0mwh3hbw50bin0ltg",
+    "workOrderId": "0mwh3hbw5trl6ld7x",
     "mileage": 99838,
     "lines": [
      {
-      "id": "0mwh2uy7qzvk3bwa8",
+      "id": "0mwh3hbw5fytgq590",
       "kind": "labor",
-      "refId": "0mwh2uy7p6pdhokmq",
+      "refId": "0mwh3hbw4zm03qlys",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -14389,12 +14389,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qwuev6tk1",
+      "id": "0mwh3hbw5c54nyw1k",
       "kind": "part",
-      "refId": "0mwh2uy7o1s4v5uk0",
+      "refId": "0mwh3hbw4ipcd6yvb",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -14405,9 +14405,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qqwb1jkm0",
+      "id": "0mwh3hbw5qi9xo3ql",
       "kind": "part",
-      "refId": "0mwh2uy7ojfdbe0bb",
+      "refId": "0mwh3hbw42yzr0b8f",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -14418,9 +14418,9 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qi5k0dvjj",
+      "id": "0mwh3hbw5vmpcyk1r",
       "kind": "labor",
-      "refId": "0mwh2uy7pa0zl1yxn",
+      "refId": "0mwh3hbw4ojkq19rs",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -14428,12 +14428,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwh2uy7okrolh20m"
+      "staffId": "0mwh3hbw4hgbd9cs5"
      },
      {
-      "id": "0mwh2uy7qx5iv6ci7",
+      "id": "0mwh3hbw5m8isieaw",
       "kind": "part",
-      "refId": "0mwh2uy7odvo0trnr",
+      "refId": "0mwh3hbw46atekvax",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -14444,7 +14444,7 @@
       "staffId": null
      },
      {
-      "id": "0mwh2uy7qpw2hueqi",
+      "id": "0mwh3hbw5jgpmxnlr",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",

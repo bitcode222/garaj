@@ -34,12 +34,12 @@ echo "→ Generating the Xcode project"
 (cd ios-native && xcodegen --quiet)
 
 echo "→ Building the app"
-xcodebuild -project ios-native/Garaj.xcodeproj -scheme Garaj -configuration Debug \
+xcodebuild -project ios-native/Garaj.xcodeproj -scheme Garaj -configuration Release \
   -destination "id=$DEVICE_ID" -derivedDataPath "$DERIVED" \
   -allowProvisioningUpdates DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic \
   -quiet build
 
-APP="$DERIVED/Build/Products/Debug-iphoneos/Garaj.app"
+APP="$DERIVED/Build/Products/Release-iphoneos/Garaj.app"
 echo "→ Installing"
 xcrun devicectl device install app --device "$DEVICE_ID" "$APP" >/dev/null
 if [ "${IOS_LAUNCH:-1}" = "0" ]; then

@@ -45,6 +45,23 @@ enum JSONValue: Codable, Hashable, Sendable {
 typealias JSONObject = [String: JSONValue]
 
 extension JSONValue {
+    /// From Foundation's parser output (much faster than Codable for a large file).
+    init(foundation any: Any) {
+        switch any {
+        case is NSNull: self = .null
+        case let n as NSNumber:
+            self = CFGetTypeID(n) == CFBooleanGetTypeID() ? .bool(n.boolValue) : .number(n.doubleValue)
+        case let s as String: self = .string(s)
+        case let a as [Any]: self = .array(a.map(JSONValue.init(foundation:)))
+        case let o as [String: Any]: self = .object(o.mapValues(JSONValue.init(foundation:)))
+        default: self = .null
+        }
+    }
+
+    static func parse(_ data: Data) throws -> JSONValue {
+        JSONValue(foundation: try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed]))
+    }
+
     /// Decodes a typed value from this JSON (via Data; fast enough for a few thousand records).
     func decode<T: Decodable>(_ type: T.Type) throws -> T {
         try JSONDecoder().decode(T.self, from: JSONEncoder().encode(self))

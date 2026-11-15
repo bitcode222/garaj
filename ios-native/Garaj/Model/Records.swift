@@ -259,7 +259,8 @@ struct Appointment: Record {
     static let collection = Collection.appointments
     static let defaults: JSONObject = [
         "start": .string(""), "end": .string(""), "customerId": .null, "vehicleId": .null, "title": .string(""),
-        "status": .string("scheduled"), "workOrderId": .null, "staffId": .null, "activity": .array([]),
+        "status": .string("scheduled"), "workOrderId": .null, "staffId": .null, "bayId": .null, "activity": .array([]),
+        "expectedAt": .null, "notes": .string(""),
     ]
     var id: String
     var start: String
@@ -270,5 +271,9 @@ struct Appointment: Record {
     var status: String
     var workOrderId: String?
     var staffId: String?
+    var bayId: String?
     var activity: [JSONValue]
+    var expectedAt: String?
+    var notes: String
+    var number: Int? = nil
 }

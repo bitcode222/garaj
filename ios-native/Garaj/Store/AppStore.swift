@@ -1,5 +1,10 @@
 import Foundation
 import Observation
+import os
+
+enum Log {
+    static let store = Logger(subsystem: "com.albertoparos.garaj", category: "store")
+}
 
 /// The whole app's data, local-first. Every record is kept as the JSON the web app
 /// writes (so backups move freely between phone and desktop); typed views are
@@ -27,6 +32,8 @@ final class AppStore {
     // MARK: Loading
 
     func load() async {
+        let started = ContinuousClock.now
+        defer { Log.store.info("load: \(String(describing: ContinuousClock.now - started), privacy: .public)") }
         do {
             if let data = try await persistence.read() {
                 try apply(Backup.decode(data))
@@ -64,7 +71,9 @@ final class AppStore {
     func all<T: Record>(_ type: T.Type) -> [T] {
         let raw = collections[T.collection] ?? [:] // observed
         if let hit = cache[T.collection] as? [T] { return hit }
-        let decoded = raw.values.compactMap { try? $0.merged(over: T.defaults).decode(T.self) }
+        // One decode for the whole collection; a record that doesn't fit is skipped (decoded one by one).
+        let merged = raw.values.map { $0.merged(over: T.defaults) }
+        let decoded = (try? JSONValue.array(merged).decode([T].self)) ?? merged.compactMap { try? $0.decode(T.self) }
         cache[T.collection] = decoded
         return decoded
     }

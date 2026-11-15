@@ -1,6 +1,8 @@
 // Golden fixtures for the native iPhone app (docs/IOS-NATIVE.md §2): runs the JS
 // business rules on fixed inputs and writes the answers the Swift port must match.
 //   npm run ios:fixtures
+// Day boundaries depend on the time zone: pin it, and the Swift tests pin the same one.
+process.env.TZ = "Europe/Bucharest";
 import { register } from "node:module";
 import { mkdirSync, writeFileSync } from "node:fs";
 
@@ -13,10 +15,12 @@ const customer = await import("../src/domain/customer.js");
 const vehicle = await import("../src/domain/vehicle.js");
 const { DEFAULT_SETTINGS } = await import("../src/lib/store/defaults.js");
 const invoice = await import("../src/domain/invoice.js");
+const agenda = await import("../src/domain/agenda.js");
+const analytics = await import("../src/domain/analytics.js");
 
 const OUT = new URL("../ios-native/GarajTests/Fixtures/", import.meta.url);
 mkdirSync(OUT, { recursive: true });
-const write = (name, data) => writeFileSync(new URL(name, OUT), `${JSON.stringify(data, null, 1)}\n`);
+const write = (name, data, { compact = false } = {}) => writeFileSync(new URL(name, OUT), `${JSON.stringify(data, null, compact ? 0 : 1)}\n`);
 
 const moneyInputs = [
 	"0", "1", "12", "12,5", "12.5", "12,50 lei", "1.234,56", "1,234.56", "1 234,56", "1.234", "1.234.567", "1,234,567",
@@ -113,6 +117,48 @@ write("rules.json", {
 		payments: [0, -5, 1, 100, issuedOne.totals.gross, issuedOne.totals.gross + 1].map((amount) => ({ amount, problem: invoice.paymentProblem(amount, { invoice: issuedOne, payments: [{ amount: 100 }] }) })),
 		messages: [0, 100, issuedOne.totals.gross].map((paid) => ({ invoice: issuedOne, balance: issuedOne.totals.gross - paid, settings: settingsVat, text: invoice.invoiceMessage({ invoice: issuedOne, balance: issuedOne.totals.gross - paid, settings: settingsVat }) })),
 	});
+}
+
+// Azi: bookings to confirm, invoices to collect, the cars in the shop, the analytics (docs/HOME-PAGE.md).
+{
+	const today = "2026-11-15";
+	const now = new Date("2026-11-15T11:20:00").toISOString();
+	const c = demoAll.collections;
+	const pick = (o, keys) => Object.fromEntries(keys.map((k) => [k, o[k]]).filter(([, v]) => v !== undefined));
+	const local = (day, h, m = 0) => new Date(`${day}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`).toISOString();
+	const extra = (id, day, h, status, more = {}) => ({ id, start: local(day, h), end: local(day, h + 1), customerId: c.customers[0].id, vehicleId: c.vehicles[0].id, title: "x", serviceIds: [], status, workOrderId: null, activity: [], ...more });
+	const appointments = [
+		...c.appointments,
+		extra("late-today", today, 10, "scheduled"),
+		extra("late-but-announced", today, 10, "confirmed", { expectedAt: local(today, 11, 30) }),
+		extra("grace", today, 11, "scheduled"),
+		extra("missed-yesterday", "2026-11-14", 9, "confirmed"),
+		extra("missed-long-ago", "2026-11-01", 9, "scheduled"),
+		extra("cancelled-today", today, 16, "cancelled"),
+	];
+	// Only what the rules read (lines only where an amount is computed from them), to keep the file small.
+	const open = new Set(["estimate", "approved", "in_progress", "waiting_parts", "ready"]);
+	const workOrders = c.workOrders.map((o) => ({ ...pick(o, ["id", "number", "status", "createdAt", "dates", "appointmentId"]), lines: open.has(o.status) ? o.lines : [] }));
+	const invoices = c.invoices.map((i) => ({ ...pick(i, ["id", "status", "series", "number", "issueDate", "dueDate", "createdAt", "stornoOf"]), totals: i.totals && pick(i.totals, ["net", "vat", "gross", "hours"]), lines: i.status === "draft" ? i.lines : [] }));
+	const payments = c.payments;
+	const byInvoice = new Map();
+	for (const p of payments) byInvoice.set(p.invoiceId, [...(byInvoice.get(p.invoiceId) ?? []), p]);
+	const settings = DEFAULT_SETTINGS;
+	const booked = agenda.bookingsToConfirm(appointments, { now });
+	const collect = agenda.invoicesToCollect(invoices, byInvoice, { today });
+	const jobs = agenda.jobsToShow(workOrders, { stages: ["estimate", "approved", "in_progress", "waiting_parts", "ready"], settings });
+	write("home.json", {
+		today, now, appointments, workOrders, invoices, payments,
+		bookings: { groups: booked.groups.map((g) => ({ key: g.key, ids: g.items.map((a) => a.id) })), total: booked.total, week: booked.week },
+		collect: { groups: collect.groups.map((g) => ({ key: g.key, amount: g.amount, items: g.items.map((i) => ({ id: i.invoice.id, balance: i.balance, paid: i.paid, overdueDays: i.overdueDays, dueIn: i.dueIn })) })), total: collect.total, due: collect.due, drafts: collect.drafts },
+		jobs: jobs.groups.map((g) => ({ key: g.key, ids: g.items.map((o) => o.id), amount: g.amount })),
+		passed: appointments.map((a) => ({ id: a.id, passed: agenda.bookingPassed(a, now) })),
+		analytics: analytics.PERIODS.map((period) => {
+			const h = analytics.homeAnalytics({ payments, workOrders, invoices, appointments }, { today, period });
+			const m = (x) => ({ value: x.value, points: x.points, empty: x.empty, change: x.change });
+			return { period, window: h.window, collected: m(h.collected), received: m(h.received), ticket: m(h.ticket), show: m(h.show), stay: m(h.stay), hours: m(h.hours) };
+		}),
+	}, { compact: true });
 }
 
 // A small backup: the demo data, a few records per collection.

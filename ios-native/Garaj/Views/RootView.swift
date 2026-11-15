@@ -3,8 +3,7 @@ import SwiftUI
 /// The app's tabs, as on the web's phone tab bar (src/components/shell/nav.js TABS).
 struct RootView: View {
     @Environment(AppStore.self) private var store
-    /// Opens on Lucrări while Azi is not native yet (phase 3).
-    @State private var tab = UserDefaults.standard.string(forKey: "GarajTab") ?? "lucrari" // debug: `-GarajTab facturi`
+    @State private var tab = UserDefaults.standard.string(forKey: "GarajTab") ?? "azi" // debug: `-GarajTab facturi`
 
     var body: some View {
         switch store.phase {
@@ -15,7 +14,7 @@ struct RootView: View {
         case .ready:
             TabView(selection: $tab) {
                 Tab("Azi", systemImage: "sun.max", value: "azi") {
-                    ComingSoon(title: "Azi", phase: "etapa 3")
+                    HomeView()
                 }
                 Tab("Programări", systemImage: "calendar", value: "programari") {
                     ComingSoon(title: "Programări", phase: "etapa 4")
