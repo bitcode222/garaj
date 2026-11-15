@@ -14,6 +14,7 @@ struct WorkOrderDetailView: View {
     @State private var confirmDelete = false
     @State private var moved = 0
     @State private var error: String?
+    @State private var openInvoice: String?
 
     var body: some View {
         if let order = store.get(WorkOrder.self, id) {
@@ -121,6 +122,28 @@ struct WorkOrderDetailView: View {
                 }
             }
 
+            Section("Factură") {
+                if let invoice = store.get(Invoice.self, order.invoiceId) {
+                    let state = store.invoiceState(invoice)
+                    NavigationLink { InvoiceDetailView(id: invoice.id) } label: {
+                        LabeledContent {
+                            Label(Labels.invoice(state).label, systemImage: Labels.invoice(state).symbol)
+                                .labelStyle(StatusLabelStyle())
+                                .foregroundStyle(Labels.invoice(state).color)
+                        } label: {
+                            Text(verbatim: invoice.number == nil ? "Ciornă" : invoice.label)
+                        }
+                    }
+                } else {
+                    Button {
+                        do { openInvoice = try store.invoiceForWorkOrder(order.id).id } catch { self.error = error.localizedDescription }
+                    } label: {
+                        Label("Fă factura", systemImage: "doc.badge.plus")
+                    }
+                    .disabled(order.lines.isEmpty)
+                }
+            }
+
             Section("Note") {
                 TextField("Note interne", text: binding(order, \.notes, allowLocked: true), axis: .vertical)
             }
@@ -137,6 +160,7 @@ struct WorkOrderDetailView: View {
         .toolbar {
             if !locked && !order.lines.isEmpty { EditButton() }
         }
+        .navigationDestination(item: $openInvoice) { InvoiceDetailView(id: $0) }
         .sheet(item: $editingLine) { line in
             LineEditor(line: line, isNew: !order.lines.contains { $0.id == line.id }) { saved in
                 var next = store.get(WorkOrder.self, id) ?? order

@@ -4,7 +4,7 @@ import SwiftUI
 struct RootView: View {
     @Environment(AppStore.self) private var store
     /// Opens on Lucrări while Azi is not native yet (phase 3).
-    @State private var tab = "lucrari"
+    @State private var tab = UserDefaults.standard.string(forKey: "GarajTab") ?? "lucrari" // debug: `-GarajTab facturi`
 
     var body: some View {
         switch store.phase {
@@ -24,7 +24,7 @@ struct RootView: View {
                     WorkOrdersView()
                 }
                 Tab("Facturi", systemImage: "doc.text", value: "facturi") {
-                    ComingSoon(title: "Facturi", phase: "etapa 2")
+                    InvoicesView()
                 }
                 Tab("Mai mult", systemImage: "square.grid.2x2", value: "mai-mult") {
                     MoreView()

@@ -183,8 +183,9 @@ struct Invoice: Record {
     static let defaults: JSONObject = [
         "status": .string("draft"), "series": .string(""), "number": .null, "issueDate": .null, "dueDate": .null,
         "customerId": .null, "vehicleId": .null, "workOrderId": .null, "lines": .array([]), "notes": .string(""),
-        "createdAt": .string(""), "stornoId": .null, "stornoOf": .null,
+        "createdAt": .string(""), "stornoId": .null, "stornoOf": .null, "mileage": .null, "activity": .array([]),
     ]
+    // totals, snapshot, issuedAt: only on issued invoices, so they are left out of the defaults (a draft never gets them as null).
     var id: String
     var status: String
     var series: String
@@ -199,6 +200,27 @@ struct Invoice: Record {
     var createdAt: String
     var stornoId: String?
     var stornoOf: String?
+    var mileage: Int? = nil
+    /// Frozen when issued; drafts compute theirs.
+    var totals: Totals? = nil
+    /// Seller, buyer and car as they were when issued.
+    var snapshot: JSONValue? = nil
+    var issuedAt: String? = nil
+    var activity: [JSONValue] = []
+
+    var label: String { InvoiceRules.formatNumber(series: series, number: number) }
+}
+
+struct Payment: Record {
+    static let collection = Collection.payments
+    static let defaults: JSONObject = ["invoiceId": .string(""), "amount": .number(0), "method": .string("cash"), "date": .string(""), "note": .string(""), "createdAt": .string("")]
+    var id: String
+    var invoiceId: String
+    var amount: Int
+    var method: String
+    var date: String
+    var note: String
+    var createdAt: String
 }
 
 // MARK: - Catalog and bookings

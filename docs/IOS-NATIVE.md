@@ -1,6 +1,6 @@
 # The native iPhone app (SwiftUI): plan
 
-Status: **approved 2026-11-15**. Phase 0 done and on the iPhone (every record moved, checked against the old database). Phase 1 (Lucrări) done: list with totals, swipe to the next step, undo; job detail with status moves, contact (call/SMS/WhatsApp with the estimate), complaint/diagnosis, lines editor (catalog, stock, free lines), totals, notes, delete; new job. Still to come in Lucrări: check-in from a booking (with Programări), the inspection checklist, the activity history.
+Status: **approved 2026-11-15**. Phase 0 done and on the iPhone (every record moved, checked against the old database). Phase 1 (Lucrări) done: list with totals, swipe to the next step, undo; job detail with status moves, contact (call/SMS/WhatsApp with the estimate), complaint/diagnosis, lines editor (catalog, stock, free lines), totals, notes, delete; new job. Still to come in Lucrări: check-in from a booking (with Programări), the inspection checklist, the activity history. Phase 2 (Facturi) done: list with filters and what is left to collect, swipe to collect; draft editing (client, dates, lines, notes, refresh from the job), issue (next number, snapshot, stock out), issue and collect in one step, payments with undo, storno (stock back, what to refund), redo, the document on screen and as PDF, share by WhatsApp/SMS; "Fă factura" on a job.
 
 The owner's decisions:
 
