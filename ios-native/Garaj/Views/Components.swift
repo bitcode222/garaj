@@ -231,3 +231,27 @@ extension ButtonStyle where Self == FillButtonStyle {
     static var primarySmall: FillButtonStyle { FillButtonStyle(small: true) }
     static var secondarySmall: FillButtonStyle { FillButtonStyle(kind: .secondary, small: true) }
 }
+
+/// The toolbar's sort and group menu (look 2 round): two inline pickers, the choice remembered by the caller.
+struct SortGroupMenu: View {
+    let sorts: [(key: String, label: String)]
+    @Binding var sort: String
+    var groups: [(key: String, label: String)] = []
+    var group: Binding<String>? = nil
+
+    var body: some View {
+        Menu {
+            Section("Sortează după") {
+                Picker("Sortează după", selection: $sort) { ForEach(sorts, id: \.key) { Text($0.label).tag($0.key) } }.pickerStyle(.inline)
+            }
+            if let group, !groups.isEmpty {
+                Section("Grupează după") {
+                    Picker("Grupează după", selection: group) { ForEach(groups, id: \.key) { Text($0.label).tag($0.key) } }.pickerStyle(.inline)
+                }
+            }
+        } label: {
+            Label("Sortează", systemImage: "arrow.up.arrow.down")
+        }
+        .sensoryFeedback(.selection, trigger: sort)
+    }
+}

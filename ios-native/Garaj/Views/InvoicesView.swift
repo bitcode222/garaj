@@ -5,6 +5,8 @@ struct InvoicesView: View {
     @Environment(AppStore.self) private var store
     @State private var query = ""
     @State private var filter = Filter.all
+    @AppStorage("invoices.sort") private var sort = "new"
+    @AppStorage("invoices.group") private var group = "month"
     @State private var path: [String] = []
     @State private var creating = false
     @State private var paying: Invoice?
@@ -54,6 +56,35 @@ struct InvoicesView: View {
         }
     }
 
+    private func sorted(_ rows: [Row]) -> [Row] {
+        let ro = Locale(identifier: "ro")
+        switch sort {
+        case "old": return rows.reversed()
+        case "amount": return rows.sorted { $0.gross > $1.gross }
+        case "client": return rows.sorted { ($0.customer?.name ?? "").compare($1.customer?.name ?? "", locale: ro) == .orderedAscending }
+        case "due": return rows.sorted { ($0.invoice.dueDate ?? "9999") < ($1.invoice.dueDate ?? "9999") }
+        default: return rows
+        }
+    }
+
+    private func grouped(_ rows: [Row]) -> [(title: String, rows: [Row])] {
+        switch group {
+        case "status":
+            let order = ["overdue", "partial", "issued", "draft", "paid", "storno", "cancelled"]
+            let by = Dictionary(grouping: rows, by: \.state)
+            return (order + by.keys.filter { !order.contains($0) }.sorted()).compactMap { k in by[k].map { (Labels.invoice(k).label, $0) } }
+        case "client":
+            var keys: [String] = []
+            for r in rows where !keys.contains(r.customer?.name ?? "Fără client") { keys.append(r.customer?.name ?? "Fără client") }
+            let by = Dictionary(grouping: rows) { $0.customer?.name ?? "Fără client" }
+            return keys.map { ($0, by[$0] ?? []) }
+        case "none":
+            return rows.isEmpty ? [] : [("Toate", rows)]
+        default:
+            return sort == "new" ? Self.byMonth(rows) : Self.byMonth(rows).map { ($0.title, sorted($0.rows)) }
+        }
+    }
+
     /// Drafts first, then one section per month of issue, newest first.
     static func byMonth(_ rows: [Row]) -> [(title: String, rows: [Row])] {
         let ro = Locale(identifier: "ro_RO")
@@ -84,7 +115,7 @@ struct InvoicesView: View {
             let monthStart = "\(Dates.monthKey(Dates.today()))-01"
             let monthPayments = store.all(Payment.self).filter { $0.date >= monthStart }
             let month = Dates.parseDate(monthStart)?.formatted(.dateTime.month(.wide).locale(Locale(identifier: "ro_RO"))) ?? ""
-            let groups = Self.byMonth(rows)
+            let groups = grouped(sorted(rows))
             List {
                 Section {
                     TileGrid {
@@ -136,6 +167,12 @@ struct InvoicesView: View {
             .navigationDestination(for: String.self) { InvoiceDetailView(id: $0) }
             .searchable(text: $query, prompt: "Număr sau client")
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SortGroupMenu(sorts: [("new", "Cele mai noi"), ("old", "Cele mai vechi"), ("amount", "Sumă"), ("client", "Client (A–Z)"), ("due", "Scadență")],
+                                  sort: $sort,
+                                  groups: [("month", "Lună"), ("status", "Stare"), ("client", "Client"), ("none", "Fără grupare")],
+                                  group: $group)
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { creating = true } label: { Label("Factură nouă", systemImage: "plus") }
                 }

@@ -4,6 +4,7 @@ import SwiftUI
 struct CatalogView: View {
     @Environment(AppStore.self) private var store
     @AppStorage("catalog.tab") private var tab = "services"
+    @AppStorage("catalog.sort") private var sort = "name"
     @State private var query = ""
     @State private var editingService: Service?
     @State private var editingPart: Part?
@@ -29,7 +30,9 @@ struct CatalogView: View {
                 ForEach(Inventory.serviceCategories.map(\.key) + grouped.keys.filter { k in !Inventory.serviceCategories.contains { $0.key == k } }.sorted(), id: \.self) { key in
                     if let items = grouped[key], !items.isEmpty {
                         Section(header: CapsHeader(Inventory.categoryLabel(key))) {
-                            ForEach(items.sorted { $0.name < $1.name }) { s in
+                            ForEach(items.sorted { a, b in
+                                sort == "price" ? a.price > b.price : sort == "time" ? a.hours > b.hours : a.name.localizedCompare(b.name) == .orderedAscending
+                            }) { s in
                                 Button { editingService = s } label: {
                                     HStack {
                                         VStack(alignment: .leading, spacing: 2) {
@@ -49,7 +52,13 @@ struct CatalogView: View {
             } else {
                 let reserved = Inventory.reserved(orders: store.all(WorkOrder.self), invoices: Dictionary(store.all(Invoice.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a }))
                 let parts = store.all(Part.self).filter { tokens.isEmpty || Search.matches(Search.fold("\($0.name) \($0.brand) \($0.code) \($0.location)"), tokens) }
-                    .sorted { $0.name < $1.name }
+                    .sorted { a, b in
+                        switch sort {
+                        case "price": return a.price > b.price
+                        case "stock": return Inventory.level(a, reserved: reserved[a.id] ?? 0).available < Inventory.level(b, reserved: reserved[b.id] ?? 0).available
+                        default: return a.name.localizedCompare(b.name) == .orderedAscending
+                        }
+                    }
                 Section {
                     ForEach(parts) { p in
                         let level = Inventory.level(p, reserved: reserved[p.id] ?? 0)
@@ -81,6 +90,7 @@ struct CatalogView: View {
         .navigationTitle("Catalog")
         .searchable(text: $query, prompt: tab == "services" ? "Caută o operație" : "Caută o piesă, cod, raft")
         .toolbar {
+            SortGroupMenu(sorts: tab == "services" ? [("name", "Nume"), ("price", "Preț"), ("time", "Durată")] : [("name", "Nume"), ("price", "Preț"), ("stock", "Stoc (cel mai mic)")], sort: $sort)
             Button { if tab == "services" { editingService = store.newService() } else { editingPart = store.newPart() } } label: {
                 Label(tab == "services" ? "Operație nouă" : "Piesă nouă", systemImage: "plus")
             }

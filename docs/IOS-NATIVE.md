@@ -87,7 +87,7 @@ Round-2 board: https://claude.ai/artifact/G3kDyaAPJFpQeoYgkCEs13. The owner pick
 | PR | What | Status |
 |---|---|---|
 | 1 | The band (`Views/Look.swift`: accent band with soft circles behind the title, follows the scroll, never shorter than the bar so the inline title stays white on orange), car make logos (`npm run ios:logos` writes template SVG image sets from `src/lib/car-logo-paths.js`; `MakeLogo` with brand colors), work-kind icons (`WorkKind`, by catalog category or words) on job lines | merged (#43) |
-| 2 | Booking operations: list with icon, duration, mechanic, price; edit sheet (kind, name, duration and quantity steppers, price from the labor rate, mechanic, parts); reorder, delete, add from catalog or free; total with VAT; saved in the web's `operations` shape | in progress |
-| 3 | Sort and group menus on every list (remembered), swipe Editează, reorder where order matters | after |
+| 2 | Booking operations: list with icon, duration, mechanic, price; edit sheet (kind, name, duration and quantity steppers, price from the labor rate, mechanic, parts); reorder, delete, add from catalog or free; total with VAT; saved in the web's `operations` shape | merged (#44) |
+| 3 | Sort and group menus on every list (remembered), swipe Editează, reorder where order matters | in progress |
 
 The status bar text is left to the system (iOS 26 picks it from what is behind it; black on this orange reads well).

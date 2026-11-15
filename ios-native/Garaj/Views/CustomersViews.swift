@@ -5,8 +5,13 @@ struct CustomersView: View {
     @Environment(AppStore.self) private var store
     @State private var query = ""
     @State private var creating: Customer?
+    @State private var editing: Customer?
+    @AppStorage("customers.sort") private var sort = "name"
+    @AppStorage("customers.group") private var group = "none"
 
     var body: some View {
+        let jobs = store.all(WorkOrder.self).filter { $0.status != "cancelled" }
+        let lastVisit = Dictionary(grouping: jobs, by: { $0.customerId ?? "" }).mapValues { $0.map(\.createdAt).max() ?? "" }
         let vehiclesByOwner = Dictionary(grouping: store.all(Vehicle.self), by: { $0.customerId ?? "" })
         let visits = Dictionary(grouping: store.all(WorkOrder.self).filter { $0.status != "cancelled" }, by: { $0.customerId ?? "" }).mapValues(\.count)
         let overdue = overdueByCustomer
@@ -16,8 +21,30 @@ struct CustomersView: View {
                 tokens.isEmpty || Search.matches(Search.fold(([c.name, c.phone, c.phone.filter(\.isNumber), c.cui, c.email, c.contactName]
                     + (vehiclesByOwner[c.id] ?? []).flatMap { [$0.plate, People.normalizePlate($0.plate), $0.title] }).joined(separator: " ")), tokens)
             }
-            .sorted { $0.name.compare($1.name, locale: Locale(identifier: "ro")) == .orderedAscending }
-        List(customers) { c in
+            .sorted { a, b in
+                switch sort {
+                case "visits": return (visits[a.id] ?? 0) > (visits[b.id] ?? 0)
+                case "recent": return (lastVisit[a.id] ?? "") > (lastVisit[b.id] ?? "")
+                case "debt": return (overdue[a.id] ?? 0) > (overdue[b.id] ?? 0)
+                default: return a.name.compare(b.name, locale: Locale(identifier: "ro")) == .orderedAscending
+                }
+            }
+        let sections: [(title: String, rows: [Customer])] = {
+            switch group {
+            case "letter":
+                var keys: [String] = []
+                let key = { (c: Customer) in String(c.name.folding(options: .diacriticInsensitive, locale: nil).prefix(1)).uppercased() }
+                for c in customers where !keys.contains(key(c)) { keys.append(key(c)) }
+                let by = Dictionary(grouping: customers, by: key)
+                return keys.map { ($0, by[$0] ?? []) }
+            case "type":
+                let people = customers.filter { !$0.isCompany }, firms = customers.filter(\.isCompany)
+                return [("Persoane", people), ("Firme", firms)].filter { !$0.1.isEmpty }
+            default:
+                return customers.isEmpty ? [] : [("", customers)]
+            }
+        }()
+        List { ForEach(sections, id: \.title) { section in Section { ForEach(section.rows) { c in
             NavigationLink { CustomerDetailView(id: c.id) } label: {
                 let cars = vehiclesByOwner[c.id] ?? []
                 HStack(spacing: 12) {
@@ -41,13 +68,29 @@ struct CustomersView: View {
                     }
                 }
             }
-        }
+            .swipeActions(edge: .trailing) {
+                Button { editing = c } label: { Label("Editează", systemImage: "pencil") }.tint(.gray)
+            }
+            .swipeActions(edge: .leading) {
+                if let url = People.telURL(c.phone) { Link(destination: url) { Label("Sună", systemImage: "phone.fill") }.tint(.green) }
+            }
+            .contextMenu {
+                Button { editing = c } label: { Label("Editează", systemImage: "pencil") }
+                if let url = People.telURL(c.phone) { Link(destination: url) { Label("Sună", systemImage: "phone") } }
+                if let url = People.whatsappURL(c.phone, text: "") { Link(destination: url) { Label("WhatsApp", systemImage: "text.bubble") } }
+            }
+        } } header: { if !section.title.isEmpty { CapsHeader("\(section.title) · \(section.rows.count)") } } } }
         .overlay { if customers.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView("Niciun client", systemImage: "person.2")) : AnyView(ContentUnavailableView.search(text: query)) } }
         .band(200)
         .navigationTitle("Clienți")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Nume, telefon, număr, CUI")
-        .toolbar { Button { creating = store.newCustomer() } label: { Label("Client nou", systemImage: "plus") } }
+        .toolbar {
+            SortGroupMenu(sorts: [("name", "Nume (A–Z)"), ("visits", "Cele mai multe vizite"), ("recent", "Ultima vizită"), ("debt", "Restanțe")], sort: $sort,
+                          groups: [("none", "Fără grupare"), ("letter", "Literă"), ("type", "Persoane / firme")], group: $group)
+            Button { creating = store.newCustomer() } label: { Label("Client nou", systemImage: "plus") }
+        }
         .sheet(item: $creating) { CustomerForm(customer: $0, isNew: true) }
+        .sheet(item: $editing) { CustomerForm(customer: $0, isNew: false) }
     }
 
     /// What each client owes on invoices past their due date.

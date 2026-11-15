@@ -6,6 +6,8 @@ struct WorkOrdersView: View {
     @Environment(UndoCenter.self) private var undo
     @State private var query = ""
     @State private var status: String?
+    @AppStorage("jobs.sort") private var sort = "new"
+    @AppStorage("jobs.group") private var group = "open"
     @State private var creating = false
     @State private var path: [String] = []
     @State private var moved = 0
@@ -29,10 +31,8 @@ struct WorkOrdersView: View {
         NavigationStack(path: $path) {
             let all = matching
             let counts = Dictionary(grouping: all, by: \.order.status).mapValues(\.count)
-            let rows = all.filter { status == nil || $0.order.status == status }
-            let openRows = rows.filter { Self.open.contains($0.order.status) }
-            let closedRows = rows.filter { !Self.open.contains($0.order.status) }
-            let openNet = openRows.reduce(0) { $0 + Lines.totals($1.order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).net }
+            let rows = sorted(all.filter { status == nil || $0.order.status == status })
+            let sections = grouped(rows)
             List {
                 Section {
                     ChipRow {
@@ -43,20 +43,16 @@ struct WorkOrdersView: View {
                     }
                 }
                 .bareRow()
-                if !openRows.isEmpty {
+                ForEach(sections, id: \.title) { section in
+                    let net = section.rows.reduce(0) { $0 + Lines.totals($1.order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).net }
                     Section {
-                        ForEach(openRows) { rowView($0) }
+                        ForEach(section.rows) { rowView($0) }
                     } header: {
-                        CapsHeader("Deschise · \(openRows.count)")
+                        CapsHeader("\(section.title) · \(section.rows.count)")
                     } footer: {
-                        if openNet != 0 { Text("Total deschis: \(Money.format(openNet, currency: store.currency, decimals: 0)) fără TVA") }
-                    }
-                }
-                if !closedRows.isEmpty {
-                    Section {
-                        ForEach(closedRows) { rowView($0) }
-                    } header: {
-                        CapsHeader("Predate și anulate · \(closedRows.count)")
+                        if net != 0 && section.rows.contains(where: { Self.open.contains($0.order.status) }) {
+                            Text("Total: \(Money.format(net, currency: store.currency, decimals: 0)) fără TVA")
+                        }
                     }
                 }
             }
@@ -79,6 +75,12 @@ struct WorkOrdersView: View {
             .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Caută număr, client, mașină")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
+                    SortGroupMenu(sorts: [("new", "Cele mai noi"), ("old", "Cele mai vechi"), ("client", "Client (A–Z)"), ("value", "Valoare"), ("car", "Mașină (A–Z)")],
+                                  sort: $sort,
+                                  groups: [("open", "Deschise / închise"), ("status", "Stare"), ("mechanic", "Mecanic"), ("none", "Fără grupare")],
+                                  group: $group)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Button { creating = true } label: { Label("Lucrare nouă", systemImage: "plus") }
                 }
             }
@@ -97,6 +99,37 @@ struct WorkOrdersView: View {
             .alert("Nu se poate", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
                 Button("OK", role: .cancel) {}
             } message: { Text(error ?? "") }
+        }
+    }
+
+    private func sorted(_ rows: [WorkOrderRow.Model]) -> [WorkOrderRow.Model] {
+        let ro = Locale(identifier: "ro")
+        switch sort {
+        case "old": return rows.sorted { $0.order.number < $1.order.number }
+        case "client": return rows.sorted { ($0.customer?.name ?? "").compare($1.customer?.name ?? "", locale: ro) == .orderedAscending }
+        case "value": return rows.sorted { $0.gross > $1.gross }
+        case "car": return rows.sorted { ($0.vehicle?.title ?? "").compare($1.vehicle?.title ?? "", locale: ro) == .orderedAscending }
+        default: return rows.sorted { $0.order.number > $1.order.number }
+        }
+    }
+
+    /// The list's sections for the chosen grouping, each keeping the sort order.
+    private func grouped(_ rows: [WorkOrderRow.Model]) -> [(title: String, rows: [WorkOrderRow.Model])] {
+        func split(_ keys: [String], _ key: (WorkOrderRow.Model) -> String, _ title: (String) -> String) -> [(title: String, rows: [WorkOrderRow.Model])] {
+            let by = Dictionary(grouping: rows, by: key)
+            return keys.compactMap { k in by[k].map { (title(k), $0) } }
+        }
+        switch group {
+        case "status":
+            return split(Labels.workOrderOrder, { $0.order.status }, { Labels.workOrder($0).label })
+        case "mechanic":
+            let staff = Dictionary(store.all(Staff.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+            let keys = store.all(Staff.self).sorted { $0.order < $1.order }.map(\.id) + [""]
+            return split(keys, { staff[$0.order.staffId ?? ""] == nil ? "" : $0.order.staffId! }, { staff[$0]?.name ?? "Fără mecanic" })
+        case "none":
+            return rows.isEmpty ? [] : [("Toate", rows)]
+        default:
+            return split(["open", "closed"], { Self.open.contains($0.order.status) ? "open" : "closed" }, { $0 == "open" ? "Deschise" : "Predate și anulate" })
         }
     }
 

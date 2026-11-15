@@ -142,8 +142,13 @@ struct SettingsView: View {
                     }
                     .tint(.primary)
                 }
+                .onMove { from, to in
+                    var list = staff
+                    list.move(fromOffsets: from, toOffset: to)
+                    for (i, var member) in list.enumerated() where member.order != Double(i) { member.order = Double(i); store.save(member) }
+                }
                 Button { editingStaff = store.newStaff() } label: { Label("Adaugă membru", systemImage: "plus") }
-            } header: { CapsHeader("Echipă") } footer: { Text("Mecanicii apar ca coloane în calendar.") }
+            } header: { CapsHeader("Echipă") } footer: { Text("Mecanicii apar ca coloane în calendar, în ordinea de aici: ține apăsat și trage ca s-o schimbi.") }
 
             Section(header: CapsHeader("Posturi de lucru")) {
                 ForEach(bays) { b in
@@ -156,6 +161,11 @@ struct SettingsView: View {
                         }
                     }
                     .tint(.primary)
+                }
+                .onMove { from, to in
+                    var list = bays
+                    list.move(fromOffsets: from, toOffset: to)
+                    for (i, var bay) in list.enumerated() where bay.order != Double(i) { bay.order = Double(i); store.save(bay) }
                 }
                 Button { editingBay = store.newBay() } label: { Label("Adaugă post", systemImage: "plus") }
             }
