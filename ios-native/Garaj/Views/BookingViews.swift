@@ -46,16 +46,15 @@ struct AppointmentDetailView: View {
                     HStack(spacing: 8) {
                         if a.status == "scheduled" {
                             Button { act("Confirmată") { try store.setAppointmentStatus(a.id, to: "confirmed") } } label: {
-                                Label("Confirmă", systemImage: "checkmark").frame(maxWidth: .infinity)
+                                Label("Confirmă", systemImage: "checkmark")
                             }
-                            .buttonStyle(.borderedProminent)
+                            .buttonStyle(.primary)
                         }
                         if (a.status == "scheduled" || a.status == "confirmed") && a.workOrderId == nil {
-                            Button { checkIn(a) } label: { Label("A sosit", systemImage: "car.fill").frame(maxWidth: .infinity) }
-                                .buttonStyle(a.status == "confirmed" ? AnyPrimitiveButtonStyle(.borderedProminent) : AnyPrimitiveButtonStyle(.bordered))
+                            Button { checkIn(a) } label: { Label("A sosit", systemImage: "car.fill") }
+                                .buttonStyle(FillButtonStyle(kind: a.status == "confirmed" ? .primary : .secondary))
                         }
                     }
-                    .controlSize(.large)
                 }
                 .padding(.vertical, 4)
             }
@@ -140,11 +139,6 @@ struct AppointmentDetailView: View {
     }
 }
 
-struct AnyPrimitiveButtonStyle: PrimitiveButtonStyle {
-    private let make: (Configuration) -> AnyView
-    init<S: PrimitiveButtonStyle>(_ style: S) { make = { AnyView(style.makeBody(configuration: $0)) } }
-    func makeBody(configuration: Configuration) -> some View { make(configuration) }
-}
 
 /// New or edited booking: client and car, day, start and length, mechanic and bay, operations, notes.
 /// Overlaps with the same mechanic or bay are shown as you go (a warning, not a block).

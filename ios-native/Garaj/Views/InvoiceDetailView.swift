@@ -81,19 +81,14 @@ struct InvoiceDetailView: View {
                     VStack(spacing: 10) {
                         if ["issued", "partial", "overdue"].contains(state) {
                             Button { paying = invoice } label: {
-                                Text("Încasează \(Money.format(balance, currency: currency))").font(.headline).frame(maxWidth: .infinity, minHeight: 34)
+                                Text("Încasează \(Money.format(balance, currency: currency))")
                             }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.large)
+                            .buttonStyle(.primary)
                         }
                         if let phone = customer?.phone, !phone.isEmpty, invoice.stornoOf == nil,
                            let url = People.whatsappURL(phone, text: InvoiceRules.message(invoice, balance: balance, settings: store.settings)) {
-                            Link(destination: url) {
-                                Text("Trimite pe WhatsApp").font(.headline).foregroundStyle(Color.accentColor)
-                                    .frame(maxWidth: .infinity, minHeight: 50)
-                                    .background(Color.accentColor.opacity(0.12), in: .capsule)
-                            }
-                            .buttonStyle(.plain)
+                            Link("Trimite pe WhatsApp", destination: url)
+                                .buttonStyle(.secondary)
                         }
                     }
                 }
@@ -119,27 +114,24 @@ struct InvoiceDetailView: View {
                     }
                     if isDraft {
                         Button { issue(invoice) } label: {
-                            Label("Emite factura", systemImage: "checkmark.seal").frame(maxWidth: .infinity)
+                            Label("Emite factura", systemImage: "checkmark.seal")
                         }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
+                        .buttonStyle(.primary)
                         .disabled(!problems.isEmpty)
                         Menu {
                             ForEach(Labels.paymentMethods, id: \.key) { m in
                                 Button { issueAndPay(invoice, method: m.key) } label: { Label(m.label, systemImage: m.symbol) }
                             }
                         } label: {
-                            Label("Emite și încasează integral", systemImage: "banknote").frame(maxWidth: .infinity)
+                            Label("Emite și încasează integral", systemImage: "banknote")
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.large)
+                        .buttonStyle(.secondary)
                         .disabled(!problems.isEmpty)
                     } else if ["issued", "partial", "overdue"].contains(state) {
                         Button { paying = invoice } label: {
-                            Label("Încasează", systemImage: "banknote").frame(maxWidth: .infinity)
+                            Label("Încasează", systemImage: "banknote")
                         }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
+                        .buttonStyle(.primary)
                     }
                 }
                 .padding(.vertical, 4)

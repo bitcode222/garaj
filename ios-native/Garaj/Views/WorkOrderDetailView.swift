@@ -65,10 +65,9 @@ struct WorkOrderDetailView: View {
                     HStack(spacing: 8) {
                         if let next {
                             Button { move(order, to: next) } label: {
-                                Text(Labels.workOrderAction(from: order.status, to: next)).font(.headline).frame(maxWidth: .infinity, minHeight: 34)
+                                Text(Labels.workOrderAction(from: order.status, to: next))
                             }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.large)
+                            .buttonStyle(.primary)
                         }
                         if !others.isEmpty {
                             Menu {
@@ -82,10 +81,8 @@ struct WorkOrderDetailView: View {
                             } label: {
                                 Label(next == nil ? "Schimbă starea" : "Altă stare", systemImage: "ellipsis")
                                     .labelStyle(next == nil ? AnyLabelStyle(.titleAndIcon) : AnyLabelStyle(.iconOnly))
-                                    .frame(maxWidth: next == nil ? .infinity : nil, minHeight: 34)
                             }
-                            .buttonStyle(.bordered)
-                            .controlSize(.large)
+                            .buttonStyle(FillButtonStyle(kind: .secondary, fill: next == nil))
                             .accessibilityLabel("Altă stare")
                         }
                     }
@@ -288,7 +285,7 @@ private struct ContactButtons: View {
                 Link(destination: url) { Label("WhatsApp", systemImage: "text.bubble.fill").frame(maxWidth: .infinity) }
             }
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.secondarySmall)
         .labelStyle(VerticalLabelStyle())
         .font(.caption.weight(.medium))
     }

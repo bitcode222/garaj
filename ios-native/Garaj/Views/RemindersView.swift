@@ -82,22 +82,22 @@ private struct ReminderRow: View {
             if let phone = customer?.phone, !phone.isEmpty {
                 HStack(spacing: 8) {
                     if let url = People.whatsappURL(phone, text: message) {
-                        Link(destination: url) { Label("WhatsApp", systemImage: "text.bubble.fill").frame(maxWidth: .infinity) }
-                            .buttonStyle(.borderedProminent)
+                        Link(destination: url) { Label("WhatsApp", systemImage: "text.bubble.fill") }
+                            .buttonStyle(.primarySmall)
                             .simultaneousGesture(TapGesture().onEnded { handled("whatsapp") })
                     }
                     if let url = People.smsURL(phone, body: message) {
-                        Link(destination: url) { Label("SMS", systemImage: "message.fill").frame(maxWidth: .infinity) }
+                        Link(destination: url) { Label("SMS", systemImage: "message.fill") }
+                            .buttonStyle(.secondarySmall)
                             .simultaneousGesture(TapGesture().onEnded { handled("sms") })
                     }
                     if let url = People.telURL(phone) {
-                        Link(destination: url) { Label("Sună", systemImage: "phone.fill").labelStyle(.iconOnly).frame(minWidth: 32) }
+                        Link(destination: url) { Label("Sună", systemImage: "phone.fill").labelStyle(.iconOnly) }
+                            .buttonStyle(FillButtonStyle(kind: .secondary, small: true, fill: false))
                             .simultaneousGesture(TapGesture().onEnded { handled("call") })
                             .accessibilityLabel("Sună")
                     }
                 }
-                .buttonStyle(.bordered)
-                .font(.subheadline.weight(.medium))
             } else {
                 Text("Clientul nu are telefon.").font(.caption).foregroundStyle(.secondary)
             }

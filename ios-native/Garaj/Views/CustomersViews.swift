@@ -117,7 +117,7 @@ struct CustomerDetailView: View {
                         if let u = People.smsURL(c.phone, body: "") { Link(destination: u) { Label("SMS", systemImage: "message.fill").frame(maxWidth: .infinity) } }
                         if let u = People.whatsappURL(c.phone, text: "") { Link(destination: u) { Label("WhatsApp", systemImage: "text.bubble.fill").frame(maxWidth: .infinity) } }
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.secondarySmall)
                     .labelStyle(VerticalLabelStyle())
                     .font(.caption.weight(.medium))
                 }
