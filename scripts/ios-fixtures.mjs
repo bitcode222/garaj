@@ -201,6 +201,33 @@ write("rules.json", {
 	}, { compact: true });
 }
 
+// The calendar's geometry (src/features/calendar/utils.js); the module imports app paths, so through the alias loader.
+{
+	const cal = await import("../src/features/calendar/utils.js");
+	const c = demoAll.collections;
+	const byDayStaff = new Map();
+	for (const a of c.appointments) {
+		if (a.status === "cancelled") continue;
+		const key = `${new Date(a.start).toDateString()}|${a.staffId}`;
+		byDayStaff.set(key, [...(byDayStaff.get(key) ?? []), a]);
+	}
+	const overlapping = [
+		{ id: "a", start: "2026-11-16T08:00:00.000Z", end: "2026-11-16T10:00:00.000Z" },
+		{ id: "b", start: "2026-11-16T08:30:00.000Z", end: "2026-11-16T09:00:00.000Z" },
+		{ id: "c", start: "2026-11-16T09:00:00.000Z", end: "2026-11-16T11:00:00.000Z" },
+		{ id: "d", start: "2026-11-16T08:00:00.000Z", end: "2026-11-16T08:30:00.000Z" },
+		{ id: "e", start: "2026-11-16T11:00:00.000Z", end: "2026-11-16T12:00:00.000Z" },
+	];
+	const groups = [...byDayStaff.values(), overlapping];
+	write("calendar.json", {
+		layouts: groups.map((events) => ({ events: events.map((e) => ({ id: e.id, start: e.start, end: e.end })), placed: cal.layoutEvents(events).map((p) => ({ id: p.event.id, lane: p.lane, lanes: p.lanes })) })),
+		bounds: groups.slice(0, 20).map((events) => ({ events: events.map((e) => ({ start: e.start, end: e.end })), bounds: cal.timeBounds(DEFAULT_SETTINGS, events) })),
+		weeks: ["2026-11-15", "2026-11-16", "2026-03-29", "2026-10-25", "2026-12-31", "2027-01-01"].map((day) => ({ day, week: cal.weekDays(day), month: cal.monthGrid(day) })),
+		minutes: ["2026-03-29", "2026-10-25", "2026-11-16"].flatMap((day) => [0, 120, 180, 210, 240, 480, 1439].map((m) => ({ day, m, at: cal.atMinute(day, m), back: cal.minuteOfDay(cal.atMinute(day, m)) }))),
+		open: DEFAULT_SETTINGS.hours.open, close: DEFAULT_SETTINGS.hours.close,
+	}, { compact: true });
+}
+
 // A small backup: the demo data, a few records per collection.
 const demo = buildDemoData("2026-11-15");
 const collections = Object.fromEntries(Object.entries(demo.collections).map(([k, v]) => [k, v.slice(0, 4)]));

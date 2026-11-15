@@ -182,3 +182,32 @@ extension AppStore {
         delete(Appointment.self, id)
     }
 }
+
+extension AppStore {
+    /// A booking can be moved on the calendar while it is still ahead or the car is in the shop (canReschedule).
+    static func canMoveOnCalendar(_ a: Appointment) -> Bool { ["scheduled", "confirmed", "arrived"].contains(a.status) }
+
+    /// The calendar's drag: a new time and/or mechanic. A booking still ahead is rescheduled (confirmed stays
+    /// confirmed only if the customer knows); a car already in the shop just gets its time. Returns it as it was.
+    @discardableResult
+    func moveOnCalendar(_ id: String, start: String, end: String, staffId: String?, customerKnows: Bool = false) throws -> Appointment {
+        guard let before = get(Appointment.self, id) else { throw DomainError(code: "not_found", message: "Programarea nu mai există.") }
+        guard Self.canMoveOnCalendar(before) else { throw DomainError(code: "invalid_transition", message: "Programarea s-a încheiat; nu se mai mută.") }
+        if !(start < end) { throw DomainError(code: "invalid", message: "Ora de sfârșit trebuie să fie după ora de început.") }
+        let timeChanged = before.start != start || before.end != end
+        if timeChanged {
+            if before.status == "arrived" {
+                var a = before
+                a.start = start; a.end = end
+                save(a, updatedAt: Dates.instant())
+            } else {
+                try reschedule(id, start: start, end: end, customerKnows: customerKnows)
+            }
+        }
+        if before.staffId != staffId, var a = get(Appointment.self, id) {
+            a.staffId = staffId
+            save(a, updatedAt: Dates.instant())
+        }
+        return before
+    }
+}
