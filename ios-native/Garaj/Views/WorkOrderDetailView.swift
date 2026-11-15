@@ -31,48 +31,83 @@ struct WorkOrderDetailView: View {
         let shop = store.shop
         let totals = Lines.totals(order.lines.filter { !$0.refused }, vatPayer: shop.vatPayer)
 
+        let staff = Dictionary(store.all(Staff.self).map { ($0.id, $0.name) }, uniquingKeysWith: { a, _ in a })
+        let next = WorkOrderRules.next[order.status]
+        let others = (WorkOrderRules.transitions[order.status] ?? []).filter { $0 != next }
+
         return List {
             Section {
-                StatusHeader(order: order) { to in
-                    if to == "cancelled" { confirmCancel = true } else { move(order, to: to) }
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(alignment: .center) {
+                        if let vehicle { PlateBadge(plate: vehicle.plate) } else { Text("Fără mașină").foregroundStyle(.secondary) }
+                        Spacer()
+                        StatusPill(style: Labels.workOrder(order.status))
+                    }
+                    Text(vehicle?.title.nonEmpty ?? "Mașină").font(.title3.weight(.bold)).padding(.top, 6)
+                    let facts = [vehicle?.year.map(String.init), vehicle.flatMap { v in Inventory.fuels.first { $0.key == v.fuel }?.label.lowercased() },
+                                 order.mileage.map { "\($0.formatted(.number.locale(Locale(identifier: "ro_RO")))) km" }].compactMap { $0 }
+                    if !facts.isEmpty { Text(facts.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary) }
+                    if let customer {
+                        Text([customer.name, customer.phone].filter { !$0.isEmpty }.joined(separator: " · "))
+                            .font(.subheadline.weight(.semibold)).foregroundStyle(Color.accentColor)
+                    }
                 }
+                .padding(.vertical, 6)
+                if let customer, !customer.phone.isEmpty {
+                    ContactButtons(phone: customer.phone, message: order.status == "ready"
+                        ? WorkOrderRules.readyMessage(customer: customer, vehicle: vehicle, settings: shop)
+                        : WorkOrderRules.estimateMessage(order: order, customer: customer, vehicle: vehicle, settings: shop))
+                }
+            }
+
+            if next != nil || !others.isEmpty {
+                Section {
+                    HStack(spacing: 8) {
+                        if let next {
+                            Button { move(order, to: next) } label: {
+                                Text(Labels.workOrderAction(from: order.status, to: next)).font(.headline).frame(maxWidth: .infinity, minHeight: 34)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.large)
+                        }
+                        if !others.isEmpty {
+                            Menu {
+                                ForEach(others, id: \.self) { to in
+                                    Button(role: to == "cancelled" ? .destructive : nil) {
+                                        if to == "cancelled" { confirmCancel = true } else { move(order, to: to) }
+                                    } label: {
+                                        Label(Labels.workOrderAction(from: order.status, to: to), systemImage: Labels.workOrder(to).symbol)
+                                    }
+                                }
+                            } label: {
+                                Label(next == nil ? "Schimbă starea" : "Altă stare", systemImage: "ellipsis")
+                                    .labelStyle(next == nil ? AnyLabelStyle(.titleAndIcon) : AnyLabelStyle(.iconOnly))
+                                    .frame(maxWidth: next == nil ? .infinity : nil, minHeight: 34)
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.large)
+                            .accessibilityLabel("Altă stare")
+                        }
+                    }
+                } footer: {
+                    Text(Labels.workOrder(order.status).hint)
+                }
+                .bareRow()
             }
 
             Section {
-                if let vehicle {
-                    LabeledContent("Mașina") {
-                        VStack(alignment: .trailing) {
-                            Text(People.formatPlate(vehicle.plate)).font(.body.weight(.semibold))
-                            Text(vehicle.title).font(.caption).foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                if let customer {
-                    LabeledContent("Client", value: customer.name)
-                    if !customer.phone.isEmpty {
-                        ContactButtons(phone: customer.phone, message: order.status == "ready"
-                            ? WorkOrderRules.readyMessage(customer: customer, vehicle: vehicle, settings: shop)
-                            : WorkOrderRules.estimateMessage(order: order, customer: customer, vehicle: vehicle, settings: shop))
-                    }
-                }
-                if let km = order.mileage {
-                    LabeledContent("Kilometraj", value: "\(km.formatted(.number.locale(Locale(identifier: "ro_RO")))) km")
-                }
-            }
-
-            Section("Ce reclamă clientul") {
                 TextField("Ce spune clientul", text: binding(order, \.complaint), axis: .vertical)
                     .disabled(locked)
-            }
-            Section("Diagnostic") {
-                TextField("Ce a găsit mecanicul", text: binding(order, \.diagnosis), axis: .vertical)
+                TextField("Diagnoză: ce a găsit mecanicul", text: binding(order, \.diagnosis), axis: .vertical)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
                     .disabled(locked)
-            }
+            } header: { CapsHeader("Reclamație") }
 
             Section {
                 ForEach(order.lines) { line in
                     Button { if !locked { editingLine = line } } label: {
-                        LineRow(line: line, currency: shop.currency, vatPayer: shop.vatPayer)
+                        LineRow(line: line, currency: shop.currency, vatPayer: shop.vatPayer, staff: staff[line.staffId ?? ""])
                     }
                     .tint(.primary)
                     .swipeActions {
@@ -95,34 +130,35 @@ struct WorkOrderDetailView: View {
                         Button { editingLine = store.blankLine("part") } label: { Label("Piesă liberă", systemImage: "gearshape") }
                         Button { editingLine = store.blankLine("fee") } label: { Label("Taxă", systemImage: "banknote") }
                     } label: {
-                        Label("Adaugă o linie", systemImage: "plus.circle.fill")
+                        Label("Adaugă o operație sau o piesă", systemImage: "plus.circle.fill")
                     }
                     .frame(minHeight: 44)
                 }
-            } header: {
-                Text("Linii")
-            }
-
-            if !order.lines.isEmpty {
-                Section("Total") {
-                    if totals.labor != 0 { LabeledContent("Manoperă", value: Money.format(totals.labor, currency: shop.currency)) }
-                    if totals.parts != 0 { LabeledContent("Piese", value: Money.format(totals.parts, currency: shop.currency)) }
-                    if totals.fees != 0 { LabeledContent("Taxe", value: Money.format(totals.fees, currency: shop.currency)) }
-                    if shop.vatPayer {
-                        LabeledContent("Fără TVA", value: Money.format(totals.net, currency: shop.currency))
-                        ForEach(totals.byRate, id: \.rate) { group in
-                            LabeledContent("TVA \(JS.number(group.rate))%", value: Money.format(group.vat, currency: shop.currency))
+                if !order.lines.isEmpty {
+                    HStack(alignment: .firstTextBaseline) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(shop.vatPayer ? "Total cu TVA" : "Total").font(.headline)
+                            Text([totals.labor != 0 ? "manoperă \(Money.format(totals.labor, currency: shop.currency, decimals: 0))" : nil,
+                                  totals.parts + totals.fees != 0 ? "piese \(Money.format(totals.parts + totals.fees, currency: shop.currency, decimals: 0))" : nil]
+                                .compactMap { $0 }.joined(separator: " · "))
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(Money.format(totals.gross, currency: shop.currency)).font(.headline).monospacedDigit()
+                            if shop.vatPayer {
+                                Text("\(Money.format(totals.net, currency: shop.currency, decimals: 0)) + TVA \(Money.format(totals.gross - totals.net, currency: shop.currency))")
+                                    .font(.caption).foregroundStyle(.secondary).monospacedDigit()
+                            }
                         }
                     }
-                    LabeledContent {
-                        Text(Money.format(totals.gross, currency: shop.currency)).font(.headline.monospacedDigit())
-                    } label: {
-                        Text("De plată").font(.headline)
-                    }
+                    .accessibilityElement(children: .combine)
                 }
+            } header: {
+                CapsHeader("Operații și piese")
             }
 
-            Section("Factură") {
+            Section {
                 if let invoice = store.get(Invoice.self, order.invoiceId) {
                     let state = store.invoiceState(invoice)
                     NavigationLink { InvoiceDetailView(id: invoice.id) } label: {
@@ -140,11 +176,11 @@ struct WorkOrderDetailView: View {
                     }
                     .disabled(order.lines.isEmpty)
                 }
-            }
+            } header: { CapsHeader("Factură") }
 
-            Section("Note") {
+            Section {
                 TextField("Note interne", text: binding(order, \.notes, allowLocked: true), axis: .vertical)
-            }
+            } header: { CapsHeader("Note") }
 
             if WorkOrderRules.canDelete(status: order.status, invoiceId: order.invoiceId) {
                 Section {
@@ -229,58 +265,6 @@ struct WorkOrderDetailView: View {
     }
 }
 
-/// The status, a big button for the next step and a menu with the other moves.
-private struct StatusHeader: View {
-    let order: WorkOrder
-    let move: (String) -> Void
-
-    var body: some View {
-        let style = Labels.workOrder(order.status)
-        let next = WorkOrderRules.next[order.status]
-        let others = (WorkOrderRules.transitions[order.status] ?? []).filter { $0 != next }
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
-                Image(systemName: style.symbol)
-                    .font(.title2)
-                    .foregroundStyle(style.color)
-                    .frame(width: 44, height: 44)
-                    .background(style.color.opacity(0.15), in: .circle)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(style.label).font(.title3.weight(.semibold))
-                    Text(style.hint).font(.subheadline).foregroundStyle(.secondary)
-                }
-            }
-            HStack(spacing: 8) {
-                if let next {
-                    Button { move(next) } label: {
-                        Label(Labels.workOrderAction(from: order.status, to: next), systemImage: Labels.workOrder(next).symbol)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                }
-                if !others.isEmpty {
-                    Menu {
-                        ForEach(others, id: \.self) { to in
-                            Button(role: to == "cancelled" ? .destructive : nil) { move(to) } label: {
-                                Label(Labels.workOrderAction(from: order.status, to: to), systemImage: Labels.workOrder(to).symbol)
-                            }
-                        }
-                    } label: {
-                        Label(next == nil ? "Schimbă starea" : "Altă stare", systemImage: "ellipsis")
-                            .labelStyle(next == nil ? AnyLabelStyle(.titleAndIcon) : AnyLabelStyle(.iconOnly))
-                            .frame(maxWidth: next == nil ? .infinity : nil, minHeight: 22)
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.large)
-                    .accessibilityLabel("Altă stare")
-                }
-            }
-        }
-        .padding(.vertical, 4)
-    }
-}
-
 struct AnyLabelStyle: LabelStyle {
     private let make: (Configuration) -> AnyView
     init<S: LabelStyle>(_ style: S) { make = { AnyView(style.makeBody(configuration: $0)) } }
@@ -325,13 +309,14 @@ struct LineRow: View {
     let line: Line
     let currency: String
     let vatPayer: Bool
+    var staff: String? = nil
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(line.description.isEmpty ? (Lines.kindLabel[line.kind] ?? "Linie") : line.description)
                     .strikethrough(line.refused)
-                Text("\(Lines.kindLabel[line.kind] ?? "") · \(Money.formatQuantity(line.qty)) \(line.unit) × \(Money.format(line.unitPrice, currency: currency))\(line.discountPct > 0 ? " −\(JS.number(line.discountPct))%" : "")")
+                Text("\(Lines.kindLabel[line.kind] ?? "") · \(Money.formatQuantity(line.qty)) \(line.unit) × \(Money.format(line.unitPrice, currency: currency))\(line.discountPct > 0 ? " −\(JS.number(line.discountPct))%" : "")\(staff.map { " · \($0)" } ?? "")")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 if line.refused {
@@ -340,7 +325,7 @@ struct LineRow: View {
             }
             Spacer()
             Text(Money.format(Lines.net(line), currency: currency))
-                .font(.subheadline.monospacedDigit())
+                .font(.body.weight(.semibold).monospacedDigit())
                 .foregroundStyle(line.refused ? .secondary : .primary)
         }
         .padding(.vertical, 2)

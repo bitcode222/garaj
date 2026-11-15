@@ -136,3 +136,65 @@ struct CapsHeader: View {
         Text(text).font(.footnote).foregroundStyle(.secondary).textCase(.uppercase)
     }
 }
+
+/// A Romanian number plate: blue EU strip with "RO", the number in bold on white.
+struct PlateBadge: View {
+    let plate: String
+    var body: some View {
+        HStack(spacing: 0) {
+            Text("RO")
+                .font(.system(size: 8, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 14)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .padding(.bottom, 3)
+                .background(Color(red: 0.12, green: 0.25, blue: 0.69))
+            Text(People.formatPlate(plate))
+                .font(.system(size: 16, weight: .bold))
+                .tracking(0.8)
+                .foregroundStyle(.black)
+                .padding(.horizontal, 8)
+        }
+        .frame(height: 30)
+        .background(.white)
+        .clipShape(.rect(cornerRadius: 5))
+        .overlay(RoundedRectangle(cornerRadius: 5).strokeBorder(.black, lineWidth: 2))
+        .accessibilityLabel("Numărul \(People.formatPlate(plate))")
+    }
+}
+
+/// A filter chip with its count; the selected one is filled with the accent color.
+struct CountChip: View {
+    let title: String
+    let count: Int
+    let on: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                Text(title)
+                Text("\(count)").monospacedDigit().foregroundStyle(on ? Color.white.opacity(0.85) : .secondary)
+            }
+            .font(.subheadline.weight(.medium))
+            .padding(.horizontal, 12)
+            .frame(minHeight: 32)
+            .foregroundStyle(on ? Color.white : .primary)
+            .background(on ? Color.accentColor : Color(.secondarySystemGroupedBackground), in: .capsule)
+        }
+        .buttonStyle(.plain)
+        .frame(minHeight: 44)
+        .accessibilityAddTraits(on ? .isSelected : [])
+    }
+}
+
+/// A row of chips that scrolls sideways, on the grouped background.
+struct ChipRow<Content: View>: View {
+    @ViewBuilder let content: Content
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) { content }.padding(.horizontal, 20)
+        }
+        .scrollClipDisabled()
+    }
+}

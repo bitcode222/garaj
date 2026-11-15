@@ -48,6 +48,60 @@ struct InvoiceDetailView: View {
         let order = store.get(WorkOrder.self, invoice.workOrderId)
 
         return List {
+            if !isDraft {
+                Section {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Button { showDocument = true } label: {
+                            GeometryReader { g in
+                                paper(invoice)
+                                    .frame(width: 595)
+                                    .scaleEffect(g.size.width / 595, anchor: .topLeading)
+                            }
+                            .frame(height: 390)
+                            .clipShape(.rect(cornerRadius: 10))
+                            .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color(.separator), lineWidth: 0.5))
+                            .shadow(color: .black.opacity(0.08), radius: 12, y: 4)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Factura \(invoice.label), atinge pentru toată pagina")
+                    }
+                } header: {
+                    HStack {
+                        StatusPill(style: style)
+                        Spacer()
+                        Text(["partial", "overdue"].contains(state) ? "rest \(Money.format(balance, currency: currency))" : Money.format(totals.gross, currency: currency))
+                            .font(.subheadline.weight(.semibold)).monospacedDigit().foregroundStyle(.primary)
+                    }
+                    .textCase(nil)
+                }
+                .bareRow()
+                .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+
+                Section {
+                    VStack(spacing: 10) {
+                        if ["issued", "partial", "overdue"].contains(state) {
+                            Button { paying = invoice } label: {
+                                Text("Încasează \(Money.format(balance, currency: currency))").font(.headline).frame(maxWidth: .infinity, minHeight: 34)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.large)
+                        }
+                        if let phone = customer?.phone, !phone.isEmpty, invoice.stornoOf == nil,
+                           let url = People.whatsappURL(phone, text: InvoiceRules.message(invoice, balance: balance, settings: store.settings)) {
+                            Link(destination: url) {
+                                Text("Trimite pe WhatsApp").font(.headline).foregroundStyle(Color.accentColor)
+                                    .frame(maxWidth: .infinity, minHeight: 50)
+                                    .background(Color.accentColor.opacity(0.12), in: .capsule)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .bareRow()
+                .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+            }
+
+            if isDraft {
             Section {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack(spacing: 12) {
@@ -93,24 +147,12 @@ struct InvoiceDetailView: View {
                     Label(p.text, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange).font(.subheadline)
                 }
             }
+            }
 
             if isDraft {
                 draftSections(invoice, customer: customer, order: order)
             } else {
                 Section {
-                    Button { showDocument = true } label: {
-                        Label("Vezi factura", systemImage: "doc.richtext")
-                    }
-                    ShareLink(item: pdfFile(invoice), preview: SharePreview(invoice.label, image: Image(systemName: "doc.text"))) {
-                        Label("Trimite PDF-ul", systemImage: "square.and.arrow.up")
-                    }
-                    if let phone = customer?.phone, !phone.isEmpty, invoice.stornoOf == nil {
-                        let text = InvoiceRules.message(invoice, balance: balance, settings: store.settings)
-                        if let url = People.whatsappURL(phone, text: text) { Link(destination: url) { Label("Trimite pe WhatsApp", systemImage: "text.bubble") } }
-                        if let url = People.smsURL(phone, body: text) { Link(destination: url) { Label("Trimite prin SMS", systemImage: "message") } }
-                    }
-                }
-                Section("Detalii") {
                     if let customer { LabeledContent("Client", value: customer.name) }
                     LabeledContent("Data emiterii", value: Dates.display(invoice.issueDate))
                     if let due = invoice.dueDate { LabeledContent("Scadență", value: Dates.display(due)) }
@@ -119,12 +161,9 @@ struct InvoiceDetailView: View {
                             LabeledContent(invoice.stornoOf != nil ? "Stornează" : "Stornată prin", value: other.label)
                         }
                     }
-                }
-                Section("Linii") {
-                    ForEach(invoice.lines) { LineRow(line: $0, currency: currency, vatPayer: store.shop.vatPayer) }
-                }
+                } header: { CapsHeader("Detalii") }
                 if invoice.stornoOf == nil && invoice.status != "draft" {
-                    Section("Plăți") {
+                    Section {
                         ForEach(payments) { p in
                             LabeledContent {
                                 Text(Money.format(p.amount, currency: currency)).monospacedDigit()
@@ -139,8 +178,17 @@ struct InvoiceDetailView: View {
                                 } label: { Label("Șterge", systemImage: "trash") }
                             }
                         }
-                        if payments.isEmpty { Text("Nicio plată încă.").foregroundStyle(.secondary) }
-                    }
+                        if payments.isEmpty {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Nicio plată încă")
+                                if let due = invoice.dueDate {
+                                    let days = Dates.diffDays(Dates.today(), due)
+                                    Text("Scadentă pe \(Dates.display(due))\(days > 0 ? ", peste \(days == 1 ? "o zi" : "\(days) zile")" : days == 0 ? ", azi" : "")")
+                                        .font(.subheadline).foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    } header: { CapsHeader("Plăți") }
                 }
             }
 
@@ -167,6 +215,22 @@ struct InvoiceDetailView: View {
         .listStyle(.insetGrouped)
         .navigationTitle(Text(verbatim: isDraft ? "Ciornă" : invoice.label))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if !isDraft {
+                Menu {
+                    Button { showDocument = true } label: { Label("Vezi factura", systemImage: "doc.richtext") }
+                    ShareLink(item: pdfFile(invoice), preview: SharePreview(invoice.label, image: Image(systemName: "doc.text"))) {
+                        Label("Trimite PDF-ul", systemImage: "square.and.arrow.up")
+                    }
+                    if let phone = customer?.phone, !phone.isEmpty, invoice.stornoOf == nil,
+                       let url = People.smsURL(phone, body: InvoiceRules.message(invoice, balance: balance, settings: store.settings)) {
+                        Link(destination: url) { Label("Trimite prin SMS", systemImage: "message") }
+                    }
+                } label: {
+                    Text("PDF")
+                }
+            }
+        }
         .sheet(item: $paying) { PaymentSheet(invoice: $0) }
         .sheet(isPresented: $showDocument) { DocumentSheet(paper: paper(invoice), pdf: pdfFile(invoice), title: invoice.label) }
         .sheet(item: $editingLine) { line in
