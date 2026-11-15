@@ -22,7 +22,8 @@
 		"docker:dev": "docker compose --profile dev up dev",
 		"docker:down": "docker compose down",
 		"ios:fixtures": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/ios-fixtures.mjs",
-		"ios:test": "bash scripts/ios-test.sh"
+		"ios:test": "bash scripts/ios-test.sh",
+		"ios:logos": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/ios-logos.mjs"
 	},
 	"dependencies": {
 		"@radix-ui/react-alert-dialog": "^1.1.15",

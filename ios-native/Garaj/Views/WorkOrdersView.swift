@@ -61,6 +61,7 @@ struct WorkOrdersView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .band(250)
             .sensoryFeedback(.selection, trigger: status)
             .overlay {
                 if rows.isEmpty {
@@ -152,6 +153,7 @@ struct WorkOrderRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
+            MakeLogo(make: model.vehicle?.make ?? "")
             VStack(alignment: .leading, spacing: 3) {
                 Text(model.vehicle?.title.nonEmpty ?? "Fără mașină").lineLimit(1)
                 Text([model.vehicle.map { People.formatPlate($0.plate) }, model.customer?.name].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))

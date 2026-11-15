@@ -18,6 +18,7 @@ struct VehiclesView: View {
             NavigationLink { VehicleDetailView(id: v.id) } label: { VehicleRow(vehicle: v, owner: owners[v.customerId ?? ""]?.name) }
         }
         .overlay { if vehicles.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView("Nicio mașină", systemImage: "car")) : AnyView(ContentUnavailableView.search(text: query)) } }
+        .band(200)
         .navigationTitle("Mașini")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Număr, marcă, VIN, proprietar")
         .toolbar { Button { creating = store.newVehicle(customerId: nil) } label: { Label("Mașină nouă", systemImage: "plus") } }
@@ -36,6 +37,7 @@ struct VehicleRow: View {
         let service = People.serviceDue(vehicle, today: today)
         let km = People.estimateKm(vehicle, today: today) ?? vehicle.mileage.last?.km
         HStack(spacing: 12) {
+            MakeLogo(make: vehicle.make)
             VStack(alignment: .leading, spacing: 3) {
                 Text(People.formatPlate(vehicle.plate)).font(.body.weight(.semibold)).tracking(0.4)
                 Text([vehicle.title, owner].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
@@ -150,6 +152,7 @@ struct VehicleDetailView: View {
             Section { Button("Șterge mașina", role: .destructive) { confirmDelete = true } }
         }
         .listStyle(.insetGrouped)
+        .band(200)
         .navigationTitle(People.formatPlate(v.plate))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { Button("Editează") { editing = v } }

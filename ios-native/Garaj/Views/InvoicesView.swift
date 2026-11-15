@@ -121,6 +121,7 @@ struct InvoicesView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .band(260)
             .sensoryFeedback(.selection, trigger: filter)
             .overlay {
                 if rows.isEmpty {

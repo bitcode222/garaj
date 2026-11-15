@@ -31,6 +31,7 @@ struct WorkOrderDetailView: View {
         let shop = store.shop
         let totals = Lines.totals(order.lines.filter { !$0.refused }, vatPayer: shop.vatPayer)
 
+        let services = Dictionary(store.all(Service.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         let staff = Dictionary(store.all(Staff.self).map { ($0.id, $0.name) }, uniquingKeysWith: { a, _ in a })
         let next = WorkOrderRules.next[order.status]
         let others = (WorkOrderRules.transitions[order.status] ?? []).filter { $0 != next }
@@ -39,7 +40,7 @@ struct WorkOrderDetailView: View {
             Section {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(alignment: .center) {
-                        if let vehicle { PlateBadge(plate: vehicle.plate) } else { Text("Fără mașină").foregroundStyle(.secondary) }
+                        if let vehicle { MakeLogo(make: vehicle.make, size: 34); PlateBadge(plate: vehicle.plate) } else { Text("Fără mașină").foregroundStyle(.secondary) }
                         Spacer()
                         StatusPill(style: Labels.workOrder(order.status))
                     }
@@ -104,7 +105,7 @@ struct WorkOrderDetailView: View {
             Section {
                 ForEach(order.lines) { line in
                     Button { if !locked { editingLine = line } } label: {
-                        LineRow(line: line, currency: shop.currency, vatPayer: shop.vatPayer, staff: staff[line.staffId ?? ""])
+                        LineRow(line: line, currency: shop.currency, vatPayer: shop.vatPayer, staff: staff[line.staffId ?? ""], services: services)
                     }
                     .tint(.primary)
                     .swipeActions {
@@ -186,6 +187,7 @@ struct WorkOrderDetailView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .band(150)
         .navigationTitle(Text(verbatim: "Lucrarea #\(order.number)"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -307,9 +309,18 @@ struct LineRow: View {
     let currency: String
     let vatPayer: Bool
     var staff: String? = nil
+    /// When given, labor lines show the icon of their kind of work.
+    var services: [String: Service]? = nil
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
+        HStack(alignment: services == nil ? .firstTextBaseline : .center, spacing: 12) {
+            if let services {
+                if line.kind == "labor" {
+                    WorkIcon(category: WorkKind.category(serviceId: line.refId, text: line.description, services: services))
+                } else {
+                    IconSquare(symbol: line.kind == "part" ? "shippingbox.fill" : "banknote.fill", color: line.kind == "part" ? .brown : .gray)
+                }
+            }
             VStack(alignment: .leading, spacing: 2) {
                 Text(line.description.isEmpty ? (Lines.kindLabel[line.kind] ?? "Linie") : line.description)
                     .strikethrough(line.refused)
