@@ -5,24 +5,67 @@ struct VehiclesView: View {
     @Environment(AppStore.self) private var store
     @State private var query = ""
     @State private var creating: Vehicle?
+    @State private var editing: Vehicle?
+    @AppStorage("vehicles.sort") private var sort = "plate"
+    @AppStorage("vehicles.group") private var group = "none"
 
     var body: some View {
         let owners = Dictionary(store.all(Customer.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let today = Dates.today()
         let tokens = Search.tokens(query)
         let vehicles = store.all(Vehicle.self)
             .filter { v in
                 tokens.isEmpty || Search.matches(Search.fold([v.plate, People.normalizePlate(v.plate), v.title, v.vin, owners[v.customerId ?? ""]?.name ?? ""].joined(separator: " ")), tokens)
             }
-            .sorted { $0.plate < $1.plate }
-        List(vehicles) { v in
-            NavigationLink { VehicleDetailView(id: v.id) } label: { VehicleRow(vehicle: v, owner: owners[v.customerId ?? ""]?.name) }
-        }
+            .sorted { a, b in
+                switch sort {
+                case "make": return a.title.localizedCompare(b.title) == .orderedAscending
+                case "km": return (People.estimateKm(a, today: today) ?? 0) > (People.estimateKm(b, today: today) ?? 0)
+                case "itp": return (a.itpExpiry ?? "9999") < (b.itpExpiry ?? "9999")
+                default: return a.plate < b.plate
+                }
+            }
+        let sections: [(title: String, make: String?, rows: [Vehicle])] = {
+            switch group {
+            case "make":
+                let by = Dictionary(grouping: vehicles) { $0.make.isEmpty ? "Fără marcă" : $0.make }
+                return by.keys.sorted().map { ($0, $0, by[$0]!) }
+            case "owner":
+                let by = Dictionary(grouping: vehicles) { owners[$0.customerId ?? ""]?.name ?? "Fără proprietar" }
+                return by.keys.sorted { $0.localizedCompare($1) == .orderedAscending }.map { ($0, nil, by[$0]!) }
+            default:
+                return vehicles.isEmpty ? [] : [("", nil, vehicles)]
+            }
+        }()
+        List { ForEach(sections, id: \.title) { section in
+            Section {
+                ForEach(section.rows) { v in
+                    NavigationLink { VehicleDetailView(id: v.id) } label: { VehicleRow(vehicle: v, owner: owners[v.customerId ?? ""]?.name) }
+                        .swipeActions(edge: .trailing) {
+                            Button { editing = v } label: { Label("Editează", systemImage: "pencil") }.tint(.gray)
+                        }
+                        .contextMenu { Button { editing = v } label: { Label("Editează", systemImage: "pencil") } }
+                }
+            } header: {
+                if !section.title.isEmpty {
+                    HStack(spacing: 8) {
+                        if let make = section.make { MakeLogo(make: make, size: 20) }
+                        CapsHeader("\(section.title) · \(section.rows.count)")
+                    }
+                }
+            }
+        } }
         .overlay { if vehicles.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView("Nicio mașină", systemImage: "car")) : AnyView(ContentUnavailableView.search(text: query)) } }
         .band(200)
         .navigationTitle("Mașini")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Număr, marcă, VIN, proprietar")
-        .toolbar { Button { creating = store.newVehicle(customerId: nil) } label: { Label("Mașină nouă", systemImage: "plus") } }
+        .toolbar {
+            SortGroupMenu(sorts: [("plate", "Număr"), ("make", "Marcă și model"), ("km", "Kilometri"), ("itp", "ITP cel mai apropiat")], sort: $sort,
+                          groups: [("none", "Fără grupare"), ("make", "Marcă"), ("owner", "Proprietar")], group: $group)
+            Button { creating = store.newVehicle(customerId: nil) } label: { Label("Mașină nouă", systemImage: "plus") }
+        }
         .sheet(item: $creating) { VehicleForm(vehicle: $0, isNew: true) }
+        .sheet(item: $editing) { VehicleForm(vehicle: $0, isNew: false) }
     }
 }
 
