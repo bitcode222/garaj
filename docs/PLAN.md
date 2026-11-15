@@ -2,7 +2,7 @@
 
 > Shop-management app for independent car repair shops (Romania first).
 > **Core loop:** `Programare → Lucrare (deviz) → Factură → Plată → Reamintire → Programare`
-> Web (Next.js static export) + iPhone app (Capacitor 8, same code, works offline).
+> Web (Next.js static export) + native iPhone app (SwiftUI, `ios-native/`, works offline; [IOS-NATIVE.md](IOS-NATIVE.md)).
 
 Status legend: ✅ done in this MVP · 🟡 partial / stubbed · ⏭ later
 
@@ -146,7 +146,7 @@ Reminder → booking conversion · estimate approval rate · average ticket · l
   src/features/<module>/     feature components (calendar, invoices, work-orders…)
   src/domain/                business rules (pure, tested with node:test)
   src/lib/store/             store, persistence, hooks, seed data
-  ios/                       Capacitor iOS project (SPM)
+  ios-native/                native SwiftUI iPhone app (xcodegen)
   ```
 
 ---
@@ -243,13 +243,12 @@ Line shape (shared by work orders and invoices): `{id, kind: labor|part|fee, ref
 
 | Item | Decision |
 |---|---|
-| Wrapper | Capacitor 8.5 + Swift Package Manager (no CocoaPods) |
-| Bundle | `out/` (static export) copied into the app → fully offline |
+| App | Native SwiftUI (`ios-native/`, iOS 26+, iPhone only), rules ported to Swift; plan in [IOS-NATIVE.md](IOS-NATIVE.md). The Capacitor wrapper it replaced was removed (phase 6). |
+| Data | `garaj.json` in Application Support, same format as a backup → fully offline |
 | Bundle ID | `com.albertoparos.garaj` |
 | Signing | Personal Team `7363RX85BF` (free) → app expires after **7 days**, max **3** free-provisioned apps on the phone |
-| Native bits | Router that maps `/route/` → `route/index.html` · print plugin (`UIPrintInteractionController`) · swipe-back gesture · status bar style |
-| Build & install | `npm run ios:device` → static build → `cap sync` → `xcodebuild` → `devicectl install` → launch |
-| Live reload (dev) | `CAP_SERVER_URL=http://<mac-ip>:3000 npm run ios:device` |
+| Build & install | `npm run ios:device` → `xcodegen` → `xcodebuild` (Release) → `devicectl install` → launch |
+| Tests | `npm run ios:test` (Swift tests against JS golden fixtures, `npm run ios:fixtures`) |
 
 ---
 

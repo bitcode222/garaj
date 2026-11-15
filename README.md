@@ -13,7 +13,7 @@ npm install
 npm run dev          # http://localhost:3000 — first load seeds a demo shop
 npm test             # business-rule unit tests (node:test)
 npm run lint
-npm run build        # static export → out/ (the website and the iOS bundle)
+npm run build        # static export → out/ (the website)
 ```
 
 ## iPhone
@@ -21,17 +21,12 @@ npm run build        # static export → out/ (the website and the iOS bundle)
 Requirements: Xcode, an Apple ID signed in to Xcode (the free Personal Team works), iPhone connected and trusted, Developer Mode on.
 
 ```bash
-npm run ios:device   # build → sync → sign → install → launch on the connected iPhone
+npm run ios:device   # native SwiftUI app (ios-native/): generate → build → sign → install → launch
+npm run ios:test     # Swift tests (the ported rules against the JS answers)
 npm run ios:open     # open the Xcode project
 ```
 
-Live reload on the phone while developing:
-
-```bash
-npm run dev:lan                                          # serves on your Mac's LAN IP
-CAP_SERVER_URL=http://<mac-ip>:3000 npm run ios:device   # app loads from the dev server
-npm run ios:device                                       # back to the bundled, offline build
-```
+The iPhone app is native SwiftUI; its rules are a Swift port of `src/domain/` ([`docs/IOS-NATIVE.md`](docs/IOS-NATIVE.md)). Needs `xcodegen` (`brew install xcodegen`).
 
 Free Personal Team limits: the app expires after 7 days (run `npm run ios:device` again), max 3 such apps on the phone.
 First install: on the iPhone, Settings → General → VPN & Device Management → trust the developer.
@@ -62,5 +57,5 @@ src/components/ds/   design-system components (Page, Card, Stat, Money, Plate, S
 src/components/shell/ sidebar · rail · top bar · tab bar · ⌘K search · quick create
 src/features/        one folder per module (calendar, work-orders, invoices, customers, vehicles…)
 src/app/             routes (static export; detail pages use ?id=)
-ios/                 Capacitor 8 project (SPM) with a static-export router and a native print plugin
+ios-native/          native SwiftUI iPhone app (xcodegen project, Swift port of the rules, Swift tests)
 ```

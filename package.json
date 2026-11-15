@@ -11,8 +11,7 @@
 		"lint": "eslint",
 		"test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"src/domain/*.test.js\" \"src/features/**/*.test.js\"",
 		"ui:check": "next build && node scripts/ui-check.mjs",
-		"ios:sync": "next build && cap sync ios",
-		"ios:open": "cap open ios",
+		"ios:open": "cd ios-native && xcodegen --quiet && open Garaj.xcodeproj",
 		"ios:device": "bash scripts/ios-device.sh",
 		"autopull": "bash scripts/auto-pull.sh",
 		"autopull:install": "bash scripts/install-auto-pull.sh",
@@ -26,9 +25,6 @@
 		"ios:test": "bash scripts/ios-test.sh"
 	},
 	"dependencies": {
-		"@capacitor/core": "^8.5.2",
-		"@capacitor/ios": "^8.5.2",
-		"@capacitor/status-bar": "^8.0.3",
 		"@radix-ui/react-alert-dialog": "^1.1.15",
 		"@radix-ui/react-dialog": "^1.1.15",
 		"@radix-ui/react-dropdown-menu": "^2.1.16",
@@ -52,7 +48,6 @@
 		"tailwind-merge": "^3.4.0"
 	},
 	"devDependencies": {
-		"@capacitor/cli": "^8.5.2",
 		"@tailwindcss/postcss": "^4",
 		"babel-plugin-react-compiler": "1.0.0",
 		"eslint": "^9",
