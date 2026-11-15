@@ -319,3 +319,15 @@ struct Bay: Record {
     var active: Bool
     var order: Double
 }
+
+/// A handled reminder ("contacted" or "snoozed"), keyed by the reminder's key.
+struct Contact: Record {
+    static let collection = Collection.contacts
+    static let defaults: JSONObject = ["key": .string(""), "channel": .string("manual"), "date": .string(""), "snoozeUntil": .string(""), "createdAt": .string("")]
+    var id: String
+    var key: String
+    var channel: String
+    var date: String
+    var snoozeUntil: String
+    var createdAt: String
+}

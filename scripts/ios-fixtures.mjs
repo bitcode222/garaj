@@ -20,6 +20,8 @@ const analytics = await import("../src/domain/analytics.js");
 const alist = await import("../src/domain/appointment-list.js");
 const appt = await import("../src/domain/appointment.js");
 const search = await import("../src/domain/search.js");
+const reminders = await import("../src/domain/reminders.js");
+const inventory = await import("../src/domain/inventory.js");
 
 const OUT = new URL("../ios-native/GarajTests/Fixtures/", import.meta.url);
 mkdirSync(OUT, { recursive: true });
@@ -245,6 +247,38 @@ write("rules.json", {
 		facts: c.customers.map((x) => ({ id: x.id, facts: customer.customerFacts(x.id, { appointments: c.appointments, workOrders: c.workOrders }) })),
 		appointments: c.appointments.map((a) => ({ id: a.id, customerId: a.customerId, status: a.status, start: a.start, end: a.end })),
 		workOrders: c.workOrders.map((o) => ({ id: o.id, customerId: o.customerId, status: o.status, createdAt: o.createdAt, dates: o.dates })),
+	}, { compact: true });
+}
+
+// De contactat and Catalog: reminders and their messages, stock levels, prices from cost.
+{
+	const today = "2026-11-15";
+	const c = demoAll.collections;
+	const byId = (list) => new Map(list.map((x) => [x.id, x]));
+	const paymentsByInvoice = new Map();
+	for (const p of c.payments) paymentsByInvoice.set(p.invoiceId, [...(paymentsByInvoice.get(p.invoiceId) ?? []), p]);
+	const all = reminders.computeReminders({ today, vehicles: c.vehicles, customersById: byId(c.customers), invoices: c.invoices, paymentsByInvoice, workOrders: c.workOrders, appointments: c.appointments, contactsByKey: new Map() });
+	// Snooze a few: one until tomorrow (hidden), one that ended today (shown again).
+	const contacts = [
+		{ id: all[0].key, key: all[0].key, channel: "whatsapp", date: "2026-11-10", snoozeUntil: "2026-11-16", createdAt: "x" },
+		{ id: all[1].key, key: all[1].key, channel: "snooze", date: "2026-11-08", snoozeUntil: "2026-11-15", createdAt: "x" },
+	];
+	const snoozed = reminders.computeReminders({ today, vehicles: c.vehicles, customersById: byId(c.customers), invoices: c.invoices, paymentsByInvoice, workOrders: c.workOrders, appointments: c.appointments, contactsByKey: new Map(contacts.map((x) => [x.key, x])) });
+	const settings = { ...DEFAULT_SETTINGS, shop: { ...DEFAULT_SETTINGS.shop, name: "Service Test", phone: "0722 000 111", iban: "RO49AAAA1B31007593840000" } };
+	const customers = byId(c.customers), vehicles = byId(c.vehicles), invoices = byId(c.invoices);
+	const pick = (o, keys) => Object.fromEntries(keys.map((k) => [k, o[k]]));
+	const reserved = inventory.reservedByPart(c.workOrders, invoices);
+	write("reminders.json", {
+		today, settings, contacts,
+		vehicles: c.vehicles, customers: c.customers,
+		invoices: c.invoices.filter((i) => i.status === "issued" && !i.stornoOf).map((i) => ({ ...pick(i, ["id", "status", "series", "number", "issueDate", "dueDate", "customerId", "vehicleId", "createdAt"]), totals: pick(i.totals, ["gross"]) })),
+		payments: c.payments.map((x) => pick(x, ["id", "invoiceId", "amount"])),
+		workOrders: c.workOrders.filter((o) => o.status !== "delivered" && o.status !== "cancelled").map((o) => ({ ...pick(o, ["id", "number", "status", "customerId", "vehicleId", "dates", "createdAt", "invoiceId"]), lines: o.lines.filter((l) => l.kind === "part") })),
+		appointments: c.appointments.filter((a) => a.status === "scheduled").map((a) => pick(a, ["id", "status", "start", "end", "customerId", "vehicleId"])),
+		all: all.map((r) => ({ ...r, message: reminders.reminderMessage(r, { customer: customers.get(r.customerId), vehicle: vehicles.get(r.vehicleId), invoice: invoices.get(r.invoiceId), settings }) })),
+		snoozed: snoozed.map((r) => r.key),
+		parts: c.parts.map((p) => ({ part: p, level: inventory.stockLevel(p, reserved.get(p.id) ?? 0), reserved: reserved.get(p.id) ?? 0 })),
+		prices: [[4200, 35], [100, 0], [12345, 27.5], [1, 35], [99999, 100], [0, 50]].map(([cost, markup]) => ({ cost, markup, price: lines.priceFromCost(cost, markup) })),
 	}, { compact: true });
 }
 
