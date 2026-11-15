@@ -46,11 +46,23 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.albertoparos.garaj.tests
+  GarajUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [GarajUITests]
+    dependencies:
+      - target: Garaj
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.albertoparos.garaj.uitests
+        TEST_TARGET_NAME: Garaj
 schemes:
   Garaj:
     build:
       targets:
         Garaj: all
         GarajTests: [test]
+        GarajUITests: [test]
     test:
-      targets: [GarajTests]
+      targets: [GarajTests, GarajUITests]

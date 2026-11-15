@@ -7,6 +7,8 @@ struct AppointmentsView: View {
     @Environment(UndoCenter.self) private var undo
     @AppStorage("appointments.period") private var period = "upcoming"
     @AppStorage("appointments.sort") private var sort = "time"
+    @AppStorage("appointments.mode") private var mode = "list"
+    @State private var calendarDay = Dates.today()
     @State private var status = "all"
     @State private var staff = "all"
     @State private var query = ""
@@ -29,6 +31,10 @@ struct AppointmentsView: View {
             let result = AppointmentList.list(store.all(Appointment.self), status: status, period: period, staff: staff,
                                               tokens: Search.tokens(query), sort: sort, today: today, now: now, lookups: lookups)
             let groups = sort == "time" ? AppointmentList.groupByDay(result.rows) : [AppointmentList.DayGroup(day: "", items: result.rows, minutes: 0)]
+            Group {
+            if mode == "calendar" {
+                CalendarDayView(day: $calendarDay, open: { path.append(.appointment($0)) }, book: { editing = .newAt($0, $1) })
+            } else {
             List {
                 if query.isEmpty {
                     Section { StatsRow(status: $status, period: $period) }
@@ -73,9 +79,24 @@ struct AppointmentsView: View {
                     }
                 }
             }
-            .navigationTitle("Programări")
             .searchable(text: $query, prompt: "Număr, client, telefon, mașină")
+            }
+            }
+            .navigationTitle("Programări")
+            .navigationBarTitleDisplayMode(mode == "calendar" ? .inline : .large)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Picker("Vedere", selection: $mode) {
+                        Label("Listă", systemImage: "list.bullet").tag("list")
+                        Label("Calendar", systemImage: "calendar").tag("calendar")
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 180)
+                }
+                if mode == "calendar" && calendarDay != Dates.today() {
+                    ToolbarItem(placement: .topBarLeading) { Button("Azi") { calendarDay = Dates.today() } }
+                }
+                if mode == "list" {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Picker("Perioada", selection: $period) {
@@ -94,6 +115,7 @@ struct AppointmentsView: View {
                     } label: {
                         Label("Filtre", systemImage: period == "upcoming" && staff == "all" && sort == "time" ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle.fill")
                     }
+                }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { editing = .new } label: { Label("Programare nouă", systemImage: "plus") }

@@ -9,4 +9,4 @@ SIM="${SIM_NAME:-$(xcrun simctl list devices available -j | node -e '
   process.stdout.write((d.find((x) => x.name.startsWith("iPhone")) ?? {}).name ?? "");')}"
 [ -n "$SIM" ] || { echo "No iPhone simulator installed." >&2; exit 1; }
 xcodebuild test -project ios-native/Garaj.xcodeproj -scheme Garaj -destination "platform=iOS Simulator,name=$SIM" \
-  -derivedDataPath ios-native/build -quiet
+  -derivedDataPath ios-native/build -only-testing:GarajTests -quiet

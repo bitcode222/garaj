@@ -151,9 +151,9 @@ struct AnyPrimitiveButtonStyle: PrimitiveButtonStyle {
 struct BookingForm: View {
     enum Target: Identifiable, Hashable {
         case new
-        case newAt(String) // start instant
+        case newAt(String, String?) // start instant, mechanic
         case edit(String)
-        var id: String { switch self { case .new: "new"; case .newAt(let s): "at-\(s)"; case .edit(let id): id } }
+        var id: String { switch self { case .new: "new"; case .newAt(let s, let staff): "at-\(s)-\(staff ?? "")"; case .edit(let id): id } }
     }
 
     @Environment(AppStore.self) private var store
@@ -279,8 +279,9 @@ struct BookingForm: View {
         case .new:
             start = nextOpenSlot()
             minutes = Int(store.settings["calendar"]?["defaultDuration"]?.number ?? 60)
-        case .newAt(let s):
+        case .newAt(let s, let staff):
             start = Dates.parseInstant(s) ?? .now
+            staffId = staff
             minutes = Int(store.settings["calendar"]?["defaultDuration"]?.number ?? 60)
         case .edit(let id):
             guard let a = store.get(Appointment.self, id) else { return }
