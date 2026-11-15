@@ -19,7 +19,7 @@ struct VehiclesView: View {
         }
         .overlay { if vehicles.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView("Nicio mașină", systemImage: "car")) : AnyView(ContentUnavailableView.search(text: query)) } }
         .navigationTitle("Mașini")
-        .searchable(text: $query, prompt: "Număr, marcă, VIN, proprietar")
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Număr, marcă, VIN, proprietar")
         .toolbar { Button { creating = store.newVehicle(customerId: nil) } label: { Label("Mașină nouă", systemImage: "plus") } }
         .sheet(item: $creating) { VehicleForm(vehicle: $0, isNew: true) }
     }
@@ -31,23 +31,40 @@ struct VehicleRow: View {
 
     var body: some View {
         let today = Dates.today()
-        let flags = [("ITP", People.deadline(vehicle.itpExpiry, today: today).status), ("RCA", People.deadline(vehicle.rcaExpiry, today: today).status),
-                     ("Revizie", People.serviceDue(vehicle, today: today).status)].filter { $0.1 == "soon" || $0.1 == "expired" }
-        VStack(alignment: .leading, spacing: 3) {
-            HStack {
-                Text(People.formatPlate(vehicle.plate)).font(.headline)
-                Spacer()
-                ForEach(flags, id: \.0) { flag in
-                    Text(flag.0).font(.caption2.weight(.semibold)).padding(.horizontal, 6).padding(.vertical, 2)
-                        .foregroundStyle(flag.1 == "expired" ? .white : .orange)
-                        .background(flag.1 == "expired" ? Color.red : Color.orange.opacity(0.18), in: .capsule)
-                        .accessibilityLabel("\(flag.0) \(flag.1 == "expired" ? "expirat" : "expiră curând")")
+        let itp = People.deadline(vehicle.itpExpiry, today: today)
+        let rca = People.deadline(vehicle.rcaExpiry, today: today)
+        let service = People.serviceDue(vehicle, today: today)
+        let km = People.estimateKm(vehicle, today: today) ?? vehicle.mileage.last?.km
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(People.formatPlate(vehicle.plate)).font(.body.weight(.semibold)).tracking(0.4)
+                Text([vehicle.title, owner].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+                    .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                if let flag = Self.flag(itp: itp, rca: rca, service: service) {
+                    StatusPill(style: flag).padding(.top, 2)
                 }
             }
-            Text([vehicle.title, vehicle.year.map(String.init), owner].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
-                .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+            Spacer(minLength: 4)
+            if let km { Text("\(km.formatted(.number.locale(Locale(identifier: "ro_RO")))) km").foregroundStyle(.secondary).monospacedDigit() }
         }
         .padding(.vertical, 2)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// The most urgent of ITP, RCA and service, as a capsule (expired first, then the nearest).
+    static func flag(itp: People.Deadline, rca: People.Deadline, service: People.ServiceDue) -> StatusStyle? {
+        let days = { (n: Int) in n == 1 ? "o zi" : "\(n) zile" }
+        if itp.status == "expired" { return StatusStyle(label: "ITP expirat", symbol: "", color: .red) }
+        if rca.status == "expired" { return StatusStyle(label: "RCA expirat", symbol: "", color: .red) }
+        if service.status == "expired" || service.status == "overdue" { return StatusStyle(label: "Revizie depășită", symbol: "", color: .red) }
+        var soon: [(Int, StatusStyle)] = []
+        if itp.status == "soon", let d = itp.days { soon.append((d, StatusStyle(label: "ITP în \(days(d))", symbol: "", color: .orange))) }
+        if rca.status == "soon", let d = rca.days { soon.append((d, StatusStyle(label: "RCA în \(days(d))", symbol: "", color: .purple))) }
+        if service.status == "soon" {
+            let label = service.kmLeft.map { "Revizie în ~\(max(0, $0).formatted(.number.locale(Locale(identifier: "ro_RO")))) km" } ?? "Revizie curând"
+            soon.append((service.days ?? 999, StatusStyle(label: label, symbol: "", color: .blue)))
+        }
+        return soon.min { $0.0 < $1.0 }?.1
     }
 }
 
@@ -87,7 +104,7 @@ struct VehicleDetailView: View {
                     NavigationLink { CustomerDetailView(id: owner.id) } label: { LabeledContent("Proprietar", value: owner.name) }
                 }
             }
-            Section("Termene") {
+            Section(header: CapsHeader("Termene")) {
                 DeadlineRow(title: "ITP", date: v.itpExpiry, d: People.deadline(v.itpExpiry, today: today))
                 DeadlineRow(title: "RCA", date: v.rcaExpiry, d: People.deadline(v.rcaExpiry, today: today))
                 LabeledContent {
@@ -112,11 +129,11 @@ struct VehicleDetailView: View {
                     }
                     .disabled(Int(reading.filter(\.isNumber)) == nil)
                 }
-            } header: { Text("Kilometraj") } footer: {
+            } header: { CapsHeader("Kilometraj") } footer: {
                 if let est = People.estimateKm(v, today: today), let last = v.mileage.last, last.date != today { Text("Azi, estimat: ~\(km(est))") }
             }
             if !orders.isEmpty {
-                Section("Lucrări") {
+                Section(header: CapsHeader("Lucrări")) {
                     ForEach(orders) { o in
                         NavigationLink { WorkOrderDetailView(id: o.id) } label: {
                             LabeledContent {
@@ -129,7 +146,7 @@ struct VehicleDetailView: View {
                     }
                 }
             }
-            if !v.notes.isEmpty { Section("Note") { Text(v.notes) } }
+            if !v.notes.isEmpty { Section(header: CapsHeader("Note")) { Text(v.notes) } }
             Section { Button("Șterge mașina", role: .destructive) { confirmDelete = true } }
         }
         .listStyle(.insetGrouped)
@@ -199,7 +216,7 @@ struct VehicleForm: View {
                     }
                     TextField("VIN", text: $vehicle.vin).textInputAutocapitalization(.characters).font(.body.monospaced())
                 } footer: { if let vin { Text(vin).foregroundStyle(.orange) } }
-                Section("Termene") {
+                Section(header: CapsHeader("Termene")) {
                     OptionalDate(title: "ITP expiră", value: $vehicle.itpExpiry)
                     OptionalDate(title: "RCA expiră", value: $vehicle.rcaExpiry)
                     OptionalDate(title: "Ultima revizie", value: $vehicle.lastServiceDate)

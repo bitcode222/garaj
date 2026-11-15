@@ -34,7 +34,7 @@ struct RemindersView: View {
                                 }
                         }
                     } header: {
-                        Label("\(type.label) · \(items.count)", systemImage: type.symbol).foregroundStyle(type.color)
+                        CapsHeader("\(type.label) · \(items.count)")
                     }
                 }
             }
@@ -83,6 +83,7 @@ private struct ReminderRow: View {
                 HStack(spacing: 8) {
                     if let url = People.whatsappURL(phone, text: message) {
                         Link(destination: url) { Label("WhatsApp", systemImage: "text.bubble.fill").frame(maxWidth: .infinity) }
+                            .buttonStyle(.borderedProminent)
                             .simultaneousGesture(TapGesture().onEnded { handled("whatsapp") })
                     }
                     if let url = People.smsURL(phone, body: message) {

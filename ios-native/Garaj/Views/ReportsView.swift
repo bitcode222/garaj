@@ -57,7 +57,7 @@ struct ReportsView: View {
                     Text(period == "month" ? "Pe zile, în tabel" : "Pe luni, în tabel")
                 }
             } header: {
-                Text(period == "month" ? "Venituri pe zile" : "Venituri pe luni")
+                CapsHeader(period == "month" ? "Venituri pe zile" : "Venituri pe luni")
             }
 
             Section {
@@ -69,7 +69,7 @@ struct ReportsView: View {
                         BarRow(label: t.name, hint: "\(t.count)×", value: money(t.revenue), share: Double(t.revenue) / Double(max), tint: .blue)
                     }
                 }
-            } header: { Text("Cele mai vândute operațiuni") } footer: { Text("După valoarea manoperei.") }
+            } header: { CapsHeader("Cele mai vândute operațiuni") } footer: { Text("După valoarea manoperei.") }
 
             Section {
                 if people.isEmpty {
@@ -82,9 +82,9 @@ struct ReportsView: View {
                                share: max > 0 ? p.hours / max : 0, tint: Tone.color(s?.color ?? "gray"))
                     }
                 }
-            } header: { Text("Mecanici") } footer: { Text("Ore de manoperă facturate.") }
+            } header: { CapsHeader("Mecanici") } footer: { Text("Ore de manoperă facturate.") }
 
-            Section("Încasări pe metode") {
+            Section(header: CapsHeader("Încasări pe metode")) {
                 PaymentMixView(mix: mix, currency: currency)
             }
 
@@ -94,7 +94,7 @@ struct ReportsView: View {
                 AgingRow(label: "Restante 31–60 zile", color: .orange, value: aging.d60, currency: currency)
                 AgingRow(label: "Restante peste 60 zile", color: .red, value: aging.d90, currency: currency)
             } header: {
-                Text("Creanțe la zi")
+                CapsHeader("Creanțe la zi")
             } footer: {
                 Text("Total de încasat: \(Money.format(aging.total, currency: currency)).")
             }

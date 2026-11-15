@@ -27,7 +27,7 @@ struct CatalogView: View {
                 let grouped = Dictionary(grouping: services, by: \.category)
                 ForEach(Inventory.serviceCategories.map(\.key) + grouped.keys.filter { k in !Inventory.serviceCategories.contains { $0.key == k } }.sorted(), id: \.self) { key in
                     if let items = grouped[key], !items.isEmpty {
-                        Section(Inventory.categoryLabel(key)) {
+                        Section(header: CapsHeader(Inventory.categoryLabel(key))) {
                             ForEach(items.sorted { $0.name < $1.name }) { s in
                                 Button { editingService = s } label: {
                                     HStack {
@@ -210,7 +210,7 @@ private struct ReceiveSheet: View {
                 Section {
                     LabeledContent("Cantitate (\(part.unit))") { TextField("0", text: $qty).keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
                     LabeledContent("Cost nou (opțional)") { TextField(Money.toInput(part.cost), text: $cost).keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
-                } header: { Text([part.name, part.brand].filter { !$0.isEmpty }.joined(separator: " ")) } footer: {
+                } header: { CapsHeader([part.name, part.brand].filter { !$0.isEmpty }.joined(separator: " ")) } footer: {
                     Text("În stoc acum: \(Money.formatQuantity(part.stock)) \(part.unit)\(q > 0 ? " → \(Money.formatQuantity(part.stock + q))" : "")")
                 }
             }

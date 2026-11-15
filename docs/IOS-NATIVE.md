@@ -77,5 +77,5 @@ The owner compared six looks on a board (https://claude.ai/artifact/PAWzmYUBS3yB
 | PR | Screens | Status |
 |---|---|---|
 | 1 | Status capsules everywhere, Azi (greeting + day, 4 shortcuts, 4 number tiles, rows for in service / to confirm / to collect, analytics), Mai mult (Settings-style icon squares with counts) | merged (#39) |
-| 2 | Lucrări (search, filters with counts, rows), Lucrare (header card with plate, next-step button, complaint, lines, total), Facturi (2 tiles, filters, rows by month), Factură (the document on screen, collect + WhatsApp buttons, payments) | in progress |
-| 3 | Programări (list/calendar switch under the title, time column rows), Calendar (mechanic colors), Clienți (avatars), Mașini (plate rows, ITP/RCA capsules), De contactat, Catalog, Rapoarte, Setări | after |
+| 2 | Lucrări (search, filters with counts, rows), Lucrare (header card with plate, next-step button, complaint, lines, total), Facturi (2 tiles, filters, rows by month), Factură (the document on screen, collect + WhatsApp buttons, payments) | merged (#40) |
+| 3 | Programări (list/calendar switch under the title, time column rows), Calendar (mechanic colors), Clienți (avatars), Mașini (plate rows, ITP/RCA capsules), De contactat, Catalog, Rapoarte, Setări | in progress |

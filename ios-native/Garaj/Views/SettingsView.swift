@@ -59,7 +59,7 @@ struct SettingsView: View {
                 field("Email", ["shop", "email"], keyboard: .emailAddress, caps: .never, plain: true, warning: !email.isEmpty && !People.isValidEmail(email) ? "Adresa nu pare corectă." : nil)
                 field("IBAN", ["shop", "iban"], caps: .characters, plain: true, warning: !iban.isEmpty && !People.isValidIBAN(iban) ? "IBAN-ul nu trece verificarea." : nil)
                 field("Banca", ["shop", "bank"])
-            } header: { Text("Service") } footer: { Text("Apare pe facturi, devize și mesaje.") }
+            } header: { CapsHeader("Service") } footer: { Text("Apare pe facturi, devize și mesaje.") }
 
             Section {
                 LabeledContent("Serie facturi") {
@@ -94,9 +94,9 @@ struct SettingsView: View {
                     LabeledContent("Termen de plată", value: shop.dueDays == 1 ? "1 zi" : "\(shop.dueDays) zile")
                 }
                 TextField("Mențiuni implicite (ex. Garanție manoperă 3 luni.)", text: text(["invoicing", "notes"]), axis: .vertical).lineLimit(2...5)
-            } header: { Text("Facturare") } footer: { Text("Numărul merge numai în sus: numerele nu se refolosesc.") }
+            } header: { CapsHeader("Facturare") } footer: { Text("Numărul merge numai în sus: numerele nu se refolosesc.") }
 
-            Section("Tarife") {
+            Section(header: CapsHeader("Tarife")) {
                 MoneyField(label: "Manoperă pe oră, fără TVA", value: shop.laborRate, currency: store.currency) { store.setSetting(["laborRate"], .number(Double($0))) }
                 NumberField(label: "Adaos piese", suffix: "%", value: store.setting(["partsMarkup"])?.number ?? 35, decimals: 1) { store.setSetting(["partsMarkup"], .number($0)) }
             }
@@ -104,7 +104,7 @@ struct SettingsView: View {
             Section {
                 TextField("https://g.page/r/…", text: Binding(get: { store.setting(["reviews", "link"])?.string ?? "" }, set: { store.setSetting(["reviews", "link"], .string($0.trimmingCharacters(in: .whitespaces))) }))
                     .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
-            } header: { Text("Linkul pentru recenzii") } footer: { Text("Ex. pagina service-ului pe Google. Apare în mesajul trimis clientului la finalul vizitei.") }
+            } header: { CapsHeader("Linkul pentru recenzii") } footer: { Text("Ex. pagina service-ului pe Google. Apare în mesajul trimis clientului la finalul vizitei.") }
 
             Section {
                 DatePicker("Deschidere", selection: time(["hours", "open"], fallback: "08:00"), displayedComponents: .hourAndMinute)
@@ -126,7 +126,7 @@ struct SettingsView: View {
                     }
                 }
                 .sensoryFeedback(.selection, trigger: on)
-            } header: { Text("Program") } footer: { Text("Calendarul arată aceste ore și zile.") }
+            } header: { CapsHeader("Program") } footer: { Text("Calendarul arată aceste ore și zile.") }
 
             Section {
                 ForEach(staff) { s in
@@ -143,9 +143,9 @@ struct SettingsView: View {
                     .tint(.primary)
                 }
                 Button { editingStaff = store.newStaff() } label: { Label("Adaugă membru", systemImage: "plus") }
-            } header: { Text("Echipă") } footer: { Text("Mecanicii apar ca coloane în calendar.") }
+            } header: { CapsHeader("Echipă") } footer: { Text("Mecanicii apar ca coloane în calendar.") }
 
-            Section("Posturi de lucru") {
+            Section(header: CapsHeader("Posturi de lucru")) {
                 ForEach(bays) { b in
                     Button { editingBay = b } label: {
                         HStack {
@@ -160,7 +160,7 @@ struct SettingsView: View {
                 Button { editingBay = store.newBay() } label: { Label("Adaugă post", systemImage: "plus") }
             }
 
-            Section("Aspect") {
+            Section(header: CapsHeader("Aspect")) {
                 Picker("Temă", selection: Binding(get: { store.setting(["appearance", "theme"])?.string ?? "system" }, set: { store.setSetting(["appearance", "theme"], .string($0)) })) {
                     Text("Automat").tag("system")
                     Text("Luminos").tag("light")
@@ -311,7 +311,7 @@ private struct StaffForm: View {
                     }
                     TextField("Telefon", text: $staff.phone).keyboardType(.phonePad)
                 }
-                Section("Culoare în calendar") {
+                Section(header: CapsHeader("Culoare în calendar")) {
                     HStack {
                         ForEach(SettingsView.calendarColors, id: \.self) { c in
                             Button { staff.color = c } label: {
