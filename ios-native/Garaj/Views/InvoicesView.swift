@@ -10,13 +10,14 @@ struct InvoicesView: View {
     @State private var paying: Invoice?
 
     enum Filter: String, CaseIterable, Identifiable {
-        case all = "Toate", due = "De încasat", drafts = "Ciorne", paid = "Plătite"
+        case all = "Toate", due = "Neîncasate", overdue = "Restante", drafts = "Ciorne", paid = "Plătite"
         var id: String { rawValue }
 
         func keeps(_ state: String) -> Bool {
             switch self {
             case .all: true
             case .due: ["issued", "partial", "overdue"].contains(state)
+            case .overdue: state == "overdue"
             case .drafts: state == "draft"
             case .paid: state == "paid"
             }
@@ -32,7 +33,8 @@ struct InvoicesView: View {
         var id: String { invoice.id }
     }
 
-    private var rows: [Row] {
+    /// Every invoice matching the search (the filter is applied after, so the chips can count).
+    private var matching: [Row] {
         let customers = Dictionary(store.all(Customer.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         let paidBy = Dictionary(grouping: store.all(Payment.self), by: \.invoiceId)
         let today = Dates.today()
@@ -40,7 +42,6 @@ struct InvoicesView: View {
         return store.all(Invoice.self).compactMap { inv in
             let pays = paidBy[inv.id] ?? []
             let state = InvoiceRules.state(inv, payments: pays, today: today)
-            guard filter.keeps(state) else { return nil }
             let customer = customers[inv.customerId ?? ""]
             if !q.isEmpty, "\(inv.label) \(customer?.name ?? "")".range(of: q, options: [.caseInsensitive, .diacriticInsensitive]) == nil { return nil }
             let gross = store.totals(of: inv).gross
@@ -53,38 +54,74 @@ struct InvoicesView: View {
         }
     }
 
+    /// Drafts first, then one section per month of issue, newest first.
+    static func byMonth(_ rows: [Row]) -> [(title: String, rows: [Row])] {
+        let ro = Locale(identifier: "ro_RO")
+        let thisYear = Dates.today().prefix(4)
+        var out: [(title: String, rows: [Row])] = []
+        let drafts = rows.filter { $0.invoice.number == nil }
+        if !drafts.isEmpty { out.append(("Ciorne", drafts)) }
+        let issued = rows.filter { $0.invoice.number != nil }
+        var order: [String] = []
+        let grouped = Dictionary(grouping: issued) { Dates.monthKey($0.invoice.issueDate ?? "") }
+        for r in issued { let k = Dates.monthKey(r.invoice.issueDate ?? ""); if !order.contains(k) { order.append(k) } }
+        order.sort(by: >)
+        for k in order {
+            let date = Dates.parseDate("\(k)-01")
+            let title = date.map { k.hasPrefix(thisYear) ? $0.formatted(.dateTime.month(.wide).locale(ro)) : $0.formatted(.dateTime.month(.wide).year().locale(ro)) } ?? "Fără dată"
+            out.append((title.capitalizedFirst, grouped[k] ?? []))
+        }
+        return out
+    }
+
     var body: some View {
         NavigationStack(path: $path) {
-            let rows = rows
-            let due = rows.filter { ["issued", "partial", "overdue"].contains($0.state) }.reduce(0) { $0 + $1.balance }
+            let all = matching
+            let rows = all.filter { filter.keeps($0.state) }
+            let dueRows = all.filter { Filter.due.keeps($0.state) }
+            let due = dueRows.reduce(0) { $0 + $1.balance }
+            let overdue = dueRows.filter { $0.state == "overdue" }.count
+            let monthStart = "\(Dates.monthKey(Dates.today()))-01"
+            let monthPayments = store.all(Payment.self).filter { $0.date >= monthStart }
+            let month = Dates.parseDate(monthStart)?.formatted(.dateTime.month(.wide).locale(Locale(identifier: "ro_RO"))) ?? ""
+            let groups = Self.byMonth(rows)
             List {
                 Section {
-                    Picker("Arată", selection: $filter) {
-                        ForEach(Filter.allCases) { Text($0.rawValue).tag($0) }
+                    TileGrid {
+                        StatTile(label: "De încasat", value: Money.format(due, currency: store.currency, decimals: 0),
+                                 detail: "\(dueRows.count) \(dueRows.count == 1 ? "factură" : "facturi")\(overdue > 0 ? ", \(overdue) \(overdue == 1 ? "restantă" : "restante")" : "")",
+                                 detailColor: overdue > 0 ? .red : nil) { filter = .due }
+                        StatTile(label: "Încasat în \(month)", value: Money.format(monthPayments.reduce(0) { $0 + $1.amount }, currency: store.currency, decimals: 0),
+                                 detail: "\(monthPayments.count) \(monthPayments.count == 1 ? "plată" : "plăți")")
                     }
-                    .pickerStyle(.segmented)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets())
                 }
-                if filter == .due && due > 0 {
-                    Section {
-                        LabeledContent("De încasat") {
-                            Text(Money.format(due, currency: store.currency)).font(.headline.monospacedDigit())
+                .bareRow()
+                Section {
+                    ChipRow {
+                        ForEach(Filter.allCases) { f in
+                            CountChip(title: f.rawValue, count: all.filter { f.keeps($0.state) }.count, on: filter == f) { filter = f }
                         }
                     }
                 }
-                Section {
-                    ForEach(rows) { row in
-                        NavigationLink(value: row.invoice.id) { InvoiceRow(row: row, currency: store.currency) }
-                            .swipeActions(edge: .leading) {
-                                if ["issued", "partial", "overdue"].contains(row.state) {
-                                    Button { paying = row.invoice } label: { Label("Încasează", systemImage: "banknote") }
-                                        .tint(.green)
+                .bareRow()
+                ForEach(groups, id: \.title) { group in
+                    Section {
+                        ForEach(group.rows) { row in
+                            NavigationLink(value: row.invoice.id) { InvoiceRow(row: row, currency: store.currency) }
+                                .swipeActions(edge: .leading) {
+                                    if ["issued", "partial", "overdue"].contains(row.state) {
+                                        Button { paying = row.invoice } label: { Label("Încasează", systemImage: "banknote") }
+                                            .tint(.green)
+                                    }
                                 }
-                            }
+                        }
+                    } header: {
+                        CapsHeader(group.title)
                     }
                 }
             }
+            .listStyle(.insetGrouped)
+            .sensoryFeedback(.selection, trigger: filter)
             .overlay {
                 if rows.isEmpty {
                     if query.isEmpty {
@@ -125,23 +162,26 @@ private struct InvoiceRow: View {
     let currency: String
 
     var body: some View {
-        let style = Labels.invoice(row.state)
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(verbatim: row.invoice.label).font(.headline.monospacedDigit())
-                Spacer()
-                Text(Money.format(row.gross, currency: currency)).font(.subheadline.monospacedDigit())
+        let ro = Locale(identifier: "ro_RO")
+        let short = { (d: String?) in d.flatMap(Dates.parseDate)?.formatted(.dateTime.day().month(.abbreviated).locale(ro)) ?? "" }
+        let detail: String = {
+            switch row.state {
+            case "draft": return "ciornă din \(short(Dates.dayOfInstant(row.invoice.createdAt)))"
+            case "paid", "cancelled", "storno": return short(row.invoice.issueDate)
+            default: return [short(row.invoice.issueDate), row.invoice.dueDate.map { "scadentă \(short($0))" }].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
             }
-            HStack(alignment: .firstTextBaseline) {
-                Text(row.customer?.name ?? "Fără client").font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
-                Spacer()
-                Text(Dates.display(row.invoice.issueDate)).font(.caption).foregroundStyle(.secondary)
+        }()
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(verbatim: "\(row.invoice.number == nil ? "Ciornă" : row.invoice.label) · \(row.customer?.name ?? "Fără client")").lineLimit(1)
+                Text(detail).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                StatusPill(style: Labels.invoice(row.state)).padding(.top, 2)
             }
-            HStack {
-                StatusPill(style: style)
-                Spacer()
+            Spacer(minLength: 8)
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(Money.format(row.gross, currency: currency)).font(.body.weight(.semibold)).monospacedDigit()
                 if row.state == "partial" || row.state == "overdue" {
-                    Text("Rest \(Money.format(row.balance, currency: currency))").font(.caption.monospacedDigit()).foregroundStyle(style.color)
+                    Text("rest \(Money.format(row.balance, currency: currency))").font(.caption).monospacedDigit().foregroundStyle(Labels.invoice(row.state).color)
                 }
             }
         }

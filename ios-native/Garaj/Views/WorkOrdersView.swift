@@ -11,13 +11,15 @@ struct WorkOrdersView: View {
     @State private var moved = 0
     @State private var error: String?
 
-    private var rows: [WorkOrderRow.Model] {
+    private static let open: Set<String> = ["estimate", "approved", "in_progress", "waiting_parts", "ready"]
+
+    /// Every job matching the search (the status filter is applied after, so the chips can count).
+    private var matching: [WorkOrderRow.Model] {
         let customers = Dictionary(store.all(Customer.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         let vehicles = Dictionary(store.all(Vehicle.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         let q = query.trimmingCharacters(in: .whitespaces).folding(options: [.diacriticInsensitive, .caseInsensitive], locale: nil)
         let vatPayer = store.shop.vatPayer
         return store.all(WorkOrder.self)
-            .filter { status == nil || $0.status == status }
             .map { WorkOrderRow.Model(order: $0, customer: customers[$0.customerId ?? ""], vehicle: vehicles[$0.vehicleId ?? ""], vatPayer: vatPayer) }
             .filter { q.isEmpty || $0.searchText.contains(q) || $0.plateKey.contains(People.normalizePlate(q)) && !People.normalizePlate(q).isEmpty }
             .sorted { $0.order.number > $1.order.number }
@@ -25,28 +27,41 @@ struct WorkOrdersView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            let rows = rows
-            List(rows) { row in
-                NavigationLink(value: row.order.id) {
-                    WorkOrderRow(model: row, currency: store.currency)
-                }
-                .swipeActions(edge: .leading) {
-                    if let next = WorkOrderRules.next[row.order.status] {
-                        Button { move(row.order, to: next) } label: {
-                            Label(Labels.workOrderAction(from: row.order.status, to: next), systemImage: Labels.workOrder(next).symbol)
+            let all = matching
+            let counts = Dictionary(grouping: all, by: \.order.status).mapValues(\.count)
+            let rows = all.filter { status == nil || $0.order.status == status }
+            let openRows = rows.filter { Self.open.contains($0.order.status) }
+            let closedRows = rows.filter { !Self.open.contains($0.order.status) }
+            let openNet = openRows.reduce(0) { $0 + Lines.totals($1.order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).net }
+            List {
+                Section {
+                    ChipRow {
+                        CountChip(title: "Toate", count: all.count, on: status == nil) { status = nil }
+                        ForEach(Labels.workOrderOrder.filter { (counts[$0] ?? 0) > 0 }, id: \.self) { key in
+                            CountChip(title: Labels.workOrder(key).label, count: counts[key] ?? 0, on: status == key) { status = status == key ? nil : key }
                         }
-                        .tint(Labels.workOrder(next).color)
                     }
                 }
-                .contextMenu {
-                    ForEach(WorkOrderRules.transitions[row.order.status] ?? [], id: \.self) { to in
-                        Button(role: to == "cancelled" ? .destructive : nil) { move(row.order, to: to) } label: {
-                            Label(Labels.workOrderAction(from: row.order.status, to: to), systemImage: Labels.workOrder(to).symbol)
-                        }
+                .bareRow()
+                if !openRows.isEmpty {
+                    Section {
+                        ForEach(openRows) { rowView($0) }
+                    } header: {
+                        CapsHeader("Deschise · \(openRows.count)")
+                    } footer: {
+                        if openNet != 0 { Text("Total deschis: \(Money.format(openNet, currency: store.currency, decimals: 0)) fără TVA") }
+                    }
+                }
+                if !closedRows.isEmpty {
+                    Section {
+                        ForEach(closedRows) { rowView($0) }
+                    } header: {
+                        CapsHeader("Predate și anulate · \(closedRows.count)")
                     }
                 }
             }
-            .listStyle(.plain)
+            .listStyle(.insetGrouped)
+            .sensoryFeedback(.selection, trigger: status)
             .overlay {
                 if rows.isEmpty {
                     if query.isEmpty && status == nil {
@@ -60,21 +75,8 @@ struct WorkOrdersView: View {
             .navigationDestination(for: String.self) { id in
                 WorkOrderDetailView(id: id)
             }
-            .searchable(text: $query, prompt: "Număr, client, mașină")
+            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Caută număr, client, mașină")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Picker("Status", selection: $status) {
-                            Text("Toate").tag(String?.none)
-                            ForEach(Labels.workOrderOrder, id: \.self) { key in
-                                let style = Labels.workOrder(key)
-                                Label(style.label, systemImage: style.symbol).tag(Optional(key))
-                            }
-                        }
-                    } label: {
-                        Label("Filtru", systemImage: status == nil ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle.fill")
-                    }
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { creating = true } label: { Label("Lucrare nouă", systemImage: "plus") }
                 }
@@ -94,6 +96,27 @@ struct WorkOrdersView: View {
             .alert("Nu se poate", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
                 Button("OK", role: .cancel) {}
             } message: { Text(error ?? "") }
+        }
+    }
+
+    private func rowView(_ row: WorkOrderRow.Model) -> some View {
+        NavigationLink(value: row.order.id) {
+            WorkOrderRow(model: row, currency: store.currency)
+        }
+        .swipeActions(edge: .leading) {
+            if let next = WorkOrderRules.next[row.order.status] {
+                Button { move(row.order, to: next) } label: {
+                    Label(Labels.workOrderAction(from: row.order.status, to: next), systemImage: Labels.workOrder(next).symbol)
+                }
+                .tint(Labels.workOrder(next).color)
+            }
+        }
+        .contextMenu {
+            ForEach(WorkOrderRules.transitions[row.order.status] ?? [], id: \.self) { to in
+                Button(role: to == "cancelled" ? .destructive : nil) { move(row.order, to: to) } label: {
+                    Label(Labels.workOrderAction(from: row.order.status, to: to), systemImage: Labels.workOrder(to).symbol)
+                }
+            }
         }
     }
 
@@ -128,27 +151,19 @@ struct WorkOrderRow: View {
     let currency: String
 
     var body: some View {
-        let style = Labels.workOrder(model.order.status)
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(model.vehicle.map { People.formatPlate($0.plate) } ?? "Fără mașină")
-                    .font(.headline)
-                Spacer()
-                Text(verbatim: "#\(model.order.number)")
-                    .font(.subheadline.monospacedDigit())
-                    .foregroundStyle(.secondary)
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(model.vehicle?.title.nonEmpty ?? "Fără mașină").lineLimit(1)
+                Text([model.vehicle.map { People.formatPlate($0.plate) }, model.customer?.name].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+                    .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                StatusPill(style: Labels.workOrder(model.order.status)).padding(.top, 2)
             }
-            Text([model.vehicle?.title, model.customer?.name].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-            HStack(alignment: .firstTextBaseline) {
-                StatusPill(style: style)
-                Spacer()
+            Spacer(minLength: 8)
+            VStack(alignment: .trailing, spacing: 2) {
                 if !model.order.lines.isEmpty {
-                    Text(Money.format(model.gross, currency: currency))
-                        .font(.subheadline.monospacedDigit())
+                    Text(Money.format(model.gross, currency: currency, decimals: 0)).font(.body.weight(.semibold)).monospacedDigit()
                 }
+                Text(verbatim: "#\(model.order.number)").font(.caption).monospacedDigit().foregroundStyle(.secondary)
             }
         }
         .padding(.vertical, 2)
