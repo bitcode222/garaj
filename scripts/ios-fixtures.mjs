@@ -282,6 +282,40 @@ write("rules.json", {
 	}, { compact: true });
 }
 
+// Rapoarte: revenue by month/day, summary, top operations, mechanics, payment mix, aging.
+{
+	const reports = await import("../src/domain/reports.js");
+	const today = "2026-11-15";
+	const c = demoAll.collections;
+	const pick = (o, keys) => Object.fromEntries(keys.map((k) => [k, o[k]]).filter(([, v]) => v !== undefined));
+	const invoices = c.invoices.map((i) => ({
+		...pick(i, ["id", "status", "series", "number", "issueDate", "dueDate", "stornoOf", "totals"]),
+		lines: i.lines.filter((l) => l.kind === "labor").map((l) => pick(l, ["id", "kind", "refId", "description", "qty", "unitPrice", "discountPct", "vatRate", "cost", "staffId"])),
+	}));
+	const payments = c.payments.map((p) => pick(p, ["id", "invoiceId", "amount", "method", "date"]));
+	const byInvoice = new Map();
+	for (const p of payments) byInvoice.set(p.invoiceId, [...(byInvoice.get(p.invoiceId) ?? []), p]);
+	const range = (period) => {
+		if (period === "month") return { from: `${today.slice(0, 7)}-01`, to: today };
+		if (period === "year") return { from: `${today.slice(0, 4)}-01-01`, to: today };
+		return { from: `${reports.monthRange(today, period === "3m" ? 3 : 12)[0]}-01`, to: today };
+	};
+	const days = Array.from({ length: 15 }, (_, i) => `2026-11-${String(i + 1).padStart(2, "0")}`);
+	write("reports.json", {
+		today,
+		invoices,
+		payments,
+		monthRanges: [1, 3, 12, 25].map((count) => ({ count, months: reports.monthRange(today, count) })),
+		byMonth: reports.revenueByMonth(invoices, reports.monthRange(today, 12)),
+		byDay: reports.revenueByDay(invoices, days),
+		periods: ["month", "3m", "12m", "year"].map((period) => {
+			const r = range(period);
+			return { period, ...r, summary: reports.summarize(invoices, r), top: reports.topServices(invoices, { ...r, limit: 6 }), staff: reports.staffProductivity(invoices, r), mix: reports.paymentMix(payments, r) };
+		}),
+		aging: reports.receivablesAging(invoices, byInvoice, today),
+	}, { compact: true });
+}
+
 // A small backup: the demo data, a few records per collection.
 const demo = buildDemoData("2026-11-15");
 const collections = Object.fromEntries(Object.entries(demo.collections).map(([k, v]) => [k, v.slice(0, 4)]));

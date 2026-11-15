@@ -17,10 +17,10 @@ struct MoreView: View {
                 }
                 Section {
                     NavigationLink { CatalogView() } label: { Label("Catalog", systemImage: "shippingbox") }
-                    NavigationLink { ComingSoonPage(title: "Rapoarte") } label: { Label("Rapoarte", systemImage: "chart.bar") }
+                    NavigationLink { ReportsView() } label: { Label("Rapoarte", systemImage: "chart.bar") }
                 }
                 Section {
-                    NavigationLink { DataView() } label: { Label("Date", systemImage: "externaldrive") }
+                    NavigationLink { SettingsView() } label: { Label("Setări", systemImage: "gearshape") }
                 }
             }
             .navigationTitle("Mai mult")
@@ -32,6 +32,8 @@ struct MoreView: View {
                 case "masini": VehiclesView()
                 case "contactat": RemindersView()
                 case "catalog": CatalogView()
+                case "rapoarte": ReportsView()
+                case "setari": SettingsView()
                 case "vehicle": VehicleDetailView(id: UserDefaults.standard.string(forKey: "GarajOpenVehicle") ?? "")
                 case "customer": CustomerDetailView(id: UserDefaults.standard.string(forKey: "GarajOpenCustomer") ?? "")
                 default: EmptyView()
@@ -46,19 +48,7 @@ struct MoreView: View {
     }
 }
 
-private struct ComingSoonPage: View {
-    let title: String
-    var body: some View {
-        ContentUnavailableView {
-            Label("În lucru", systemImage: "hammer")
-        } description: {
-            Text("„\(title)” vine în aplicația nativă în etapa 5. Până atunci, folosește versiunea web.")
-        }
-        .navigationTitle(title)
-    }
-}
-
-/// Setări → Date: what is stored, backup out, backup in.
+/// Setări → Date și backup: what is stored, backup out, backup in.
 struct DataView: View {
     @Environment(AppStore.self) private var store
     @State private var importing = false
@@ -118,7 +108,7 @@ struct DataView: View {
         .alert(notice ?? "", isPresented: Binding(get: { notice != nil }, set: { if !$0 { notice = nil } })) {
             Button("OK", role: .cancel) {}
         }
-        .navigationTitle("Date")
+        .navigationTitle("Date și backup")
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             do {
                 let url = try result.get()

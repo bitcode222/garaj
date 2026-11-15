@@ -5,6 +5,15 @@ struct RootView: View {
     @Environment(AppStore.self) private var store
     @State private var tab = UserDefaults.standard.string(forKey: "GarajTab") ?? "azi" // debug: `-GarajTab facturi`
 
+    /// Setări → Aspect (settings.appearance.theme).
+    private var colorScheme: ColorScheme? {
+        switch store.settings["appearance"]?["theme"]?.string {
+        case "light": .light
+        case "dark": .dark
+        default: nil
+        }
+    }
+
     var body: some View {
         switch store.phase {
         case .loading:
@@ -33,23 +42,7 @@ struct RootView: View {
             .safeAreaInset(edge: .bottom) {
                 UndoToastView().padding(.bottom, 64) // above the tab bar
             }
-        }
-    }
-}
-
-/// A screen that is not rebuilt natively yet (docs/IOS-NATIVE.md §5).
-struct ComingSoon: View {
-    let title: String
-    let phase: String
-
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView {
-                Label("În lucru", systemImage: "hammer")
-            } description: {
-                Text("„\(title)” vine în aplicația nativă în \(phase). Până atunci, folosește versiunea web.")
-            }
-            .navigationTitle(title)
+            .preferredColorScheme(colorScheme)
         }
     }
 }
