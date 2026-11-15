@@ -107,17 +107,12 @@ export function useDraft(source, commit, delay = 400) {
 	return [draft, update, flush];
 }
 
-/** Prints the current page: native print sheet in the iOS app, browser dialog elsewhere. */
+/** Prints the current page with the browser's dialog (the document title names the PDF). */
 export async function printPage(name) {
 	const previous = document.title;
 	if (name) document.title = name;
 	try {
-		if (window.Capacitor?.isNativePlatform?.()) {
-			const { registerPlugin } = await import("@capacitor/core");
-			await registerPlugin("Printer").print({ name: name ?? previous });
-		} else {
-			window.print();
-		}
+		window.print();
 	} finally {
 		document.title = previous;
 	}

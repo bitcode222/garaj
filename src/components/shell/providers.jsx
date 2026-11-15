@@ -1,6 +1,6 @@
 "use client";
 
-import { ThemeProvider, useTheme } from "next-themes";
+import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import { toast } from "@/lib/toast";
 import { ConfirmProvider } from "@/components/ds/confirm";
@@ -10,10 +10,7 @@ import { ensureAppointmentNumbers } from "@/lib/store/actions";
 import { initStore } from "@/lib/store/store";
 import { useStoreValue } from "@/lib/store/hooks";
 
-const isNative = () => typeof window !== "undefined" && Boolean(window.Capacitor?.isNativePlatform?.());
-
 function StoreBoot() {
-	const { resolvedTheme } = useTheme();
 	const saveError = useStoreValue("saveError");
 	useKeyboardInset();
 
@@ -22,16 +19,7 @@ function StoreBoot() {
 		initStore()
 			.then(ensureAppointmentNumbers)
 			.catch((error) => console.warn("[garaj] numbering bookings failed", error));
-		if (isNative()) document.documentElement.dataset.native = "ios";
 	}, []);
-
-	// Status bar text must contrast with the app theme, not the system one.
-	useEffect(() => {
-		if (!resolvedTheme || !isNative()) return;
-		import("@capacitor/status-bar")
-			.then(({ StatusBar, Style }) => StatusBar.setStyle({ style: resolvedTheme === "dark" ? Style.Dark : Style.Light }))
-			.catch(() => {});
-	}, [resolvedTheme]);
 
 	useEffect(() => {
 		if (saveError) toast.error("Datele nu au putut fi salvate pe acest dispozitiv.", { description: saveError });

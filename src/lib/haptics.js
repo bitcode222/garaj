@@ -1,18 +1,8 @@
-// Taptic feedback through the native HapticsPlugin (AppDelegate.swift). Outside
-// the iOS app every call is a silent no-op, so callers never need to check.
-import { Capacitor, registerPlugin } from "@capacitor/core";
-
-let plugin = null;
-
-function native() {
-	if (typeof window === "undefined" || !Capacitor.isNativePlatform()) return null;
-	plugin ??= registerPlugin("NativeHaptics");
-	return plugin;
-}
-
-const fire = (method, options) => {
+// Short vibrations where the browser supports them (Android); elsewhere every call is a
+// silent no-op, so callers never need to check. The iPhone app is native (ios-native/).
+const vibrate = (pattern) => {
 	try {
-		native()?.[method]?.(options)?.catch?.(() => {});
+		if (typeof navigator !== "undefined") navigator.vibrate?.(pattern);
 	} catch {
 		// feedback is a nicety, never an error
 	}
@@ -20,14 +10,14 @@ const fire = (method, options) => {
 
 export const haptics = {
 	/** Light tap: tab change, menu pick, toggles. */
-	selection: () => fire("selection"),
+	selection: () => vibrate(5),
 	/** Press feedback for primary actions. */
-	tap: () => fire("impact", { style: "light" }),
+	tap: () => vibrate(8),
 	/** A threshold was crossed (swipe past the dismiss point). */
-	thud: () => fire("impact", { style: "medium" }),
+	thud: () => vibrate(15),
 	/** Saved, issued, paid. */
-	success: () => fire("notify", { type: "success" }),
+	success: () => vibrate([10, 40, 10]),
 	/** Destructive confirmation, or an irreversible step. */
-	warning: () => fire("notify", { type: "warning" }),
-	error: () => fire("notify", { type: "error" }),
+	warning: () => vibrate([20, 60, 20]),
+	error: () => vibrate([30, 50, 30, 50, 30]),
 };
