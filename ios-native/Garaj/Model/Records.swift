@@ -45,7 +45,25 @@ struct Vehicle: Record {
     static let defaults: JSONObject = [
         "customerId": .null, "plate": .string(""), "vin": .string(""), "make": .string(""), "model": .string(""),
         "engine": .string(""), "fuel": .string(""), "year": .null, "color": .string(""), "notes": .string(""), "createdAt": .string(""),
+        "mileage": .array([]), "itpExpiry": .null, "rcaExpiry": .null, "serviceIntervalKm": .null, "serviceIntervalMonths": .null,
+        "lastServiceDate": .null, "lastServiceKm": .null,
     ]
+    struct Reading: Codable, Hashable, Sendable {
+        var date: String
+        var km: Int
+        var source: String?
+
+        init(date: String, km: Int, source: String?) { self.date = date; self.km = km; self.source = source }
+
+        /// A km typed with a fraction somewhere still reads (rounded) instead of dropping the car.
+        init(from decoder: Decoder) throws {
+            enum K: String, CodingKey { case date, km, source }
+            let c = try decoder.container(keyedBy: K.self)
+            date = (try? c.decode(String.self, forKey: .date)) ?? ""
+            km = Int(Money.jsRound((try? c.decode(Double.self, forKey: .km)) ?? 0))
+            source = try? c.decodeIfPresent(String.self, forKey: .source)
+        }
+    }
     var id: String
     var customerId: String?
     var plate: String
@@ -58,6 +76,13 @@ struct Vehicle: Record {
     var color: String
     var notes: String
     var createdAt: String
+    var mileage: [Reading]
+    var itpExpiry: String?
+    var rcaExpiry: String?
+    var serviceIntervalKm: Int?
+    var serviceIntervalMonths: Int?
+    var lastServiceDate: String?
+    var lastServiceKm: Int?
 
     var title: String { [make, model].filter { !$0.isEmpty }.joined(separator: " ") }
 }

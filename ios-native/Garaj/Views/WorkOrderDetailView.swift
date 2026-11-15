@@ -312,7 +312,7 @@ private struct ContactButtons: View {
     }
 }
 
-private struct VerticalLabelStyle: LabelStyle {
+struct VerticalLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         VStack(spacing: 4) {
             configuration.icon.font(.body)

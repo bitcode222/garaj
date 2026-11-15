@@ -3,12 +3,16 @@ import UniformTypeIdentifiers
 
 /// Mai mult: the screens that don't have their own tab.
 struct MoreView: View {
+    #if DEBUG
+    @State private var debugPage: String?
+    #endif
+
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    NavigationLink { ComingSoonPage(title: "Clienți") } label: { Label("Clienți", systemImage: "person.2") }
-                    NavigationLink { ComingSoonPage(title: "Mașini") } label: { Label("Mașini", systemImage: "car") }
+                    NavigationLink { CustomersView() } label: { Label("Clienți", systemImage: "person.2") }
+                    NavigationLink { VehiclesView() } label: { Label("Mașini", systemImage: "car") }
                     NavigationLink { ComingSoonPage(title: "De contactat") } label: { Label("De contactat", systemImage: "bell") }
                 }
                 Section {
@@ -20,6 +24,22 @@ struct MoreView: View {
                 }
             }
             .navigationTitle("Mai mult")
+            #if DEBUG
+            // Screenshots: `-GarajMore clienti|masini`, `-GarajOpenVehicle <id>`, `-GarajOpenCustomer <id>`.
+            .navigationDestination(isPresented: Binding(get: { debugPage != nil }, set: { if !$0 { debugPage = nil } })) {
+                switch debugPage {
+                case "clienti": CustomersView()
+                case "masini": VehiclesView()
+                case "vehicle": VehicleDetailView(id: UserDefaults.standard.string(forKey: "GarajOpenVehicle") ?? "")
+                case "customer": CustomerDetailView(id: UserDefaults.standard.string(forKey: "GarajOpenCustomer") ?? "")
+                default: EmptyView()
+                }
+            }
+            .task {
+                let d = UserDefaults.standard
+                debugPage = d.string(forKey: "GarajOpenVehicle") != nil ? "vehicle" : d.string(forKey: "GarajOpenCustomer") != nil ? "customer" : d.string(forKey: "GarajMore")
+            }
+            #endif
         }
     }
 }
