@@ -31,6 +31,23 @@ extension AppStore {
         return lines
     }
 
+    /// Lines of an (edited) operation from a booking: its labor line, plus the catalog package's parts (linesFromOperation).
+    func linesFromOperation(_ op: JSONObject, staffId: String? = nil) -> [Line] {
+        let s = shop
+        let hours = (op["hours"]?.number ?? 0) > 0 ? op["hours"]!.number! : 1
+        let price = op["price"]?.number ?? 0
+        let cost = op["cost"]?.number ?? 0
+        let vat: Double = !s.vatPayer ? 0 : (op["vatRate"]?.number ?? s.vatRate)
+        let name = (op["name"]?.string ?? "").trimmingCharacters(in: .whitespaces)
+        var lines = [Line(id: Ids.uid(), kind: "labor", refId: op["serviceId"]?.string, description: name.isEmpty ? "Manoperă" : name,
+                          qty: hours, unit: "h", unitPrice: Int(Money.jsRound(price / hours)), vatRate: vat,
+                          cost: Int(Money.jsRound(cost / hours)), staffId: staffId)]
+        for item in get(Service.self, op["serviceId"]?.string)?.parts ?? [] {
+            if let partId = item["partId"]?.string, let line = lineFromPart(partId, qty: item["qty"]?.number ?? 1) { lines.append(line) }
+        }
+        return lines
+    }
+
     func lineFromPart(_ partId: String, qty: Double = 1) -> Line? {
         guard let part = get(Part.self, partId) else { return nil }
         return Line(id: Ids.uid(), kind: "part", refId: part.id,

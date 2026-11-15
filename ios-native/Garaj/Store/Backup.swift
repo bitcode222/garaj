@@ -22,7 +22,7 @@ enum Backup {
 
     /// Same checks as the web's importBackup.
     static func decode(_ data: Data) throws -> Snapshot {
-        guard let root = try? JSONDecoder().decode(JSONValue.self, from: data) else { throw Failure.invalidJSON }
+        guard let root = try? JSONValue.parse(data) else { throw Failure.invalidJSON }
         guard root["app"]?.string == "garaj", let collections = root["collections"]?.object,
               let meta = root["meta"]?.object, meta["settings"]?.object != nil else { throw Failure.notGaraj }
         var out: [Collection: [JSONValue]] = [:]
