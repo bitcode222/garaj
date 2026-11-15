@@ -4,9 +4,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw5fytgq590",
+     "id": "0mwh42wjh2ka24iki",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -14,12 +14,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw5c54nyw1k",
+     "id": "0mwh42wjh0frh1h2z",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -30,9 +30,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5qi9xo3ql",
+     "id": "0mwh42wjhebsdqgc9",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -43,9 +43,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5vmpcyk1r",
+     "id": "0mwh42wjh4kk8skpg",
      "kind": "labor",
-     "refId": "0mwh3hbw4ojkq19rs",
+     "refId": "0mwh42wjgaai1sso9",
      "description": "Înlocuire biellete antiruliu",
      "qty": 0.8,
      "unit": "h",
@@ -53,12 +53,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw5m8isieaw",
+     "id": "0mwh42wjh503w40rw",
      "kind": "part",
-     "refId": "0mwh3hbw46atekvax",
+     "refId": "0mwh42wjggqwoh85v",
      "description": "Bieletă antiruliu Meyle",
      "qty": 2,
      "unit": "buc",
@@ -69,7 +69,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5jgpmxnlr",
+     "id": "0mwh42wjhhsct7q52",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -123,9 +123,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw5fytgq590",
+     "id": "0mwh42wjh2ka24iki",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -133,12 +133,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw5c54nyw1k",
+     "id": "0mwh42wjh0frh1h2z",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -149,9 +149,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5qi9xo3ql",
+     "id": "0mwh42wjhebsdqgc9",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -162,9 +162,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5vmpcyk1r",
+     "id": "0mwh42wjh4kk8skpg",
      "kind": "labor",
-     "refId": "0mwh3hbw4ojkq19rs",
+     "refId": "0mwh42wjgaai1sso9",
      "description": "Înlocuire biellete antiruliu",
      "qty": 0.8,
      "unit": "h",
@@ -172,12 +172,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw5m8isieaw",
+     "id": "0mwh42wjh503w40rw",
      "kind": "part",
-     "refId": "0mwh3hbw46atekvax",
+     "refId": "0mwh42wjggqwoh85v",
      "description": "Bieletă antiruliu Meyle",
      "qty": 2,
      "unit": "buc",
@@ -188,7 +188,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5jgpmxnlr",
+     "id": "0mwh42wjhhsct7q52",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -242,9 +242,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw5bo1asaj8",
+     "id": "0mwh42wjhr6dmw9xh",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -252,12 +252,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw5w8plq6g1",
+     "id": "0mwh42wjhdtq8y2nf",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -268,9 +268,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5t0yitpv5",
+     "id": "0mwh42wjhpt1vl05s",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -281,7 +281,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5527pfhun",
+     "id": "0mwh42wjhnwdwviip",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -331,9 +331,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw5bo1asaj8",
+     "id": "0mwh42wjhr6dmw9xh",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -341,12 +341,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw5w8plq6g1",
+     "id": "0mwh42wjhdtq8y2nf",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -357,9 +357,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5t0yitpv5",
+     "id": "0mwh42wjhpt1vl05s",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -370,7 +370,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5527pfhun",
+     "id": "0mwh42wjhnwdwviip",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -420,9 +420,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw5288afua4",
+     "id": "0mwh42wjh6cqde1mk",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -430,12 +430,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw5ejpqvu81",
+     "id": "0mwh42wjhujgmc68k",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -479,9 +479,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw5288afua4",
+     "id": "0mwh42wjh6cqde1mk",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -489,12 +489,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw5ejpqvu81",
+     "id": "0mwh42wjhujgmc68k",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -538,9 +538,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw5ve3zc75f",
+     "id": "0mwh42wjh0soafti6",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -548,12 +548,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw5cl5aaewn",
+     "id": "0mwh42wjh616pbp9y",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -564,9 +564,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5ousdriby",
+     "id": "0mwh42wjhzewz4b02",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -612,9 +612,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw5ve3zc75f",
+     "id": "0mwh42wjh0soafti6",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -622,12 +622,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw5cl5aaewn",
+     "id": "0mwh42wjh616pbp9y",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -638,9 +638,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw5ousdriby",
+     "id": "0mwh42wjhzewz4b02",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -686,9 +686,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw55rf75efb",
+     "id": "0mwh42wjhrcb98eai",
      "kind": "labor",
-     "refId": "0mwh3hbw4wkf66aoy",
+     "refId": "0mwh42wjgni8c5p33",
      "description": "Geometrie roți",
      "qty": 0.8,
      "unit": "h",
@@ -696,7 +696,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     }
    ],
    "totals": {
@@ -730,9 +730,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw55rf75efb",
+     "id": "0mwh42wjhrcb98eai",
      "kind": "labor",
-     "refId": "0mwh3hbw4wkf66aoy",
+     "refId": "0mwh42wjgni8c5p33",
      "description": "Geometrie roți",
      "qty": 0.8,
      "unit": "h",
@@ -740,7 +740,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     }
    ],
    "totals": {
@@ -774,9 +774,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw5w1iocb6e",
+     "id": "0mwh42wjh9vz5fgqz",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -784,12 +784,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw5k63n5jzq",
+     "id": "0mwh42wjh63w8o0gy",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -800,9 +800,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw52r7smynr",
+     "id": "0mwh42wjht3hu34d3",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -848,9 +848,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw5w1iocb6e",
+     "id": "0mwh42wjh9vz5fgqz",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -858,12 +858,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw5k63n5jzq",
+     "id": "0mwh42wjh63w8o0gy",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -874,9 +874,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw52r7smynr",
+     "id": "0mwh42wjht3hu34d3",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -922,9 +922,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw5n4eur01f",
+     "id": "0mwh42wjid2y5a11h",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -932,10 +932,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw50qjboylz",
+     "id": "0mwh42wjiiai3qxez",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -981,9 +981,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw5n4eur01f",
+     "id": "0mwh42wjid2y5a11h",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -991,10 +991,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw50qjboylz",
+     "id": "0mwh42wjiiai3qxez",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -1040,9 +1040,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw58c023gmr",
+     "id": "0mwh42wjhxw4e2uws",
      "kind": "labor",
-     "refId": "0mwh3hbw4sbkhq55c",
+     "refId": "0mwh42wjg42avp8tv",
      "description": "Înlocuire rulment roată",
      "qty": 1.5,
      "unit": "h",
@@ -1050,12 +1050,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw5ihjpodzs",
+     "id": "0mwh42wjhqlw1f38s",
      "kind": "part",
-     "refId": "0mwh3hbw46l1ffd9s",
+     "refId": "0mwh42wjgkwmfbprx",
      "description": "Kit rulment roată SKF",
      "qty": 1,
      "unit": "buc",
@@ -1066,9 +1066,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw51rot91ww",
+     "id": "0mwh42wjh9zp6xoqz",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -1076,10 +1076,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw5wbam9ths",
+     "id": "0mwh42wjhn0hilj3p",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -1129,9 +1129,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw58c023gmr",
+     "id": "0mwh42wjhxw4e2uws",
      "kind": "labor",
-     "refId": "0mwh3hbw4sbkhq55c",
+     "refId": "0mwh42wjg42avp8tv",
      "description": "Înlocuire rulment roată",
      "qty": 1.5,
      "unit": "h",
@@ -1139,12 +1139,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw5ihjpodzs",
+     "id": "0mwh42wjhqlw1f38s",
      "kind": "part",
-     "refId": "0mwh3hbw46l1ffd9s",
+     "refId": "0mwh42wjgkwmfbprx",
      "description": "Kit rulment roată SKF",
      "qty": 1,
      "unit": "buc",
@@ -1155,9 +1155,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw51rot91ww",
+     "id": "0mwh42wjh9zp6xoqz",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -1165,10 +1165,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw5wbam9ths",
+     "id": "0mwh42wjhn0hilj3p",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -1218,9 +1218,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw60490t7tk",
+     "id": "0mwh42wjib1w2iiog",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -1228,7 +1228,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     }
    ],
    "totals": {
@@ -1262,9 +1262,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw60490t7tk",
+     "id": "0mwh42wjib1w2iiog",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -1272,7 +1272,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     }
    ],
    "totals": {
@@ -1306,9 +1306,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6z7lvem7p",
+     "id": "0mwh42wjib3p52k3s",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -1316,12 +1316,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6cfr2ianx",
+     "id": "0mwh42wji3y4p31t8",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -1332,7 +1332,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6ilkxeq39",
+     "id": "0mwh42wjiakd0nbed",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -1380,9 +1380,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6z7lvem7p",
+     "id": "0mwh42wjib3p52k3s",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -1390,12 +1390,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6cfr2ianx",
+     "id": "0mwh42wji3y4p31t8",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -1406,7 +1406,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6ilkxeq39",
+     "id": "0mwh42wjiakd0nbed",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -1454,9 +1454,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6c549tkj6",
+     "id": "0mwh42wji0zcfcpli",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -1464,12 +1464,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6l2k90x34",
+     "id": "0mwh42wji1siywzzp",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -1513,9 +1513,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6c549tkj6",
+     "id": "0mwh42wji0zcfcpli",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -1523,12 +1523,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6l2k90x34",
+     "id": "0mwh42wji1siywzzp",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -1572,9 +1572,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6lgmy89f8",
+     "id": "0mwh42wjirj898uw4",
      "kind": "labor",
-     "refId": "0mwh3hbw4n2knhq74",
+     "refId": "0mwh42wjgyezghcae",
      "description": "Înlocuire bujii",
      "qty": 0.6,
      "unit": "h",
@@ -1582,12 +1582,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw67j47ksj6",
+     "id": "0mwh42wjir7fd0gk1",
      "kind": "part",
-     "refId": "0mwh3hbw43benjfa2",
+     "refId": "0mwh42wjgzro9b05k",
      "description": "Bujie NGK",
      "qty": 4,
      "unit": "buc",
@@ -1631,9 +1631,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6lgmy89f8",
+     "id": "0mwh42wjirj898uw4",
      "kind": "labor",
-     "refId": "0mwh3hbw4n2knhq74",
+     "refId": "0mwh42wjgyezghcae",
      "description": "Înlocuire bujii",
      "qty": 0.6,
      "unit": "h",
@@ -1641,12 +1641,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw67j47ksj6",
+     "id": "0mwh42wjir7fd0gk1",
      "kind": "part",
-     "refId": "0mwh3hbw43benjfa2",
+     "refId": "0mwh42wjgzro9b05k",
      "description": "Bujie NGK",
      "qty": 4,
      "unit": "buc",
@@ -1690,9 +1690,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw63977d4u4",
+     "id": "0mwh42wjirg0wa3th",
      "kind": "labor",
-     "refId": "0mwh3hbw40z6wincx",
+     "refId": "0mwh42wjg6r5umko2",
      "description": "Curățare filtru de particule (DPF)",
      "qty": 1.5,
      "unit": "h",
@@ -1700,12 +1700,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6irbnhx7k",
+     "id": "0mwh42wjik7f6i1gf",
      "kind": "part",
-     "refId": "0mwh3hbw4gqyx8v1m",
+     "refId": "0mwh42wjgjp8i58ix",
      "description": "Soluție curățare DPF Liqui Moly",
      "qty": 1,
      "unit": "buc",
@@ -1749,9 +1749,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw63977d4u4",
+     "id": "0mwh42wjirg0wa3th",
      "kind": "labor",
-     "refId": "0mwh3hbw40z6wincx",
+     "refId": "0mwh42wjg6r5umko2",
      "description": "Curățare filtru de particule (DPF)",
      "qty": 1.5,
      "unit": "h",
@@ -1759,12 +1759,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6irbnhx7k",
+     "id": "0mwh42wjik7f6i1gf",
      "kind": "part",
-     "refId": "0mwh3hbw4gqyx8v1m",
+     "refId": "0mwh42wjgjp8i58ix",
      "description": "Soluție curățare DPF Liqui Moly",
      "qty": 1,
      "unit": "buc",
@@ -1808,9 +1808,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6yv1trkgr",
+     "id": "0mwh42wjimlpadsh8",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -1818,12 +1818,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw66o1irkys",
+     "id": "0mwh42wjihll6q44m",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -1834,9 +1834,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6x5r17k9q",
+     "id": "0mwh42wjiqr3lpx07",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -1882,9 +1882,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6yv1trkgr",
+     "id": "0mwh42wjimlpadsh8",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -1892,12 +1892,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw66o1irkys",
+     "id": "0mwh42wjihll6q44m",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -1908,9 +1908,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6x5r17k9q",
+     "id": "0mwh42wjiqr3lpx07",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -1956,9 +1956,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6giy5905o",
+     "id": "0mwh42wji8yuc33gt",
      "kind": "labor",
-     "refId": "0mwh3hbw4sbkhq55c",
+     "refId": "0mwh42wjg42avp8tv",
      "description": "Înlocuire rulment roată",
      "qty": 1.5,
      "unit": "h",
@@ -1966,12 +1966,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw64ayh04aj",
+     "id": "0mwh42wjifsw24h6u",
      "kind": "part",
-     "refId": "0mwh3hbw46l1ffd9s",
+     "refId": "0mwh42wjgkwmfbprx",
      "description": "Kit rulment roată SKF",
      "qty": 1,
      "unit": "buc",
@@ -2015,9 +2015,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6giy5905o",
+     "id": "0mwh42wji8yuc33gt",
      "kind": "labor",
-     "refId": "0mwh3hbw4sbkhq55c",
+     "refId": "0mwh42wjg42avp8tv",
      "description": "Înlocuire rulment roată",
      "qty": 1.5,
      "unit": "h",
@@ -2025,12 +2025,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw64ayh04aj",
+     "id": "0mwh42wjifsw24h6u",
      "kind": "part",
-     "refId": "0mwh3hbw46l1ffd9s",
+     "refId": "0mwh42wjgkwmfbprx",
      "description": "Kit rulment roată SKF",
      "qty": 1,
      "unit": "buc",
@@ -2074,9 +2074,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw68okbyduk",
+     "id": "0mwh42wji0wd0h0xx",
      "kind": "labor",
-     "refId": "0mwh3hbw4vf804pd7",
+     "refId": "0mwh42wjg3ihsakei",
      "description": "Înlocuire acumulator",
      "qty": 0.3,
      "unit": "h",
@@ -2084,12 +2084,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6wjt95brs",
+     "id": "0mwh42wjigf7urdtt",
      "kind": "part",
-     "refId": "0mwh3hbw4622cba5t",
+     "refId": "0mwh42wjguz9ccx6j",
      "description": "Acumulator 74 Ah 680 A Varta",
      "qty": 1,
      "unit": "buc",
@@ -2100,7 +2100,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6wruhgn7v",
+     "id": "0mwh42wjifs6xz18i",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -2148,9 +2148,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw68okbyduk",
+     "id": "0mwh42wji0wd0h0xx",
      "kind": "labor",
-     "refId": "0mwh3hbw4vf804pd7",
+     "refId": "0mwh42wjg3ihsakei",
      "description": "Înlocuire acumulator",
      "qty": 0.3,
      "unit": "h",
@@ -2158,12 +2158,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6wjt95brs",
+     "id": "0mwh42wjigf7urdtt",
      "kind": "part",
-     "refId": "0mwh3hbw4622cba5t",
+     "refId": "0mwh42wjguz9ccx6j",
      "description": "Acumulator 74 Ah 680 A Varta",
      "qty": 1,
      "unit": "buc",
@@ -2174,7 +2174,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6wruhgn7v",
+     "id": "0mwh42wjifs6xz18i",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -2222,9 +2222,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6tnw5ubaq",
+     "id": "0mwh42wjij5q324g9",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -2232,10 +2232,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6pym4ysrn",
+     "id": "0mwh42wji41i24yl2",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -2281,9 +2281,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6tnw5ubaq",
+     "id": "0mwh42wjij5q324g9",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -2291,10 +2291,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6pym4ysrn",
+     "id": "0mwh42wji41i24yl2",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -2340,9 +2340,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6rdyi3ssa",
+     "id": "0mwh42wjielg97hfx",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -2350,12 +2350,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6ttyaadg8",
+     "id": "0mwh42wjimlmregnv",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -2366,9 +2366,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6cnhey75x",
+     "id": "0mwh42wjimc9kurrl",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -2379,9 +2379,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6b76qj18d",
+     "id": "0mwh42wjilhh0cc8c",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -2392,9 +2392,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6sm5h5cpz",
+     "id": "0mwh42wjib5pct8pn",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -2405,9 +2405,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6lt2yp9h4",
+     "id": "0mwh42wjiatis3uzk",
      "kind": "labor",
-     "refId": "0mwh3hbw49wmwf2s5",
+     "refId": "0mwh42wjgkzzpo873",
      "description": "Înlocuire kit distribuție și pompă apă",
      "qty": 4,
      "unit": "h",
@@ -2415,12 +2415,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6cl1h4haz",
+     "id": "0mwh42wjiaogc6ukl",
      "kind": "part",
-     "refId": "0mwh3hbw4idw7xktu",
+     "refId": "0mwh42wjgy51m1kgt",
      "description": "Kit distribuție cu pompă de apă Gates",
      "qty": 1,
      "unit": "set",
@@ -2431,9 +2431,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6a17tplek",
+     "id": "0mwh42wji2d20iubh",
      "kind": "part",
-     "refId": "0mwh3hbw43oh2fjbm",
+     "refId": "0mwh42wjgpvei1k1a",
      "description": "Antigel G12+ concentrat Valvoline",
      "qty": 3,
      "unit": "l",
@@ -2444,9 +2444,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6mbvyw6of",
+     "id": "0mwh42wji9xp1gkpm",
      "kind": "part",
-     "refId": "0mwh3hbw4xjpvxlas",
+     "refId": "0mwh42wjg4jxqu9j9",
      "description": "Curea accesorii Contitech",
      "qty": 1,
      "unit": "buc",
@@ -2504,9 +2504,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6rdyi3ssa",
+     "id": "0mwh42wjielg97hfx",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -2514,12 +2514,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6ttyaadg8",
+     "id": "0mwh42wjimlmregnv",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -2530,9 +2530,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6cnhey75x",
+     "id": "0mwh42wjimc9kurrl",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -2543,9 +2543,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6b76qj18d",
+     "id": "0mwh42wjilhh0cc8c",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -2556,9 +2556,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6sm5h5cpz",
+     "id": "0mwh42wjib5pct8pn",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -2569,9 +2569,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6lt2yp9h4",
+     "id": "0mwh42wjiatis3uzk",
      "kind": "labor",
-     "refId": "0mwh3hbw49wmwf2s5",
+     "refId": "0mwh42wjgkzzpo873",
      "description": "Înlocuire kit distribuție și pompă apă",
      "qty": 4,
      "unit": "h",
@@ -2579,12 +2579,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6cl1h4haz",
+     "id": "0mwh42wjiaogc6ukl",
      "kind": "part",
-     "refId": "0mwh3hbw4idw7xktu",
+     "refId": "0mwh42wjgy51m1kgt",
      "description": "Kit distribuție cu pompă de apă Gates",
      "qty": 1,
      "unit": "set",
@@ -2595,9 +2595,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6a17tplek",
+     "id": "0mwh42wji2d20iubh",
      "kind": "part",
-     "refId": "0mwh3hbw43oh2fjbm",
+     "refId": "0mwh42wjgpvei1k1a",
      "description": "Antigel G12+ concentrat Valvoline",
      "qty": 3,
      "unit": "l",
@@ -2608,9 +2608,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6mbvyw6of",
+     "id": "0mwh42wji9xp1gkpm",
      "kind": "part",
-     "refId": "0mwh3hbw4xjpvxlas",
+     "refId": "0mwh42wjg4jxqu9j9",
      "description": "Curea accesorii Contitech",
      "qty": 1,
      "unit": "buc",
@@ -2668,9 +2668,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw68l250efc",
+     "id": "0mwh42wji1crkfy5w",
      "kind": "labor",
-     "refId": "0mwh3hbw481vu4odo",
+     "refId": "0mwh42wjglx1xcjux",
      "description": "Înlocuire plăcuțe frână spate",
      "qty": 1,
      "unit": "h",
@@ -2678,12 +2678,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw633f68a3z",
+     "id": "0mwh42wjiwm2sl9iy",
      "kind": "part",
-     "refId": "0mwh3hbw4pm16l48w",
+     "refId": "0mwh42wjgcsfjhx9o",
      "description": "Plăcuțe frână spate TRW",
      "qty": 1,
      "unit": "set",
@@ -2694,9 +2694,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw61w17iigs",
+     "id": "0mwh42wjip7do33fs",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -2704,12 +2704,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw60ho03xvw",
+     "id": "0mwh42wjiy5lddyph",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -2720,9 +2720,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6j36d81rh",
+     "id": "0mwh42wjiyff4m952",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -2733,9 +2733,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw62wfog48n",
+     "id": "0mwh42wjiyc1nc1iv",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -2746,9 +2746,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6yc42j8r4",
+     "id": "0mwh42wjixh2blln0",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -2802,9 +2802,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw68l250efc",
+     "id": "0mwh42wji1crkfy5w",
      "kind": "labor",
-     "refId": "0mwh3hbw481vu4odo",
+     "refId": "0mwh42wjglx1xcjux",
      "description": "Înlocuire plăcuțe frână spate",
      "qty": 1,
      "unit": "h",
@@ -2812,12 +2812,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw633f68a3z",
+     "id": "0mwh42wjiwm2sl9iy",
      "kind": "part",
-     "refId": "0mwh3hbw4pm16l48w",
+     "refId": "0mwh42wjgcsfjhx9o",
      "description": "Plăcuțe frână spate TRW",
      "qty": 1,
      "unit": "set",
@@ -2828,9 +2828,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw61w17iigs",
+     "id": "0mwh42wjip7do33fs",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -2838,12 +2838,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw60ho03xvw",
+     "id": "0mwh42wjiy5lddyph",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -2854,9 +2854,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6j36d81rh",
+     "id": "0mwh42wjiyff4m952",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -2867,9 +2867,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw62wfog48n",
+     "id": "0mwh42wjiyc1nc1iv",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -2880,9 +2880,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6yc42j8r4",
+     "id": "0mwh42wjixh2blln0",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -2936,9 +2936,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw63fa026lc",
+     "id": "0mwh42wji5ygc3vtk",
      "kind": "labor",
-     "refId": "0mwh3hbw43wdc5tzd",
+     "refId": "0mwh42wjg2d3y8q0i",
      "description": "Încărcare freon AC",
      "qty": 0.7,
      "unit": "h",
@@ -2946,12 +2946,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6eplo3gc2",
+     "id": "0mwh42wjitth7h5xd",
      "kind": "part",
-     "refId": "0mwh3hbw4xdas9ids",
+     "refId": "0mwh42wjgf2v2o7vn",
      "description": "Freon R1234yf Honeywell",
      "qty": 5,
      "unit": "100 g",
@@ -2962,9 +2962,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6ne7j3ola",
+     "id": "0mwh42wjirhttqxgf",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -2972,7 +2972,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     }
    ],
    "totals": {
@@ -3010,9 +3010,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw63fa026lc",
+     "id": "0mwh42wji5ygc3vtk",
      "kind": "labor",
-     "refId": "0mwh3hbw43wdc5tzd",
+     "refId": "0mwh42wjg2d3y8q0i",
      "description": "Încărcare freon AC",
      "qty": 0.7,
      "unit": "h",
@@ -3020,12 +3020,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6eplo3gc2",
+     "id": "0mwh42wjitth7h5xd",
      "kind": "part",
-     "refId": "0mwh3hbw4xdas9ids",
+     "refId": "0mwh42wjgf2v2o7vn",
      "description": "Freon R1234yf Honeywell",
      "qty": 5,
      "unit": "100 g",
@@ -3036,9 +3036,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6ne7j3ola",
+     "id": "0mwh42wjirhttqxgf",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -3046,7 +3046,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     }
    ],
    "totals": {
@@ -3084,9 +3084,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6fbfpzvxj",
+     "id": "0mwh42wjii95h74y3",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -3094,12 +3094,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6t7550tpl",
+     "id": "0mwh42wji97jv6qro",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -3110,9 +3110,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6xa0o5mpu",
+     "id": "0mwh42wji89w7kckv",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -3123,9 +3123,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6mr81eigb",
+     "id": "0mwh42wji98woirwj",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -3133,10 +3133,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6ihh6eyv8",
+     "id": "0mwh42wjisuz1s5pb",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -3188,9 +3188,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6fbfpzvxj",
+     "id": "0mwh42wjii95h74y3",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -3198,12 +3198,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6t7550tpl",
+     "id": "0mwh42wji97jv6qro",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -3214,9 +3214,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6xa0o5mpu",
+     "id": "0mwh42wji89w7kckv",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -3227,9 +3227,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6mr81eigb",
+     "id": "0mwh42wji98woirwj",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -3237,10 +3237,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6ihh6eyv8",
+     "id": "0mwh42wjisuz1s5pb",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -3292,9 +3292,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6bgzrjrv4",
+     "id": "0mwh42wjidll5s99k",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -3302,10 +3302,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw67kh1tmj5",
+     "id": "0mwh42wjinazl72x7",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -3351,9 +3351,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6bgzrjrv4",
+     "id": "0mwh42wjidll5s99k",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -3361,10 +3361,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw67kh1tmj5",
+     "id": "0mwh42wjinazl72x7",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -3410,9 +3410,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6lyfbt670",
+     "id": "0mwh42wji63j3t7t8",
      "kind": "labor",
-     "refId": "0mwh3hbw4n2knhq74",
+     "refId": "0mwh42wjgyezghcae",
      "description": "Înlocuire bujii",
      "qty": 0.6,
      "unit": "h",
@@ -3420,12 +3420,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw61g6icjgi",
+     "id": "0mwh42wjinc8iqwoc",
      "kind": "part",
-     "refId": "0mwh3hbw43benjfa2",
+     "refId": "0mwh42wjgzro9b05k",
      "description": "Bujie NGK",
      "qty": 4,
      "unit": "buc",
@@ -3469,9 +3469,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6lyfbt670",
+     "id": "0mwh42wji63j3t7t8",
      "kind": "labor",
-     "refId": "0mwh3hbw4n2knhq74",
+     "refId": "0mwh42wjgyezghcae",
      "description": "Înlocuire bujii",
      "qty": 0.6,
      "unit": "h",
@@ -3479,12 +3479,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw61g6icjgi",
+     "id": "0mwh42wjinc8iqwoc",
      "kind": "part",
-     "refId": "0mwh3hbw43benjfa2",
+     "refId": "0mwh42wjgzro9b05k",
      "description": "Bujie NGK",
      "qty": 4,
      "unit": "buc",
@@ -3528,9 +3528,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6dhrqibah",
+     "id": "0mwh42wji8rm9j0d7",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -3538,7 +3538,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     }
    ],
    "totals": {
@@ -3572,9 +3572,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6dhrqibah",
+     "id": "0mwh42wji8rm9j0d7",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -3582,7 +3582,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     }
    ],
    "totals": {
@@ -3616,9 +3616,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6a0zfhn5z",
+     "id": "0mwh42wji8jy0173w",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -3626,12 +3626,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6bxryunni",
+     "id": "0mwh42wji0mvegio1",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -3642,9 +3642,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw66yq623fs",
+     "id": "0mwh42wjivclyxmqh",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -3655,9 +3655,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw630oyy9p2",
+     "id": "0mwh42wjixvvqwirt",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -3668,9 +3668,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw67zosej63",
+     "id": "0mwh42wjibsxuwv62",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -3720,9 +3720,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6a0zfhn5z",
+     "id": "0mwh42wji8jy0173w",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -3730,12 +3730,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6bxryunni",
+     "id": "0mwh42wji0mvegio1",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -3746,9 +3746,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw66yq623fs",
+     "id": "0mwh42wjivclyxmqh",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -3759,9 +3759,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw630oyy9p2",
+     "id": "0mwh42wjixvvqwirt",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -3772,9 +3772,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw67zosej63",
+     "id": "0mwh42wjibsxuwv62",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -3824,9 +3824,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6mee59ixj",
+     "id": "0mwh42wjig9qsxnof",
      "kind": "labor",
-     "refId": "0mwh3hbw481vu4odo",
+     "refId": "0mwh42wjglx1xcjux",
      "description": "Înlocuire plăcuțe frână spate",
      "qty": 1,
      "unit": "h",
@@ -3834,12 +3834,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6puhorczh",
+     "id": "0mwh42wjiesr5ghx0",
      "kind": "part",
-     "refId": "0mwh3hbw4pm16l48w",
+     "refId": "0mwh42wjgcsfjhx9o",
      "description": "Plăcuțe frână spate TRW",
      "qty": 1,
      "unit": "set",
@@ -3883,9 +3883,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6mee59ixj",
+     "id": "0mwh42wjig9qsxnof",
      "kind": "labor",
-     "refId": "0mwh3hbw481vu4odo",
+     "refId": "0mwh42wjglx1xcjux",
      "description": "Înlocuire plăcuțe frână spate",
      "qty": 1,
      "unit": "h",
@@ -3893,12 +3893,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6puhorczh",
+     "id": "0mwh42wjiesr5ghx0",
      "kind": "part",
-     "refId": "0mwh3hbw4pm16l48w",
+     "refId": "0mwh42wjgcsfjhx9o",
      "description": "Plăcuțe frână spate TRW",
      "qty": 1,
      "unit": "set",
@@ -3942,9 +3942,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw65w1vcgif",
+     "id": "0mwh42wjijo09y7te",
      "kind": "labor",
-     "refId": "0mwh3hbw40z6wincx",
+     "refId": "0mwh42wjg6r5umko2",
      "description": "Curățare filtru de particule (DPF)",
      "qty": 1.5,
      "unit": "h",
@@ -3952,12 +3952,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw61t32o5om",
+     "id": "0mwh42wjisjaarlub",
      "kind": "part",
-     "refId": "0mwh3hbw4gqyx8v1m",
+     "refId": "0mwh42wjgjp8i58ix",
      "description": "Soluție curățare DPF Liqui Moly",
      "qty": 1,
      "unit": "buc",
@@ -3968,7 +3968,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6yujiivy0",
+     "id": "0mwh42wjipjdi1hni",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -4016,9 +4016,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw65w1vcgif",
+     "id": "0mwh42wjijo09y7te",
      "kind": "labor",
-     "refId": "0mwh3hbw40z6wincx",
+     "refId": "0mwh42wjg6r5umko2",
      "description": "Curățare filtru de particule (DPF)",
      "qty": 1.5,
      "unit": "h",
@@ -4026,12 +4026,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw61t32o5om",
+     "id": "0mwh42wjisjaarlub",
      "kind": "part",
-     "refId": "0mwh3hbw4gqyx8v1m",
+     "refId": "0mwh42wjgjp8i58ix",
      "description": "Soluție curățare DPF Liqui Moly",
      "qty": 1,
      "unit": "buc",
@@ -4042,7 +4042,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6yujiivy0",
+     "id": "0mwh42wjipjdi1hni",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -4090,9 +4090,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw63hsa6m04",
+     "id": "0mwh42wjiv006eik2",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -4100,7 +4100,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     }
    ],
    "totals": {
@@ -4134,9 +4134,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw63hsa6m04",
+     "id": "0mwh42wjiv006eik2",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -4144,7 +4144,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     }
    ],
    "totals": {
@@ -4178,9 +4178,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6ktvm0stj",
+     "id": "0mwh42wjidetic6zt",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -4188,12 +4188,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6ikzpr5by",
+     "id": "0mwh42wji64tntgsr",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -4204,9 +4204,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6bh6lrtg3",
+     "id": "0mwh42wjiwupfpnpc",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -4217,9 +4217,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw605t6jm1w",
+     "id": "0mwh42wji9bx6fvai",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -4230,9 +4230,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6vd36az3t",
+     "id": "0mwh42wjid8jmf33n",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -4282,9 +4282,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6ktvm0stj",
+     "id": "0mwh42wjidetic6zt",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -4292,12 +4292,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6ikzpr5by",
+     "id": "0mwh42wji64tntgsr",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -4308,9 +4308,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6bh6lrtg3",
+     "id": "0mwh42wjiwupfpnpc",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -4321,9 +4321,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw605t6jm1w",
+     "id": "0mwh42wji9bx6fvai",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -4334,9 +4334,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6vd36az3t",
+     "id": "0mwh42wjid8jmf33n",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -4386,9 +4386,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw60bs9llgo",
+     "id": "0mwh42wji2doy5i0u",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -4396,12 +4396,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw68jh1regl",
+     "id": "0mwh42wjik45tp9e1",
      "kind": "labor",
-     "refId": "0mwh3hbw43j524qqz",
+     "refId": "0mwh42wjgosa736wt",
      "description": "Înlocuire bec far",
      "qty": 0.3,
      "unit": "h",
@@ -4409,12 +4409,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw6gvh5ssig",
+     "id": "0mwh42wjilcezfhcy",
      "kind": "part",
-     "refId": "0mwh3hbw4pe9g378i",
+     "refId": "0mwh42wjgtthzv2r2",
      "description": "Bec H7 Philips",
      "qty": 1,
      "unit": "buc",
@@ -4460,9 +4460,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw60bs9llgo",
+     "id": "0mwh42wji2doy5i0u",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -4470,12 +4470,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw68jh1regl",
+     "id": "0mwh42wjik45tp9e1",
      "kind": "labor",
-     "refId": "0mwh3hbw43j524qqz",
+     "refId": "0mwh42wjgosa736wt",
      "description": "Înlocuire bec far",
      "qty": 0.3,
      "unit": "h",
@@ -4483,12 +4483,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw6gvh5ssig",
+     "id": "0mwh42wjilcezfhcy",
      "kind": "part",
-     "refId": "0mwh3hbw4pe9g378i",
+     "refId": "0mwh42wjgtthzv2r2",
      "description": "Bec H7 Philips",
      "qty": 1,
      "unit": "buc",
@@ -4534,9 +4534,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6g9l035dg",
+     "id": "0mwh42wji2k20od6l",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -4544,10 +4544,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6n09joiqc",
+     "id": "0mwh42wjimowuo1p0",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -4593,9 +4593,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6g9l035dg",
+     "id": "0mwh42wji2k20od6l",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -4603,10 +4603,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw6n09joiqc",
+     "id": "0mwh42wjimowuo1p0",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -4652,9 +4652,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw63fq0f12j",
+     "id": "0mwh42wji4jtsywer",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -4662,12 +4662,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6fap6tp23",
+     "id": "0mwh42wjigim7of55",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -4675,12 +4675,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6fta4ni8e",
+     "id": "0mwh42wjit40um4kc",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -4691,9 +4691,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6quf3m3q9",
+     "id": "0mwh42wjib81t6v10",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -4741,9 +4741,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw63fq0f12j",
+     "id": "0mwh42wji4jtsywer",
      "kind": "labor",
-     "refId": "0mwh3hbw4op4v3gnc",
+     "refId": "0mwh42wjgqcqqhb9r",
      "description": "Schimb anvelope sezonier (4 buc.)",
      "qty": 0.6,
      "unit": "h",
@@ -4751,12 +4751,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6fap6tp23",
+     "id": "0mwh42wjigim7of55",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -4764,12 +4764,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw6fta4ni8e",
+     "id": "0mwh42wjit40um4kc",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -4780,9 +4780,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6quf3m3q9",
+     "id": "0mwh42wjib81t6v10",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -4830,9 +4830,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw620sgi62i",
+     "id": "0mwh42wjieruc9bro",
      "kind": "labor",
-     "refId": "0mwh3hbw4y2kxgrp5",
+     "refId": "0mwh42wjgx53yq4o4",
      "description": "Înlocuire capete de bară",
      "qty": 1,
      "unit": "h",
@@ -4840,12 +4840,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6nyc3lyyv",
+     "id": "0mwh42wjiqyozy32n",
      "kind": "part",
-     "refId": "0mwh3hbw4qol2spog",
+     "refId": "0mwh42wjg2cklzr4i",
      "description": "Cap de bară Lemförder",
      "qty": 2,
      "unit": "buc",
@@ -4856,9 +4856,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6393u1c2a",
+     "id": "0mwh42wji0k7iei2b",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -4866,12 +4866,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6helnmkdn",
+     "id": "0mwh42wjiacfp9kxl",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -4882,9 +4882,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6juuqbrke",
+     "id": "0mwh42wjidwxl88wl",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -4934,9 +4934,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw620sgi62i",
+     "id": "0mwh42wjieruc9bro",
      "kind": "labor",
-     "refId": "0mwh3hbw4y2kxgrp5",
+     "refId": "0mwh42wjgx53yq4o4",
      "description": "Înlocuire capete de bară",
      "qty": 1,
      "unit": "h",
@@ -4944,12 +4944,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6nyc3lyyv",
+     "id": "0mwh42wjiqyozy32n",
      "kind": "part",
-     "refId": "0mwh3hbw4qol2spog",
+     "refId": "0mwh42wjg2cklzr4i",
      "description": "Cap de bară Lemförder",
      "qty": 2,
      "unit": "buc",
@@ -4960,9 +4960,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6393u1c2a",
+     "id": "0mwh42wji0k7iei2b",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -4970,12 +4970,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6helnmkdn",
+     "id": "0mwh42wjiacfp9kxl",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -4986,9 +4986,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6juuqbrke",
+     "id": "0mwh42wjidwxl88wl",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -5038,9 +5038,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6pief931n",
+     "id": "0mwh42wjic7f8g4qi",
      "kind": "labor",
-     "refId": "0mwh3hbw4glqa319b",
+     "refId": "0mwh42wjgn0gr9xiw",
      "description": "Înlocuire lichid de frână",
      "qty": 0.7,
      "unit": "h",
@@ -5048,12 +5048,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6az2wkl3f",
+     "id": "0mwh42wjih0o5baeh",
      "kind": "part",
-     "refId": "0mwh3hbw4p454m7pu",
+     "refId": "0mwh42wjg816e1am4",
      "description": "Lichid frână DOT 4 ATE",
      "qty": 1,
      "unit": "l",
@@ -5064,9 +5064,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6j26nkglm",
+     "id": "0mwh42wjipc894bu6",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -5074,12 +5074,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6v12m1iem",
+     "id": "0mwh42wjin30hey5z",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -5127,9 +5127,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6pief931n",
+     "id": "0mwh42wjic7f8g4qi",
      "kind": "labor",
-     "refId": "0mwh3hbw4glqa319b",
+     "refId": "0mwh42wjgn0gr9xiw",
      "description": "Înlocuire lichid de frână",
      "qty": 0.7,
      "unit": "h",
@@ -5137,12 +5137,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6az2wkl3f",
+     "id": "0mwh42wjih0o5baeh",
      "kind": "part",
-     "refId": "0mwh3hbw4p454m7pu",
+     "refId": "0mwh42wjg816e1am4",
      "description": "Lichid frână DOT 4 ATE",
      "qty": 1,
      "unit": "l",
@@ -5153,9 +5153,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6j26nkglm",
+     "id": "0mwh42wjipc894bu6",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -5163,12 +5163,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6v12m1iem",
+     "id": "0mwh42wjin30hey5z",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -5216,9 +5216,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7aprt84rh",
+     "id": "0mwh42wjihev01ioy",
      "kind": "labor",
-     "refId": "0mwh3hbw4wkf66aoy",
+     "refId": "0mwh42wjgni8c5p33",
      "description": "Geometrie roți",
      "qty": 0.8,
      "unit": "h",
@@ -5226,10 +5226,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7j4o15q3m",
+     "id": "0mwh42wjibibfk4vn",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -5275,9 +5275,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7aprt84rh",
+     "id": "0mwh42wjihev01ioy",
      "kind": "labor",
-     "refId": "0mwh3hbw4wkf66aoy",
+     "refId": "0mwh42wjgni8c5p33",
      "description": "Geometrie roți",
      "qty": 0.8,
      "unit": "h",
@@ -5285,10 +5285,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7j4o15q3m",
+     "id": "0mwh42wjibibfk4vn",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -5334,9 +5334,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7kdzuewl2",
+     "id": "0mwh42wjjpkmbqilt",
      "kind": "labor",
-     "refId": "0mwh3hbw40k825r1h",
+     "refId": "0mwh42wjgy8ul3yl5",
      "description": "Echilibrare roți (4 buc.)",
      "qty": 0.5,
      "unit": "h",
@@ -5344,12 +5344,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7iuc7ghqp",
+     "id": "0mwh42wjjnltlga10",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -5357,10 +5357,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7alag1ol8",
+     "id": "0mwh42wjjp7p1bnbb",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -5408,9 +5408,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7kdzuewl2",
+     "id": "0mwh42wjjpkmbqilt",
      "kind": "labor",
-     "refId": "0mwh3hbw40k825r1h",
+     "refId": "0mwh42wjgy8ul3yl5",
      "description": "Echilibrare roți (4 buc.)",
      "qty": 0.5,
      "unit": "h",
@@ -5418,12 +5418,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7iuc7ghqp",
+     "id": "0mwh42wjjnltlga10",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -5431,10 +5431,10 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7alag1ol8",
+     "id": "0mwh42wjjp7p1bnbb",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -5482,9 +5482,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7ug93c5gz",
+     "id": "0mwh42wjinaoseou6",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -5492,12 +5492,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7p7xycdbt",
+     "id": "0mwh42wjitao4adhz",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -5508,9 +5508,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw719vdiyof",
+     "id": "0mwh42wjiysenra0n",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -5521,9 +5521,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7panrejmq",
+     "id": "0mwh42wjis7gwi7x0",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -5531,12 +5531,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7wsceije8",
+     "id": "0mwh42wjier7rkcsh",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -5547,9 +5547,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7f9c4dva1",
+     "id": "0mwh42wjihgjymfc6",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -5560,9 +5560,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7gkv9dvqo",
+     "id": "0mwh42wjitxuk2qxe",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -5573,9 +5573,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7gttradis",
+     "id": "0mwh42wji3gx97xwt",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -5586,7 +5586,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7qb7626md",
+     "id": "0mwh42wjip1eg2juk",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -5646,9 +5646,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7ug93c5gz",
+     "id": "0mwh42wjinaoseou6",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -5656,12 +5656,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7p7xycdbt",
+     "id": "0mwh42wjitao4adhz",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -5672,9 +5672,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw719vdiyof",
+     "id": "0mwh42wjiysenra0n",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -5685,9 +5685,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7panrejmq",
+     "id": "0mwh42wjis7gwi7x0",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -5695,12 +5695,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7wsceije8",
+     "id": "0mwh42wjier7rkcsh",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -5711,9 +5711,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7f9c4dva1",
+     "id": "0mwh42wjihgjymfc6",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -5724,9 +5724,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7gkv9dvqo",
+     "id": "0mwh42wjitxuk2qxe",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -5737,9 +5737,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7gttradis",
+     "id": "0mwh42wji3gx97xwt",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -5750,7 +5750,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7qb7626md",
+     "id": "0mwh42wjip1eg2juk",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -5810,9 +5810,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw6c7pvtyh9",
+     "id": "0mwh42wjik55d9bjj",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -5820,12 +5820,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6bxt94nil",
+     "id": "0mwh42wjidnlbgj1a",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -5833,12 +5833,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6j1qinlyj",
+     "id": "0mwh42wjig5ph7ln7",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -5849,9 +5849,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6x4cum809",
+     "id": "0mwh42wjiss2hvldu",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -5899,9 +5899,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw6c7pvtyh9",
+     "id": "0mwh42wjik55d9bjj",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -5909,12 +5909,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6bxt94nil",
+     "id": "0mwh42wjidnlbgj1a",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -5922,12 +5922,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw6j1qinlyj",
+     "id": "0mwh42wjig5ph7ln7",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -5938,9 +5938,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw6x4cum809",
+     "id": "0mwh42wjiss2hvldu",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -5988,9 +5988,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7wa0smies",
+     "id": "0mwh42wjjgz3q06d1",
      "kind": "labor",
-     "refId": "0mwh3hbw43451eooq",
+     "refId": "0mwh42wjg7uqm9g14",
      "description": "Verificare pre-ITP",
      "qty": 0.5,
      "unit": "h",
@@ -5998,7 +5998,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     }
    ],
    "totals": {
@@ -6032,9 +6032,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7wa0smies",
+     "id": "0mwh42wjjgz3q06d1",
      "kind": "labor",
-     "refId": "0mwh3hbw43451eooq",
+     "refId": "0mwh42wjg7uqm9g14",
      "description": "Verificare pre-ITP",
      "qty": 0.5,
      "unit": "h",
@@ -6042,7 +6042,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     }
    ],
    "totals": {
@@ -6076,9 +6076,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7rwxtx763",
+     "id": "0mwh42wjj89x56vyp",
      "kind": "labor",
-     "refId": "0mwh3hbw481vu4odo",
+     "refId": "0mwh42wjglx1xcjux",
      "description": "Înlocuire plăcuțe frână spate",
      "qty": 1,
      "unit": "h",
@@ -6086,12 +6086,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7r53ywv6o",
+     "id": "0mwh42wjjxtxztvch",
      "kind": "part",
-     "refId": "0mwh3hbw4pm16l48w",
+     "refId": "0mwh42wjgcsfjhx9o",
      "description": "Plăcuțe frână spate TRW",
      "qty": 1,
      "unit": "set",
@@ -6135,9 +6135,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7rwxtx763",
+     "id": "0mwh42wjj89x56vyp",
      "kind": "labor",
-     "refId": "0mwh3hbw481vu4odo",
+     "refId": "0mwh42wjglx1xcjux",
      "description": "Înlocuire plăcuțe frână spate",
      "qty": 1,
      "unit": "h",
@@ -6145,12 +6145,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7r53ywv6o",
+     "id": "0mwh42wjjxtxztvch",
      "kind": "part",
-     "refId": "0mwh3hbw4pm16l48w",
+     "refId": "0mwh42wjgcsfjhx9o",
      "description": "Plăcuțe frână spate TRW",
      "qty": 1,
      "unit": "set",
@@ -6194,9 +6194,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7e2tumrad",
+     "id": "0mwh42wjjfgrmmev8",
      "kind": "labor",
-     "refId": "0mwh3hbw481vu4odo",
+     "refId": "0mwh42wjglx1xcjux",
      "description": "Înlocuire plăcuțe frână spate",
      "qty": 1,
      "unit": "h",
@@ -6204,12 +6204,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7mvsuwdhj",
+     "id": "0mwh42wjjgz0ruyge",
      "kind": "part",
-     "refId": "0mwh3hbw4pm16l48w",
+     "refId": "0mwh42wjgcsfjhx9o",
      "description": "Plăcuțe frână spate TRW",
      "qty": 1,
      "unit": "set",
@@ -6253,9 +6253,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7e2tumrad",
+     "id": "0mwh42wjjfgrmmev8",
      "kind": "labor",
-     "refId": "0mwh3hbw481vu4odo",
+     "refId": "0mwh42wjglx1xcjux",
      "description": "Înlocuire plăcuțe frână spate",
      "qty": 1,
      "unit": "h",
@@ -6263,12 +6263,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7mvsuwdhj",
+     "id": "0mwh42wjjgz0ruyge",
      "kind": "part",
-     "refId": "0mwh3hbw4pm16l48w",
+     "refId": "0mwh42wjgcsfjhx9o",
      "description": "Plăcuțe frână spate TRW",
      "qty": 1,
      "unit": "set",
@@ -6312,9 +6312,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7cmf9ch1i",
+     "id": "0mwh42wjjdk6483os",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -6322,12 +6322,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7szfa4pgh",
+     "id": "0mwh42wjjzw9g3kqy",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -6338,9 +6338,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7d3lw97a3",
+     "id": "0mwh42wjjpvnhxunj",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -6351,9 +6351,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7zj5g8v1m",
+     "id": "0mwh42wjj64mh3ftv",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -6364,9 +6364,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7pre45hdc",
+     "id": "0mwh42wjj7fmil0zr",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -6377,9 +6377,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7prdyci60",
+     "id": "0mwh42wjjk6sw991z",
      "kind": "labor",
-     "refId": "0mwh3hbw43j524qqz",
+     "refId": "0mwh42wjgosa736wt",
      "description": "Înlocuire bec far",
      "qty": 0.3,
      "unit": "h",
@@ -6387,12 +6387,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7wmq1gmjj",
+     "id": "0mwh42wjjhznmoyj8",
      "kind": "part",
-     "refId": "0mwh3hbw4pe9g378i",
+     "refId": "0mwh42wjgtthzv2r2",
      "description": "Bec H7 Philips",
      "qty": 1,
      "unit": "buc",
@@ -6403,7 +6403,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7tyvyixpf",
+     "id": "0mwh42wjj3yfnxwwn",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -6461,9 +6461,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7cmf9ch1i",
+     "id": "0mwh42wjjdk6483os",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -6471,12 +6471,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7szfa4pgh",
+     "id": "0mwh42wjjzw9g3kqy",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -6487,9 +6487,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7d3lw97a3",
+     "id": "0mwh42wjjpvnhxunj",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -6500,9 +6500,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7zj5g8v1m",
+     "id": "0mwh42wjj64mh3ftv",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -6513,9 +6513,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7pre45hdc",
+     "id": "0mwh42wjj7fmil0zr",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -6526,9 +6526,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7prdyci60",
+     "id": "0mwh42wjjk6sw991z",
      "kind": "labor",
-     "refId": "0mwh3hbw43j524qqz",
+     "refId": "0mwh42wjgosa736wt",
      "description": "Înlocuire bec far",
      "qty": 0.3,
      "unit": "h",
@@ -6536,12 +6536,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7wmq1gmjj",
+     "id": "0mwh42wjjhznmoyj8",
      "kind": "part",
-     "refId": "0mwh3hbw4pe9g378i",
+     "refId": "0mwh42wjgtthzv2r2",
      "description": "Bec H7 Philips",
      "qty": 1,
      "unit": "buc",
@@ -6552,7 +6552,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7tyvyixpf",
+     "id": "0mwh42wjj3yfnxwwn",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -6610,9 +6610,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7ewfb67tx",
+     "id": "0mwh42wjj9i413vj1",
      "kind": "labor",
-     "refId": "0mwh3hbw4n2knhq74",
+     "refId": "0mwh42wjgyezghcae",
      "description": "Înlocuire bujii",
      "qty": 0.6,
      "unit": "h",
@@ -6620,12 +6620,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7l8x7quch",
+     "id": "0mwh42wjj7z6njm1p",
      "kind": "part",
-     "refId": "0mwh3hbw43benjfa2",
+     "refId": "0mwh42wjgzro9b05k",
      "description": "Bujie NGK",
      "qty": 4,
      "unit": "buc",
@@ -6669,9 +6669,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7ewfb67tx",
+     "id": "0mwh42wjj9i413vj1",
      "kind": "labor",
-     "refId": "0mwh3hbw4n2knhq74",
+     "refId": "0mwh42wjgyezghcae",
      "description": "Înlocuire bujii",
      "qty": 0.6,
      "unit": "h",
@@ -6679,12 +6679,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7l8x7quch",
+     "id": "0mwh42wjj7z6njm1p",
      "kind": "part",
-     "refId": "0mwh3hbw43benjfa2",
+     "refId": "0mwh42wjgzro9b05k",
      "description": "Bujie NGK",
      "qty": 4,
      "unit": "buc",
@@ -6728,9 +6728,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw770zjgxmz",
+     "id": "0mwh42wjjfeg6fh2c",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -6738,12 +6738,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7ehtqztcr",
+     "id": "0mwh42wjjobbvy61j",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -6751,12 +6751,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7jpfxbdet",
+     "id": "0mwh42wjj21pvblrg",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -6767,9 +6767,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw77c1yhnwc",
+     "id": "0mwh42wjjs0ah7g8t",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -6780,9 +6780,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7o5ynh11g",
+     "id": "0mwh42wjjouw74nxm",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -6793,9 +6793,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw73g69wcg1",
+     "id": "0mwh42wjjab2fopql",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -6806,7 +6806,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7mblj3m98",
+     "id": "0mwh42wjj076msil2",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -6862,9 +6862,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw770zjgxmz",
+     "id": "0mwh42wjjfeg6fh2c",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -6872,12 +6872,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7ehtqztcr",
+     "id": "0mwh42wjjobbvy61j",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -6885,12 +6885,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7jpfxbdet",
+     "id": "0mwh42wjj21pvblrg",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -6901,9 +6901,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw77c1yhnwc",
+     "id": "0mwh42wjjs0ah7g8t",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -6914,9 +6914,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7o5ynh11g",
+     "id": "0mwh42wjjouw74nxm",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -6927,9 +6927,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw73g69wcg1",
+     "id": "0mwh42wjjab2fopql",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -6940,7 +6940,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7mblj3m98",
+     "id": "0mwh42wjj076msil2",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -6996,9 +6996,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw77u5pvqtn",
+     "id": "0mwh42wjj03xdtphm",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -7006,12 +7006,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7ou05d7ft",
+     "id": "0mwh42wjjks7krl5j",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -7022,9 +7022,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw75fmjgbrs",
+     "id": "0mwh42wjj8y5t06td",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -7032,12 +7032,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7p3t5ysx4",
+     "id": "0mwh42wjj80ymsan2",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -7048,9 +7048,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7jy4us341",
+     "id": "0mwh42wjjidnl3xir",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -7100,9 +7100,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw77u5pvqtn",
+     "id": "0mwh42wjj03xdtphm",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -7110,12 +7110,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7ou05d7ft",
+     "id": "0mwh42wjjks7krl5j",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -7126,9 +7126,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw75fmjgbrs",
+     "id": "0mwh42wjj8y5t06td",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -7136,12 +7136,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7p3t5ysx4",
+     "id": "0mwh42wjj80ymsan2",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -7152,9 +7152,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7jy4us341",
+     "id": "0mwh42wjjidnl3xir",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -7204,9 +7204,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw70lkyd5cp",
+     "id": "0mwh42wjj3h8piilv",
      "kind": "labor",
-     "refId": "0mwh3hbw4glqa319b",
+     "refId": "0mwh42wjgn0gr9xiw",
      "description": "Înlocuire lichid de frână",
      "qty": 0.7,
      "unit": "h",
@@ -7214,12 +7214,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw75de0c7xg",
+     "id": "0mwh42wjjecy21x0c",
      "kind": "part",
-     "refId": "0mwh3hbw4p454m7pu",
+     "refId": "0mwh42wjg816e1am4",
      "description": "Lichid frână DOT 4 ATE",
      "qty": 1,
      "unit": "l",
@@ -7263,9 +7263,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw70lkyd5cp",
+     "id": "0mwh42wjj3h8piilv",
      "kind": "labor",
-     "refId": "0mwh3hbw4glqa319b",
+     "refId": "0mwh42wjgn0gr9xiw",
      "description": "Înlocuire lichid de frână",
      "qty": 0.7,
      "unit": "h",
@@ -7273,12 +7273,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw75de0c7xg",
+     "id": "0mwh42wjjecy21x0c",
      "kind": "part",
-     "refId": "0mwh3hbw4p454m7pu",
+     "refId": "0mwh42wjg816e1am4",
      "description": "Lichid frână DOT 4 ATE",
      "qty": 1,
      "unit": "l",
@@ -7322,9 +7322,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7x7zj0mh3",
+     "id": "0mwh42wjjej3m09pl",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -7332,12 +7332,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw74w0ymhhi",
+     "id": "0mwh42wjjayrppktm",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -7381,9 +7381,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7x7zj0mh3",
+     "id": "0mwh42wjjej3m09pl",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -7391,12 +7391,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw74w0ymhhi",
+     "id": "0mwh42wjjayrppktm",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -7440,9 +7440,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw701dk68ms",
+     "id": "0mwh42wjjrcfbd5tw",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -7450,12 +7450,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7uim2tfrm",
+     "id": "0mwh42wjjskth1rl5",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -7466,9 +7466,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7qpbze0l2",
+     "id": "0mwh42wjjqnjpe71i",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -7514,9 +7514,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw701dk68ms",
+     "id": "0mwh42wjjrcfbd5tw",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -7524,12 +7524,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7uim2tfrm",
+     "id": "0mwh42wjjskth1rl5",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -7540,9 +7540,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7qpbze0l2",
+     "id": "0mwh42wjjqnjpe71i",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -7588,9 +7588,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7n398rq5d",
+     "id": "0mwh42wjjao8rymzv",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -7598,12 +7598,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7dsv92wk3",
+     "id": "0mwh42wjjmd60640b",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -7611,12 +7611,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7owzxj1zz",
+     "id": "0mwh42wjj23mjfm4e",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -7627,9 +7627,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7q5s6pu6h",
+     "id": "0mwh42wjjr4tl0y4j",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -7677,9 +7677,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7n398rq5d",
+     "id": "0mwh42wjjao8rymzv",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -7687,12 +7687,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7dsv92wk3",
+     "id": "0mwh42wjjmd60640b",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -7700,12 +7700,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     },
     {
-     "id": "0mwh3hbw7owzxj1zz",
+     "id": "0mwh42wjj23mjfm4e",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -7716,9 +7716,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7q5s6pu6h",
+     "id": "0mwh42wjjr4tl0y4j",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -7766,9 +7766,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw76hz945et",
+     "id": "0mwh42wjjbxz3jg8i",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -7776,12 +7776,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7hbnaa1jq",
+     "id": "0mwh42wjjszoabfq3",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -7792,9 +7792,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7porg164j",
+     "id": "0mwh42wjjb06lrxs0",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -7840,9 +7840,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw76hz945et",
+     "id": "0mwh42wjjbxz3jg8i",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -7850,12 +7850,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7hbnaa1jq",
+     "id": "0mwh42wjjszoabfq3",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -7866,9 +7866,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7porg164j",
+     "id": "0mwh42wjjb06lrxs0",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -7914,9 +7914,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7ri7der1v",
+     "id": "0mwh42wjjpy7mej0f",
      "kind": "labor",
-     "refId": "0mwh3hbw4y2kxgrp5",
+     "refId": "0mwh42wjgx53yq4o4",
      "description": "Înlocuire capete de bară",
      "qty": 1,
      "unit": "h",
@@ -7924,12 +7924,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw72beswjvy",
+     "id": "0mwh42wjj07tb5p86",
      "kind": "part",
-     "refId": "0mwh3hbw4qol2spog",
+     "refId": "0mwh42wjg2cklzr4i",
      "description": "Cap de bară Lemförder",
      "qty": 2,
      "unit": "buc",
@@ -7940,9 +7940,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7ha57clfw",
+     "id": "0mwh42wjjps5n85gj",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -7950,12 +7950,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7xae23ij5",
+     "id": "0mwh42wjjjwt77svv",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -7966,9 +7966,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7c4bbdex8",
+     "id": "0mwh42wjj0h53t1oe",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -7979,7 +7979,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7qo7u0vyt",
+     "id": "0mwh42wjj351olwga",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -8033,9 +8033,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7ri7der1v",
+     "id": "0mwh42wjjpy7mej0f",
      "kind": "labor",
-     "refId": "0mwh3hbw4y2kxgrp5",
+     "refId": "0mwh42wjgx53yq4o4",
      "description": "Înlocuire capete de bară",
      "qty": 1,
      "unit": "h",
@@ -8043,12 +8043,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw72beswjvy",
+     "id": "0mwh42wjj07tb5p86",
      "kind": "part",
-     "refId": "0mwh3hbw4qol2spog",
+     "refId": "0mwh42wjg2cklzr4i",
      "description": "Cap de bară Lemförder",
      "qty": 2,
      "unit": "buc",
@@ -8059,9 +8059,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7ha57clfw",
+     "id": "0mwh42wjjps5n85gj",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -8069,12 +8069,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7xae23ij5",
+     "id": "0mwh42wjjjwt77svv",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -8085,9 +8085,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7c4bbdex8",
+     "id": "0mwh42wjj0h53t1oe",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -8098,7 +8098,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7qo7u0vyt",
+     "id": "0mwh42wjj351olwga",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -8152,9 +8152,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7sb29l39i",
+     "id": "0mwh42wjjwbczvd4u",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -8162,12 +8162,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7fao1co51",
+     "id": "0mwh42wjjuw2yavlk",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -8178,9 +8178,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw71i8x8yvo",
+     "id": "0mwh42wjjvq53tf9m",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -8191,7 +8191,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw79mvwpoc8",
+     "id": "0mwh42wjj81k2z223",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -8241,9 +8241,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7sb29l39i",
+     "id": "0mwh42wjjwbczvd4u",
      "kind": "labor",
-     "refId": "0mwh3hbw4zm03qlys",
+     "refId": "0mwh42wjgjvzcblmu",
      "description": "Schimb ulei și filtru",
      "qty": 0.6,
      "unit": "h",
@@ -8251,12 +8251,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7fao1co51",
+     "id": "0mwh42wjjuw2yavlk",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -8267,9 +8267,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw71i8x8yvo",
+     "id": "0mwh42wjjvq53tf9m",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -8280,7 +8280,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw79mvwpoc8",
+     "id": "0mwh42wjj81k2z223",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -8330,9 +8330,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7wrl4euox",
+     "id": "0mwh42wjjc028btui",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -8340,12 +8340,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7cqxfcbyf",
+     "id": "0mwh42wjj45nh15p1",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -8389,9 +8389,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7wrl4euox",
+     "id": "0mwh42wjjc028btui",
      "kind": "labor",
-     "refId": "0mwh3hbw44x0o2mx9",
+     "refId": "0mwh42wjgguj8trxa",
      "description": "Înlocuire plăcuțe frână față",
      "qty": 1,
      "unit": "h",
@@ -8399,12 +8399,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw7cqxfcbyf",
+     "id": "0mwh42wjj45nh15p1",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -8448,9 +8448,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7hc13ayjn",
+     "id": "0mwh42wjj9utnv65m",
      "kind": "labor",
-     "refId": "0mwh3hbw43j524qqz",
+     "refId": "0mwh42wjgosa736wt",
      "description": "Înlocuire bec far",
      "qty": 0.3,
      "unit": "h",
@@ -8458,12 +8458,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw74b8zczco",
+     "id": "0mwh42wjj09gx28qg",
      "kind": "part",
-     "refId": "0mwh3hbw4pe9g378i",
+     "refId": "0mwh42wjgtthzv2r2",
      "description": "Bec H7 Philips",
      "qty": 1,
      "unit": "buc",
@@ -8507,9 +8507,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7hc13ayjn",
+     "id": "0mwh42wjj9utnv65m",
      "kind": "labor",
-     "refId": "0mwh3hbw43j524qqz",
+     "refId": "0mwh42wjgosa736wt",
      "description": "Înlocuire bec far",
      "qty": 0.3,
      "unit": "h",
@@ -8517,12 +8517,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw74b8zczco",
+     "id": "0mwh42wjj09gx28qg",
      "kind": "part",
-     "refId": "0mwh3hbw4pe9g378i",
+     "refId": "0mwh42wjgtthzv2r2",
      "description": "Bec H7 Philips",
      "qty": 1,
      "unit": "buc",
@@ -8566,9 +8566,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw73l5pup0n",
+     "id": "0mwh42wjjwnmgnndo",
      "kind": "labor",
-     "refId": "0mwh3hbw43j524qqz",
+     "refId": "0mwh42wjgosa736wt",
      "description": "Înlocuire bec far",
      "qty": 0.3,
      "unit": "h",
@@ -8576,12 +8576,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw78z3b66pz",
+     "id": "0mwh42wjj74hp0uys",
      "kind": "part",
-     "refId": "0mwh3hbw4pe9g378i",
+     "refId": "0mwh42wjgtthzv2r2",
      "description": "Bec H7 Philips",
      "qty": 1,
      "unit": "buc",
@@ -8592,7 +8592,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7j8f8lo7p",
+     "id": "0mwh42wjj0rbdddn2",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -8640,9 +8640,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw73l5pup0n",
+     "id": "0mwh42wjjwnmgnndo",
      "kind": "labor",
-     "refId": "0mwh3hbw43j524qqz",
+     "refId": "0mwh42wjgosa736wt",
      "description": "Înlocuire bec far",
      "qty": 0.3,
      "unit": "h",
@@ -8650,12 +8650,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw48dsa525q"
+     "staffId": "0mwh42wjgwr6dtecd"
     },
     {
-     "id": "0mwh3hbw78z3b66pz",
+     "id": "0mwh42wjj74hp0uys",
      "kind": "part",
-     "refId": "0mwh3hbw4pe9g378i",
+     "refId": "0mwh42wjgtthzv2r2",
      "description": "Bec H7 Philips",
      "qty": 1,
      "unit": "buc",
@@ -8666,7 +8666,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7j8f8lo7p",
+     "id": "0mwh42wjj0rbdddn2",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -8714,9 +8714,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7cyrdrtxc",
+     "id": "0mwh42wjj0ui3efp8",
      "kind": "labor",
-     "refId": "0mwh3hbw4n2knhq74",
+     "refId": "0mwh42wjgyezghcae",
      "description": "Înlocuire bujii",
      "qty": 0.6,
      "unit": "h",
@@ -8724,12 +8724,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7fchdm4xm",
+     "id": "0mwh42wjjp5tc3ehh",
      "kind": "part",
-     "refId": "0mwh3hbw43benjfa2",
+     "refId": "0mwh42wjgzro9b05k",
      "description": "Bujie NGK",
      "qty": 4,
      "unit": "buc",
@@ -8773,9 +8773,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7cyrdrtxc",
+     "id": "0mwh42wjj0ui3efp8",
      "kind": "labor",
-     "refId": "0mwh3hbw4n2knhq74",
+     "refId": "0mwh42wjgyezghcae",
      "description": "Înlocuire bujii",
      "qty": 0.6,
      "unit": "h",
@@ -8783,12 +8783,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7fchdm4xm",
+     "id": "0mwh42wjjp5tc3ehh",
      "kind": "part",
-     "refId": "0mwh3hbw43benjfa2",
+     "refId": "0mwh42wjgzro9b05k",
      "description": "Bujie NGK",
      "qty": 4,
      "unit": "buc",
@@ -8832,9 +8832,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7u5s4ndmh",
+     "id": "0mwh42wjj1ueui59h",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -8842,12 +8842,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw72f4fixq4",
+     "id": "0mwh42wjjl5r3k66n",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -8858,9 +8858,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7mwat0pb1",
+     "id": "0mwh42wjjf3dvvhzv",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -8871,9 +8871,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7hr21l3g4",
+     "id": "0mwh42wjjejvdbazt",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -8884,9 +8884,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw72va3x82t",
+     "id": "0mwh42wjj1zemr2ue",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -8936,9 +8936,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7u5s4ndmh",
+     "id": "0mwh42wjj1ueui59h",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -8946,12 +8946,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw72f4fixq4",
+     "id": "0mwh42wjjl5r3k66n",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -8962,9 +8962,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7mwat0pb1",
+     "id": "0mwh42wjjf3dvvhzv",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -8975,9 +8975,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7hr21l3g4",
+     "id": "0mwh42wjjejvdbazt",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -8988,9 +8988,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw72va3x82t",
+     "id": "0mwh42wjj1zemr2ue",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -9040,9 +9040,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7ik9cih3j",
+     "id": "0mwh42wjjk8sxvcyp",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -9050,12 +9050,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw71vj3fr2x",
+     "id": "0mwh42wjjldcwvigf",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -9066,9 +9066,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7399bykbr",
+     "id": "0mwh42wjjr53kpquh",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -9079,9 +9079,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7ke2vrkwx",
+     "id": "0mwh42wjjbhpfzpad",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -9089,12 +9089,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7i8c3r424",
+     "id": "0mwh42wjjsm8tduxg",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -9105,9 +9105,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7sls374wa",
+     "id": "0mwh42wjj7pwljnhe",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -9118,9 +9118,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7su34dhtb",
+     "id": "0mwh42wjj5f5fdah0",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -9131,9 +9131,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7p2cwe6sh",
+     "id": "0mwh42wjj7ifdtzuz",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -9144,7 +9144,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7tfmk0unv",
+     "id": "0mwh42wjjjrzhr47t",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -9204,9 +9204,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7ik9cih3j",
+     "id": "0mwh42wjjk8sxvcyp",
      "kind": "labor",
-     "refId": "0mwh3hbw4752dkaz4",
+     "refId": "0mwh42wjgb7dxhr7p",
      "description": "Înlocuire discuri și plăcuțe față",
      "qty": 1.6,
      "unit": "h",
@@ -9214,12 +9214,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw71vj3fr2x",
+     "id": "0mwh42wjjldcwvigf",
      "kind": "part",
-     "refId": "0mwh3hbw4ywxgk7u3",
+     "refId": "0mwh42wjgcovmasvp",
      "description": "Discuri frână față Brembo",
      "qty": 1,
      "unit": "set",
@@ -9230,9 +9230,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7399bykbr",
+     "id": "0mwh42wjjr53kpquh",
      "kind": "part",
-     "refId": "0mwh3hbw4e7q1vkot",
+     "refId": "0mwh42wjg3cu1rkq2",
      "description": "Plăcuțe frână față ATE",
      "qty": 1,
      "unit": "set",
@@ -9243,9 +9243,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7ke2vrkwx",
+     "id": "0mwh42wjjbhpfzpad",
      "kind": "labor",
-     "refId": "0mwh3hbw4zhip8e0q",
+     "refId": "0mwh42wjg054eho2x",
      "description": "Revizie completă (ulei și filtre)",
      "qty": 1.5,
      "unit": "h",
@@ -9253,12 +9253,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4hgbd9cs5"
+     "staffId": "0mwh42wjgvf4ep96l"
     },
     {
-     "id": "0mwh3hbw7i8c3r424",
+     "id": "0mwh42wjjsm8tduxg",
      "kind": "part",
-     "refId": "0mwh3hbw4ipcd6yvb",
+     "refId": "0mwh42wjg20ycfe8g",
      "description": "Ulei motor 5W-30 Castrol",
      "qty": 4.5,
      "unit": "l",
@@ -9269,9 +9269,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7sls374wa",
+     "id": "0mwh42wjj7pwljnhe",
      "kind": "part",
-     "refId": "0mwh3hbw42yzr0b8f",
+     "refId": "0mwh42wjg7ul076d7",
      "description": "Filtru ulei Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -9282,9 +9282,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7su34dhtb",
+     "id": "0mwh42wjj5f5fdah0",
      "kind": "part",
-     "refId": "0mwh3hbw4mqog98y4",
+     "refId": "0mwh42wjgdi3l2ad2",
      "description": "Filtru aer Mann-Filter",
      "qty": 1,
      "unit": "buc",
@@ -9295,9 +9295,9 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7p2cwe6sh",
+     "id": "0mwh42wjj7ifdtzuz",
      "kind": "part",
-     "refId": "0mwh3hbw41fhtg0h2",
+     "refId": "0mwh42wjg3nsi4u6c",
      "description": "Filtru polen cu carbon activ Bosch",
      "qty": 1,
      "unit": "buc",
@@ -9308,7 +9308,7 @@
      "staffId": null
     },
     {
-     "id": "0mwh3hbw7tfmk0unv",
+     "id": "0mwh42wjjjrzhr47t",
      "kind": "fee",
      "refId": null,
      "description": "Materiale consumabile",
@@ -9368,9 +9368,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7gtobmvrw",
+     "id": "0mwh42wjjo9tbdyom",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -9378,7 +9378,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     }
    ],
    "totals": {
@@ -9412,9 +9412,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7gtobmvrw",
+     "id": "0mwh42wjjo9tbdyom",
      "kind": "labor",
-     "refId": "0mwh3hbw4ske1uj2t",
+     "refId": "0mwh42wjgo5cdxghr",
      "description": "Diagnoză computerizată",
      "qty": 0.5,
      "unit": "h",
@@ -9422,7 +9422,7 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw2pvuyxruu"
+     "staffId": "0mwh42wjeu2zf3xfw"
     }
    ],
    "totals": {
@@ -9456,9 +9456,9 @@
    "vatPayer": true,
    "lines": [
     {
-     "id": "0mwh3hbw7z6yr3h78",
+     "id": "0mwh42wjjjl10wuia",
      "kind": "labor",
-     "refId": "0mwh3hbw4vf804pd7",
+     "refId": "0mwh42wjg3ihsakei",
      "description": "Înlocuire acumulator",
      "qty": 0.3,
      "unit": "h",
@@ -9466,12 +9466,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7x8xhkv6m",
+     "id": "0mwh42wjju6bmkqlt",
      "kind": "part",
-     "refId": "0mwh3hbw4622cba5t",
+     "refId": "0mwh42wjguz9ccx6j",
      "description": "Acumulator 74 Ah 680 A Varta",
      "qty": 1,
      "unit": "buc",
@@ -9515,9 +9515,9 @@
    "vatPayer": false,
    "lines": [
     {
-     "id": "0mwh3hbw7z6yr3h78",
+     "id": "0mwh42wjjjl10wuia",
      "kind": "labor",
-     "refId": "0mwh3hbw4vf804pd7",
+     "refId": "0mwh42wjg3ihsakei",
      "description": "Înlocuire acumulator",
      "qty": 0.3,
      "unit": "h",
@@ -9525,12 +9525,12 @@
      "discountPct": 0,
      "vatRate": 21,
      "cost": 0,
-     "staffId": "0mwh3hbw4yug9lrcv"
+     "staffId": "0mwh42wjg8ejm9msj"
     },
     {
-     "id": "0mwh3hbw7x8xhkv6m",
+     "id": "0mwh42wjju6bmkqlt",
      "kind": "part",
-     "refId": "0mwh3hbw4622cba5t",
+     "refId": "0mwh42wjguz9ccx6j",
      "description": "Acumulator 74 Ah 680 A Varta",
      "qty": 1,
      "unit": "buc",

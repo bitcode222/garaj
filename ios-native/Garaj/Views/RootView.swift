@@ -17,7 +17,7 @@ struct RootView: View {
                     HomeView()
                 }
                 Tab("Programări", systemImage: "calendar", value: "programari") {
-                    ComingSoon(title: "Programări", phase: "etapa 4")
+                    AppointmentsView()
                 }
                 Tab("Lucrări", systemImage: "wrench.and.screwdriver", value: "lucrari") {
                     WorkOrdersView()
