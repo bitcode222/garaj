@@ -138,10 +138,7 @@ private struct InvoiceRow: View {
                 Text(Dates.display(row.invoice.issueDate)).font(.caption).foregroundStyle(.secondary)
             }
             HStack {
-                Label(style.label, systemImage: style.symbol)
-                    .labelStyle(StatusLabelStyle())
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(style.color)
+                StatusPill(style: style)
                 Spacer()
                 if row.state == "partial" || row.state == "overdue" {
                     Text("Rest \(Money.format(row.balance, currency: currency))").font(.caption.monospacedDigit()).foregroundStyle(style.color)

@@ -127,9 +127,7 @@ struct WorkOrderDetailView: View {
                     let state = store.invoiceState(invoice)
                     NavigationLink { InvoiceDetailView(id: invoice.id) } label: {
                         LabeledContent {
-                            Label(Labels.invoice(state).label, systemImage: Labels.invoice(state).symbol)
-                                .labelStyle(StatusLabelStyle())
-                                .foregroundStyle(Labels.invoice(state).color)
+                            StatusPill(style: Labels.invoice(state))
                         } label: {
                             Text(verbatim: invoice.number == nil ? "Ciornă" : invoice.label)
                         }

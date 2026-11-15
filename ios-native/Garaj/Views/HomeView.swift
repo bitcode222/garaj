@@ -1,9 +1,9 @@
 import Charts
 import SwiftUI
 
-/// Azi (docs/HOME-PAGE.md): the day, a search over everything, then the cars in the shop,
-/// the bookings to confirm, the invoices to collect, and the analytics. One tap acts where it
-/// can (confirm, check in, collect, remind); everything else opens the record.
+/// Azi (docs/HOME-PAGE.md; look A, docs/IOS-NATIVE.md §7): the greeting and the day, four shortcuts,
+/// four numbers, then the cars in the shop, the bookings to confirm, the invoices to collect and the
+/// analytics, as list rows with status capsules. Swipe a row for its next step; tap it to open it.
 struct HomeView: View {
     enum Route: Hashable { case job(String), invoice(String), appointment(String) }
 
@@ -11,7 +11,9 @@ struct HomeView: View {
     @Environment(UndoCenter.self) private var undo
     @State private var path: [Route] = []
     @State private var query = ""
+    @State private var searching = false
     @State private var creatingJob = false
+    @State private var booking: BookingForm.Target?
     @State private var paying: Invoice?
     @State private var period = "7d"
     @State private var stage: String?
@@ -21,34 +23,42 @@ struct HomeView: View {
     var body: some View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
-            ScrollView {
-                VStack(alignment: .leading, spacing: 28) {
+                List {
                     if query.isEmpty {
-                        hero
-                        inShop
+                        shortcuts
+                        numbers(proxy)
+                        inShop.id("shop")
                         toConfirm.id("confirm")
                         toCollect.id("collect")
                         analytics.id("analytics")
                     } else {
-                        SearchResults(query: query) { path.append($0) }
+                        Section { SearchResults(query: query) { path.append($0) } }.bareRow()
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+                .listStyle(.insetGrouped)
+                .listSectionSpacing(20)
+                #if DEBUG
+                // Screenshots: `-GarajHomeSection collect` scrolls there.
+                .task {
+                    if let id = UserDefaults.standard.string(forKey: "GarajHomeSection") {
+                        try? await Task.sleep(for: .milliseconds(300))
+                        proxy.scrollTo(id, anchor: .top)
+                    }
+                }
+                #endif
             }
-            #if DEBUG
-            // Screenshots: `-GarajHomeSection collect` scrolls there.
-            .task {
-                if let id = UserDefaults.standard.string(forKey: "GarajHomeSection") {
-                    try? await Task.sleep(for: .milliseconds(300))
-                    proxy.scrollTo(id, anchor: .top)
+            .navigationTitle(greeting)
+            .navigationSubtitle(dayLine)
+            .searchable(text: $query, isPresented: $searching, prompt: "Mașină, client, lucrare, factură")
+            .toolbar {
+                Menu {
+                    Button { booking = .new } label: { Label("Programare nouă", systemImage: "calendar.badge.plus") }
+                    Button { creatingJob = true } label: { Label("Primire mașină", systemImage: "car.badge.gearshape") }
+                    Button { path.append(.invoice(store.createInvoiceDraft().id)) } label: { Label("Factură nouă", systemImage: "doc.badge.plus") }
+                } label: {
+                    Label("Adaugă", systemImage: "plus")
                 }
             }
-            #endif
-            }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("Azi")
-            .searchable(text: $query, prompt: "Mașină, client, lucrare, factură")
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .job(let id): WorkOrderDetailView(id: id)
@@ -57,6 +67,7 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $creatingJob) { NewWorkOrderSheet { path.append(.job($0)) } }
+            .sheet(item: $booking) { BookingForm(target: $0) }
             .sheet(item: $paying) { PaymentSheet(invoice: $0) }
             .sensoryFeedback(.success, trigger: done)
             .alert("Nu se poate", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
@@ -67,26 +78,65 @@ struct HomeView: View {
 
     // MARK: The day
 
-    private var hero: some View {
+    private var greeting: String {
+        let hour = Calendar.current.component(.hour, from: .now)
+        return hour >= 5 && hour < 11 ? "Bună dimineața" : hour >= 11 && hour < 18 ? "Bună ziua" : "Bună seara"
+    }
+
+    private var dayLine: String {
         let shop = store.shop
-        let now = Date.now
-        let hour = Calendar.current.component(.hour, from: now)
-        let greeting = hour >= 5 && hour < 11 ? "Bună dimineața" : hour >= 11 && hour < 18 ? "Bună ziua" : "Bună seara"
-        let weekday = Calendar.current.component(.weekday, from: now) // 1 = Sunday
+        let weekday = Calendar.current.component(.weekday, from: .now) // 1 = Sunday
         let openDays = store.settings["hours"]?["days"]?.array?.compactMap { $0.number.map(Int.init) } ?? [1, 2, 3, 4, 5, 6]
-        let open = openDays.contains(weekday - 1)
-        return VStack(alignment: .leading, spacing: 12) {
-            Text("\(greeting) · \(now.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale(identifier: "ro_RO")))) · \(open ? "deschis \(shop.hoursOpen)–\(shop.hoursClose)" : "închis azi")")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            HStack(spacing: 8) {
-                Button { creatingJob = true } label: { Label("Primire mașină", systemImage: "car.badge.gearshape") }
-                Button { path.append(.invoice(store.createInvoiceDraft().id)) } label: { Label("Factură", systemImage: "doc.badge.plus") }
+        let day = Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale(identifier: "ro_RO"))).capitalizedFirst
+        return "\(day) · \(openDays.contains(weekday - 1) ? "deschis \(shop.hoursOpen)–\(shop.hoursClose)" : "închis azi")"
+    }
+
+    private var shortcuts: some View {
+        Section {
+            HStack(spacing: 10) {
+                QuickAction(title: "Programare", symbol: "calendar.badge.plus") { booking = .new }
+                QuickAction(title: "Lucrare", symbol: "wrench.and.screwdriver") { creatingJob = true }
+                QuickAction(title: "Factură", symbol: "doc.badge.plus") { path.append(.invoice(store.createInvoiceDraft().id)) }
+                QuickAction(title: "Caută", symbol: "magnifyingglass") { searching = true }
             }
-            .buttonStyle(.bordered)
-            .buttonBorderShape(.capsule)
-            .controlSize(.regular)
         }
+        .bareRow()
+    }
+
+    private func numbers(_ proxy: ScrollViewProxy) -> some View {
+        let today = Dates.today()
+        let jobs = Agenda.jobsToShow(store.all(WorkOrder.self), vatPayer: store.shop.vatPayer)
+        let inShop = jobs.reduce(0) { $0 + $1.items.count }
+        let ready = jobs.first { $0.key == "ready" }?.items.count ?? 0
+        let bookings = Agenda.bookingsToConfirm(store.all(Appointment.self), now: Dates.instant())
+        let soon = bookings.groups.filter { $0.day == today || $0.day == Dates.addDays(today, 1) }.reduce(0) { $0 + $1.items.count }
+        let collect = Agenda.invoicesToCollect(store.all(Invoice.self), paymentsByInvoice: Dictionary(grouping: store.all(Payment.self), by: \.invoiceId),
+                                               today: today, vatPayer: store.shop.vatPayer)
+        let overdue = collect.groups.first { $0.key == "overdue" }?.items.count ?? 0
+        // This month so far against the same days of last month (net, like Rapoarte).
+        let invoices = store.all(Invoice.self)
+        let monthStart = "\(Dates.monthKey(today))-01"
+        let lastStart = Dates.addMonths(monthStart, -1)
+        let now = Reports.summarize(invoices, from: monthStart, to: today).net
+        let before = Reports.summarize(invoices, from: lastStart, to: min(Dates.addMonths(today, -1), Dates.addDays(monthStart, -1))).net
+        let ro = Locale(identifier: "ro_RO")
+        let month = Dates.parseDate(monthStart)?.formatted(.dateTime.month(.wide).locale(ro)) ?? ""
+        let lastMonth = Dates.parseDate(lastStart)?.formatted(.dateTime.month(.abbreviated).locale(ro)) ?? ""
+        let change = before > 0 ? Int(Money.jsRound(Double(now - before) / Double(before) * 100)) : nil
+        return Section {
+            TileGrid {
+                StatTile(label: "În service", value: "\(inShop)", detail: ready > 0 ? "\(ready) gata de predare" : "niciuna gata încă") { withAnimation { proxy.scrollTo("shop", anchor: .top) } }
+                StatTile(label: "De confirmat", value: "\(bookings.total)", detail: soon > 0 ? "\(soon) azi și mâine" : "nimic urgent",
+                         detailColor: soon > 0 ? .orange : nil) { withAnimation { proxy.scrollTo("confirm", anchor: .top) } }
+                StatTile(label: "De încasat", value: Money.format(collect.due, currency: store.currency, decimals: 0),
+                         detail: overdue > 0 ? "\(overdue) \(overdue == 1 ? "restantă" : "restante")" : "nimic restant",
+                         detailColor: overdue > 0 ? .red : nil) { withAnimation { proxy.scrollTo("collect", anchor: .top) } }
+                StatTile(label: "Venit în \(month)", value: Money.format(now, currency: store.currency, decimals: 0),
+                         detail: change.map { "\($0 >= 0 ? "+" : "")\($0)% față de \(lastMonth)" } ?? "fără TVA",
+                         detailColor: change.map { $0 >= 0 ? Color.green : Color.red }) { withAnimation { proxy.scrollTo("analytics", anchor: .top) } }
+            }
+        }
+        .bareRow()
     }
 
     // MARK: Deja în service
@@ -95,29 +145,45 @@ struct HomeView: View {
         let groups = Agenda.jobsToShow(store.all(WorkOrder.self), vatPayer: store.shop.vatPayer)
         let total = groups.reduce(0) { $0 + $1.items.count }
         let shown = groups.filter { stage == nil || $0.key == stage }
-        let vehicles = byId(Vehicle.self), customers = byId(Customer.self)
-        return VStack(alignment: .leading, spacing: 10) {
-            SectionTitle("Deja în service", count: total)
+        let vehicles = byId(Vehicle.self), customers = byId(Customer.self), staff = byId(Staff.self)
+        return Section {
             if total == 0 {
-                EmptyCard(text: "Nicio mașină în service acum.", symbol: "car")
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        Chip(title: "Toate", count: total, color: .accentColor, on: stage == nil) { stage = nil }
-                        ForEach(groups) { g in
-                            let style = Labels.workOrder(g.key)
-                            Chip(title: style.label, count: g.items.count, color: style.color, on: stage == g.key) { stage = stage == g.key ? nil : g.key }
+                Text("Nicio mașină în service acum.").foregroundStyle(.secondary)
+            }
+            ForEach(shown) { g in
+                ForEach(g.items) { order in
+                    let vehicle = vehicles[order.vehicleId ?? ""]
+                    Button { path.append(.job(order.id)) } label: {
+                        HomeRow(title: [vehicle?.title, vehicle.map { People.formatPlate($0.plate) }].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
+                                subtitle: [customers[order.customerId ?? ""]?.name, staff[order.staffId ?? ""]?.name].compactMap { $0 }.joined(separator: " · "),
+                                pill: Labels.workOrder(order.status),
+                                value: amount(Lines.totals(order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross))
+                    }
+                    .tint(.primary)
+                    .swipeActions(edge: .leading) {
+                        if let next = WorkOrderRules.next[order.status] {
+                            Button { moveJob(order, to: next) } label: {
+                                Label(Labels.workOrderAction(from: order.status, to: next), systemImage: Labels.workOrder(next).symbol)
+                            }
+                            .tint(Labels.workOrder(next).color)
                         }
                     }
                 }
-                Carousel {
-                    ForEach(shown) { g in
-                        ForEach(g.items) { order in
-                            JobCard(order: order, vehicle: vehicles[order.vehicleId ?? ""], customer: customers[order.customerId ?? ""],
-                                    gross: Lines.totals(order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross, currency: store.currency,
-                                    next: WorkOrderRules.next[order.status]) { to in moveJob(order, to: to) }
-                                .onTapGesture { path.append(.job(order.id)) }
+            }
+        } header: {
+            HStack {
+                CapsHeader("Deja în service")
+                Spacer()
+                if total > 0 {
+                    Menu {
+                        Picker("Etapa", selection: $stage) {
+                            Text("Toate · \(total)").tag(String?.none)
+                            ForEach(groups) { g in Text("\(Labels.workOrder(g.key).label) · \(g.items.count)").tag(Optional(g.key)) }
                         }
+                    } label: {
+                        Label(stage.map { Labels.workOrder($0).label } ?? "Toate", systemImage: "line.3.horizontal.decrease")
+                            .font(.footnote.weight(.semibold))
+                            .textCase(nil)
                     }
                 }
             }
@@ -127,30 +193,54 @@ struct HomeView: View {
     // MARK: De confirmat
 
     private var toConfirm: some View {
-        let now = Dates.instant()
-        let bookings = Agenda.bookingsToConfirm(store.all(Appointment.self), now: now)
+        let bookings = Agenda.bookingsToConfirm(store.all(Appointment.self), now: Dates.instant())
         let week = bookings.week
         let booked = week.values.reduce(0, +) - (week["no_show"] ?? 0)
-        let vehicles = byId(Vehicle.self), customers = byId(Customer.self), staff = byId(Staff.self)
-        return VStack(alignment: .leading, spacing: 10) {
-            SectionTitle("De confirmat", count: bookings.total,
-                         subtitle: booked > 0 ? "\(booked - (week["scheduled"] ?? 0)) din \(booked) confirmate în următoarele 7 zile" : nil)
+        let vehicles = byId(Vehicle.self), customers = byId(Customer.self)
+        return Section {
             if bookings.total == 0 {
-                EmptyCard(text: "Toate programările sunt confirmate.", symbol: "checkmark.circle")
-            } else {
-                Carousel {
-                    ForEach(bookings.groups) { g in
-                        ForEach(g.items) { a in
-                            BookingCard(appointment: a, group: groupLabel(g), late: g.key == "past",
-                                        vehicle: vehicles[a.vehicleId ?? ""], customer: customers[a.customerId ?? ""], staff: staff[a.staffId ?? ""],
-                                        confirm: { act("Confirmată") { try store.setAppointmentStatus(a.id, to: "confirmed") } },
-                                        arrived: { checkIn(a) },
-                                        noShow: { act("Neprezentat") { try store.markNoShow(a.id) } })
-                                .onTapGesture { path.append(.appointment(a.id)) }
+                Text("Toate programările sunt confirmate.").foregroundStyle(.secondary)
+            }
+            ForEach(bookings.groups) { g in
+                ForEach(g.items) { a in
+                    let late = g.key == "past"
+                    let customer = customers[a.customerId ?? ""]
+                    let vehicle = vehicles[a.vehicleId ?? ""]
+                    HStack(spacing: 12) {
+                        Button { path.append(.appointment(a.id)) } label: {
+                            HStack(spacing: 12) {
+                                TimeColumn(time: Dates.timeOfInstant(a.start), detail: late ? "a trecut" : groupLabel(g).lowercased())
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(customer?.name ?? "Client necunoscut").lineLimit(1)
+                                    Text([a.title, vehicle.map { People.formatPlate($0.plate) }].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+                                        .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                                }
+                                Spacer(minLength: 4)
+                            }
+                            .contentShape(.rect)
+                        }
+                        .buttonStyle(.plain)
+                        if late {
+                            Button("A sosit") { checkIn(a) }.fontWeight(.semibold).buttonStyle(.borderless)
+                        } else {
+                            Button("Confirmă") { act("Confirmată") { try store.setAppointmentStatus(a.id, to: "confirmed") } }
+                                .fontWeight(.semibold).buttonStyle(.borderless)
+                        }
+                    }
+                    .swipeActions(edge: .trailing) {
+                        if late {
+                            Button(role: .destructive) { act("Neprezentat") { try store.markNoShow(a.id) } } label: { Label("Neprezentat", systemImage: "person.slash") }
+                        }
+                        if let phone = customer?.phone, !phone.isEmpty, let url = People.telURL(phone) {
+                            Link(destination: url) { Label("Sună", systemImage: "phone.fill") }.tint(.green)
                         }
                     }
                 }
             }
+        } header: {
+            CapsHeader("De confirmat")
+        } footer: {
+            if booked > 0 { Text("\(booked - (week["scheduled"] ?? 0)) din \(booked) confirmate în următoarele 7 zile.") }
         }
     }
 
@@ -159,7 +249,7 @@ struct HomeView: View {
         let today = Dates.today()
         if day == today { return "Azi" }
         if day == Dates.addDays(today, 1) { return "Mâine" }
-        return Dates.parseDate(day)?.formatted(.dateTime.weekday(.wide).day().locale(Locale(identifier: "ro_RO"))).capitalized ?? day
+        return Dates.parseDate(day)?.formatted(.dateTime.weekday(.abbreviated).day().locale(Locale(identifier: "ro_RO"))) ?? day
     }
 
     // MARK: Facturi de încasat
@@ -168,24 +258,49 @@ struct HomeView: View {
         let collect = Agenda.invoicesToCollect(store.all(Invoice.self), paymentsByInvoice: Dictionary(grouping: store.all(Payment.self), by: \.invoiceId),
                                                today: Dates.today(), vatPayer: store.shop.vatPayer)
         let customers = byId(Customer.self)
-        return VStack(alignment: .leading, spacing: 10) {
-            SectionTitle("De încasat", count: collect.total,
-                         subtitle: collect.due > 0 ? "\(Money.format(collect.due, currency: store.currency)) de încasat\(collect.drafts > 0 ? " · \(Money.format(collect.drafts, currency: store.currency)) în ciorne" : "")" : nil)
+        return Section {
             if collect.total == 0 {
-                EmptyCard(text: "Toate facturile sunt încasate.", symbol: "checkmark.circle")
-            } else {
-                Carousel {
-                    ForEach(collect.groups) { g in
-                        ForEach(g.items) { item in
-                            CollectCard(item: item, customer: customers[item.invoice.customerId ?? ""], currency: store.currency,
-                                        message: InvoiceRules.message(item.invoice, balance: item.balance, settings: store.settings),
-                                        pay: { paying = item.invoice })
-                                .onTapGesture { path.append(.invoice(item.invoice.id)) }
+                Text("Toate facturile sunt încasate.").foregroundStyle(.secondary)
+            }
+            ForEach(collect.groups) { g in
+                ForEach(g.items) { item in
+                    let customer = customers[item.invoice.customerId ?? ""]
+                    Button { path.append(.invoice(item.invoice.id)) } label: {
+                        HomeRow(title: "\(item.invoice.number == nil ? "Ciornă" : item.invoice.label) · \(customer?.name ?? "Fără client")",
+                                subtitle: when(item), pill: Labels.invoice(item.state),
+                                value: Money.format(item.balance, currency: store.currency))
+                    }
+                    .tint(.primary)
+                    .swipeActions(edge: .leading) {
+                        if item.state != "draft" {
+                            Button { paying = item.invoice } label: { Label("Încasează", systemImage: "banknote") }.tint(.green)
+                        }
+                    }
+                    .swipeActions(edge: .trailing) {
+                        if item.state != "draft", let phone = customer?.phone, !phone.isEmpty,
+                           let url = People.whatsappURL(phone, text: InvoiceRules.message(item.invoice, balance: item.balance, settings: store.settings)) {
+                            Link(destination: url) { Label("Memento", systemImage: "text.bubble") }.tint(.green)
                         }
                     }
                 }
             }
+        } header: {
+            CapsHeader("De încasat")
+        } footer: {
+            if collect.due > 0 {
+                Text("\(Money.format(collect.due, currency: store.currency)) de încasat\(collect.drafts > 0 ? " · \(Money.format(collect.drafts, currency: store.currency)) în ciorne" : ""). Glisează spre dreapta pentru a încasa.")
+            }
         }
+    }
+
+    private func when(_ item: Agenda.CollectItem) -> String {
+        if item.state == "draft" {
+            let n = Dates.dayOfInstant(item.invoice.createdAt).map { Dates.diffDays($0, Dates.today()) } ?? 0
+            return n <= 0 ? "ciornă de azi" : "ciornă de \(n == 1 ? "o zi" : "\(n) zile")"
+        }
+        if item.state == "overdue" { return "restantă de \(item.overdueDays == 1 ? "o zi" : "\(item.overdueDays) zile")" }
+        guard let d = item.dueIn else { return Dates.display(item.invoice.issueDate) }
+        return d == 0 ? "scadentă azi" : d == 1 ? "scadentă mâine" : "scadentă în \(d) zile"
     }
 
     // MARK: Analiză
@@ -194,26 +309,32 @@ struct HomeView: View {
         let h = Analytics.home(payments: store.all(Payment.self), orders: store.all(WorkOrder.self), invoices: store.all(Invoice.self),
                                appointments: store.all(Appointment.self), today: Dates.today(), period: period)
         let c = store.currency
-        return VStack(alignment: .leading, spacing: 10) {
-            SectionTitle("Analiză", count: nil)
-            Picker("Perioada", selection: $period) {
-                Text("7 zile").tag("7d")
-                Text("30 de zile").tag("30d")
-                Text("12 luni").tag("12m")
+        return Section {
+            VStack(spacing: 10) {
+                Picker("Perioada", selection: $period) {
+                    Text("7 zile").tag("7d")
+                    Text("30 de zile").tag("30d")
+                    Text("12 luni").tag("12m")
+                }
+                .pickerStyle(.segmented)
+                MetricTile(title: "Încasări", metric: h.collected, window: h.window, big: true, scale: 100) { Money.format(Int($0), currency: c, decimals: 0) }
+                MetricTile(title: "Mașini primite", metric: h.received, window: h.window, big: true) { String(Int($0)) }
+                TileGrid {
+                    MetricTile(title: "Bon mediu", metric: h.ticket, window: h.window, scale: 100) { Money.format(Int($0), currency: c, decimals: 0) }
+                    MetricTile(title: "Prezență", metric: h.show, window: h.window) { "\(Int(Money.jsRound($0 * 100)))%" }
+                    MetricTile(title: "Timp în service", metric: h.stay, window: h.window) { "\(JS.number(Money.jsRound($0 * 10) / 10).replacingOccurrences(of: ".", with: ",")) zile" }
+                    MetricTile(title: "Ore facturate", metric: h.hours, window: h.window) { "\(Int(Money.jsRound($0))) h" }
+                }
             }
-            .pickerStyle(.segmented)
-            MetricTile(title: "Încasări", metric: h.collected, window: h.window, big: true, scale: 100) { Money.format(Int($0), currency: c, decimals: 0) }
-            MetricTile(title: "Mașini primite", metric: h.received, window: h.window, big: true) { String(Int($0)) }
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                MetricTile(title: "Bon mediu", metric: h.ticket, window: h.window, scale: 100) { Money.format(Int($0), currency: c, decimals: 0) }
-                MetricTile(title: "Prezență", metric: h.show, window: h.window) { "\(Int(Money.jsRound($0 * 100)))%" }
-                MetricTile(title: "Timp în service", metric: h.stay, window: h.window) { "\(JS.number(Money.jsRound($0 * 10) / 10).replacingOccurrences(of: ".", with: ",")) zile" }
-                MetricTile(title: "Ore facturate", metric: h.hours, window: h.window) { "\(Int(Money.jsRound($0))) h" }
-            }
+        } header: {
+            CapsHeader("Analiză")
         }
+        .bareRow()
     }
 
     // MARK: Actions
+
+    private func amount(_ gross: Int) -> String? { gross == 0 ? nil : Money.format(gross, currency: store.currency, decimals: 0) }
 
     private func byId<T: Record>(_ type: T.Type) -> [String: T] {
         Dictionary(store.all(T.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
@@ -246,242 +367,31 @@ struct HomeView: View {
 
 // MARK: - Pieces
 
-private struct SectionTitle: View {
+/// A list row of look A: title, a muted line, the status capsule, the amount on the right.
+struct HomeRow: View {
     let title: String
-    let count: Int?
-    var subtitle: String?
-
-    init(_ title: String, count: Int?, subtitle: String? = nil) {
-        self.title = title
-        self.count = count
-        self.subtitle = subtitle
-    }
+    let subtitle: String
+    let pill: StatusStyle
+    var value: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Text(title).font(.title3.weight(.semibold))
-                if let count { Text("\(count)").font(.title3).foregroundStyle(.secondary).monospacedDigit() }
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title).lineLimit(1)
+                if !subtitle.isEmpty { Text(subtitle).font(.subheadline).foregroundStyle(.secondary).lineLimit(1) }
+                StatusPill(style: pill).padding(.top, 2)
             }
-            if let subtitle { Text(subtitle).font(.subheadline).foregroundStyle(.secondary) }
+            Spacer(minLength: 8)
+            if let value { Text(value).font(.body.weight(.semibold)).monospacedDigit().lineLimit(1) }
         }
+        .padding(.vertical, 2)
+        .contentShape(.rect)
         .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isHeader)
     }
 }
 
-/// Cards in a row that snap one by one, a finger swipes them.
-private struct Carousel<Content: View>: View {
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(alignment: .top, spacing: 10) { content }
-                .scrollTargetLayout()
-        }
-        .scrollTargetBehavior(.viewAligned)
-        .scrollClipDisabled()
-    }
-}
-
-private struct Chip: View {
-    let title: String
-    let count: Int
-    let color: Color
-    let on: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 4) {
-                Text(title)
-                Text("\(count)").foregroundStyle(on ? .white.opacity(0.85) : .secondary).monospacedDigit()
-            }
-            .font(.subheadline.weight(.medium))
-            .padding(.horizontal, 12)
-            .frame(minHeight: 36)
-            .foregroundStyle(on ? .white : .primary)
-            .background(on ? color : Color(.secondarySystemGroupedBackground), in: .capsule)
-        }
-        .buttonStyle(.plain)
-        .frame(minHeight: 44)
-        .accessibilityAddTraits(on ? .isSelected : [])
-    }
-}
-
-private struct EmptyCard: View {
-    let text: String
-    let symbol: String
-    var body: some View {
-        Label(text, systemImage: symbol)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
-            .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 16))
-    }
-}
-
-/// The card frame shared by every carousel: a tinted edge for its group, 260 pt wide.
-private struct Card<Content: View>: View {
-    let tint: Color
-    var outlined = false
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) { content }
-            .padding(14)
-            .frame(width: 260, alignment: .topLeading)
-            .frame(minHeight: 150, alignment: .topLeading)
-            .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 18))
-            .overlay(alignment: .leading) {
-                UnevenRoundedRectangle(topLeadingRadius: 18, bottomLeadingRadius: 18).fill(tint).frame(width: 4)
-            }
-            .overlay {
-                if outlined { RoundedRectangle(cornerRadius: 18).strokeBorder(tint.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3])) }
-            }
-            .contentShape(.rect(cornerRadius: 18))
-    }
-}
-
-private struct JobCard: View {
-    let order: WorkOrder
-    let vehicle: Vehicle?
-    let customer: Customer?
-    let gross: Int
-    let currency: String
-    let next: String?
-    let move: (String) -> Void
-
-    var body: some View {
-        let style = Labels.workOrder(order.status)
-        Card(tint: style.color) {
-            Label(style.label, systemImage: style.symbol).labelStyle(StatusLabelStyle()).font(.caption.weight(.semibold)).foregroundStyle(style.color)
-            Text(vehicle.map { People.formatPlate($0.plate) } ?? "Fără mașină").font(.headline)
-            Text([vehicle?.title, customer?.name].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
-                .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
-            if !order.complaint.isEmpty { Text(order.complaint).font(.caption).foregroundStyle(.secondary).lineLimit(2) }
-            Spacer(minLength: 0)
-            Divider()
-            HStack {
-                Text(verbatim: "#\(order.number) · \(since(order.createdAt))").font(.caption).foregroundStyle(.secondary)
-                Spacer()
-                if gross != 0 { Text(Money.format(gross, currency: currency, decimals: 0)).font(.subheadline.weight(.semibold).monospacedDigit()) }
-            }
-            if let next {
-                Button { move(next) } label: {
-                    Label(Labels.workOrderAction(from: order.status, to: next), systemImage: Labels.workOrder(next).symbol)
-                        .font(.subheadline.weight(.medium)).frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .tint(Labels.workOrder(next).color)
-            }
-        }
-        .accessibilityElement(children: .contain)
-    }
-
-    private func since(_ instant: String) -> String {
-        guard let day = Dates.dayOfInstant(instant) else { return "" }
-        let n = Dates.diffDays(day, Dates.today())
-        return n <= 0 ? "de azi" : n == 1 ? "de ieri" : "de \(n) zile"
-    }
-}
-
-private struct BookingCard: View {
-    let appointment: Appointment
-    let group: String
-    let late: Bool
-    let vehicle: Vehicle?
-    let customer: Customer?
-    let staff: Staff?
-    let confirm: () -> Void
-    let arrived: () -> Void
-    let noShow: () -> Void
-
-    var body: some View {
-        let tint: Color = late ? .orange : .teal
-        Card(tint: tint, outlined: appointment.status == "scheduled") {
-            HStack {
-                Text(group).font(.caption.weight(.semibold)).foregroundStyle(tint)
-                Spacer()
-                Text("\(late ? "\(Dates.display(Dates.dayOfInstant(appointment.start))) " : "")\(Dates.timeOfInstant(appointment.start))")
-                    .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
-            }
-            Text(vehicle.map { People.formatPlate($0.plate) } ?? "Mașină nealeasă").font(.headline)
-            Text([vehicle?.title, customer?.name].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
-                .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
-            if !appointment.title.isEmpty { Text(appointment.title).font(.caption).foregroundStyle(.secondary).lineLimit(2) }
-            Spacer(minLength: 0)
-            if let staff { Text(staff.name).font(.caption).foregroundStyle(.secondary) }
-            HStack(spacing: 8) {
-                if late {
-                    Button(action: arrived) { Label("A sosit", systemImage: "car.fill").frame(maxWidth: .infinity) }
-                        .buttonStyle(.borderedProminent)
-                    Button(action: noShow) { Label("Neprezentat", systemImage: "person.slash").labelStyle(.iconOnly).frame(minWidth: 28) }
-                        .buttonStyle(.bordered).tint(.red)
-                        .accessibilityLabel("Neprezentat")
-                } else {
-                    Button(action: confirm) { Label("Confirmă", systemImage: "checkmark").frame(maxWidth: .infinity) }
-                        .buttonStyle(.borderedProminent)
-                    if let phone = customer?.phone, !phone.isEmpty, let url = People.telURL(phone) {
-                        Link(destination: url) { Label("Sună", systemImage: "phone.fill").labelStyle(.iconOnly).frame(minWidth: 28) }
-                            .buttonStyle(.bordered)
-                            .accessibilityLabel("Sună")
-                    }
-                }
-            }
-            .font(.subheadline.weight(.medium))
-        }
-    }
-}
-
-private struct CollectCard: View {
-    let item: Agenda.CollectItem
-    let customer: Customer?
-    let currency: String
-    let message: String
-    let pay: () -> Void
-
-    var body: some View {
-        let style = Labels.invoice(item.state)
-        let inv = item.invoice
-        Card(tint: style.color, outlined: item.state == "draft") {
-            Label(style.label, systemImage: style.symbol).labelStyle(StatusLabelStyle()).font(.caption.weight(.semibold)).foregroundStyle(style.color)
-            Text(customer?.name ?? "Fără client").font(.headline).lineLimit(1)
-            Text(verbatim: inv.label).font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
-            Text(when).font(.caption).foregroundStyle(item.state == "overdue" ? .red : .secondary)
-            Spacer(minLength: 0)
-            Divider()
-            HStack(alignment: .firstTextBaseline) {
-                Text(item.state == "draft" ? "total" : "rest").font(.caption).foregroundStyle(.secondary)
-                Text(Money.format(item.balance, currency: currency)).font(.headline.monospacedDigit())
-                Spacer()
-                if item.paid > 0 { Text("din \(Money.format(item.total, currency: currency, decimals: 0))").font(.caption).foregroundStyle(.secondary) }
-            }
-            if item.state != "draft" {
-                HStack(spacing: 8) {
-                    Button(action: pay) { Label("Încasează", systemImage: "banknote").frame(maxWidth: .infinity) }
-                        .buttonStyle(.borderedProminent).tint(.green)
-                    if let phone = customer?.phone, !phone.isEmpty, let url = People.whatsappURL(phone, text: message) {
-                        Link(destination: url) { Label("Memento", systemImage: "text.bubble").labelStyle(.iconOnly).frame(minWidth: 28) }
-                            .buttonStyle(.bordered)
-                            .accessibilityLabel("Trimite un memento pe WhatsApp")
-                    }
-                }
-                .font(.subheadline.weight(.medium))
-            }
-        }
-    }
-
-    private var when: String {
-        if item.state == "draft" {
-            let n = Dates.dayOfInstant(item.invoice.createdAt).map { Dates.diffDays($0, Dates.today()) } ?? 0
-            return n <= 0 ? "ciornă de azi" : "ciornă de \(n == 1 ? "o zi" : "\(n) zile")"
-        }
-        if item.state == "overdue" { return "restantă de \(item.overdueDays == 1 ? "o zi" : "\(item.overdueDays) zile")" }
-        guard let d = item.dueIn else { return "" }
-        return d == 0 ? "scadentă azi" : d == 1 ? "scadentă mâine" : "scadentă în \(d) zile"
-    }
+extension String {
+    var nonEmpty: String? { isEmpty ? nil : self }
 }
 
 /// One number with its change and a small chart of its points.
@@ -618,7 +528,7 @@ private struct ResultRow: View {
                     Text(detail).font(.caption).foregroundStyle(.secondary)
                 }
                 Spacer()
-                Label(style.label, systemImage: style.symbol).labelStyle(StatusLabelStyle()).font(.caption).foregroundStyle(style.color)
+                StatusPill(style: style)
                 Image(systemName: "chevron.right").font(.caption).foregroundStyle(.tertiary)
             }
             .padding(.horizontal, 14)

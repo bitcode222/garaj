@@ -306,7 +306,7 @@ struct AppointmentRow: View {
                     .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
                 if !appointment.title.isEmpty { Text(appointment.title).font(.caption).foregroundStyle(.secondary).lineLimit(1) }
                 HStack {
-                    Label(style.label, systemImage: style.symbol).labelStyle(StatusLabelStyle()).font(.caption.weight(.medium)).foregroundStyle(style.color)
+                    StatusPill(style: style)
                     if let staff { Text("· \(staff.name)").font(.caption).foregroundStyle(.secondary) }
                 }
             }

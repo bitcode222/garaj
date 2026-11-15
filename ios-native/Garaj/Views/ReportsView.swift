@@ -37,12 +37,12 @@ struct ReportsView: View {
             Section {
                 Grid(horizontalSpacing: 10, verticalSpacing: 10) {
                     GridRow {
-                        StatTile(title: "Venituri", value: money(summary.net), detail: summary.count == 1 ? "1 factură" : "\(summary.count) facturi")
-                        StatTile(title: "Bon mediu", value: money(summary.avgTicket), detail: "per factură")
+                        StatTile(label: "Venituri", value: money(summary.net), detail: summary.count == 1 ? "1 factură" : "\(summary.count) facturi")
+                        StatTile(label: "Bon mediu", value: money(summary.avgTicket), detail: "per factură")
                     }
                     GridRow {
-                        StatTile(title: "Marjă pe piese", value: "\(Int(Money.jsRound(summary.partsMarginPct)))%", detail: "adaos \(money(summary.partsMargin))")
-                        StatTile(title: "Manoperă facturată", value: Self.hours(Money.jsRound(summary.hours)), detail: money(summary.labor))
+                        StatTile(label: "Marjă pe piese", value: "\(Int(Money.jsRound(summary.partsMarginPct)))%", detail: "adaos \(money(summary.partsMargin))")
+                        StatTile(label: "Manoperă facturată", value: Self.hours(Money.jsRound(summary.hours)), detail: money(summary.labor))
                     }
                 }
                 .listRowBackground(Color.clear)
@@ -109,24 +109,6 @@ struct ReportsView: View {
     }
 
     static func hours(_ h: Double) -> String { "\(JS.number(h).replacingOccurrences(of: ".", with: ",")) h" }
-}
-
-private struct StatTile: View {
-    let title: String
-    let value: String
-    let detail: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title).font(.subheadline).foregroundStyle(.secondary)
-            Text(value).font(.title3.weight(.semibold).monospacedDigit()).lineLimit(1).minimumScaleFactor(0.7)
-            Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.8)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 14))
-        .accessibilityElement(children: .combine)
-    }
 }
 
 /// Stacked columns, labor and parts (+ fees); touch and slide to read a day or month.
