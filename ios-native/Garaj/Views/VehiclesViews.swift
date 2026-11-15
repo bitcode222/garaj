@@ -78,7 +78,7 @@ struct VehicleDetailView: View {
                         .font(.title.weight(.bold))
                         .padding(.horizontal, 12).padding(.vertical, 4)
                         .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.primary, lineWidth: 2))
-                    Text([v.title, v.year.map(String.init), v.engine, v.fuel].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+                    Text([v.title, v.year.map(String.init), v.engine, Inventory.fuels.first { $0.key == v.fuel }?.label ?? v.fuel].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
                         .font(.subheadline).foregroundStyle(.secondary)
                     if !v.vin.isEmpty { Text("VIN \(v.vin)").font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled) }
                 }
@@ -194,8 +194,8 @@ struct VehicleForm: View {
                     TextField("Motor", text: $vehicle.engine)
                     Picker("Combustibil", selection: $vehicle.fuel) {
                         Text("—").tag("")
-                        ForEach(["benzină", "motorină", "hibrid", "electric", "GPL"], id: \.self) { Text($0.capitalized).tag($0) }
-                        if !["", "benzină", "motorină", "hibrid", "electric", "GPL"].contains(vehicle.fuel) { Text(vehicle.fuel).tag(vehicle.fuel) }
+                        ForEach(Inventory.fuels, id: \.key) { Text($0.label).tag($0.key) }
+                        if !vehicle.fuel.isEmpty && !Inventory.fuels.contains(where: { $0.key == vehicle.fuel }) { Text(vehicle.fuel).tag(vehicle.fuel) }
                     }
                     TextField("VIN", text: $vehicle.vin).textInputAutocapitalization(.characters).font(.body.monospaced())
                 } footer: { if let vin { Text(vin).foregroundStyle(.orange) } }

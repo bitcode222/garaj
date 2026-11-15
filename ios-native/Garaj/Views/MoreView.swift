@@ -13,10 +13,10 @@ struct MoreView: View {
                 Section {
                     NavigationLink { CustomersView() } label: { Label("Clienți", systemImage: "person.2") }
                     NavigationLink { VehiclesView() } label: { Label("Mașini", systemImage: "car") }
-                    NavigationLink { ComingSoonPage(title: "De contactat") } label: { Label("De contactat", systemImage: "bell") }
+                    NavigationLink { RemindersView() } label: { Label("De contactat", systemImage: "bell") }
                 }
                 Section {
-                    NavigationLink { ComingSoonPage(title: "Catalog") } label: { Label("Catalog", systemImage: "shippingbox") }
+                    NavigationLink { CatalogView() } label: { Label("Catalog", systemImage: "shippingbox") }
                     NavigationLink { ComingSoonPage(title: "Rapoarte") } label: { Label("Rapoarte", systemImage: "chart.bar") }
                 }
                 Section {
@@ -30,6 +30,8 @@ struct MoreView: View {
                 switch debugPage {
                 case "clienti": CustomersView()
                 case "masini": VehiclesView()
+                case "contactat": RemindersView()
+                case "catalog": CatalogView()
                 case "vehicle": VehicleDetailView(id: UserDefaults.standard.string(forKey: "GarajOpenVehicle") ?? "")
                 case "customer": CustomerDetailView(id: UserDefaults.standard.string(forKey: "GarajOpenCustomer") ?? "")
                 default: EmptyView()

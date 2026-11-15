@@ -28,6 +28,7 @@ struct RootView: View {
                 Tab("Mai mult", systemImage: "square.grid.2x2", value: "mai-mult") {
                     MoreView()
                 }
+                .badge(store.reminders().count)
             }
             .safeAreaInset(edge: .bottom) {
                 UndoToastView().padding(.bottom, 64) // above the tab bar
