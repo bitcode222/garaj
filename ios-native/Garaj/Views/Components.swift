@@ -198,3 +198,36 @@ struct ChipRow<Content: View>: View {
         .scrollClipDisabled()
     }
 }
+
+/// The buttons of look A: a filled accent rectangle (primary) or a light accent tint (secondary),
+/// 50 pt tall with 12 pt corners; the small size (34 pt, 8 pt corners) sits inside rows.
+struct FillButtonStyle: ButtonStyle {
+    enum Kind { case primary, secondary }
+    var kind: Kind = .primary
+    var small = false
+    /// Stretch to the row's width (a lone icon button keeps its own width).
+    var fill = true
+    @Environment(\.isEnabled) private var enabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(small ? .subheadline.weight(.semibold) : .headline)
+            .lineLimit(1)
+            .foregroundStyle(kind == .primary ? Color.white : Color.accentColor)
+            .padding(.horizontal, small ? 12 : 16)
+            .frame(maxWidth: fill ? .infinity : nil, minHeight: small ? 34 : 50)
+            .frame(minWidth: small ? 34 : 50)
+            .background(kind == .primary ? Color.accentColor : Color.accentColor.opacity(0.12), in: .rect(cornerRadius: small ? 8 : 12))
+            .contentShape(.rect(cornerRadius: small ? 8 : 12))
+            .opacity(enabled ? (configuration.isPressed ? 0.7 : 1) : 0.4)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .animation(.spring(duration: 0.2), value: configuration.isPressed)
+    }
+}
+
+extension ButtonStyle where Self == FillButtonStyle {
+    static var primary: FillButtonStyle { FillButtonStyle() }
+    static var secondary: FillButtonStyle { FillButtonStyle(kind: .secondary) }
+    static var primarySmall: FillButtonStyle { FillButtonStyle(small: true) }
+    static var secondarySmall: FillButtonStyle { FillButtonStyle(kind: .secondary, small: true) }
+}
