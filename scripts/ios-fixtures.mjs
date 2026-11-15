@@ -228,6 +228,26 @@ write("rules.json", {
 	}, { compact: true });
 }
 
+// Clienți and Mașini: checks, deadlines, the service estimate, a customer's facts.
+{
+	const today = "2026-11-15";
+	const c = demoAll.collections;
+	const vehicles = c.vehicles;
+	write("people.json", {
+		today,
+		cui: ["RO18547290", "18547290", "RO 18547290", "18547291", "1", "12345678901", "RO310041489", "14399840", "abc", ""].map((input) => ({ input, ok: customer.isValidCUI(input) })),
+		iban: ["RO49AAAA1B31007593840000", "RO49 AAAA 1B31 0075 9384 0000", "RO49AAAA1B31007593840001", "DE89370400440532013000", "RO49AAAA1B3100759384000", "x"].map((input) => ({ input, ok: customer.isValidIBAN(input), formatted: customer.formatIBAN(input) })),
+		email: ["a@b.ro", "a@b", " a@b.co ", "a b@c.ro", ""].map((input) => ({ input, ok: customer.isValidEmail(input) })),
+		initials: ["Andrei Popescu", "Ion", "  ", "Brutăria Bunica SRL", "ștefan"].map((input) => ({ input, output: customer.initials(input) })),
+		vin: ["", "WAU68YKK4RMZP7XRW", "WAU68YKK4RMZP7XR", "WAU68YKK4RMZP7XRI", "WAU68YKK4RMZP7XR-", "wau68ykk4rmzp7xrw"].map((input) => ({ input, issue: vehicle.vinIssue(input) })),
+		deadlines: ["2026-11-15", "2026-11-14", "2026-12-15", "2026-12-16", null].map((date) => ({ date, d: vehicle.deadline(date, today) })),
+		vehicles: vehicles.map((v) => ({ vehicle: v, service: vehicle.serviceDue(v, today), est: vehicle.estimateKm(v, today), perDay: vehicle.kmPerDay(v.mileage) })),
+		facts: c.customers.map((x) => ({ id: x.id, facts: customer.customerFacts(x.id, { appointments: c.appointments, workOrders: c.workOrders }) })),
+		appointments: c.appointments.map((a) => ({ id: a.id, customerId: a.customerId, status: a.status, start: a.start, end: a.end })),
+		workOrders: c.workOrders.map((o) => ({ id: o.id, customerId: o.customerId, status: o.status, createdAt: o.createdAt, dates: o.dates })),
+	}, { compact: true });
+}
+
 // A small backup: the demo data, a few records per collection.
 const demo = buildDemoData("2026-11-15");
 const collections = Object.fromEntries(Object.entries(demo.collections).map(([k, v]) => [k, v.slice(0, 4)]));
