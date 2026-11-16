@@ -395,7 +395,7 @@ export function CalendarPage() {
 		const titleBlock = (line) =>
 			line ? (
 				<span className="inline-flex max-w-full min-w-0 flex-col items-start">
-					<span aria-live="polite" className="max-w-full truncate text-2xl leading-7 font-semibold tracking-tight first-letter:uppercase">
+					<span aria-live="polite" className="max-w-full truncate text-[1.625rem] leading-8 font-semibold tracking-tight first-letter:uppercase">
 						{title}
 					</span>
 					<span className="-mt-1 flex min-w-0 items-center">

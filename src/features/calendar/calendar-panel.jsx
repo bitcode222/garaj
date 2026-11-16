@@ -13,8 +13,8 @@ import { monthGrid } from "./utils";
 
 const WEEKDAYS = ["L", "M", "M", "J", "V", "S", "D"];
 const COLOR_BY = [
-	// "status" is the key saved on devices; it now colours by kind, the state being each block's dot (docs/RECORD-COLORS.md).
-	{ value: "status", label: "Tip" },
+	// "status" is the key saved on devices; it now colours by the car (docs/DESIGN.md §1), the state being each block's dot.
+	{ value: "status", label: "Mașină" },
 	{ value: "mechanic", label: "Mecanic" },
 	{ value: "service", label: "Operație" },
 ];

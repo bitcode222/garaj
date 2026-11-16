@@ -14,6 +14,7 @@ import { APPOINTMENT_STATUS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { BlockMark } from "./block-mark";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
+import { makeColor, makeTint } from "@/lib/colors";
 import { DRAG_SLOP_PX, HOLD_MS, HOLD_SLOP_PX, drawSpan, edgeSpeed, shiftSpan, startAt, stretchSpan } from "@/features/dashboard/timeline-drag";
 import {
 	GUTTER_PX,
@@ -69,7 +70,7 @@ function columnBackground(hourPx, openMin, closeMin, closedDay) {
  * done) and the time; the car, its make's logo, make and model; who owns it; its plate; what it is
  * in for; and the mechanic (the avatar in the bottom-left corner, with the name once there is room).
  */
-const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", top, height, left, width, toneName, lookups, past, selected, alert, dragging, movable }) {
+const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", top, height, left, width, toneName, byCar = true, lookups, past, selected, alert, dragging, movable }) {
 	const f = cardFacts(a, lookups);
 	const mechanic = f.mechanic;
 	const state = lookups.states?.get(a.id) ?? null;
@@ -91,8 +92,9 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 			data-mark={mark}
 			className={cn(
 				"absolute z-[5] flex flex-col overflow-hidden rounded-md border px-1.5 py-[3px] text-left text-2xs leading-[15px] transition-[box-shadow,opacity] select-none [-webkit-touch-callout:none]",
-				// Outlined in their colour, white inside (very small cards, D): past, cancelled or missed ones keep it (struck through when they did not happen).
-				tone(toneName).line,
+				// By car (docs/DESIGN.md §3): a light tint of its colour with that colour as the left edge. By mechanic or
+				// operation: outlined in that colour, white inside. Dashed while only booked.
+				byCar ? "border-y border-r" : cn("border", tone(toneName).line),
 				a.status === "scheduled" && "border-dashed",
 				lookups.match && !lookups.match.has(a.id) && "opacity-15 saturate-50",
 				(a.status === "no_show" || a.status === "cancelled") && "line-through",
@@ -101,14 +103,24 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 				movable && "pointer-fine:cursor-grab",
 				dragging && "opacity-30",
 			)}
-			style={{ top, height, left: `calc(${left}% + 2px)`, width: `calc(${width}% - 4px)` }}
+			style={{
+				top,
+				height,
+				left: `calc(${left}% + 2px)`,
+				width: `calc(${width}% - 4px)`,
+				...(byCar && {
+					background: makeTint(f.make),
+					borderColor: `color-mix(in srgb, ${makeColor(f.make)} 30%, transparent)`,
+					borderLeft: `3px solid ${makeColor(f.make)}`,
+				}),
+			}}
 		>
 			{lines === 1 ? (
 				// One line: the mark, the time, the car and its owner, the avatar at the end.
 				<span className="flex min-w-0 items-center gap-1">
 					<BlockMark state={state} mark={mark} />
 					<span className="min-w-0 flex-1 truncate">
-						<span className={cn("font-semibold tabular-nums", tone(toneName).text)}>{fmtTime(a.start)}</span> <span className="font-semibold">{f.name}</span>
+						<span className="font-semibold tabular-nums">{fmtTime(a.start)}</span> <span className="font-semibold">{f.name}</span>
 						{f.owner && <span> · {f.owner}</span>}
 					</span>
 					<AlertSign alert={alert} />
@@ -119,7 +131,7 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 				<>
 					<span className="flex min-w-0 items-center gap-1">
 						<BlockMark state={state} mark={mark} />
-						<span className={cn("shrink-0 font-semibold tabular-nums", tone(toneName).text)}>{fmtTime(a.start)}</span>
+						<span className="shrink-0 font-semibold tabular-nums">{fmtTime(a.start)}</span>
 						{logo}
 						<span className="min-w-0 flex-1 truncate font-semibold">{f.name}</span>
 						<AlertSign alert={alert} />
@@ -133,7 +145,7 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 				<>
 					<span className="flex min-w-0 items-center gap-1">
 						<BlockMark state={state} mark={mark} />
-						<span className={cn("min-w-0 flex-1 truncate font-semibold tabular-nums", tone(toneName).text)}>{time}</span>
+						<span className="min-w-0 flex-1 truncate font-semibold tabular-nums">{time}</span>
 						{/* What needs attention, at the end of the top line (the details on hover and in the sheet). */}
 						<AlertSign alert={alert} />
 					</span>
@@ -212,6 +224,7 @@ const DayColumn = memo(function DayColumn({ day, left, width, slim, closed, even
 									left={(lane / lanes) * 100}
 									width={100 / lanes}
 									toneName={eventTone(a, colorBy, lookups)}
+									byCar={colorBy !== "mechanic" && colorBy !== "service"}
 									lookups={lookups}
 									past={now != null && a.end < now}
 									selected={a.id === selectedId}
