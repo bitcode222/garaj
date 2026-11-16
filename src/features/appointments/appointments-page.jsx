@@ -7,7 +7,9 @@ import { EmptyState, Initials, Stat } from "@/components/ds/data";
 import { FilterChips, SearchInput } from "@/components/ds/inputs";
 import { useProgressive } from "@/components/ds/list";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
-import { Page, PageHeader, Toolbar } from "@/components/ds/page";
+import { Page, Toolbar } from "@/components/ds/page";
+import { PageTitle } from "@/components/ds/blocks";
+import { MakeTile } from "@/components/ds/car";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { StatusMenu } from "@/components/ds/status-menu";
 import { SwipeRow } from "@/components/ds/swipe-row";
@@ -180,19 +182,12 @@ export function AppointmentsPage() {
 
 	return (
 		<Page>
-			<PageHeader
-				title="Programări"
-				kind="appointment"
-				description={plural(result.counts.all ?? 0, "programare", "programări") + ` · ${PERIOD_LABEL[period].toLowerCase()}`}
-				actions={
-					<>
-						<ProgramariSwitch current="/appointments/" className="max-sm:w-full" />
-						<Button onClick={() => openSheet("appointment")} className="max-md:hidden">
-							<CalendarPlus /> Programare nouă
-						</Button>
-					</>
-				}
-			/>
+			<PageTitle title="Toate programările" subtitle={plural(result.counts.all ?? 0, "programare", "programări") + ` · ${PERIOD_LABEL[period].toLowerCase()}`} className="mb-6">
+				<ProgramariSwitch current="/appointments/" className="max-sm:w-full" />
+				<Button onClick={() => openSheet("appointment")} className="max-md:hidden">
+					<CalendarPlus /> Programare nouă
+				</Button>
+			</PageTitle>
 
 			<div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
 				<Stat label="Azi" value={stats.today.count} hint={stats.today.next ? `Următoarea la ${fmtTime(stats.today.next.start)}` : "Nimic în așteptare"} icon={CalendarClock} tone="teal" href="/appointments/?period=today" />
@@ -391,9 +386,7 @@ function Row({ appointment: a, now, customer, vehicle, mechanic, order, operatio
 				>
 					{/* phone and tablet: two lines and the status */}
 					<div className="flex min-w-0 items-start gap-3 lg:hidden">
-						<span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
-							<MakeLogo make={vehicle?.make} className="size-4" />
-						</span>
+						<MakeTile make={vehicle?.make} size={36} />
 						<span className="min-w-0 flex-1">
 							<span className="flex items-baseline justify-between gap-2">
 								<span className="truncate font-medium">
@@ -421,7 +414,7 @@ function Row({ appointment: a, now, customer, vehicle, mechanic, order, operatio
 						{timing && <span className={cn("block truncate text-xs", timingClass(timing.mark))}>{timing.text}</span>}
 					</span>
 					<span className="hidden min-w-0 items-center gap-2.5 lg:flex">
-						<MakeLogo make={vehicle?.make} className="size-4" />
+						<MakeTile make={vehicle?.make} size={32} />
 						<span className="min-w-0">
 							<span className="block truncate font-medium">{car || "—"}</span>
 							{vehicle?.plate && <PlateTag value={vehicle.plate} className="mt-0.5" />}
