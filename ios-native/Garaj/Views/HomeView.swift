@@ -153,14 +153,13 @@ struct HomeView: View {
                             ForEach(shown) { order in
                                 let vehicle = vehicles[order.vehicleId ?? ""]
                                 let customer = customers[order.customerId ?? ""]
-                                let next = WorkOrderRules.next[order.status]
                                 CoverCard(make: vehicle?.make ?? "", plate: vehicle?.plate,
                                           eyebrow: [vehicle?.title.nonEmpty, customer?.name.nonEmpty].compactMap { $0 }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
                                           title: JobText.headline(order),
                                           detail: ["#\(order.number)", staff[order.staffId ?? ""]?.name, amount(Lines.totals(order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross)]
                                             .compactMap { $0 }.joined(separator: " · "),
                                           status: Labels.workOrder(order.status),
-                                          next: next.map { to in (Labels.workOrderAction(from: order.status, to: to), Labels.workOrder(to).symbol, { moveJob(order, to: to) }) },
+                                          next: JobAction.primary(order, store: store, move: { moveJob(order, to: $0) }, failed: { error = $0 }),
                                           open: { path.append(.job(order.id)) }) {
                                     jobMenu(order, customer: customer)
                                 }

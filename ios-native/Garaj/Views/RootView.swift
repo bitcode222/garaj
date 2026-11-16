@@ -39,6 +39,7 @@ struct RootView: View {
                     SearchView()
                 }
             }
+            .modifier(RunningJobAccessory())
             .safeAreaInset(edge: .bottom) {
                 UndoToastView().padding(.bottom, 64) // above the tab bar
             }

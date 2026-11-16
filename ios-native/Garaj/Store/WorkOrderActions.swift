@@ -192,4 +192,37 @@ extension AppStore {
         put(.vehicles, .object(raw))
         return warning
     }
+
+    // MARK: The running job (src/domain/work-clock.js, look 3 part 4)
+
+    /// Starts work on a job: "in progress" (through the status move, so its booking follows),
+    /// the clock on for the mechanic, and that mechanic's other running job stopped.
+    func startWork(_ id: String, staffId: String? = nil) throws {
+        let order = try mustGet(WorkOrder.self, id, "Lucrarea")
+        if order.status != "in_progress" && WorkOrderRules.isOpen(order.status) && !WorkClock.isRunning(order) {
+            _ = try setWorkOrderStatus(id, to: "in_progress")
+        }
+        let now = Dates.instant()
+        let r = try WorkClock.start(try mustGet(WorkOrder.self, id, "Lucrarea"), staffId: staffId ?? order.staffId, now: now,
+                                    orders: all(WorkOrder.self), id: Ids.uid())
+        save(r.order, updatedAt: now)
+        for other in r.stopped { save(other, updatedAt: now) }
+    }
+
+    /// Stops a job's clock (Pauză).
+    func stopWork(_ id: String) throws {
+        let order = try mustGet(WorkOrder.self, id, "Lucrarea")
+        let now = Dates.instant()
+        save(WorkClock.stop(order, now: now), updatedAt: now)
+    }
+
+    /// Ticks a line of a job off as done, or back.
+    func setLineDone(_ id: String, lineId: String, done: Bool) throws {
+        var order = try mustGet(WorkOrder.self, id, "Lucrarea")
+        guard let i = order.lines.firstIndex(where: { $0.id == lineId }) else {
+            throw DomainError(code: "line_not_found", message: "Linia nu mai există.")
+        }
+        order.lines[i].done = done
+        save(order, updatedAt: Dates.instant())
+    }
 }

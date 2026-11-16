@@ -1,0 +1,1229 @@
+{
+ "now": "2026-11-16T10:05:00.000Z",
+ "jobs": [
+  {
+   "id": "0mwio8c5rpfmcwoqg",
+   "number": 1001,
+   "status": "estimate",
+   "customerId": "0mwio8c5rzpqpit1u",
+   "vehicleId": "0mwio8c5rth4btxp6",
+   "appointmentId": null,
+   "staffId": "0mwio8c5qti4kosmm",
+   "bayId": "0mwio8c5qpbvz567m",
+   "mileage": 99838,
+   "fuelLevel": 4,
+   "complaint": "Schimb ulei și filtru, Înlocuire biellete antiruliu",
+   "diagnosis": "",
+   "lines": [
+    {
+     "id": "0mwio8c5rbl2aq3i2",
+     "kind": "labor",
+     "refId": "0mwio8c5qwrlo1oa6",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwio8c5qti4kosmm",
+     "done": true
+    },
+    {
+     "id": "0mwio8c5rcj91fbzg",
+     "kind": "part",
+     "refId": "0mwio8c5qpvxc35fj",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwio8c5rvvzpwcxv",
+     "kind": "part",
+     "refId": "0mwio8c5qlfenyitz",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null,
+     "done": true
+    },
+    {
+     "id": "0mwio8c5rru2wk7pf",
+     "kind": "labor",
+     "refId": "0mwio8c5q0oj2vlt5",
+     "description": "Înlocuire biellete antiruliu",
+     "qty": 0.8,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwio8c5qti4kosmm"
+    },
+    {
+     "id": "0mwio8c5r08me91n8",
+     "kind": "part",
+     "refId": "0mwio8c5qionr5e5m",
+     "description": "Bieletă antiruliu Meyle",
+     "qty": 2,
+     "unit": "buc",
+     "unitPrice": 8400,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 6200,
+     "staffId": null,
+     "done": true
+    },
+    {
+     "id": "0mwio8c5r98oepp4x",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "inspection": [
+    {
+     "key": "brakes",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "tires",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "lights",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "fluids",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "wipers",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "battery",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "suspension",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "exhaust",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "belts",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "filters",
+     "status": null,
+     "note": ""
+    }
+   ],
+   "notes": "",
+   "invoiceId": "0mwio8c6efkw48o6n",
+   "dates": {
+    "estimate": "2025-11-15T08:30:00.000Z",
+    "approved": "2025-11-15T08:30:00.000Z",
+    "in_progress": "2025-11-15T09:00:00.000Z",
+    "ready": "2025-11-15T13:00:00.000Z",
+    "delivered": "2025-11-15T15:00:00.000Z"
+   },
+   "activity": [],
+   "createdAt": "2025-11-15T08:30:00.000Z",
+   "updatedAt": "2025-11-15T08:30:00.000Z",
+   "timeLog": []
+  },
+  {
+   "id": "0mwio8c5ry70albnv",
+   "number": 1002,
+   "status": "approved",
+   "customerId": "0mwio8c5rftedmq8n",
+   "vehicleId": "0mwio8c5rbj029jlb",
+   "appointmentId": null,
+   "staffId": "0mwio8c5pjcy6hhkr",
+   "bayId": "0mwio8c5qmb1h7f0f",
+   "mileage": 179096,
+   "fuelLevel": 4,
+   "complaint": "Schimb ulei și filtru",
+   "diagnosis": "",
+   "lines": [
+    {
+     "id": "0mwio8c5r0x3rgi7h",
+     "kind": "labor",
+     "refId": "0mwio8c5qwrlo1oa6",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwio8c5pjcy6hhkr"
+    },
+    {
+     "id": "0mwio8c5r15ydypeb",
+     "kind": "part",
+     "refId": "0mwio8c5qpvxc35fj",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwio8c5r1kqq17wz",
+     "kind": "part",
+     "refId": "0mwio8c5qlfenyitz",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    },
+    {
+     "id": "0mwio8c5rkkaodxud",
+     "kind": "fee",
+     "refId": null,
+     "description": "Materiale consumabile",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 2500,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": null
+    }
+   ],
+   "inspection": [
+    {
+     "key": "brakes",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "tires",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "lights",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "fluids",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "wipers",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "battery",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "suspension",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "exhaust",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "belts",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "filters",
+     "status": null,
+     "note": ""
+    }
+   ],
+   "notes": "",
+   "invoiceId": "0mwio8c6earuxnrua",
+   "dates": {
+    "estimate": "2025-11-17T06:45:00.000Z",
+    "approved": "2025-11-17T06:45:00.000Z",
+    "in_progress": "2025-11-17T09:00:00.000Z",
+    "ready": "2025-11-17T13:00:00.000Z",
+    "delivered": "2025-11-17T15:00:00.000Z"
+   },
+   "activity": [],
+   "createdAt": "2025-11-17T06:45:00.000Z",
+   "updatedAt": "2025-11-17T06:45:00.000Z",
+   "timeLog": []
+  },
+  {
+   "id": "0mwio8c5rwz8ox528",
+   "number": 1003,
+   "status": "in_progress",
+   "customerId": "0mwio8c5rizxgg5tx",
+   "vehicleId": "0mwio8c5ri3g3za34",
+   "appointmentId": null,
+   "staffId": "0mwio8c5pjcy6hhkr",
+   "bayId": "0mwio8c5q0ohpz8fe",
+   "mileage": 105400,
+   "fuelLevel": 2,
+   "complaint": "Înlocuire plăcuțe frână față",
+   "diagnosis": "",
+   "lines": [
+    {
+     "id": "0mwio8c5rad8i3t3s",
+     "kind": "labor",
+     "refId": "0mwio8c5qj1uafm4b",
+     "description": "Înlocuire plăcuțe frână față",
+     "qty": 1,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwio8c5pjcy6hhkr",
+     "done": true
+    },
+    {
+     "id": "0mwio8c5rfqdh2rip",
+     "kind": "part",
+     "refId": "0mwio8c5q1j5yppny",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "inspection": [
+    {
+     "key": "brakes",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "tires",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "lights",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "fluids",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "wipers",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "battery",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "suspension",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "exhaust",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "belts",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "filters",
+     "status": null,
+     "note": ""
+    }
+   ],
+   "notes": "",
+   "invoiceId": "0mwio8c6e15zdp6tm",
+   "dates": {
+    "estimate": "2025-11-17T09:15:00.000Z",
+    "approved": "2025-11-17T09:15:00.000Z",
+    "in_progress": "2025-11-17T09:00:00.000Z",
+    "ready": "2025-11-17T13:00:00.000Z",
+    "delivered": "2025-11-17T14:00:00.000Z"
+   },
+   "activity": [],
+   "createdAt": "2025-11-17T09:15:00.000Z",
+   "updatedAt": "2025-11-17T09:15:00.000Z",
+   "timeLog": [
+    {
+     "id": "t1",
+     "staffId": "m1",
+     "start": "2026-11-16T07:00:00.000Z",
+     "end": "2026-11-16T08:15:00.000Z"
+    },
+    {
+     "id": "t2",
+     "staffId": "m1",
+     "start": "2026-11-16T09:00:00.000Z",
+     "end": null
+    }
+   ]
+  },
+  {
+   "id": "0mwio8c5rx4pxlhwf",
+   "number": 1004,
+   "status": "waiting_parts",
+   "customerId": "0mwio8c5qqoka0k2b",
+   "vehicleId": "0mwio8c5qbspv62i9",
+   "appointmentId": null,
+   "staffId": "0mwio8c5q61s8p8zw",
+   "bayId": "0mwio8c5qmb1h7f0f",
+   "mileage": 221987,
+   "fuelLevel": 4,
+   "complaint": "Înlocuire discuri și plăcuțe față",
+   "diagnosis": "",
+   "lines": [
+    {
+     "id": "0mwio8c5rjjdwxvj4",
+     "kind": "labor",
+     "refId": "0mwio8c5qur5v4ldv",
+     "description": "Înlocuire discuri și plăcuțe față",
+     "qty": 1.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwio8c5q61s8p8zw"
+    },
+    {
+     "id": "0mwio8c5rkai8o2r6",
+     "kind": "part",
+     "refId": "0mwio8c5qmbagl3ye",
+     "description": "Discuri frână față Brembo",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 52700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 39000,
+     "staffId": null,
+     "refused": true
+    },
+    {
+     "id": "0mwio8c5rz1dndi2c",
+     "kind": "part",
+     "refId": "0mwio8c5q1j5yppny",
+     "description": "Plăcuțe frână față ATE",
+     "qty": 1,
+     "unit": "set",
+     "unitPrice": 22300,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 16500,
+     "staffId": null
+    }
+   ],
+   "inspection": [
+    {
+     "key": "brakes",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "tires",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "lights",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "fluids",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "wipers",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "battery",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "suspension",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "exhaust",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "belts",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "filters",
+     "status": null,
+     "note": ""
+    }
+   ],
+   "notes": "",
+   "invoiceId": "0mwio8c6e86lh27e5",
+   "dates": {
+    "estimate": "2025-11-18T06:15:00.000Z",
+    "approved": "2025-11-18T06:15:00.000Z",
+    "in_progress": "2025-11-18T09:00:00.000Z",
+    "ready": "2025-11-18T13:00:00.000Z",
+    "delivered": "2025-11-18T15:00:00.000Z"
+   },
+   "activity": [],
+   "createdAt": "2025-11-18T06:15:00.000Z",
+   "updatedAt": "2025-11-18T06:15:00.000Z",
+   "timeLog": []
+  },
+  {
+   "id": "0mwio8c5r8r29d8jd",
+   "number": 1005,
+   "status": "ready",
+   "customerId": "0mwio8c5rpscx4qor",
+   "vehicleId": "0mwio8c5r5debo150",
+   "appointmentId": null,
+   "staffId": "0mwio8c5qb9pbe20h",
+   "bayId": "0mwio8c5qmb1h7f0f",
+   "mileage": 137691,
+   "fuelLevel": 4,
+   "complaint": "Geometrie roți",
+   "diagnosis": "",
+   "lines": [
+    {
+     "id": "0mwio8c5renzj6qo5",
+     "kind": "labor",
+     "refId": "0mwio8c5q1055nvpk",
+     "description": "Geometrie roți",
+     "qty": 0.8,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwio8c5qb9pbe20h",
+     "done": true
+    }
+   ],
+   "inspection": [
+    {
+     "key": "brakes",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "tires",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "lights",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "fluids",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "wipers",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "battery",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "suspension",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "exhaust",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "belts",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "filters",
+     "status": null,
+     "note": ""
+    }
+   ],
+   "notes": "",
+   "invoiceId": "0mwio8c6e4koncb85",
+   "dates": {
+    "estimate": "2025-11-18T07:15:00.000Z",
+    "approved": "2025-11-18T07:15:00.000Z",
+    "in_progress": "2025-11-18T09:00:00.000Z",
+    "ready": "2025-11-18T13:00:00.000Z",
+    "delivered": "2025-11-18T16:00:00.000Z"
+   },
+   "activity": [],
+   "createdAt": "2025-11-18T07:15:00.000Z",
+   "updatedAt": "2025-11-18T07:15:00.000Z",
+   "timeLog": []
+  },
+  {
+   "id": "0mwio8c5rh1joz1xu",
+   "number": 1006,
+   "status": "in_progress",
+   "customerId": "0mwio8c5rzpqpit1u",
+   "vehicleId": "0mwio8c5rjm6djp6p",
+   "appointmentId": null,
+   "staffId": "0mwio8c5pjcy6hhkr",
+   "bayId": "0mwio8c5qmb1h7f0f",
+   "mileage": 3392,
+   "fuelLevel": 4,
+   "complaint": "Schimb ulei și filtru",
+   "diagnosis": "",
+   "lines": [
+    {
+     "id": "0mwio8c5r1y8gzftn",
+     "kind": "labor",
+     "refId": "0mwio8c5qwrlo1oa6",
+     "description": "Schimb ulei și filtru",
+     "qty": 0.6,
+     "unit": "h",
+     "unitPrice": 18000,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 0,
+     "staffId": "0mwio8c5pjcy6hhkr"
+    },
+    {
+     "id": "0mwio8c5rr2cqah4y",
+     "kind": "part",
+     "refId": "0mwio8c5qpvxc35fj",
+     "description": "Ulei motor 5W-30 Castrol",
+     "qty": 4.5,
+     "unit": "l",
+     "unitPrice": 5700,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 4200,
+     "staffId": null
+    },
+    {
+     "id": "0mwio8c5rczl9vtko",
+     "kind": "part",
+     "refId": "0mwio8c5qlfenyitz",
+     "description": "Filtru ulei Mann-Filter",
+     "qty": 1,
+     "unit": "buc",
+     "unitPrice": 3800,
+     "discountPct": 0,
+     "vatRate": 21,
+     "cost": 2800,
+     "staffId": null
+    }
+   ],
+   "inspection": [
+    {
+     "key": "brakes",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "tires",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "lights",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "fluids",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "wipers",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "battery",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "suspension",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "exhaust",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "belts",
+     "status": null,
+     "note": ""
+    },
+    {
+     "key": "filters",
+     "status": null,
+     "note": ""
+    }
+   ],
+   "notes": "",
+   "invoiceId": "0mwio8c6eya5jemeh",
+   "dates": {
+    "estimate": "2025-11-19T06:45:00.000Z",
+    "approved": "2025-11-19T06:45:00.000Z",
+    "in_progress": "2025-11-19T09:00:00.000Z",
+    "ready": "2025-11-19T13:00:00.000Z",
+    "delivered": "2025-11-19T15:00:00.000Z"
+   },
+   "activity": [],
+   "createdAt": "2025-11-19T06:45:00.000Z",
+   "updatedAt": "2025-11-19T06:45:00.000Z",
+   "timeLog": [
+    {
+     "id": "t3",
+     "staffId": "m2",
+     "start": "2026-11-16T08:30:00.000Z",
+     "end": null
+    }
+   ]
+  }
+ ],
+ "worked": [
+  {
+   "id": "0mwio8c5rpfmcwoqg",
+   "ms": 0
+  },
+  {
+   "id": "0mwio8c5ry70albnv",
+   "ms": 0
+  },
+  {
+   "id": "0mwio8c5rwz8ox528",
+   "ms": 8400000
+  },
+  {
+   "id": "0mwio8c5rx4pxlhwf",
+   "ms": 0
+  },
+  {
+   "id": "0mwio8c5r8r29d8jd",
+   "ms": 0
+  },
+  {
+   "id": "0mwio8c5rh1joz1xu",
+   "ms": 5700000
+  }
+ ],
+ "steps": [
+  {
+   "id": "0mwio8c5rpfmcwoqg",
+   "total": 2,
+   "done": 1,
+   "current": "0mwio8c5rru2wk7pf"
+  },
+  {
+   "id": "0mwio8c5ry70albnv",
+   "total": 1,
+   "done": 0,
+   "current": "0mwio8c5r0x3rgi7h"
+  },
+  {
+   "id": "0mwio8c5rwz8ox528",
+   "total": 1,
+   "done": 1,
+   "current": null
+  },
+  {
+   "id": "0mwio8c5rx4pxlhwf",
+   "total": 1,
+   "done": 0,
+   "current": "0mwio8c5rjjdwxvj4"
+  },
+  {
+   "id": "0mwio8c5r8r29d8jd",
+   "total": 1,
+   "done": 1,
+   "current": null
+  },
+  {
+   "id": "0mwio8c5rh1joz1xu",
+   "total": 1,
+   "done": 0,
+   "current": "0mwio8c5r1y8gzftn"
+  }
+ ],
+ "starts": [
+  {
+   "id": "0mwio8c5rpfmcwoqg",
+   "staffId": "m1",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": "m1",
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": [
+    {
+     "id": "0mwio8c5rwz8ox528",
+     "timeLog": [
+      {
+       "id": "t1",
+       "staffId": "m1",
+       "start": "2026-11-16T07:00:00.000Z",
+       "end": "2026-11-16T08:15:00.000Z"
+      },
+      {
+       "id": "t2",
+       "staffId": "m1",
+       "start": "2026-11-16T09:00:00.000Z",
+       "end": "2026-11-16T10:05:00.000Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "0mwio8c5rpfmcwoqg",
+   "staffId": "m2",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": "m2",
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": [
+    {
+     "id": "0mwio8c5rh1joz1xu",
+     "timeLog": [
+      {
+       "id": "t3",
+       "staffId": "m2",
+       "start": "2026-11-16T08:30:00.000Z",
+       "end": "2026-11-16T10:05:00.000Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "0mwio8c5rpfmcwoqg",
+   "staffId": null,
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": null,
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "id": "0mwio8c5ry70albnv",
+   "staffId": "m1",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": "m1",
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": [
+    {
+     "id": "0mwio8c5rwz8ox528",
+     "timeLog": [
+      {
+       "id": "t1",
+       "staffId": "m1",
+       "start": "2026-11-16T07:00:00.000Z",
+       "end": "2026-11-16T08:15:00.000Z"
+      },
+      {
+       "id": "t2",
+       "staffId": "m1",
+       "start": "2026-11-16T09:00:00.000Z",
+       "end": "2026-11-16T10:05:00.000Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "0mwio8c5ry70albnv",
+   "staffId": "m2",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": "m2",
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": [
+    {
+     "id": "0mwio8c5rh1joz1xu",
+     "timeLog": [
+      {
+       "id": "t3",
+       "staffId": "m2",
+       "start": "2026-11-16T08:30:00.000Z",
+       "end": "2026-11-16T10:05:00.000Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "0mwio8c5ry70albnv",
+   "staffId": null,
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": null,
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "id": "0mwio8c5rwz8ox528",
+   "staffId": "m1",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "t1",
+     "staffId": "m1",
+     "start": "2026-11-16T07:00:00.000Z",
+     "end": "2026-11-16T08:15:00.000Z"
+    },
+    {
+     "id": "t2",
+     "staffId": "m1",
+     "start": "2026-11-16T09:00:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "id": "0mwio8c5rwz8ox528",
+   "staffId": "m2",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "t1",
+     "staffId": "m1",
+     "start": "2026-11-16T07:00:00.000Z",
+     "end": "2026-11-16T08:15:00.000Z"
+    },
+    {
+     "id": "t2",
+     "staffId": "m1",
+     "start": "2026-11-16T09:00:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "id": "0mwio8c5rwz8ox528",
+   "staffId": null,
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "t1",
+     "staffId": "m1",
+     "start": "2026-11-16T07:00:00.000Z",
+     "end": "2026-11-16T08:15:00.000Z"
+    },
+    {
+     "id": "t2",
+     "staffId": "m1",
+     "start": "2026-11-16T09:00:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "id": "0mwio8c5rx4pxlhwf",
+   "staffId": "m1",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": "m1",
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": [
+    {
+     "id": "0mwio8c5rwz8ox528",
+     "timeLog": [
+      {
+       "id": "t1",
+       "staffId": "m1",
+       "start": "2026-11-16T07:00:00.000Z",
+       "end": "2026-11-16T08:15:00.000Z"
+      },
+      {
+       "id": "t2",
+       "staffId": "m1",
+       "start": "2026-11-16T09:00:00.000Z",
+       "end": "2026-11-16T10:05:00.000Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "0mwio8c5rx4pxlhwf",
+   "staffId": "m2",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": "m2",
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": [
+    {
+     "id": "0mwio8c5rh1joz1xu",
+     "timeLog": [
+      {
+       "id": "t3",
+       "staffId": "m2",
+       "start": "2026-11-16T08:30:00.000Z",
+       "end": "2026-11-16T10:05:00.000Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "0mwio8c5rx4pxlhwf",
+   "staffId": null,
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": null,
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "id": "0mwio8c5r8r29d8jd",
+   "staffId": "m1",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": "m1",
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": [
+    {
+     "id": "0mwio8c5rwz8ox528",
+     "timeLog": [
+      {
+       "id": "t1",
+       "staffId": "m1",
+       "start": "2026-11-16T07:00:00.000Z",
+       "end": "2026-11-16T08:15:00.000Z"
+      },
+      {
+       "id": "t2",
+       "staffId": "m1",
+       "start": "2026-11-16T09:00:00.000Z",
+       "end": "2026-11-16T10:05:00.000Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "0mwio8c5r8r29d8jd",
+   "staffId": "m2",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": "m2",
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": [
+    {
+     "id": "0mwio8c5rh1joz1xu",
+     "timeLog": [
+      {
+       "id": "t3",
+       "staffId": "m2",
+       "start": "2026-11-16T08:30:00.000Z",
+       "end": "2026-11-16T10:05:00.000Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "0mwio8c5r8r29d8jd",
+   "staffId": null,
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "new",
+     "staffId": null,
+     "start": "2026-11-16T10:05:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "id": "0mwio8c5rh1joz1xu",
+   "staffId": "m1",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "t3",
+     "staffId": "m2",
+     "start": "2026-11-16T08:30:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "id": "0mwio8c5rh1joz1xu",
+   "staffId": "m2",
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "t3",
+     "staffId": "m2",
+     "start": "2026-11-16T08:30:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "id": "0mwio8c5rh1joz1xu",
+   "staffId": null,
+   "status": "in_progress",
+   "timeLog": [
+    {
+     "id": "t3",
+     "staffId": "m2",
+     "start": "2026-11-16T08:30:00.000Z",
+     "end": null
+    }
+   ],
+   "stopped": []
+  },
+  {
+   "error": "job_closed",
+   "id": "closed",
+   "staffId": null
+  }
+ ],
+ "running": [
+  "0mwio8c5rwz8ox528",
+  "0mwio8c5rh1joz1xu"
+ ]
+}

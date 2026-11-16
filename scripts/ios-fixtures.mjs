@@ -22,6 +22,7 @@ const appt = await import("../src/domain/appointment.js");
 const search = await import("../src/domain/search.js");
 const reminders = await import("../src/domain/reminders.js");
 const inventory = await import("../src/domain/inventory.js");
+const clock = await import("../src/domain/work-clock.js");
 
 const OUT = new URL("../ios-native/GarajTests/Fixtures/", import.meta.url);
 mkdirSync(OUT, { recursive: true });
@@ -334,6 +335,33 @@ write("rules.json", {
 		figures: ops.flatMap((op) => [21, 9, 0].map((rate) => ({ id: op.id, rate, ...lines.operationFigures(op, rate) }))),
 		vatRates: ops.flatMap((op) => [true, false].map((vatPayer) => ({ id: op.id, vatPayer, rate: lines.operationVatRate(op, { vatPayer, vatRate: 21 }) }))),
 		estimate: [true, false].map((vatPayer) => ({ vatPayer, ...lines.operationsEstimate(ops, { vatPayer, vatRate: 21 }) })),
+	});
+}
+
+// The running job (work-clock.js): time worked, steps, starting work, running jobs.
+{
+	const T = (h, m = 0) => `2026-11-16T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00.000Z`;
+	const base = demoAll.collections.workOrders.filter((o) => o.lines.length).slice(0, 6);
+	const jobs = base.map((o, i) => ({
+		...o,
+		status: ["estimate", "approved", "in_progress", "waiting_parts", "ready", "in_progress"][i],
+		lines: o.lines.map((l, j) => ({ ...l, ...(j % 2 === 0 && i % 2 === 0 ? { done: true } : null), ...(j === 1 && i === 3 ? { refused: true } : null) })),
+		timeLog: i === 2 ? [{ id: "t1", staffId: "m1", start: T(7), end: T(8, 15) }, { id: "t2", staffId: "m1", start: T(9), end: null }]
+			: i === 5 ? [{ id: "t3", staffId: "m2", start: T(8, 30), end: null }] : [],
+	}));
+	const now = T(10, 5);
+	write("work-clock.json", {
+		now,
+		jobs,
+		worked: jobs.map((o) => ({ id: o.id, ms: clock.workedMs(o, now) })),
+		steps: jobs.map((o) => { const s = clock.steps(o); return { id: o.id, total: s.total, done: s.done, current: s.current?.id ?? null }; }),
+		starts: jobs.flatMap((o) => ["m1", "m2", null].map((staffId) => {
+			try {
+				const r = clock.startWork(o, { staffId, now, orders: jobs, id: "new" });
+				return { id: o.id, staffId, status: r.order.status, timeLog: r.order.timeLog, stopped: r.stopped.map((x) => ({ id: x.id, timeLog: x.timeLog })) };
+			} catch (e) { return { id: o.id, staffId, error: e.code }; }
+		})).concat([{ ...(() => { try { clock.startWork({ ...jobs[0], status: "delivered" }, { now }); return {}; } catch (e) { return { error: e.code }; } })(), id: "closed", staffId: null }]),
+		running: clock.runningJobs(jobs).map((o) => o.id),
 	});
 }
 

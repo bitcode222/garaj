@@ -153,7 +153,7 @@ struct WorkOrdersView: View {
                        status: Labels.workOrder(order.status),
                        meta: [row.customer?.name.nonEmpty, order.lines.isEmpty ? nil : Money.format(row.gross, currency: store.currency, decimals: 0)].compactMap { $0 }.joined(separator: " · "),
                        summary: [staff, JobText.summary(order)].compactMap { $0 }.joined(separator: ": "),
-                       next: WorkOrderRules.next[order.status].map { to in (Labels.workOrderAction(from: order.status, to: to), Labels.workOrder(to).symbol, { move(order, to: to) }) },
+                       next: JobAction.primary(order, store: store, move: { move(order, to: $0) }, failed: { error = $0 }),
                        phone: phone.isEmpty ? nil : People.telURL(phone),
                        open: { path.append(order.id) }) {
             Section {

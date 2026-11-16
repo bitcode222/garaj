@@ -34,7 +34,11 @@ struct WorkOrderDetailView: View {
         let services = Dictionary(store.all(Service.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         let staff = Dictionary(store.all(Staff.self).map { ($0.id, $0.name) }, uniquingKeysWith: { a, _ in a })
         let next = WorkOrderRules.next[order.status]
-        let others = (WorkOrderRules.transitions[order.status] ?? []).filter { $0 != next }
+        let primary = JobAction.primary(order, store: store, move: { move(order, to: $0) }, failed: { error = $0 })
+        // In progress, the main button is the clock; every move is in "…".
+        let others = (WorkOrderRules.transitions[order.status] ?? []).filter { $0 != next || order.status == "in_progress" }
+        let steps = WorkClock.steps(order)
+        let worked = WorkClock.workedMs(order, now: Dates.instant())
 
         let make = vehicle?.make ?? ""
         let ink = Make.ink(make)
@@ -62,11 +66,9 @@ struct WorkOrderDetailView: View {
                                  order.mileage.map { "\($0.formatted(.number.locale(Locale(identifier: "ro_RO")))) km" }].compactMap { $0 }
                     if !facts.isEmpty { Text(facts.joined(separator: " · ")).font(.subheadline).opacity(0.8) }
                     HStack(spacing: 10) {
-                        if let next {
-                            Button { move(order, to: next) } label: {
-                                Label(Labels.workOrderAction(from: order.status, to: next), systemImage: Labels.workOrder(next).symbol)
-                            }
-                            .buttonStyle(.onColor)
+                        if let primary {
+                            Button(action: primary.run) { Label(primary.label, systemImage: primary.symbol) }
+                                .buttonStyle(.onColor)
                         }
                         if !phone.isEmpty, let url = People.telURL(phone) {
                             Link(destination: url) { Image(systemName: "phone.fill") }.buttonStyle(TintCircleStyle(ink: ink)).accessibilityLabel("Sună")
@@ -93,9 +95,17 @@ struct WorkOrderDetailView: View {
                             }
                             .accessibilityLabel("Altă stare și mesaje")
                         }
-                        if next == nil { Spacer() }
+                        if primary == nil { Spacer() }
                     }
                     .padding(.top, 8)
+                    if WorkClock.isRunning(order) || worked > 0 || steps.done > 0 {
+                        TimelineView(.periodic(from: .now, by: 1)) { ctx in
+                            Label([WorkClock.isRunning(order) ? "pornită" : "oprită", clockText(WorkClock.workedMs(order, now: Dates.instant(ctx.date))),
+                                   steps.total > 0 ? "\(steps.done) din \(steps.total) operații gata" : nil].compactMap { $0 }.joined(separator: " · "),
+                                  systemImage: WorkClock.isRunning(order) ? "timer" : "pause.circle")
+                                .font(.footnote.weight(.semibold)).monospacedDigit()
+                        }
+                    }
                     Text(Labels.workOrder(order.status).hint).font(.footnote).opacity(0.7)
                 }
                 .foregroundStyle(ink)
@@ -117,9 +127,21 @@ struct WorkOrderDetailView: View {
             Section {
                 ForEach(order.lines) { line in
                     Button { if !locked { editingLine = line } } label: {
-                        LineRow(line: line, currency: shop.currency, vatPayer: shop.vatPayer, staff: staff[line.staffId ?? ""], services: services)
+                        HStack(spacing: 8) {
+                            LineRow(line: line, currency: shop.currency, vatPayer: shop.vatPayer, staff: staff[line.staffId ?? ""], services: services)
+                                .opacity(line.done ? 0.55 : 1)
+                            if line.done { Image(systemName: "checkmark.circle.fill").foregroundStyle(.green).accessibilityLabel("Gata") }
+                        }
                     }
                     .tint(.primary)
+                    .swipeActions(edge: .leading) {
+                        if !locked {
+                            Button { do { try store.setLineDone(order.id, lineId: line.id, done: !line.done) } catch { self.error = error.localizedDescription } } label: {
+                                Label(line.done ? "Nu e gata" : "Gata", systemImage: line.done ? "arrow.uturn.backward" : "checkmark")
+                            }
+                            .tint(line.done ? .gray : .green)
+                        }
+                    }
                     .swipeActions {
                         if !locked {
                             Button(role: .destructive) { removeLine(order, line) } label: { Label("Șterge", systemImage: "trash") }
