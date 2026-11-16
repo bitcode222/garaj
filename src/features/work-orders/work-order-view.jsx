@@ -1,6 +1,10 @@
 "use client";
 
+import { Phone } from "lucide-react";
 import { DetailSheet } from "@/components/ds/detail-sheet";
+import { Button } from "@/components/ui/button";
+import { useAccount } from "@/components/shell/account-menu";
+import { primaryAction } from "./job-action";
 import { EmbeddedLinks } from "@/components/ds/embedded-links";
 import { fmtWorkOrder } from "@/lib/format";
 import { VisitBarFor, visitTitle } from "@/features/flow/visit-bar";
@@ -17,6 +21,8 @@ export default function WorkOrderView({ open, onOpenChange, id }) {
 	const customer = useEntity("customers", order?.customerId);
 	const today = useToday();
 	const kind = order ? orderKind(order) : "job";
+	const { member } = useAccount();
+	const primary = order ? primaryAction(order, { staffId: member?.id ?? null }) : null;
 	return (
 		<DetailSheet
 			open={open}
@@ -29,6 +35,23 @@ export default function WorkOrderView({ open, onOpenChange, id }) {
 			bar={order ? <VisitBarFor from="work-order" record={order} /> : null}
 			make={vehicle?.make}
 			fullPage={order && detailHref("work-order", order.id)}
+			// The main button under the title (sheets "A"): the job's next step, as on its cards.
+			footer={
+				order && primary ? (
+					<>
+						<Button onClick={primary.run}>
+							<primary.icon /> {primary.label}
+						</Button>
+						{customer?.phone && (
+							<Button asChild variant="outline" size="icon" aria-label={`Sună: ${customer.name}`}>
+								<a href={`tel:${customer.phone}`}>
+									<Phone />
+								</a>
+							</Button>
+						)}
+					</>
+				) : null
+			}
 		>
 			{order && (
 				<EmbeddedLinks>

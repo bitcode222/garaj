@@ -66,6 +66,12 @@ a visit's records (booking, estimate, job, invoice), the car, the client (their 
 form once a car is chosen, Recepție once a car is chosen. Sheets with no car (parts, operations, payment, team) stay
 neutral.
 
+Second pass (owner's pick "A · Capsule sub titlu", board https://claude.ai/artifact/Rgsc7cfr41UCgzYQjRkiyU): on a car's
+sheet the main buttons sit under the title (the sheet's `footer` moves there: the booking's next step, the job's next step
+and call, the invoice's Încasează and PDF, a form's Renunță and Salvează); in forms each field is an iPhone row, label on
+the left, value on the right, in rounded groups with their title above (`[data-field]` rows, `globals.css`); a view's
+sections are rounded groups.
+
 ## 5. Building blocks (in code)
 
 | Where | What |
