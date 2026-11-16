@@ -57,7 +57,6 @@ struct WorkOrdersView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .band(250)
             .sensoryFeedback(.selection, trigger: status)
             .overlay {
                 if rows.isEmpty {
@@ -68,7 +67,7 @@ struct WorkOrdersView: View {
                     }
                 }
             }
-            .navigationTitle("Lucrări")
+            .navigationTitle("Atelier")
             .navigationDestination(for: String.self) { id in
                 WorkOrderDetailView(id: id)
             }

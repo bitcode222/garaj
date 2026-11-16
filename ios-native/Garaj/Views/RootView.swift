@@ -1,9 +1,10 @@
 import SwiftUI
 
-/// The app's tabs, as on the web's phone tab bar (src/components/shell/nav.js TABS).
+/// The tabs of look 3 (docs/IOS-NATIVE.md §9): Azi, Atelier, Agendă, Registru, and search on its own.
 struct RootView: View {
     @Environment(AppStore.self) private var store
-    @State private var tab = UserDefaults.standard.string(forKey: "GarajTab") ?? "azi" // debug: `-GarajTab facturi`
+    @State private var query = ""
+    @State private var tab = UserDefaults.standard.string(forKey: "GarajTab") ?? "azi" // debug: `-GarajTab registru`
 
     /// Setări → Aspect (settings.appearance.theme).
     private var colorScheme: ColorScheme? {
@@ -22,23 +23,24 @@ struct RootView: View {
             ContentUnavailableView("Datele nu s-au putut încărca", systemImage: "exclamationmark.triangle", description: Text(message))
         case .ready:
             TabView(selection: $tab) {
-                Tab("Azi", systemImage: "sun.max", value: "azi") {
+                Tab("Azi", systemImage: "house", value: "azi") {
                     HomeView()
                 }
-                Tab("Programări", systemImage: "calendar", value: "programari") {
-                    AppointmentsView()
-                }
-                Tab("Lucrări", systemImage: "wrench.and.screwdriver", value: "lucrari") {
+                Tab("Atelier", systemImage: "wrench.and.screwdriver", value: "atelier") {
                     WorkOrdersView()
                 }
-                Tab("Facturi", systemImage: "doc.text", value: "facturi") {
-                    InvoicesView()
+                Tab("Agendă", systemImage: "calendar", value: "agenda") {
+                    AppointmentsView()
                 }
-                Tab("Mai mult", systemImage: "square.grid.2x2", value: "mai-mult") {
-                    MoreView()
+                Tab("Registru", systemImage: "square.grid.2x2", value: "registru") {
+                    RegistryView()
                 }
                 .badge(store.reminders().count)
+                Tab(value: "cauta", role: .search) {
+                    SearchView(query: $query)
+                }
             }
+            .searchable(text: $query, prompt: "Mașină, client, lucrare, factură")
             .safeAreaInset(edge: .bottom) {
                 UndoToastView().padding(.bottom, 64) // above the tab bar
             }

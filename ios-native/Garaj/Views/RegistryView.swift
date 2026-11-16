@@ -1,35 +1,47 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Mai mult: the screens that don't have their own tab.
-struct MoreView: View {
+/// Registru: the collections (look 3, docs/IOS-NATIVE.md §9). Each keeps its area color.
+struct RegistryView: View {
     @Environment(AppStore.self) private var store
     #if DEBUG
     @State private var debugPage: String?
     #endif
 
     var body: some View {
+        let due = Agenda.invoicesToCollect(store.all(Invoice.self), paymentsByInvoice: Dictionary(grouping: store.all(Payment.self), by: \.invoiceId),
+                                           today: Dates.today(), vatPayer: store.shop.vatPayer)
         NavigationStack {
             List {
                 Section {
-                    NavigationLink { CustomersView() } label: { IconRowLabel(title: "Clienți", symbol: "person.2.fill", color: .blue, value: store.count(.customers).formatted()) }
-                    NavigationLink { VehiclesView() } label: { IconRowLabel(title: "Mașini", symbol: "car.fill", color: .green, value: store.count(.vehicles).formatted()) }
-                    NavigationLink { RemindersView() } label: { IconRowLabel(title: "De contactat", symbol: "bell.fill", color: .red, value: store.reminders().count.formatted()) }
+                    NavigationLink { InvoicesView(embedded: true) } label: {
+                        IconRowLabel(title: "Facturi", symbol: "doc.text.fill", color: Area.facturi,
+                                     value: due.due > 0 ? Money.format(due.due, currency: store.currency, decimals: 0) : nil)
+                    }
+                    NavigationLink { ReportsView() } label: { IconRowLabel(title: "Rapoarte", symbol: "chart.bar.fill", color: Area.rapoarte) }
+                } header: {
+                    SectionHeader("Bani", subtitle: due.due > 0 ? "De încasat, pe facturi emise" : nil)
                 }
                 Section {
-                    NavigationLink { CatalogView() } label: { IconRowLabel(title: "Catalog", symbol: "shippingbox.fill", color: .orange) }
-                    NavigationLink { ReportsView() } label: { IconRowLabel(title: "Rapoarte", symbol: "chart.bar.fill", color: .purple) }
+                    NavigationLink { CustomersView() } label: { IconRowLabel(title: "Clienți", symbol: "person.2.fill", color: Area.clienti, value: store.count(.customers).formatted()) }
+                    NavigationLink { VehiclesView() } label: { IconRowLabel(title: "Mașini", symbol: "car.fill", color: Area.masini, value: store.count(.vehicles).formatted()) }
+                    NavigationLink { RemindersView() } label: { IconRowLabel(title: "De contactat", symbol: "bell.fill", color: Area.contact, value: store.reminders().count.formatted()) }
+                } header: {
+                    SectionHeader("Oameni și mașini")
                 }
                 Section {
-                    NavigationLink { SettingsView() } label: { IconRowLabel(title: "Setări", symbol: "gearshape.fill", color: .gray) }
+                    NavigationLink { CatalogView() } label: { IconRowLabel(title: "Catalog", symbol: "shippingbox.fill", color: Area.catalog) }
+                    NavigationLink { SettingsView() } label: { IconRowLabel(title: "Setări", symbol: "gearshape.fill", color: Area.setari) }
+                } header: {
+                    SectionHeader("Atelier")
                 }
             }
-            .band(210)
-            .navigationTitle("Mai mult")
+            .navigationTitle("Registru")
             #if DEBUG
             // Screenshots: `-GarajMore clienti|masini`, `-GarajOpenVehicle <id>`, `-GarajOpenCustomer <id>`.
             .navigationDestination(isPresented: Binding(get: { debugPage != nil }, set: { if !$0 { debugPage = nil } })) {
                 switch debugPage {
+                case "facturi": InvoicesView(embedded: true)
                 case "clienti": CustomersView()
                 case "masini": VehiclesView()
                 case "contactat": RemindersView()
@@ -110,7 +122,6 @@ struct DataView: View {
         .alert(notice ?? "", isPresented: Binding(get: { notice != nil }, set: { if !$0 { notice = nil } })) {
             Button("OK", role: .cancel) {}
         }
-        .band(180)
         .navigationTitle("Date și backup")
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             do {

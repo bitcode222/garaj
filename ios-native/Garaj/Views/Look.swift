@@ -1,57 +1,21 @@
 import SwiftUI
 
-// Look 2 "Pată de culoare" (round-2 board, picked 16 Nov 2026): an orange band with soft shapes
-// behind the title of the main screens, car make logos, colored icons for the kind of work.
+// Look 3 "Coperți" (round-3 board, picked 16 Nov 2026, docs/IOS-NATIVE.md §9): color comes from the
+// content. The car's make colors its cards and pages, each area of the app keeps one color, and the
+// kind of work has its icon and color.
 
-/// The band: accent color with rounded bottom corners and a few soft circles.
-struct Band: View {
-    var body: some View {
-        UnevenRoundedRectangle(bottomLeadingRadius: 28, bottomTrailingRadius: 28)
-            .fill(Color.accentColor)
-            .overlay(alignment: .topTrailing) {
-                Circle().fill(.white.opacity(0.16)).frame(width: 210, height: 210).offset(x: 60, y: -50)
-            }
-            .overlay(alignment: .bottomLeading) {
-                Circle().fill(.white.opacity(0.10)).frame(width: 120, height: 120).offset(x: -50, y: 70)
-            }
-            .overlay(alignment: .bottomTrailing) {
-                Circle().fill(.white.opacity(0.18)).frame(width: 34, height: 34).offset(x: -96, y: -26)
-            }
-            .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 28, bottomTrailingRadius: 28))
-            .accessibilityHidden(true)
-    }
-}
-
-/// Puts the band behind a scrolling screen. It follows the content up and stretches when pulled
-/// down; once scrolled, the navigation bar takes the same color, so the title stays white on orange.
-struct BandBackground: ViewModifier {
-    /// How far the band reaches from the top of the screen at rest.
-    var height: CGFloat
-    @State private var offset: CGFloat = 0
-
-    func body(content: Content) -> some View {
-        content
-            .scrollContentBackground(.hidden)
-            .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y + $0.contentInsets.top } action: { _, y in offset = y }
-            .background(alignment: .top) {
-                GeometryReader { g in
-                    // Never shorter than the bar, so the title and the clock stay on orange when scrolled.
-                    let bar = g.safeAreaInsets.top + 6
-                    ZStack(alignment: .top) {
-                        Color(.systemGroupedBackground)
-                        Band().frame(height: max(bar, height - offset))
-                    }
-                    .ignoresSafeArea()
-                }
-            }
-            .toolbarColorScheme(.dark, for: .navigationBar)
-    }
-}
-
-extension View {
-    func band(_ height: CGFloat = 300) -> some View { modifier(BandBackground(height: height)) }
-    /// A control that sits on the band (a segmented picker, a search field) reads as on a dark ground.
-    func onBand() -> some View { environment(\.colorScheme, .dark) }
+/// The areas of the app and their colors, always the same (the tiles and icons of Registru).
+enum Area {
+    static let programari = Color(hue: 0.57, saturation: 0.72, brightness: 0.86)
+    static let lucrari = Color(hue: 0.06, saturation: 0.78, brightness: 0.93)
+    static let facturi = Color(hue: 0.72, saturation: 0.55, brightness: 0.82)
+    static let clienti = Color(hue: 0.12, saturation: 0.85, brightness: 0.85)
+    static let masini = Color(hue: 0.44, saturation: 0.70, brightness: 0.70)
+    static let stoc = Color(hue: 0.93, saturation: 0.60, brightness: 0.86)
+    static let catalog = Color(hue: 0.52, saturation: 0.75, brightness: 0.72)
+    static let rapoarte = Color(hue: 0.38, saturation: 0.62, brightness: 0.68)
+    static let contact = Color.red
+    static let setari = Color.gray
 }
 
 // MARK: - Car makes

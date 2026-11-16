@@ -28,7 +28,7 @@ struct ReportsView: View {
                     ForEach(Reports.periods, id: \.key) { Text($0.label).tag($0.key) }
                 }
                 .pickerStyle(.segmented)
-                .onBand()
+                
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
             } footer: {
@@ -101,7 +101,6 @@ struct ReportsView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .band(230)
         .navigationTitle("Rapoarte")
         .sensoryFeedback(.selection, trigger: period)
     }
@@ -228,7 +227,6 @@ private struct RevenueTable: View {
                 .accessibilityElement(children: .combine)
             }
         }
-        .band(0)
         .navigationTitle(daily ? "Pe zile" : "Pe luni")
         .navigationBarTitleDisplayMode(.inline)
     }

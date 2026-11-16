@@ -185,7 +185,6 @@ struct SettingsView: View {
                 Text("Totul stă pe acest iPhone, fără cont. Fă un backup săptămânal.\n\nGaraj \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")")
             }
         }
-        .band(180)
         .navigationTitle("Setări")
         .scrollDismissesKeyboard(.interactively)
         .sheet(item: $editingStaff) { StaffForm(staff: $0) }

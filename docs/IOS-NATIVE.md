@@ -88,6 +88,29 @@ Round-2 board: https://claude.ai/artifact/G3kDyaAPJFpQeoYgkCEs13. The owner pick
 |---|---|---|
 | 1 | The band (`Views/Look.swift`: accent band with soft circles behind the title, follows the scroll, never shorter than the bar so the inline title stays white on orange), car make logos (`npm run ios:logos` writes template SVG image sets from `src/lib/car-logo-paths.js`; `MakeLogo` with brand colors), work-kind icons (`WorkKind`, by catalog category or words) on job lines | merged (#43) |
 | 2 | Booking operations: list with icon, duration, mechanic, price; edit sheet (kind, name, duration and quantity steppers, price from the labor rate, mechanic, parts); reorder, delete, add from catalog or free; total with VAT; saved in the web's `operations` shape | merged (#44) |
-| 3 | Sort and group menus on every list (remembered), swipe Editează, reorder where order matters | in progress |
+| 3 | Sort and group menus on every list (remembered), swipe Editează, reorder where order matters | merged (#45) |
 
 The status bar text is left to the system (iOS 26 picks it from what is behind it; black on this orange reads well).
+
+## 9. Look 3 "Coperți" (picked 16 Nov 2026)
+
+Round-3 board: https://claude.ai/artifact/JxQ97krZXRKRx2TowZzMoa. A design system taken from a podcast app the owner likes, applied four ways; the owner picked **A · Coperți** (light). The orange band of look 2 goes; color now comes from the content.
+
+Rules:
+
+1. **Color comes from the content.** The car's make colors its card, its page and the sheets opened from it (`Make.colors`).
+2. **Each area keeps one color** (`Area` in `Views/Look.swift`): Programări sky, Lucrări peach, Facturi lavender, Clienți butter, Mașini mint, Stoc pink, Catalog teal, Rapoarte green.
+3. **One filled button per card:** an ink capsule (`.primary`; white `.onColor` on a car's color). Other actions are round glass buttons (`.circle`) or grey capsules (`.secondary`).
+4. **Four levels of text:** large title → `SectionHeader` (bold, › when it opens everything, one muted line under it) → card → row. Status only in small capsules.
+5. **What runs sits at the bottom:** the started job above the tab bar, with its timer (`tabViewBottomAccessory`).
+6. **Menus grouped with icons; sheets with Renunță / Salvează; empty lists with a sentence and a button that fixes it.**
+
+Tabs: **Azi · Atelier · Agendă · Registru**, and search as its own tab (`Tab(role: .search)`; iOS decides whether it sits in the bar or apart). Registru holds Facturi, Rapoarte, Clienți, Mașini, De contactat, Catalog, Setări.
+
+| PR | What | Status |
+|---|---|---|
+| 1 | Base: new tabs and Registru, search tab, ink capsule buttons and chips, glass circle style, `SectionHeader`, area colors; the band removed | in progress |
+| 2 | Covers: Azi carousel of make-colored cards (paging, "1 / 5"), Atelier cards with a one-line summary, Lucrare page headed in the car's color, grouped "…" menus | planned |
+| 3 | Car-colored sheets (operation, line, payment), Mașina page (hero, history cards, ITP/RCA), empty states with an action | planned |
+| 4 | The running job: a time log on the job (start/stop, mechanic; one running job per mechanic) and a done mark on lines, in `src/domain/` with tests, the Swift port and fixtures; the bottom accessory with timer, step and Pauză/Gata | planned |
+
