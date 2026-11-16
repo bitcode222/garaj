@@ -80,7 +80,13 @@ struct CustomersView: View {
                 if let url = People.whatsappURL(c.phone, text: "") { Link(destination: url) { Label("WhatsApp", systemImage: "text.bubble") } }
             }
         } } header: { if !section.title.isEmpty { CapsHeader("\(section.title) · \(section.rows.count)") } } } }
-        .overlay { if customers.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView("Niciun client", systemImage: "person.2")) : AnyView(ContentUnavailableView.search(text: query)) } }
+        .overlay { if customers.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView {
+            Label("Niciun client", systemImage: "person.2")
+        } description: {
+            Text("Clienții se adaugă singuri când faci o programare. Îi poți adăuga și de aici.")
+        } actions: {
+            Button { creating = store.newCustomer() } label: { Label("Client nou", systemImage: "person.badge.plus") }.buttonStyle(FillButtonStyle(fill: false))
+        }) : AnyView(ContentUnavailableView.search(text: query)) } }
         .navigationTitle("Clienți")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Nume, telefon, număr, CUI")
         .toolbar {

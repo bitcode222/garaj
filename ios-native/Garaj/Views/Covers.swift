@@ -237,3 +237,27 @@ struct CoverBackground: ViewModifier {
 extension View {
     func cover(_ color: Color, height: CGFloat = 420) -> some View { modifier(CoverBackground(color: color, height: height)) }
 }
+
+// MARK: - Sheets on the car's color
+
+extension EnvironmentValues {
+    /// The make whose color a sheet sits on; nil for ordinary sheets.
+    @Entry var coverMake: String? = nil
+}
+
+extension View {
+    /// A sheet about one car takes its color (look 3): the cover behind, light rows, the cover's ink.
+    func carSheet(_ make: String?) -> some View {
+        let light = Make.ink(make) == .black
+        return self
+            .environment(\.coverMake, make ?? "")
+            .environment(\.colorScheme, light ? .light : .dark)
+            .tint(Make.ink(make))
+            .presentationBackground(Make.cover(make))
+    }
+
+    /// The rows of a form on a car's color: a light veil of the cover's ink instead of grey cells.
+    func coverRows(_ make: String?) -> some View {
+        listRowBackground(make.map { Make.ink($0).opacity(0.12) })
+    }
+}

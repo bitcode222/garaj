@@ -61,7 +61,13 @@ struct WorkOrdersView: View {
             .overlay {
                 if rows.isEmpty {
                     if query.isEmpty && status == nil {
-                        ContentUnavailableView("Nicio lucrare", systemImage: "wrench.and.screwdriver", description: Text("Apasă + ca să deschizi o lucrare."))
+                        ContentUnavailableView {
+                            Label("Nicio lucrare", systemImage: "wrench.and.screwdriver")
+                        } description: {
+                            Text("Când primești o mașină, deschizi aici lucrarea ei: ce cere clientul, operațiile, piesele.")
+                        } actions: {
+                            Button { creating = true } label: { Label("Primește o mașină", systemImage: "car.badge.gearshape") }.buttonStyle(FillButtonStyle(fill: false))
+                        }
                     } else {
                         ContentUnavailableView.search(text: query)
                     }
