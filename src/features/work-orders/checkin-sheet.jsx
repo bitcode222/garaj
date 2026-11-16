@@ -25,7 +25,7 @@ import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 
 /** "Primire mașină": the 30-second check-in that opens a work order. */
-export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicleId, status = "estimate" }) {
+export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicleId, status = "estimate", centered = false }) {
 	const router = useRouter();
 	const depth = useContext(SheetDepth);
 	const appointment = useEntity("appointments", appointmentId);
@@ -83,6 +83,8 @@ export default function CheckInSheet({ open, onOpenChange, appointmentId, vehicl
 			open={open}
 			onOpenChange={onOpenChange}
 			title="Primire mașină"
+			tint={vehicle?.make ?? null}
+			centered={centered}
 			description={appointment ? `Din programarea: ${appointment.title || "fără titlu"}` : "Deschide o lucrare nouă"}
 			footer={
 				<>

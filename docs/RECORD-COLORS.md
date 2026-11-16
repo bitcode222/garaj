@@ -1,5 +1,7 @@
 # Record colours and state dots: plan
 
+> **Note (16 Nov 2026):** with the redesign ([`DESIGN.md`](DESIGN.md)) a record's kind keeps its colour as its area (icon, kind label, "Nou" tile), a state is a dot with words, and cards and calendar blocks take the car's colour instead of the kind's.
+
 **Status: requested by the owner on 2 Nov 2026, to plan and build in one go. 🟢 Built the same day** (§9, §10).
 
 ---

@@ -3,7 +3,7 @@
 One language for the web and the iPhone app, taken from the iPhone's look 3 "Coperți" ([`IOS-NATIVE.md`](IOS-NATIVE.md) §9).
 It replaces the old web design system (removed 16 Nov 2026).
 
-Status: **chosen, not built yet** (16 Nov 2026). Board: round 5, https://claude.ai/artifact/XjEeKzMcBaw2Kcg7fxUdds
+Status: **built** (16 Nov 2026, PRs #50–#57). Board: round 5, https://claude.ai/artifact/XjEeKzMcBaw2Kcg7fxUdds
 (the professional pass, with the car-colour gradients kept as on the phone).
 
 ## 1. Rules
@@ -69,4 +69,4 @@ The current home (hero search, day ruler, stage sections) is replaced by Azi A/B
 | 5 | Bani A + B: invoices as "Tabel" (the table under the month's numbers) or "Plăci" (cards with the amount first, grouped: to collect, drafts, paid, cancelled); the invoice's full page follows the list's look (`garaj.bani.look`): the printed page with its state, or the amount first in a car-coloured header; Rapoarte as "Grafice" or "Panou" (the chart large beside the numbers as tiles), with the old home's analytics at the bottom. In the side panel an invoice keeps its sheet | done |
 | 6 | Oameni și mașini A + B, one switch for the three lists (`garaj.oameni.look`): Clienți as the table or cards with their cars as tiles; Mașini as the table (car tiles) or covers; De contactat with the message folded or ready to send; the client page plain or in their car's colour; the car page with its car-coloured header in both | done |
 | 7a | Catalog, Setări, Caută, Nou A + B, one switch (`garaj.rest.look`): Catalog as tables or with tabs on the left and cards; Setări as the iPhone's grouped list leading to the sections, or tabs on the left that follow the scroll; Caută as the ⌘K window or the results page `/search/` (⌘K always opens the window, its "Vezi toate rezultatele" opens the page); Nou as tiles under its button or a centred sheet | done |
-| 7b | Sheets reworked (a car's sheet in its colour; Recepție centred in Atelier A); old components and docs that no longer apply are removed | planned |
+| 7b | Sheets: a sheet about one car (a visit's records, Recepție once the car is chosen) has its head washed with the car's colour and its logo on a tile of that colour (`Sheet` `tint`); Recepție opens centred from Atelier "Etape" (`centered`). Removed: the old home (hero, day ruler, sections, its timeline and cards, `card-section`, `half-donut`). `scripts/ui-check.mjs` still drives the old home and needs rewriting for the new one | done |
