@@ -299,7 +299,7 @@ function NowPill({ hourPx, label }) {
  * width; the closed ones are a sideways scroll away). The same window, re-anchoring, editing in
  * place and API as DayStrip, turned: a booking is drawn, moved and stretched along its row.
  */
-export function DayRows({ ref, view, today, settings, byDay, allByDay, columns, keyOf, lookups, colorBy, selectedId, initialDay, onView, onOpen, onCreate, onReschedule, onPickDay }) {
+export function DayRows({ ref, view, alone, today, settings, byDay, allByDay, columns, keyOf, lookups, colorBy, selectedId, initialDay, onView, onOpen, onCreate, onReschedule, onPickDay }) {
 	const touch = useMediaQuery("(pointer: coarse)");
 	const scroller = useRef(null);
 	const [size, setSize] = useState({ width: 0, height: 0 });
@@ -319,7 +319,7 @@ export function DayRows({ ref, view, today, settings, byDay, allByDay, columns, 
 	const hourPx = size.width ? Math.max(touch ? 64 : 48, (size.width - label) / Math.max(1, Math.ceil((closeMin - openMin) / 60))) : 64;
 	const zi = view === "day";
 	// Zi: the middle day whole and a share of the ones above and under, less with every mechanic more.
-	const perView = zi ? visibleDays("day", 0, columns.length) : 7;
+	const perView = zi ? (alone ? 1 : visibleDays("day", 0, columns.length)) : 7;
 	const rowPx = size.height ? Math.max(zi ? columns.length * SUBROW_MIN : ROW_MIN, Math.floor((size.height - AXIS_PX) / perView)) : ROW_MIN;
 
 	const attach = useCallback((el) => {
