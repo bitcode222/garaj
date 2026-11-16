@@ -3,7 +3,8 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ArrowLeftIcon, ChevronLeftIcon, XIcon } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { MakeLogo } from "@/components/ds/make-logo";
+import { MakeTile } from "@/components/ds/car";
+import { makeCover } from "@/lib/colors";
 import { KindMark, StateTag, kindText } from "@/components/ds/tone";
 import { haptics } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
@@ -142,7 +143,10 @@ function bounceThroughScrollLock(el) {
  * in the text colour, and the state is a pill at the right (the sheet look the owner picked, 7 Nov 2026). Without a
  * bar, `kind` and `state` colour and mark the title as before.
  */
-export function Sheet({ open, onOpenChange, title, description, headerActions, kind, state, bar, make, footer, footerClassName, className, children }) {
+export function Sheet({ open, onOpenChange, title, description, headerActions, kind, state, bar, make, tint, centered = false, footer, footerClassName, className, children }) {
+	// A sheet about one car takes its colour (docs/DESIGN.md §1): its head is washed with the car's cover colour, fading
+	// into the sheet, and its logo sits on a tile of that colour. `tint` names the car for sheets without a visit bar.
+	const car = tint ?? (bar ? make : null);
 	const contentRef = useRef(null);
 	const depth = useContext(SheetDepth);
 	const motion = useContext(SheetMotion);
@@ -179,11 +183,18 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:border-l",
 						// One width for every sheet on the web (md and up), so stacked sheets line up exactly (42 rem, 672 px).
 						"md:max-w-2xl",
+						// Centred (Recepție in Atelier "Etape", docs/DESIGN.md §4): a card in the middle of the window, md and up.
+						centered &&
+							"md:inset-auto md:top-[5vh] md:left-1/2 md:h-auto md:max-h-[90dvh] md:-translate-x-1/2 md:overflow-hidden md:rounded-2xl md:border md:[--tw-enter-translate-x:0] md:[--tw-exit-translate-x:0] md:data-[state=closed]:zoom-out-95 md:data-[state=open]:zoom-in-95",
 						depth > 0 && "shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.12)] dark:shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.25)]",
 						className,
 					)}
 				>
-					<div className="shrink-0 touch-pan-y px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10" {...swipe.handlers}>
+					<div
+						className={cn("shrink-0 touch-pan-y px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
+						style={car ? { background: `linear-gradient(to bottom, color-mix(in srgb, ${makeCover(car)} 24%, var(--card)) 0, var(--card) 100%)` } : undefined}
+						{...swipe.handlers}
+					>
 						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. */}
 						<div className="-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-9">
 							<button
@@ -212,9 +223,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 							{bar && <div className="-mx-1 mt-2 mb-4">{bar}</div>}
 							{bar ? (
 								<div className="flex min-w-0 items-start gap-2.5">
-									<span className="mt-px flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
-										<MakeLogo make={make} className="size-[1.125rem] text-foreground/80" />
-									</span>
+									<MakeTile make={make} size={28} className="mt-px" />
 									<DialogPrimitive.Title className="min-w-0 flex-1 text-heading break-words text-foreground">{title}</DialogPrimitive.Title>
 									{state && (
 										<span className="mt-px flex shrink-0 items-center rounded-full border bg-card px-2.5 py-1">
@@ -224,7 +233,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 								</div>
 							) : (
 								<div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1">
-									{kind && <KindMark kind={kind} size="sm" />}
+									{tint ? <MakeTile make={tint} size={28} /> : kind && <KindMark kind={kind} size="sm" />}
 									<DialogPrimitive.Title className={cn("text-heading", kind && kindText(kind))}>{title}</DialogPrimitive.Title>
 									{state && <StateTag state={state} size="md" />}
 								</div>

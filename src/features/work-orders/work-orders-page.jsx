@@ -107,7 +107,7 @@ export function WorkOrdersPage() {
 		<Page width="wide" className="space-y-6">
 			<PageTitle title="Atelier" subtitle={`${plural(open.length, "lucrare deschisă", "lucrări deschise")} · ${open.filter((r) => r.order.status === "in_progress").length} în lucru${running ? `, ${running} cu cronometrul pornit` : ""}`}>
 				{lookSwitch}
-				<Button onClick={() => openSheet("checkin")}>
+				<Button onClick={() => openSheet("checkin", { centered: look === "stages" })}>
 					<Wrench /> Primire mașină
 				</Button>
 			</PageTitle>
@@ -131,25 +131,25 @@ export function WorkOrdersPage() {
 						);
 					})
 				) : (
-					<Empty query={query} />
+					<Empty query={query} centered={look === "stages"} />
 				)
 			) : shown.length ? (
 				<ClosedList rows={shown} settings={settings} onOpen={openJob} />
 			) : (
-				<Empty query={query} />
+				<Empty query={query} centered={look === "stages"} />
 			)}
 		</Page>
 	);
 }
 
-function Empty({ query }) {
+function Empty({ query, centered }) {
 	return (
 		<div className="flex flex-col items-center gap-2 rounded-xl border border-dashed bg-card px-6 py-12 text-center">
 			<Wrench className="size-6 text-muted-foreground" aria-hidden />
 			<p className="text-[15px] font-semibold">{query ? "Nicio lucrare găsită" : "Nicio lucrare aici"}</p>
 			<p className="text-sm text-muted-foreground">{query ? "Caută după număr, client sau numărul lucrării." : "Când primești o mașină, lucrarea ei apare aici."}</p>
 			{!query && (
-				<Button className="mt-1" onClick={() => openSheet("checkin")}>
+				<Button className="mt-1" onClick={() => openSheet("checkin", { centered })}>
 					Primește o mașină
 				</Button>
 			)}

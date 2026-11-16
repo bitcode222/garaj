@@ -1,5 +1,7 @@
 # Dashboard calendar v2: plan
 
+> **Note (16 Nov 2026):** the web was redesigned ([`DESIGN.md`](DESIGN.md)). Azi no longer has the hero search, the day ruler or the stage sections described here; this file is kept as history.
+
 **Status: plan approved by the owner on 13 Oct 2026. All phases (0 to 8) are 🟢 built.** Phase 8 (§12: bigger bookings, the same wording on a card and its booking, editing in place) was asked for by the owner on 13 Oct after phases 0 to 7 were merged. What is still open: the owner's own hands-on pass on the physical iPhone (the checks below ran in Chrome; phases 0 to 7 also in the iOS 27 simulator).
 It replaces the paged Zi / Săptămână calendar on Azi (`src/features/dashboard/dashboard-calendar.jsx`, `visit-timeline.jsx`).
 Build order and status are in §10; each phase ships on its own. The owner's answers are in §11.

@@ -1,5 +1,7 @@
 # Azi, the home page: plan (Cloudflare-style home)
 
+> **Note (16 Nov 2026):** the web was redesigned ([`DESIGN.md`](DESIGN.md)). Azi no longer has the hero search, the day ruler or the stage sections described here; this file is kept as history.
+
 **Status: plan approved by the owner on 17 Oct 2026, all five questions answered as recommended (§9). All phases (0 to 7) are 🟢 built; §10 lists what came out differently.** Still open: the owner's hands-on pass on the iPhone, and the Cloudflare look for the sidebar and top bar (Q5, a later pass).
 
 The owner showed the Cloudflare dashboard's home ("What's on the agenda?", one big search, then sections, then an analytics grid) and asked for the same kind of page, with every section after the search in the form of the "Deja în service" strip (a title column, cards grouped under small labels, a coloured line with a legend under them). The order is fixed by the owner:

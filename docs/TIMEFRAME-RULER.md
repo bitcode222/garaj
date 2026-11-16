@@ -1,5 +1,7 @@
 # The timeframe ruler on Azi: plan
 
+> **Note (16 Nov 2026):** the web was redesigned ([`DESIGN.md`](DESIGN.md)). Azi no longer has the hero search, the day ruler or the stage sections described here; this file is kept as history.
+
 **Status: requested and approved to build in one go by the owner (2 Nov 2026); 🟢 built the same day** (§9). Replaces the "Perioada" toggle (Azi · 7 zile · 30 de zile) under the quick-create
 buttons.
 
