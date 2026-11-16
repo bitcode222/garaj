@@ -15,7 +15,7 @@ const PAGES = [
  */
 export function ProgramariSwitch({ current, className }) {
 	return (
-		<nav aria-label="Paginile Programări" className={cn("inline-flex h-11 items-center gap-1 rounded-lg bg-muted p-1 md:h-9", className)}>
+		<nav aria-label="Paginile Programări" className={cn("inline-flex h-11 items-center gap-0.5 rounded-[8px] bg-muted p-0.5 md:h-[30px]", className)}>
 			{PAGES.map((page) => {
 				const here = page.href === current;
 				return (
@@ -24,11 +24,11 @@ export function ProgramariSwitch({ current, className }) {
 						href={page.href}
 						aria-current={here ? "page" : undefined}
 						className={cn(
-							"inline-flex h-full flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium transition-[background-color,color,box-shadow] duration-200",
-							here ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+							"inline-flex h-full flex-1 items-center justify-center gap-1.5 rounded-[6px] px-2.5 text-[12.5px] font-medium transition-[background-color,color,box-shadow] duration-200",
+							here ? "bg-card text-foreground shadow-[0_1px_3px_rgb(0_0_0/0.1)]" : "text-muted-foreground hover:text-foreground",
 						)}
 					>
-						<page.icon className="size-4" aria-hidden />
+						<page.icon className="size-3.5" aria-hidden />
 						<span data-label>{page.label}</span>
 					</Link>
 				);

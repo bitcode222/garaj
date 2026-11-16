@@ -131,7 +131,7 @@ export function SearchInput({ value, onChange, placeholder = "Caută…", classN
  */
 export function Segmented({ value, onValueChange, options, collapse = false, className, ...props }) {
 	return (
-		<div role="tablist" className={cn("inline-flex h-9 items-center gap-1 rounded-lg bg-muted p-1", className)} {...props}>
+		<div role="tablist" className={cn("inline-flex h-[30px] items-center gap-0.5 rounded-[8px] bg-muted p-0.5 pointer-coarse:h-10", className)} {...props}>
 			{options.map((option) => {
 				const active = option.value === value;
 				const Icon = option.icon;
@@ -144,8 +144,8 @@ export function Segmented({ value, onValueChange, options, collapse = false, cla
 						aria-label={collapse ? option.label : undefined}
 						onClick={() => onValueChange(option.value)}
 						className={cn(
-							"inline-flex h-full min-w-8 items-center justify-center rounded-md px-2 text-sm font-medium transition-[background-color,color,box-shadow] duration-200",
-							active ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+							"inline-flex h-full min-w-8 items-center justify-center rounded-[6px] px-2 text-[12.5px] font-medium transition-[background-color,color,box-shadow] duration-200",
+							active ? "bg-card text-foreground shadow-[0_1px_3px_rgb(0_0_0/0.1)]" : "text-muted-foreground hover:text-foreground",
 							!collapse && "px-2.5",
 						)}
 					>

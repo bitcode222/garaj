@@ -119,7 +119,7 @@ function PeekCard({ id, rect, controls }) {
 				<Item label="Mecanic">
 					{mechanic ? (
 						<span className="flex min-w-0 items-center gap-1.5">
-							<Initials name={mechanic.name} tone={mechanic.color} size="sm" className="size-4 shrink-0 text-[8px]" />
+							<Initials name={mechanic.name} tone="neutral" size="sm" className="size-4 shrink-0 text-[8px]" />
 							<span className="truncate">{mechanic.name}</span>
 						</span>
 					) : (

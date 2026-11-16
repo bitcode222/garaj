@@ -418,7 +418,7 @@ export function CalendarPage() {
 				</span>
 			);
 		const todayButton = (
-			<Button variant="outline" className="max-md:h-11 md:h-8" onClick={() => strip.current?.today()} title="Azi (T)">
+			<Button variant="outline" className="max-md:h-11" onClick={() => strip.current?.today()} title="Azi (T)">
 				Azi
 			</Button>
 		);
@@ -437,7 +437,7 @@ export function CalendarPage() {
 			<Button
 				variant="outline"
 				size="icon"
-				className="size-11 shrink-0 md:size-9"
+				className="size-11 shrink-0 md:size-8"
 				onClick={() => turn(direction === "horizontal" ? "vertical" : "horizontal")}
 				aria-label={direction === "horizontal" ? "Derulare: stânga–dreapta. Schimbă în sus–jos." : "Derulare: sus–jos. Schimbă în stânga–dreapta."}
 				title={direction === "horizontal" ? "Derulare: stânga–dreapta (apasă pentru sus–jos)" : "Derulare: sus–jos (apasă pentru stânga–dreapta)"}
@@ -466,7 +466,7 @@ export function CalendarPage() {
 			</DropdownMenu>
 		);
 		const miniButton = (
-			<Button variant="ghost" size="icon" className="size-9" onClick={() => setMiniPref("open")} aria-label="Arată minicalendarul" title="Arată minicalendarul">
+			<Button variant="outline" size="icon" className="size-8" onClick={() => setMiniPref("open")} aria-label="Arată minicalendarul" title="Arată minicalendarul">
 				<CalendarDays />
 			</Button>
 		);
@@ -479,28 +479,32 @@ export function CalendarPage() {
 			<h1 className="sr-only">Calendar</h1>
 			<div className="flex min-w-0 flex-1 flex-col">
 				{/* The top bar. Desktop: one line, where you are on the left (the pages, ‹ Azi ›, the title) and what you do on the right (search, how it is drawn, settings). Phone: the title, which opens the panel, and the filters; the controls; the search. */}
-				<header className="border-b px-3 py-2 md:border-b-0 md:px-4 md:py-3">
+				<header className="border-b px-3 py-2 md:border-b-0 md:px-6 md:pt-5 md:pb-3">
 					{desktop ? (
-						<div className="flex flex-col gap-2">
-							{/* Row 1, the page and the time: the two Programări pages on the left; ‹ Azi ›, how it is drawn and the mini month on the right. */}
+						// The page's head, as the other pages (docs/DESIGN.md §3): "Agendă" and what is in view under it, how it is
+						// drawn and ‹ Azi › on the right; then the two pages, the search and the settings.
+						<div className="flex flex-col gap-3.5">
+							<div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+								<div className="min-w-0">
+									<p className="text-[1.625rem] leading-tight font-semibold tracking-tight">Agendă</p>
+									<p aria-live="polite" data-in-view className="mt-0.5 truncate text-[13.5px] text-muted-foreground first-letter:uppercase">
+										{title} · {inViewText}
+									</p>
+								</div>
+								<div className="flex items-center gap-2">
+									<Segmented aria-label="Vizualizare" value={currentView} onValueChange={changeView} options={VIEWS.map((v) => ({ value: v.value, label: v.label }))} />
+									<span className="flex gap-1">
+										{stepButton(-1)}
+										{stepButton(1)}
+									</span>
+									{todayButton}
+									{scrollButton}
+									{!miniOpen && miniButton}
+								</div>
+							</div>
 							<div className="flex items-center gap-2">
 								<ProgramariSwitch current="/calendar/" />
 								<div className="flex-1" />
-								<div className="flex items-center gap-2">
-									<span id="calendar-view-label" className="text-sm font-medium text-muted-foreground">Vizualizare</span>
-									<Segmented
-										aria-labelledby="calendar-view-label"
-										value={currentView}
-										onValueChange={changeView}
-										options={VIEWS.map((v) => ({ value: v.value, label: v.label }))}
-									/>
-								</div>
-								{scrollButton}
-								{!miniOpen && miniButton}
-							</div>
-							{/* Row 2, what is in view: its title and count, then the search and the settings for it. */}
-							<div className="flex items-center gap-2">
-								<div className="min-w-0 flex-1 pl-1">{titleBlock(true)}</div>
 								{searchNode("w-72 shrink-0 xl:w-96")}
 								<Button
 									variant={settingsOpen ? "secondary" : "outline"}
@@ -513,7 +517,7 @@ export function CalendarPage() {
 								>
 									<SlidersHorizontal />
 									Setări
-									{filtersOn > 0 && <span className="rounded-full bg-brand px-1.5 text-[10px] leading-4 font-semibold text-brand-foreground tabular-nums">{filtersOn}</span>}
+									{filtersOn > 0 && <span className="rounded-full bg-foreground px-1.5 text-[10px] leading-4 font-semibold text-background tabular-nums">{filtersOn}</span>}
 									<ChevronDown className={cn("opacity-60 transition-transform", settingsOpen && "rotate-180")} />
 								</Button>
 							</div>

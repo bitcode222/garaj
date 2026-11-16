@@ -13,6 +13,7 @@ import { APPOINTMENT_STATUS } from "@/lib/labels";
 import { BlockMark } from "./block-mark";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
+import { makeColor, makeTint } from "@/lib/colors";
 import { DRAG_SLOP_PX, HOLD_MS, HOLD_SLOP_PX, drawSpan, edgeSpeed, shiftSpan, startAt, stretchSpan } from "@/features/dashboard/timeline-drag";
 import { centerLeft, dayAtCenter, dayAtLeft, dayWindow, daysInView, indexAt, indexOfDay, keepScroll, leftOf, nearEdge, stepDay, visibleDays, widthAt } from "./calendar-geometry";
 import { AlertSign, alertOutline, alertSummary } from "./booking-warnings";
@@ -55,12 +56,12 @@ function rowBackground(hourPx, openMin, closeMin, closedDay) {
  * time, the car (logo, make and model); who owns it and its plate; what it is in for; and the
  * mechanic (the avatar in the bottom-left, with the name on a row of its own when there is room).
  */
-const RowEvent = memo(function RowEvent({ appointment: a, mark = "booking", left, width, top, height, toneName, lookups, past, selected, alert, dragging, movable }) {
+const RowEvent = memo(function RowEvent({ appointment: a, mark = "booking", left, width, top, height, toneName, byCar = true, lookups, past, selected, alert, dragging, movable }) {
 	const f = cardFacts(a, lookups);
 	const mechanic = f.mechanic;
 	const time = `${fmtTime(a.start)}–${fmtTime(a.end)}`;
 	const state = lookups.states?.get(a.id) ?? null;
-	const avatar = mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="size-4 shrink-0 text-[8px] ring-1 ring-card" />;
+	const avatar = mechanic && <Initials name={mechanic.name} tone="neutral" size="sm" className="size-4 shrink-0 text-[8px] ring-1 ring-card" />;
 	// Rows: 1 (the car), 2 (+ owner and plate), 3 (+ what for), 4 (+ the mechanic, named, on a row of their own).
 	const rows = height < 38 ? 1 : height < 62 ? 2 : height < 80 ? 3 : 4;
 	// A narrow bar keeps the owner and leaves the plate out (who it is matters more than which plate).
@@ -75,25 +76,32 @@ const RowEvent = memo(function RowEvent({ appointment: a, mark = "booking", left
 			aria-label={[time, f.name, f.owner, f.plate, f.subject, mechanic?.name, state?.text ?? APPOINTMENT_STATUS[a.status].label, alertSummary(alert)].filter(Boolean).join(" · ")}
 			data-mark={mark}
 			className={cn(
-				"absolute z-[5] flex flex-col overflow-hidden rounded-md border px-1.5 text-left text-2xs leading-[15px] transition-[box-shadow,opacity] select-none [-webkit-touch-callout:none]",
+				"absolute z-[5] flex flex-col overflow-hidden rounded-[7px] px-1.5 text-left text-2xs leading-[15px] transition-[box-shadow,opacity] select-none [-webkit-touch-callout:none]",
 				height >= 56 ? "justify-start gap-0.5 py-1.5" : "justify-center",
-				// Outlined in their colour, white inside (very small cards, D): past, cancelled or missed ones keep it (struck through when they did not happen).
-				tone(toneName).line,
+				// By car (docs/DESIGN.md §3): a light tint of its colour with that colour as the left edge; by mechanic or operation:
+				// outlined in that colour. Dashed while only booked.
+				byCar ? "border-y border-r" : cn("border", tone(toneName).line),
 				a.status === "scheduled" && "border-dashed",
 				lookups.match && !lookups.match.has(a.id) && "opacity-15 saturate-50",
 				(a.status === "no_show" || a.status === "cancelled") && "line-through",
 				alertOutline(alert),
-				selected && "z-[6] ring-2 ring-brand shadow-md shadow-brand/25",
+				selected && "z-[6] ring-2 ring-foreground shadow-md shadow-black/15",
 				movable && "pointer-fine:cursor-grab",
 				dragging && "opacity-30",
 			)}
-			style={{ left: left + 1, width: Math.max(width - 2, 14), top, height }}
+			style={{
+				left: left + 1,
+				width: Math.max(width - 2, 14),
+				top,
+				height,
+				...(byCar && { background: makeTint(f.make), borderColor: `color-mix(in srgb, ${makeColor(f.make)} 30%, transparent)`, borderLeft: `3px solid ${makeColor(f.make)}` }),
+			}}
 		>
 			<span className="flex min-w-0 items-center gap-1">
 				<BlockMark state={state} mark={mark} />
 				{width >= 90 && f.make && <MakeLogo make={f.make} className="size-3 shrink-0" />}
 				<span className="min-w-0 flex-1 truncate">
-					{width >= 70 && <span className={cn("font-semibold tabular-nums", tone(toneName).text)}>{fmtTime(a.start)} </span>}
+					{width >= 70 && <span className="font-semibold tabular-nums">{fmtTime(a.start)} </span>}
 					<span className="font-semibold">{f.name}</span>
 					{rows === 1 && f.owner && <span> · {f.owner}</span>}
 				</span>
@@ -166,7 +174,7 @@ const DayRow = memo(function DayRow({ day, top, height, slim, closed, isToday, e
 							style={{ width: dateWidth }}
 						>
 							<span className={cn("text-xs capitalize", isToday ? "text-foreground" : "text-muted-foreground")}>{fmtDate(day, "EEE").replace(".", "")}</span>
-							<span className={cn("flex h-7 min-w-7 items-center justify-center rounded-md px-1 text-base font-semibold tabular-nums", isToday && "bg-brand text-brand-foreground")}>{Number(day.slice(8))}</span>
+							<span className={cn("flex h-7 min-w-7 items-center justify-center rounded-md px-1 text-base font-semibold tabular-nums", isToday && "rounded-full bg-foreground text-background")}>{Number(day.slice(8))}</span>
 							{(!closed || count > 0) && (
 								<span data-day-count={count} className={cn("text-[10px] leading-3 whitespace-nowrap text-muted-foreground tabular-nums", countClass)}>
 									{countText(dateWidth - 4, 4.6)}
@@ -193,7 +201,7 @@ const DayRow = memo(function DayRow({ day, top, height, slim, closed, isToday, e
 					>
 						<span className="flex items-center gap-1.5">
 							<span className={cn("text-xs capitalize", isToday ? "text-foreground" : "text-muted-foreground")}>{fmtDate(day, "EEE")}</span>
-							<span className={cn("flex h-6 min-w-6 items-center justify-center rounded-md px-1 text-sm font-semibold tabular-nums", isToday && "bg-brand text-brand-foreground")}>{Number(day.slice(8))}</span>
+							<span className={cn("flex h-6 min-w-6 items-center justify-center rounded-md px-1 text-sm font-semibold tabular-nums", isToday && "rounded-full bg-foreground text-background")}>{Number(day.slice(8))}</span>
 						</span>
 						{(!closed || count > 0) && (
 							<span data-day-count={count} className={cn("text-2xs whitespace-nowrap text-muted-foreground tabular-nums", countClass)}>
@@ -219,7 +227,7 @@ const DayRow = memo(function DayRow({ day, top, height, slim, closed, isToday, e
 								const rect = event.currentTarget.getBoundingClientRect();
 								onCreateAt(day, ((event.clientX - rect.left) / hourPx) * 60, column.staffId);
 							}}
-							className={cn("absolute inset-x-0 cursor-copy", c > 0 && "border-t border-dashed border-foreground/45", columns.length > 1 && tone(column.color).lane)}
+							className={cn("absolute inset-x-0 cursor-copy", c > 0 && "border-t border-dashed border-border")}
 							style={{ top: `${c * band}%`, height: `${band}%` }}
 						>
 							{placed.map(({ event: a, lane, lanes }) => {
@@ -238,6 +246,7 @@ const DayRow = memo(function DayRow({ day, top, height, slim, closed, isToday, e
 										top={4 + named + lane * laneH + (laneH - barH) / 2}
 										height={barH}
 										toneName={eventTone(a, colorBy, lookups)}
+										byCar={colorBy !== "mechanic" && colorBy !== "service"}
 										lookups={lookups}
 										past={now != null && a.end < now}
 										selected={a.id === selectedId}
@@ -263,10 +272,10 @@ function NowLine({ layout, today, hourPx, label, totalHeight }) {
 	const index = layout.days[0] <= today && today <= layout.days.at(-1) ? indexOfDay(layout, today) : -1;
 	return (
 		<>
-			<div aria-hidden className="pointer-events-none absolute z-[7] w-px bg-brand/35" style={{ left: x, top: AXIS_PX, height: totalHeight }} />
+			<div aria-hidden className="pointer-events-none absolute z-[7] w-px bg-[#ff3b30]/35" style={{ left: x, top: AXIS_PX, height: totalHeight }} />
 			{index >= 0 && !layout.slim[index] && (
-				<div aria-hidden className="pointer-events-none absolute z-[8] w-0.5 -translate-x-1/2 bg-brand" style={{ left: x, top: AXIS_PX + layout.offsets[index], height: widthAt(layout, index) }}>
-					<span className="absolute -top-1 -left-[3px] size-2 rounded-full bg-brand" />
+				<div aria-hidden className="pointer-events-none absolute z-[8] w-0.5 -translate-x-1/2 bg-[#ff3b30]" style={{ left: x, top: AXIS_PX + layout.offsets[index], height: widthAt(layout, index) }}>
+					<span className="absolute -top-1 -left-[3px] size-2 rounded-full bg-[#ff3b30]" />
 				</div>
 			)}
 		</>
@@ -277,7 +286,7 @@ function NowPill({ hourPx, label }) {
 	const minute = useNowMinute();
 	if (minute == null) return null;
 	return (
-		<span aria-hidden className="absolute bottom-1 z-[9] -translate-x-1/2 rounded-md bg-brand px-1 text-2xs leading-4 font-semibold text-brand-foreground tabular-nums" style={{ left: label + xOf(minute, hourPx) }}>
+		<span aria-hidden className="absolute bottom-1 z-[9] -translate-x-1/2 rounded-md bg-[#ff3b30] px-1 text-2xs leading-4 font-semibold text-white tabular-nums" style={{ left: label + xOf(minute, hourPx) }}>
 			{hhmm(minute)}
 		</span>
 	);
