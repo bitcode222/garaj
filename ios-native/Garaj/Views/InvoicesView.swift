@@ -168,7 +168,17 @@ struct InvoicesView: View {
             .overlay {
                 if rows.isEmpty {
                     if query.isEmpty {
-                        ContentUnavailableView("Nicio factură", systemImage: "doc.text", description: Text(filter == .all ? "Facturile se fac din lucrări sau cu +." : "Nimic aici acum."))
+                        ContentUnavailableView {
+                            Label(filter == .overdue ? "Nicio factură restantă" : "Nicio factură", systemImage: filter == .overdue ? "checkmark.seal" : "doc.text")
+                        } description: {
+                            Text(filter == .all ? "Facturile se fac din lucrări, cu butonul „Fă factura”, sau de aici." : filter == .overdue ? "Toți clienții au plătit la termen." : "Nimic aici acum.")
+                        } actions: {
+                            if filter == .all {
+                                Button { creating = true } label: { Label("Factură nouă", systemImage: "doc.badge.plus") }.buttonStyle(FillButtonStyle(fill: false))
+                            } else {
+                                Button("Vezi toate facturile") { filter = .all }.buttonStyle(FillButtonStyle(kind: .secondary, fill: false))
+                            }
+                        }
                     } else {
                         ContentUnavailableView.search(text: query)
                     }

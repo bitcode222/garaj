@@ -138,6 +138,8 @@ private struct OperationRow: View {
 
 /// Edit one operation: its kind, name, time, quantity and price (with the price from the labor rate).
 struct OperationSheet: View {
+    /// Set when the sheet sits on a car's color (look 3).
+    @Environment(\.coverMake) private var coverMake
     enum Target: Identifiable {
         case new(Operation), edit(Operation)
         var id: String { switch self { case .new(let o), .edit(let o): o.id } }
@@ -162,6 +164,7 @@ struct OperationSheet: View {
         let parts = store.get(Service.self, op.serviceId)?.parts.compactMap(\.object) ?? []
         NavigationStack {
             Form {
+                Group {
                 Section {
                     ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -244,7 +247,10 @@ struct OperationSheet: View {
                         }
                     }
                 }
+                }
+                .coverRows(coverMake)
             }
+            .scrollContentBackground(coverMake == nil ? .automatic : .hidden)
             .navigationTitle(isNew ? "Operație nouă" : "Operație")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

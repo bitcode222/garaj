@@ -55,7 +55,13 @@ struct VehiclesView: View {
                 }
             }
         } }
-        .overlay { if vehicles.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView("Nicio mașină", systemImage: "car")) : AnyView(ContentUnavailableView.search(text: query)) } }
+        .overlay { if vehicles.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView {
+            Label("Nicio mașină", systemImage: "car")
+        } description: {
+            Text("Mașinile se adaugă la programare sau la primire. O poți adăuga și de aici.")
+        } actions: {
+            Button { creating = store.newVehicle(customerId: nil) } label: { Label("Mașină nouă", systemImage: "plus") }.buttonStyle(FillButtonStyle(fill: false))
+        }) : AnyView(ContentUnavailableView.search(text: query)) } }
         .navigationTitle("Mașini")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Număr, marcă, VIN, proprietar")
         .toolbar {
@@ -132,20 +138,69 @@ struct VehicleDetailView: View {
         let service = People.serviceDue(v, today: today)
         let orders = store.all(WorkOrder.self).filter { $0.vehicleId == v.id }.sorted { $0.number > $1.number }
         let km = { (n: Int) in "\(n.formatted(.number.locale(Locale(identifier: "ro_RO")))) km" }
+        let ink = Make.ink(v.make)
+        let services = Dictionary(store.all(Service.self).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let spent = orders.filter { $0.status == "delivered" }.reduce(0) { $0 + Lines.totals($1.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross }
         return List {
+            // The cover (look 3): the make's logo on its color, the plate, what car it is, the owner.
             Section {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(People.formatPlate(v.plate))
-                        .font(.title.weight(.bold))
-                        .padding(.horizontal, 12).padding(.vertical, 4)
-                        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.primary, lineWidth: 2))
-                    Text([v.title, v.year.map(String.init), v.engine, Inventory.fuels.first { $0.key == v.fuel }?.label ?? v.fuel].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
-                        .font(.subheadline).foregroundStyle(.secondary)
-                    if !v.vin.isEmpty { Text("VIN \(v.vin)").font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled) }
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Spacer()
+                        MakeArt(make: v.make, size: 110)
+                        Spacer()
+                    }
+                    .padding(.vertical, 18)
+                    HStack(spacing: 10) {
+                        Text(v.title.nonEmpty ?? "Mașină").font(.largeTitle.weight(.bold)).lineLimit(2).minimumScaleFactor(0.7)
+                        if !v.plate.isEmpty { PlateBadge(plate: v.plate) }
+                    }
+                    Text([v.year.map(String.init), v.engine, Inventory.fuels.first { $0.key == v.fuel }?.label.lowercased() ?? v.fuel,
+                          v.mileage.last.map { km($0.km) }].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
+                        .font(.subheadline).opacity(0.8)
+                    if !v.vin.isEmpty { Text("VIN \(v.vin)").font(.caption.monospaced()).opacity(0.7).textSelection(.enabled) }
+                    if let owner {
+                        NavigationLink { CustomerDetailView(id: owner.id) } label: {
+                            Label(owner.name, systemImage: "person.fill")
+                        }
+                        .buttonStyle(.onColor)
+                        .padding(.top, 8)
+                    }
                 }
-                .padding(.vertical, 4)
-                if let owner {
-                    NavigationLink { CustomerDetailView(id: owner.id) } label: { LabeledContent("Proprietar", value: owner.name) }
+                .foregroundStyle(ink)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 8)
+            }
+            .bareRow()
+            if !orders.isEmpty {
+                Section {
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 12) {
+                            ForEach(orders) { o in
+                                let first = o.lines.first { $0.kind == "labor" } ?? o.lines.first
+                                let kind = WorkKind.style(WorkKind.category(serviceId: first?.refId, text: first?.description ?? o.complaint, services: services))
+                                NavigationLink { WorkOrderDetailView(id: o.id) } label: {
+                                    VStack(alignment: .leading) {
+                                        Image(systemName: kind.symbol).font(.title2)
+                                        Spacer()
+                                        Text(JobText.headline(o)).font(.subheadline.weight(.semibold)).lineLimit(2).multilineTextAlignment(.leading)
+                                        Text("\(Dates.display(Dates.dayOfInstant(o.createdAt))) · \(Labels.workOrder(o.status).label.lowercased())")
+                                            .font(.caption).opacity(0.75).lineLimit(1)
+                                    }
+                                    .foregroundStyle(ink)
+                                    .padding(12)
+                                    .frame(width: 150, height: 150, alignment: .leading)
+                                    .background(Make.cover(v.make).mix(with: kind.color, by: 0.25), in: .rect(cornerRadius: 24))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                    .contentMargins(.horizontal, 20, for: .scrollContent)
+                    .scrollIndicators(.hidden)
+                    .bareRow()
+                } header: {
+                    SectionHeader("Istoric", subtitle: "\(orders.count) \(orders.count == 1 ? "lucrare" : "lucrări")\(spent > 0 ? " · \(Money.format(spent, currency: store.currency, decimals: 0)) predate" : "")")
                 }
             }
             Section(header: CapsHeader("Termene")) {
@@ -176,24 +231,11 @@ struct VehicleDetailView: View {
             } header: { CapsHeader("Kilometraj") } footer: {
                 if let est = People.estimateKm(v, today: today), let last = v.mileage.last, last.date != today { Text("Azi, estimat: ~\(km(est))") }
             }
-            if !orders.isEmpty {
-                Section(header: CapsHeader("Lucrări")) {
-                    ForEach(orders) { o in
-                        NavigationLink { WorkOrderDetailView(id: o.id) } label: {
-                            LabeledContent {
-                                Text(Labels.workOrder(o.status).label).foregroundStyle(Labels.workOrder(o.status).color)
-                            } label: {
-                                Text(verbatim: "#\(o.number) · \(Dates.display(Dates.dayOfInstant(o.createdAt)))")
-                                Text(o.complaint).lineLimit(1)
-                            }
-                        }
-                    }
-                }
-            }
             if !v.notes.isEmpty { Section(header: CapsHeader("Note")) { Text(v.notes) } }
             Section { Button("Șterge mașina", role: .destructive) { confirmDelete = true } }
         }
         .listStyle(.insetGrouped)
+        .cover(Make.cover(v.make), height: 560)
         .navigationTitle(People.formatPlate(v.plate))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { Button("Editează") { editing = v } }

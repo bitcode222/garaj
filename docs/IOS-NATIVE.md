@@ -110,7 +110,7 @@ Tabs: **Azi · Atelier · Agendă · Registru**, and search as its own tab (`Tab
 | PR | What | Status |
 |---|---|---|
 | 1 | Base: new tabs and Registru, search tab, ink capsule buttons and chips, glass circle style, `SectionHeader`, area colors; the band removed | merged (#46) |
-| 2 | Covers: Azi carousel of make-colored cards (paging, "1 / 5"), Atelier cards with a one-line summary, Lucrare page headed in the car's color, grouped "…" menus (`Views/Covers.swift`: `CoverCard`, `JobCard`, `MakeTile`, `.cover()`, `JobText`) | in progress |
-| 3 | Car-colored sheets (operation, line, payment), Mașina page (hero, history cards, ITP/RCA), empty states with an action | planned |
+| 2 | Covers: Azi carousel of make-colored cards (paging, "1 / 5"), Atelier cards with a one-line summary, Lucrare page headed in the car's color, grouped "…" menus (`Views/Covers.swift`: `CoverCard`, `JobCard`, `MakeTile`, `.cover()`, `JobText`) | merged (#47) |
+| 3 | Car-colored sheets (`.carSheet(make)`: the job's line editor, the booking's operation sheet), Mașina page (cover with logo, plate, facts, owner; history cards tinted by the kind of work; deadlines), empty lists with a sentence and a button (jobs, invoices, clients, cars, bookings) | in progress |
 | 4 | The running job: a time log on the job (start/stop, mechanic; one running job per mechanic) and a done mark on lines, in `src/domain/` with tests, the Swift port and fixtures; the bottom accessory with timer, step and Pauză/Gata | planned |
 

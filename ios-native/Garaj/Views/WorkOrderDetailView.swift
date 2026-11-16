@@ -212,6 +212,7 @@ struct WorkOrderDetailView: View {
                 if let i = next.lines.firstIndex(where: { $0.id == saved.id }) { next.lines[i] = saved } else { next.lines.append(saved) }
                 save(next)
             }
+            .carSheet(store.get(Vehicle.self, order.vehicleId)?.make)
         }
         .sheet(item: $adding) { source in
             AddLineSheet(source: source) { lines in

@@ -71,7 +71,13 @@ struct AppointmentsView: View {
             .overlay {
                 if result.rows.isEmpty {
                     if query.isEmpty {
-                        ContentUnavailableView("Nicio programare", systemImage: "calendar", description: Text("Nimic pentru „\(Self.statusLabel[status] ?? "")” în „\(Self.periodLabel[period] ?? "")”."))
+                        ContentUnavailableView {
+                            Label("Nicio programare", systemImage: "calendar")
+                        } description: {
+                            Text("Nimic pentru „\(Self.statusLabel[status] ?? "")” în „\(Self.periodLabel[period] ?? "")”.")
+                        } actions: {
+                            Button { editing = .new } label: { Label("Programare nouă", systemImage: "calendar.badge.plus") }.buttonStyle(FillButtonStyle(fill: false))
+                        }
                     } else {
                         ContentUnavailableView.search(text: query)
                     }

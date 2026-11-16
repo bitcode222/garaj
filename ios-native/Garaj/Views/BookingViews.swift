@@ -119,7 +119,7 @@ struct AppointmentDetailView: View {
         .navigationDestination(item: $openJob) { WorkOrderDetailView(id: $0) }
         .sheet(item: $editing) { BookingForm(target: $0) }
         .sheet(item: $cancelling) { CancelSheet(appointment: $0) }
-        .sheet(item: $editingOperation) { OperationSheet(target: $0, appointmentId: a.id) }
+        .sheet(item: $editingOperation) { OperationSheet(target: $0, appointmentId: a.id).carSheet(store.get(Vehicle.self, a.vehicleId)?.make) }
         .sheet(isPresented: $pickingServices) {
             ServicePicker { picked in
                 let rate = store.shop.laborRate

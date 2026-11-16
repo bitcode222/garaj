@@ -2,6 +2,8 @@ import SwiftUI
 
 /// Edits one line in a sheet: what it is, quantity, price, discount, VAT, mechanic.
 struct LineEditor: View {
+    /// Set when the sheet sits on a car's color (look 3).
+    @Environment(\.coverMake) private var coverMake
     @Environment(AppStore.self) private var store
     @Environment(\.dismiss) private var dismiss
 
@@ -41,6 +43,7 @@ struct LineEditor: View {
         let shop = store.shop
         NavigationStack {
             Form {
+                Group {
                 Section {
                     Picker("Tip", selection: $line.kind) {
                         ForEach(Lines.kinds, id: \.self) { Text(Lines.kindLabel[$0] ?? $0).tag($0) }
@@ -93,7 +96,10 @@ struct LineEditor: View {
                         ForEach(issues, id: \.self) { Label($0, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.red) }
                     }
                 }
+                }
+                .coverRows(coverMake)
             }
+            .scrollContentBackground(coverMake == nil ? .automatic : .hidden)
             .navigationTitle(isNew ? "Linie nouă" : "Linie")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
