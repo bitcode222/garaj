@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { clockText, jobHeadline, stepText } from "@/features/work-orders/job-text";
 
 /** The time now, once a second while `on`. */
-function useTick(on) {
+export function useTick(on) {
 	const [now, setNow] = useState(() => new Date().toISOString());
 	useEffect(() => {
 		if (!on) return undefined;
