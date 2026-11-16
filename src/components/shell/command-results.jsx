@@ -1,7 +1,7 @@
 "use client";
 
 import { useDeferredValue } from "react";
-import { CalendarPlus, CarFront, FilePlus2, ReceiptText, UserPlus, Users, Wrench } from "lucide-react";
+import { CalendarPlus, CarFront, FilePlus2, ReceiptText, Search, UserPlus, Users, Wrench } from "lucide-react";
 import { CommandEmpty, CommandGroup, CommandItem, CommandSeparator } from "@/components/ui/command";
 import { PlateTag } from "@/components/ds/make-logo";
 import { StatusBadge } from "@/components/ds/tone";
@@ -11,7 +11,7 @@ import { useCollection } from "@/lib/store/hooks";
 import { selectSearchIndex } from "@/lib/store/selectors";
 import { NAV } from "./nav";
 
-const GROUPS = [
+export const GROUPS = [
 	{ type: "vehicle", heading: "Mașini", icon: CarFront, href: (id) => `/vehicles/detail/?id=${id}` },
 	{ type: "customer", heading: "Clienți", icon: Users, href: (id) => `/customers/detail/?id=${id}` },
 	{ type: "workOrder", heading: "Lucrări", icon: Wrench, href: (id) => `/work-orders/detail/?id=${id}` },
@@ -21,7 +21,7 @@ const GROUPS = [
 const LIMIT = 6;
 
 /** The search for a query: the matches per group (at most LIMIT each), read from the shop's data. */
-export function useSearch(query) {
+export function useSearch(query, limit = LIMIT) {
 	const deferred = useDeferredValue(query);
 	const index = selectSearchIndex(
 		useCollection("customers"),
@@ -35,7 +35,7 @@ export function useSearch(query) {
 	if (tokens.length) {
 		for (const item of index) {
 			const bucket = (results[item.type] ??= []);
-			if (bucket.length < LIMIT && matchesTokens(item.hay, tokens)) bucket.push(item);
+			if (bucket.length < limit && matchesTokens(item.hay, tokens)) bucket.push(item);
 		}
 	}
 	return { deferred, tokens, results };
@@ -64,6 +64,13 @@ export function SearchResults({ search: { deferred, tokens, results }, onGo, onC
 						))}
 					</CommandGroup>
 				) : null,
+			)}
+			{tokens.length > 0 && GROUPS.some((group) => results[group.type]?.length) && (
+				<CommandGroup>
+					<CommandItem value="see-all" onSelect={() => onGo(`/search/?q=${encodeURIComponent(deferred)}`)} className="text-muted-foreground">
+						<Search /> Vezi toate rezultatele pentru „{deferred}”
+					</CommandItem>
+				</CommandGroup>
 			)}
 			{!tokens.length && (
 				<>

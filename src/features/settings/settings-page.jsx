@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
-import { Building2, CalendarClock, Database, Download, FlaskConical, ImagePlus, Monitor, PanelRight, FileText, Moon, Palette, Percent, Plus, ReceiptText, RotateCcw, Star, Sun, Upload, Users, Warehouse } from "lucide-react";
+import { Building2, CalendarClock, ChevronRight, Database, Download, FlaskConical, ImagePlus, Monitor, PanelRight, FileText, Moon, Palette, Percent, Plus, ReceiptText, RotateCcw, Star, Sun, Upload, Users, Warehouse } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
 import { Banner, Initials } from "@/components/ds/data";
 import { Field, MoneyInput, NumberInput, Segmented } from "@/components/ds/inputs";
 import { ListRow } from "@/components/ds/list";
-import { Page, PageHeader } from "@/components/ds/page";
+import { Page } from "@/components/ds/page";
+import { PageTitle, useViewSwitch } from "@/components/ds/blocks";
+import { AREA } from "@/lib/colors";
+import { REST_LOOKS, REST_LOOK_KEY } from "@/features/common/rest-look";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
@@ -80,12 +83,98 @@ async function saveFile(text, filename) {
 	return "downloaded";
 }
 
-function Section({ id, icon, title, description, children }) {
+// The sections, with their icon and colour (docs/DESIGN.md §4: settings as the iPhone's grouped list, or tabs on the left).
+const SECTIONS = [
+	{ id: "service", title: "Service", icon: Building2, color: AREA.lucrare },
+	{ id: "facturare", title: "Facturare", icon: ReceiptText, color: AREA.factura },
+	{ id: "tarife", title: "Tarife", icon: Percent, color: AREA.catalog },
+	{ id: "recenzii", title: "Recenzii", icon: Star, color: "#e26a8d" },
+	{ id: "program", title: "Program", icon: CalendarClock, color: AREA.programare },
+	{ id: "echipa", title: "Echipă", icon: Users, color: AREA.clienti },
+	{ id: "posturi", title: "Posturi de lucru", icon: Warehouse, color: AREA.masini },
+	{ id: "aspect", title: "Aspect", icon: Palette, color: AREA.setari },
+	{ id: "deschidere", title: "Deschiderea detaliilor", icon: PanelRight, color: AREA.setari, wide: true },
+	{ id: "date", title: "Date", icon: Database, color: AREA.setari },
+];
+
+function Tile({ icon: Icon, color, size = 28 }) {
 	return (
-		<Card id={id} className="scroll-mt-24">
-			<CardHeader title={title} description={description} icon={icon} />
-			<CardContent>{children}</CardContent>
-		</Card>
+		<span aria-hidden className="flex shrink-0 items-center justify-center rounded-[7px] text-white" style={{ width: size, height: size, background: color }}>
+			<Icon className="size-4" />
+		</span>
+	);
+}
+
+function Section({ id, icon, title, description, className, children }) {
+	const color = SECTIONS.find((section) => section.id === id)?.color ?? AREA.setari;
+	return (
+		<section id={id} aria-label={title} className={cn("scroll-mt-24 space-y-2.5", className)}>
+			<div className="flex items-center gap-2.5 px-1">
+				<Tile icon={icon} color={color} />
+				<div className="min-w-0">
+					<h2 className="text-[15.5px] font-semibold tracking-tight">{title}</h2>
+					{description && <p className="text-[12.5px] text-muted-foreground">{description}</p>}
+				</div>
+			</div>
+			<div className="rounded-xl border bg-card p-4 md:p-5">{children}</div>
+		</section>
+	);
+}
+
+/** "Listă": the sections as the iPhone's grouped list, each row jumping to its section. */
+function SectionIndex() {
+	return (
+		<nav aria-label="Secțiuni" className="overflow-hidden rounded-xl border bg-card">
+			<ul className="divide-y">
+				{SECTIONS.map((section) => (
+					<li key={section.id} className={cn(section.wide && "max-md:hidden")}>
+						<a href={`#${section.id}`} className="flex min-h-11 items-center gap-3 px-3.5 text-[14px] hover:bg-accent/40">
+							<Tile icon={section.icon} color={section.color} />
+							<span className="flex-1">{section.title}</span>
+							<ChevronRight className="size-4 text-muted-foreground" aria-hidden />
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+	);
+}
+
+/** "File": the sections as tabs on the left, staying in view. */
+function SectionTabs() {
+	const [here, setHere] = useState(SECTIONS[0].id);
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const seen = entries.filter((entry) => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+				if (seen) setHere(seen.target.id);
+			},
+			{ rootMargin: "-20% 0px -70% 0px" },
+		);
+		for (const section of SECTIONS) {
+			const element = document.getElementById(section.id);
+			if (element) observer.observe(element);
+		}
+		return () => observer.disconnect();
+	}, []);
+	return (
+		<nav aria-label="Secțiuni" className="flex gap-1 overflow-x-auto md:sticky md:top-6 md:flex-col md:self-start">
+			{SECTIONS.map((section) => (
+				<a
+					key={section.id}
+					href={`#${section.id}`}
+					aria-current={here === section.id ? "true" : undefined}
+					className={cn(
+						"flex h-8 shrink-0 items-center gap-2.5 rounded-[7px] px-2 text-[13.5px] pointer-coarse:h-10",
+						section.wide && "max-md:hidden",
+						here === section.id ? "bg-card font-medium shadow-[0_0_0_1px_var(--border)]" : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
+					)}
+				>
+					<Tile icon={section.icon} color={section.color} size={22} />
+					{section.title}
+				</a>
+			))}
+		</nav>
 	);
 }
 
@@ -98,6 +187,7 @@ export function SettingsPage() {
 
 function Settings({ settings }) {
 	const confirm = useConfirm();
+	const [look, lookSwitch] = useViewSwitch(REST_LOOK_KEY, REST_LOOKS);
 	const { theme, setTheme } = useTheme();
 	const [detailMode, setDetailMode] = useLocalPreference(DETAIL_MODE_KEY, "sheet", DETAIL_MODES);
 	const persistence = useStoreValue("persistence");
@@ -207,9 +297,13 @@ function Settings({ settings }) {
 	};
 
 	return (
-		<Page width="narrow">
-			<PageHeader title="Setări" description="Se salvează automat, pe acest dispozitiv." />
-			<div className="space-y-6">
+		<Page width={look === "tabs" ? "default" : "narrow"}>
+			<PageTitle title="Setări" subtitle="Se salvează automat, pe acest dispozitiv." className="mb-6">
+				{lookSwitch}
+			</PageTitle>
+			<div className={cn(look === "tabs" && "grid gap-8 md:grid-cols-[210px_minmax(0,1fr)]")}>
+			{look === "tabs" ? <SectionTabs /> : <SectionIndex />}
+			<div className={cn("space-y-8", look !== "tabs" && "mt-8")}>
 				<Section id="service" icon={Building2} title="Service" description="Apare pe facturi, devize și mesaje">
 					<div className="grid gap-4 sm:grid-cols-2">
 						<div className="flex items-center gap-3 sm:col-span-2">
@@ -424,6 +518,7 @@ function Settings({ settings }) {
 					</div>
 				</Section>
 				<p className="pb-4 text-center text-xs text-muted-foreground">Garaj 0.1 · prototip MVP</p>
+			</div>
 			</div>
 		</Page>
 	);
