@@ -1,11 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BarChart3, Clock, Percent, ReceiptText, Table2, Wallet } from "lucide-react";
+import { BarChart3, LayoutDashboard, Table2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
-import { Money, Stat } from "@/components/ds/data";
+import { Money } from "@/components/ds/data";
 import { Segmented } from "@/components/ds/inputs";
-import { Page, PageHeader } from "@/components/ds/page";
+import { Page } from "@/components/ds/page";
+import { PageTitle, StatCard, useViewSwitch } from "@/components/ds/blocks";
+import { AREA } from "@/lib/colors";
+import { cn } from "@/lib/utils";
+import { HomeAnalytics } from "@/features/dashboard/home-analytics";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge } from "@/components/ds/tone";
 import { addDaysISO, diffDaysISO, monthKey } from "@/domain/dates";
@@ -45,6 +49,11 @@ export function ReportsPage() {
 	const staff = useCollection("staff");
 	const [period, setPeriod] = useState("12m");
 	const [table, setTable] = useState(false);
+	const [look, lookSwitch] = useViewSwitch("garaj.rapoarte.look", [
+		{ value: "charts", label: "Grafice", icon: BarChart3 },
+		{ value: "panel", label: "Panou", icon: LayoutDashboard },
+	]);
+	const panel = look === "panel";
 
 	const report = useMemo(() => {
 		if (!today) return null;
@@ -78,20 +87,22 @@ export function ReportsPage() {
 
 	return (
 		<Page width="wide">
-			<PageHeader title="Rapoarte" description={`${fmtDate(range.from)} – ${fmtDate(range.to)} · valori fără TVA`} />
+			<PageTitle title="Rapoarte" subtitle={`${fmtDate(range.from)} – ${fmtDate(range.to)} · valori fără TVA`} className="mb-6">
+				{lookSwitch}
+			</PageTitle>
 
 			<div className="mb-6 flex flex-wrap items-center gap-2">
 				<Segmented value={period} onValueChange={setPeriod} options={PERIODS} className="max-sm:w-full max-sm:[&>button]:flex-1 max-sm:[&>button]:px-1" aria-label="Perioadă" />
 			</div>
 
+			{/* "Grafice": the numbers in a row, the chart, then the lists two by two. "Panou": a dashboard, the chart large in
+			    the corner and the numbers as tiles beside it (docs/DESIGN.md §4). */}
 			<div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-				<Stat label="Venituri" value={<Money value={summary.net} decimals={0} />} hint={plural(summary.count, "factură", "facturi")} icon={ReceiptText} />
-				<Stat label="Bon mediu" value={<Money value={summary.avgTicket} decimals={0} />} hint="per factură" icon={Wallet} />
-				<Stat label="Marjă pe piese" value={`${fmtNumber(summary.partsMarginPct, 0)}%`} hint={<>adaos {formatMoney(summary.partsMargin, settings.currency, { decimals: 0 })}</>} icon={Percent} />
-				<Stat label="Manoperă facturată" value={fmtHours(Math.round(summary.hours))} hint={<>{formatMoney(summary.labor, settings.currency, { decimals: 0 })}</>} icon={Clock} />
-			</div>
-
-			<Card className="mb-6">
+				<StatCard className={cn(panel && "lg:order-2")} label="Venituri" value={formatMoney(summary.net, settings.currency, { decimals: 0 })} note={plural(summary.count, "factură", "facturi")} color={AREA.factura} />
+				<StatCard className={cn(panel && "lg:order-3")} label="Bon mediu" value={formatMoney(summary.avgTicket, settings.currency, { decimals: 0 })} note="per factură" color={AREA.factura} />
+				<StatCard className={cn(panel && "lg:order-4")} label="Marjă pe piese" value={`${fmtNumber(summary.partsMarginPct, 0)}%`} note={`adaos ${formatMoney(summary.partsMargin, settings.currency, { decimals: 0 })}`} color={AREA.catalog} />
+				<StatCard className={cn(panel && "lg:order-5")} label="Manoperă facturată" value={fmtHours(Math.round(summary.hours))} note={formatMoney(summary.labor, settings.currency, { decimals: 0 })} color={AREA.lucrare} />
+			<Card className={cn("col-span-2", panel ? "lg:order-1 lg:row-span-2" : "mt-3 lg:col-span-4")}>
 				<CardHeader
 					title={daily ? "Venituri pe zile" : "Venituri pe luni"}
 					icon={BarChart3}
@@ -137,8 +148,9 @@ export function ReportsPage() {
 					)}
 				</CardContent>
 			</Card>
+			</div>
 
-			<div className="grid gap-6 lg:grid-cols-2">
+			<div className={cn("grid gap-6", panel ? "lg:grid-cols-4 [&>*]:lg:col-span-2" : "lg:grid-cols-2")}>
 				<Card>
 					<CardHeader title="Cele mai vândute operațiuni" description="După valoarea manoperei" />
 					<CardContent>
@@ -205,6 +217,10 @@ export function ReportsPage() {
 					</CardContent>
 				</Card>
 			</div>
+			{/* The home page's analytics, moved here with the redesign (docs/DESIGN.md §4). */}
+			<section className="mt-10" aria-label="Activitate">
+				<HomeAnalytics today={today} />
+			</section>
 		</Page>
 	);
 }

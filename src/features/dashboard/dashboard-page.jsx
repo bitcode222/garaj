@@ -22,7 +22,6 @@ import { cn } from "@/lib/utils";
 import { atMinute, toMinutes } from "@/features/calendar/utils";
 import { primaryAction } from "@/features/work-orders/job-action";
 import { jobHeadline, jobSummary } from "@/features/work-orders/job-text";
-import { HomeAnalytics } from "./home-analytics";
 import { JOB_FILTERS, dayLanes, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data";
 
 // Azi (docs/DESIGN.md §4): the owner kept two looks, switched at the top right and remembered on this device.
@@ -373,8 +372,6 @@ export function DashboardPage() {
 					</div>
 				</>
 			)}
-			{/* The analytics stay here until Rapoarte takes them (docs/DESIGN.md §6, part 5). */}
-			<HomeAnalytics today={today} />
 		</Page>
 	);
 }

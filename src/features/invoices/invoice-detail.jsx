@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
 	Banknote,
 	CarFront,
+	ChevronLeft,
 	CircleCheck,
 	EllipsisVertical,
 	Eye,
@@ -50,7 +51,10 @@ import { draftBehindOrder } from "@/domain/work-order";
 import { InvoiceState } from "./invoice-state";
 import { computeTotals } from "@/domain/lines";
 import { fmtDate, fmtDays, fmtWorkOrder } from "@/lib/format";
-import { printPage, shareText, useDraft, useQueryId } from "@/lib/hooks";
+import { printPage, shareText, useDraft, useLocalPreference, useQueryId } from "@/lib/hooks";
+import { CarHeader } from "@/components/ds/car";
+import { formatMoney } from "@/domain/money";
+import { vehicleName } from "@/domain/vehicle";
 import { INVOICE_STATE, PAYMENT_METHODS } from "@/lib/labels";
 import { closeSheet, openSheet } from "@/lib/sheets";
 import {
@@ -94,6 +98,28 @@ export function InvoiceEmbedded({ invoice }) {
 	return invoice.status === "draft" ? <DraftInvoice key={invoice.id} invoice={invoice} embedded /> : <IssuedInvoice invoice={invoice} embedded />;
 }
 
+// Bani's two looks (docs/DESIGN.md §4): the invoice opens as the list it came from was shown. "Tabel": the printed page
+// with its state beside it. "Plăci": the amount first, in a header in the car's colour, the page under it.
+export const BANI_LOOK_KEY = "garaj.bani.look";
+export const BANI_LOOKS = ["table", "cards"];
+
+function AmountHeader({ vehicle, customer, amount, eyebrow, currency }) {
+	return (
+		<CarHeader
+			make={vehicle?.make}
+			plate={vehicle?.plate}
+			eyebrow={eyebrow}
+			title={<span className="text-[2.25rem] tabular-nums">{formatMoney(amount, currency)}</span>}
+			facts={[customer?.name, vehicleName(vehicle)].filter(Boolean).join(" · ")}
+			back={
+				<Link href="/invoices/" className="mb-4 inline-flex items-center gap-0.5 text-[13px] opacity-75 hover:opacity-100">
+					<ChevronLeft className="size-4" aria-hidden /> Facturi
+				</Link>
+			}
+		/>
+	);
+}
+
 // ── draft ────────────────────────────────────────────────────────────────────
 
 function DraftInvoice({ invoice, embedded = false }) {
@@ -104,6 +130,7 @@ function DraftInvoice({ invoice, embedded = false }) {
 	const customers = useCollection("customers");
 	const vehicles = useCollection("vehicles");
 	const staff = selectActive(useCollection("staff"));
+	const [look] = useLocalPreference(BANI_LOOK_KEY, BANI_LOOKS[0], BANI_LOOKS);
 	const [preview, setPreview] = useState(false);
 	const [issuing, setIssuing] = useState(false);
 	const [draft, update, flush] = useDraft(invoice, (next) =>
@@ -187,11 +214,13 @@ function DraftInvoice({ invoice, embedded = false }) {
 	};
 
 	const snapshot = buildSnapshot({ settings, customer, vehicle, mileage: draft.mileage });
+	const amountFirst = !embedded && look === "cards";
 
 	return (
 		<Page width="wide" embedded={embedded}>
+			{amountFirst && <AmountHeader vehicle={vehicle} customer={customer} amount={totals.gross} currency={settings.currency} eyebrow={`Factură · ciornă${order ? ` · din Lucrarea #${order.number}` : ""}`} />}
 			<PageHeader
-				embedded={embedded}
+				embedded={embedded || amountFirst}
 				back={{ href: "/invoices/", label: "Facturi" }}
 				title={visitTitle({ vehicle }, "ciornă", customer?.name ?? "Factură nouă")}
 				kind="invoice"
@@ -313,6 +342,7 @@ function IssuedInvoice({ invoice, embedded = false }) {
 	const order = useEntity("workOrders", invoice.workOrderId);
 	const vehicle = useEntity("vehicles", invoice.vehicleId);
 	const list = selectPaymentsByInvoice(payments).get(invoice.id) ?? [];
+	const [look] = useLocalPreference(BANI_LOOK_KEY, BANI_LOOKS[0], BANI_LOOKS);
 	const info = today ? selectInvoiceStates(invoices, payments, today).get(invoice.id) : null;
 	const state = info?.state ?? "issued";
 	const balance = info?.balance ?? 0;
@@ -438,10 +468,22 @@ function IssuedInvoice({ invoice, embedded = false }) {
 </>
 	);
 
+	const amountFirst = !embedded && look === "cards";
+	const issuedLook = today ? invoiceLook(invoice, list, { today, currency: settings.currency }) : null;
+
 	return (
 		<Page width="wide" embedded={embedded}>
+			{amountFirst && (
+				<AmountHeader
+					vehicle={vehicle}
+					customer={customer}
+					amount={payable ? balance : invoice.totals.gross}
+					currency={settings.currency}
+					eyebrow={[invoice.stornoOf ? `Stornare ${number}` : `Factura ${number}`, issuedLook?.text, payable && balance < invoice.totals.gross ? "rest de plată" : null].filter(Boolean).join(" · ")}
+				/>
+			)}
 			<PageHeader
-				embedded={embedded}
+				embedded={embedded || amountFirst}
 				back={{ href: "/invoices/", label: "Facturi" }}
 				title={visitTitle({ vehicle }, invoice.stornoOf ? `stornare ${number}` : number, customer?.name ?? `Factura ${number}`)}
 				kind="invoice"
