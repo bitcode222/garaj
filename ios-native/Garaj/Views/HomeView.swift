@@ -15,6 +15,9 @@ struct HomeView: View {
     @State private var paying: Invoice?
     @State private var period = "7d"
     @State private var stage: String?
+    @State private var cover: String?
+    /// The app's tab, to jump to Atelier from the section header.
+    var selectedTab: Binding<String> = .constant("azi")
     @State private var done = 0
     @State private var error: String?
 
@@ -22,9 +25,9 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
+                    inShop.id("shop")
                     shortcuts
                     numbers(proxy)
-                    inShop.id("shop")
                     toConfirm.id("confirm")
                     toCollect.id("collect")
                     analytics.id("analytics")
@@ -131,40 +134,67 @@ struct HomeView: View {
         .bareRow()
     }
 
-    // MARK: Deja în service
+    // MARK: În atelier (look 3: the jobs as covers in their car's color)
 
     private var inShop: some View {
         let groups = Agenda.jobsToShow(store.all(WorkOrder.self), vatPayer: store.shop.vatPayer)
         let total = groups.reduce(0) { $0 + $1.items.count }
-        let shown = groups.filter { stage == nil || $0.key == stage }
+        let ready = groups.first { $0.key == "ready" }?.items.count ?? 0
+        let shown = groups.filter { stage == nil || $0.key == stage }.flatMap(\.items)
         let vehicles = byId(Vehicle.self), customers = byId(Customer.self), staff = byId(Staff.self)
+        let index = shown.firstIndex { $0.id == cover } ?? 0
         return Section {
             if total == 0 {
                 Text("Nicio mașină în service acum.").foregroundStyle(.secondary)
-            }
-            ForEach(shown) { g in
-                ForEach(g.items) { order in
-                    let vehicle = vehicles[order.vehicleId ?? ""]
-                    Button { path.append(.job(order.id)) } label: {
-                        HomeRow(make: vehicle?.make, title: [vehicle?.title, vehicle.map { People.formatPlate($0.plate) }].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
-                                subtitle: [customers[order.customerId ?? ""]?.name, staff[order.staffId ?? ""]?.name].compactMap { $0 }.joined(separator: " · "),
-                                pill: Labels.workOrder(order.status),
-                                value: amount(Lines.totals(order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross))
-                    }
-                    .tint(.primary)
-                    .swipeActions(edge: .leading) {
-                        if let next = WorkOrderRules.next[order.status] {
-                            Button { moveJob(order, to: next) } label: {
-                                Label(Labels.workOrderAction(from: order.status, to: next), systemImage: Labels.workOrder(next).symbol)
+            } else {
+                VStack(spacing: 14) {
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: 14) {
+                            ForEach(shown) { order in
+                                let vehicle = vehicles[order.vehicleId ?? ""]
+                                let customer = customers[order.customerId ?? ""]
+                                let next = WorkOrderRules.next[order.status]
+                                CoverCard(make: vehicle?.make ?? "", plate: vehicle?.plate,
+                                          eyebrow: [vehicle?.title.nonEmpty, customer?.name.nonEmpty].compactMap { $0 }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
+                                          title: JobText.headline(order),
+                                          detail: ["#\(order.number)", staff[order.staffId ?? ""]?.name, amount(Lines.totals(order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross)]
+                                            .compactMap { $0 }.joined(separator: " · "),
+                                          status: Labels.workOrder(order.status),
+                                          next: next.map { to in (Labels.workOrderAction(from: order.status, to: to), Labels.workOrder(to).symbol, { moveJob(order, to: to) }) },
+                                          open: { path.append(.job(order.id)) }) {
+                                    jobMenu(order, customer: customer)
+                                }
+                                .id(order.id)
                             }
-                            .tint(Labels.workOrder(next).color)
                         }
+                        .scrollTargetLayout()
+                    }
+                    .scrollTargetBehavior(.viewAligned)
+                    .scrollPosition(id: $cover)
+                    .contentMargins(.horizontal, 20, for: .scrollContent)
+                    .scrollIndicators(.hidden)
+                    .scrollClipDisabled()
+                    if shown.count > 1 {
+                        HStack(spacing: 10) {
+                            Capsule().fill(Color(.tertiarySystemFill)).frame(width: 110, height: 4)
+                                .overlay(alignment: .leading) {
+                                    Capsule().fill(Color.primary).frame(width: max(14, 110 / CGFloat(shown.count)), height: 4)
+                                        .offset(x: (110 - max(14, 110 / CGFloat(shown.count))) * CGFloat(index) / CGFloat(max(1, shown.count - 1)))
+                                }
+                            Text("\(index + 1) / \(shown.count)").font(.footnote).monospacedDigit().foregroundStyle(.secondary)
+                        }
+                        .animation(.snappy, value: index)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Mașina \(index + 1) din \(shown.count)")
                     }
                 }
+                .bareRow()
             }
         } header: {
-            HStack {
-                CapsHeader("Deja în service")
+            HStack(alignment: .firstTextBaseline) {
+                SectionHeader("În atelier", subtitle: total == 0 ? nil : "\(total) \(total == 1 ? "mașină" : "mașini") · \(ready > 0 ? "\(ready) gata de predare" : "niciuna gata încă")") {
+                    selectedTab.wrappedValue = "atelier"
+                }
                 Spacer()
                 if total > 0 {
                     Menu {
@@ -177,8 +207,29 @@ struct HomeView: View {
                             .font(.footnote.weight(.semibold))
                             .textCase(nil)
                     }
+                    .tint(.primary)
                 }
             }
+        }
+    }
+
+    /// The "…" and long-press menu of a job, grouped: its states, the client, the job.
+    @ViewBuilder private func jobMenu(_ order: WorkOrder, customer: Customer?) -> some View {
+        Section {
+            ForEach(WorkOrderRules.transitions[order.status] ?? [], id: \.self) { to in
+                Button(role: to == "cancelled" ? .destructive : nil) { moveJob(order, to: to) } label: {
+                    Label(Labels.workOrderAction(from: order.status, to: to), systemImage: Labels.workOrder(to).symbol)
+                }
+            }
+        }
+        if let phone = customer?.phone, !phone.isEmpty {
+            Section {
+                if let url = People.telURL(phone) { Link(destination: url) { Label("Sună pe \(customer?.name ?? "client")", systemImage: "phone") } }
+                if let url = People.whatsappURL(phone, text: "") { Link(destination: url) { Label("Scrie pe WhatsApp", systemImage: "text.bubble") } }
+            }
+        }
+        Section {
+            Button { path.append(.job(order.id)) } label: { Label("Deschide lucrarea", systemImage: "arrow.up.right") }
         }
     }
 
@@ -536,7 +587,7 @@ private struct ResultRow: View {
 /// Caută: the search tab, apart from the others (look 3). Cars, clients, jobs, invoices.
 struct SearchView: View {
     @State private var path: [HomeView.Route] = []
-    @Binding var query: String
+    @State private var query = ""
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -551,6 +602,7 @@ struct SearchView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Caută")
+            .searchable(text: $query, prompt: "Mașină, client, lucrare, factură")
             .navigationDestination(for: HomeView.Route.self) { route in
                 switch route {
                 case .job(let id): WorkOrderDetailView(id: id)

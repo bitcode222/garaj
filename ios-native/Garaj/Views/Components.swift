@@ -145,7 +145,7 @@ struct SectionHeader: View {
             if let action {
                 Button(action: action) {
                     HStack(spacing: 4) {
-                        Text(title)
+                        Text(title).foregroundStyle(Color.primary)
                         Image(systemName: "chevron.right").font(.body.weight(.bold)).foregroundStyle(.secondary)
                     }
                     .contentShape(.rect)

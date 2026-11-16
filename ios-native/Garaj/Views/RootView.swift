@@ -3,7 +3,6 @@ import SwiftUI
 /// The tabs of look 3 (docs/IOS-NATIVE.md §9): Azi, Atelier, Agendă, Registru, and search on its own.
 struct RootView: View {
     @Environment(AppStore.self) private var store
-    @State private var query = ""
     @State private var tab = UserDefaults.standard.string(forKey: "GarajTab") ?? "azi" // debug: `-GarajTab registru`
 
     /// Setări → Aspect (settings.appearance.theme).
@@ -24,7 +23,7 @@ struct RootView: View {
         case .ready:
             TabView(selection: $tab) {
                 Tab("Azi", systemImage: "house", value: "azi") {
-                    HomeView()
+                    HomeView(selectedTab: $tab)
                 }
                 Tab("Atelier", systemImage: "wrench.and.screwdriver", value: "atelier") {
                     WorkOrdersView()
@@ -37,10 +36,9 @@ struct RootView: View {
                 }
                 .badge(store.reminders().count)
                 Tab(value: "cauta", role: .search) {
-                    SearchView(query: $query)
+                    SearchView()
                 }
             }
-            .searchable(text: $query, prompt: "Mașină, client, lucrare, factură")
             .safeAreaInset(edge: .bottom) {
                 UndoToastView().padding(.bottom, 64) // above the tab bar
             }
