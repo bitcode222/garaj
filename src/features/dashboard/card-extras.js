@@ -1,4 +1,4 @@
-// What a card on Azi says besides its rows (the owner's picks, 7 Nov 2026; docs/DESIGN-SYSTEM.md, Card stages): what
+// What a card on Azi says besides its rows (the owner's picks, 7 Nov 2026; the old web design system (removed; now docs/DESIGN.md), Card stages): what
 // the record waits for, how long it has been at its stage, the time the car was promised for, what needs attention,
 // and how much of its invoice is paid. Also the records of the visit that came before it, stacked behind the card.
 // Words only: the money comes from the domain (invoiceFlow), the warnings from bookingWarnings.

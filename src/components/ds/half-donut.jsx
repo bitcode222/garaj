@@ -12,7 +12,7 @@ const THICK = 20;
 const LIFT = 4;
 const CX = W / 2;
 const CY = R + LIFT;
-// Between two parts, 2 units at the middle of the ring (docs/DESIGN-SYSTEM.md §4, the surface gap).
+// Between two parts, 2 units at the middle of the ring (the old web design system (removed; now docs/DESIGN.md) §4, the surface gap).
 const GAP = 2 / (R - THICK / 2);
 // The smallest part's share of the half turn, so one in a hundred still shows.
 const MIN = 0.07;
@@ -46,7 +46,7 @@ function arcs(parts) {
 }
 
 /**
- * A section's parts as a half donut (docs/DESIGN-SYSTEM.md, Cards form): an arc per part in its state's colour
+ * A section's parts as a half donut (the old web design system (removed; now docs/DESIGN.md), Cards form): an arc per part in its state's colour
  * (hatched: only planned), from the left (green parts first, then in the chips' order), as big as its share of the whole (the smallest still
  * shows). In its hollow, the whole (`total`, or the sum of the values, over `unit`) or the part pointed at or kept:
  * its number over its name, in its colour. A tap on a part does what its chip does (`value`, `onChange`): only its

@@ -1,11 +1,11 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import { AppShell } from "@/components/shell/app-shell";
 import { Providers } from "@/components/shell/providers";
 import "./globals.css";
 
 // latin-ext carries ă, ș, ț.
-const geistSans = Geist({
-	variable: "--font-geist-sans",
+const inter = Inter({
+	variable: "--font-inter",
 	subsets: ["latin", "latin-ext"],
 	display: "swap",
 });
@@ -35,8 +35,8 @@ export const viewport = {
 	maximumScale: 1,
 	userScalable: false,
 	themeColor: [
-		{ media: "(prefers-color-scheme: light)", color: "#fafafa" },
-		{ media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+		{ media: "(prefers-color-scheme: light)", color: "#f7f7f8" },
+		{ media: "(prefers-color-scheme: dark)", color: "#0f0f11" },
 	],
 };
 
@@ -45,7 +45,7 @@ export const viewport = {
 export default function RootLayout({ children }) {
 	return (
 		<html lang="ro" suppressHydrationWarning>
-			<body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+			<body suppressHydrationWarning className={`${inter.variable} ${geistMono.variable} font-sans antialiased`}>
 				{/* Before anything is painted: the sidebar folded or not (app-shell.jsx), one choice for every page. */}
 				<script
 					dangerouslySetInnerHTML={{

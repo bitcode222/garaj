@@ -84,7 +84,7 @@ export function KindMark({ kind, size = "md", className }) {
 export const kindText = (kind) => toneOf(RECORD_KIND[kind].tone).text;
 
 /**
- * A record's card (docs/DESIGN-SYSTEM.md, normal and small cards, owner 7 Nov 2026): white with a hairline; the kind's
+ * A record's card (the old web design system (removed; now docs/DESIGN.md), normal and small cards, owner 7 Nov 2026): white with a hairline; the kind's
  * colour is on its first line (VisitCard), not its fill. `kind` stays so a card can still be told by its record.
  */
 export const kindCard = (kind) => (RECORD_KIND[kind] ? "bg-card text-card-foreground" : "");

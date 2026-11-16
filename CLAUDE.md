@@ -1,7 +1,7 @@
 # Garaj — working notes
 
 Car repair shop app (Romania). Web: Next.js 16 static export, local-first (IndexedDB). iPhone: native SwiftUI app in `ios-native/` (plan and phase status in [`docs/IOS-NATIVE.md`](docs/IOS-NATIVE.md)). Romanian UI.
-Read [`docs/PLAN.md`](docs/PLAN.md) before changing business rules and [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md) before changing UI.
+Read [`docs/PLAN.md`](docs/PLAN.md) before changing business rules and [`docs/DESIGN.md`](docs/DESIGN.md) before changing UI.
 
 ## Rules
 
