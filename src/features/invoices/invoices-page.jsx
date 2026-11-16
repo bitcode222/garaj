@@ -2,11 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
-import { FilePlus2, ReceiptText, TriangleAlert, Wallet, Banknote, FileText } from "lucide-react";
-import { Money, Stat, EmptyState } from "@/components/ds/data";
+import { FilePlus2, ReceiptText, Banknote, LayoutGrid, Rows3 } from "lucide-react";
+import { Money, EmptyState } from "@/components/ds/data";
 import { FilterChips, SearchInput } from "@/components/ds/inputs";
 import { DataList, ListHeader, ListRow } from "@/components/ds/list";
-import { Page, PageHeader, Toolbar } from "@/components/ds/page";
+import { Page, Toolbar } from "@/components/ds/page";
+import { PageTitle, SectionHeader, StatCard, StatusDot, useViewSwitch } from "@/components/ds/blocks";
+import { MakeTile } from "@/components/ds/car";
+import { AREA, STATE, TONE_COLOR } from "@/lib/colors";
+import { BANI_LOOK_KEY } from "./invoice-detail";
 import { PlateTag } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { StateTag } from "@/components/ds/tone";
@@ -46,6 +50,10 @@ export function InvoicesPage() {
 	const customers = useCollection("customers");
 	const vehicles = useCollection("vehicles");
 	const [filter, setFilter] = useState("all");
+	const [look, lookSwitch] = useViewSwitch(BANI_LOOK_KEY, [
+		{ value: "table", label: "Tabel", icon: Rows3 },
+		{ value: "cards", label: "Plăci", icon: LayoutGrid },
+	]);
 	const [query, setQuery] = useState("");
 	const deferredQuery = useDeferredValue(query);
 
@@ -94,6 +102,12 @@ export function InvoicesPage() {
 		return c;
 	}, [rows]);
 
+	// What the search keeps, whatever the filter (the cards group by state themselves).
+	const found = useMemo(() => {
+		const tokens = queryTokens(deferredQuery);
+		return tokens.length ? rows.filter((row) => matchesTokens(row.hay, tokens)) : rows;
+	}, [rows, deferredQuery]);
+
 	const visible = useMemo(() => {
 		const active = FILTERS.find((f) => f.value === filter);
 		const tokens = queryTokens(deferredQuery);
@@ -109,34 +123,28 @@ export function InvoicesPage() {
 
 	return (
 		<Page>
-			<PageHeader
-				title="Facturi"
-				kind="invoice"
-				description={`${plural(counts.all, "document", "documente")} · seria ${settings.invoicing.series}`}
-				actions={
-					<Button onClick={newInvoice} className="max-md:hidden">
-						<FilePlus2 /> Factură nouă
-					</Button>
-				}
-			/>
+			<PageTitle title="Facturi" subtitle={`${plural(counts.all, "document", "documente")} · seria ${settings.invoicing.series}`} className="mb-6">
+				{lookSwitch}
+				<Button onClick={newInvoice} className="max-md:hidden">
+					<FilePlus2 /> Factură nouă
+				</Button>
+			</PageTitle>
 
 			<div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-				<Stat label="Facturat luna aceasta" value={<Money value={stats.issuedMonth} decimals={0} />} hint={plural(stats.issuedCount, "factură", "facturi")} icon={FileText} />
-				<Stat label="Încasat luna aceasta" value={<Money value={stats.collectedMonth} decimals={0} />} icon={Banknote} tone="green" />
-				<Stat label="De încasat" value={<Money value={stats.outstanding} decimals={0} />} icon={Wallet} tone="blue" />
-				<Stat
-					label="Restante"
-					value={<Money value={stats.overdue} decimals={0} />}
-					hint={plural(stats.overdueCount, "factură", "facturi")}
-					icon={TriangleAlert}
-					tone={stats.overdueCount ? "red" : undefined}
-				/>
+				<StatCard label="Facturat luna aceasta" value={formatMoney(stats.issuedMonth, settings.currency, { decimals: 0 })} note={plural(stats.issuedCount, "factură", "facturi")} color={AREA.factura} />
+				<StatCard label="Încasat luna aceasta" value={formatMoney(stats.collectedMonth, settings.currency, { decimals: 0 })} note="plăți primite" color={STATE.ok} />
+				<StatCard label="De încasat" value={formatMoney(stats.outstanding, settings.currency, { decimals: 0 })} note={plural(counts.unpaid, "factură", "facturi")} color={STATE.wait} />
+				<StatCard label="Restante" value={formatMoney(stats.overdue, settings.currency, { decimals: 0 })} note={plural(stats.overdueCount, "factură", "facturi")} color={stats.overdueCount ? STATE.late : STATE.off} />
 			</div>
 
 			<Toolbar className="flex-col items-stretch md:flex-row md:items-center">
 				<SearchInput value={query} onChange={setQuery} placeholder="Număr, client, nr. înmatriculare…" className="md:w-80" />
-				<FilterChips value={filter} onChange={setFilter} options={FILTERS.map((f) => ({ ...f, count: counts[f.value] }))} />
+				{look === "table" && <FilterChips value={filter} onChange={setFilter} options={FILTERS.map((f) => ({ ...f, count: counts[f.value] }))} />}
 			</Toolbar>
+
+			{look === "cards" ? (
+				<InvoiceCards rows={found} onOpen={(row) => openDetail("invoice", row.invoice.id)} currency={settings.currency} vehicles={vehicles} />
+			) : (
 
 			<DataList
 				items={visible}
@@ -166,6 +174,7 @@ export function InvoicesPage() {
 				}
 				renderRow={(row, index) => <InvoiceRow row={row} first={index === 0} today={today} onOpen={() => openDetail("invoice", row.invoice.id)} />}
 			/>
+			)}
 		</Page>
 	);
 }
@@ -175,6 +184,7 @@ function InvoiceRow({ row, first, today, onOpen }) {
 	const draft = invoice.status === "draft";
 	const { currency } = useSettings();
 	const customer = useEntity("customers", invoice.customerId);
+	const vehicle = useEntity("vehicles", invoice.vehicleId);
 	const owes = balance > 0 && invoice.status === "issued" && !invoice.stornoOf;
 	const trailing = owes ? [{ key: "pay", label: "Încasează", icon: Banknote, tone: "green", onSelect: () => openSheet("payment", { invoiceId: invoice.id }) }] : [];
 	return (
@@ -200,6 +210,7 @@ function InvoiceRow({ row, first, today, onOpen }) {
 				<p className="text-xs text-muted-foreground">{fmtDate(invoice.issueDate)}</p>
 			</div>
 			<div className="hidden min-w-0 items-center gap-2.5 md:flex">
+				<MakeTile make={vehicle?.make} size={28} />
 				<span className="truncate text-sm font-medium">{customerName}</span>
 				{plate && <PlateTag value={plate} />}
 			</div>
@@ -220,5 +231,59 @@ function InvoiceRow({ row, first, today, onOpen }) {
 			</div>
 		</ListRow>
 		</SwipeRow>
+	);
+}
+
+const CARD_GROUPS = [
+	{ key: "due", title: "De încasat", states: ["overdue", "partial", "issued"] },
+	{ key: "draft", title: "Ciorne", subtitle: "Facturi încă neemise", states: ["draft"] },
+	{ key: "paid", title: "Plătite recent", states: ["paid"], limit: 12 },
+	{ key: "cancelled", title: "Stornate", states: ["cancelled", "storno"], limit: 8 },
+];
+
+/** "Plăci": each invoice as a card with its amount first, in groups: to collect, drafts, paid, cancelled. */
+function InvoiceCards({ rows, onOpen, currency, vehicles }) {
+	const groups = CARD_GROUPS.map((group) => {
+		const all = rows.filter((row) => group.states.includes(row.state));
+		return { ...group, all, list: group.limit ? all.slice(0, group.limit) : all };
+	}).filter((group) => group.all.length);
+	if (!groups.length) return <EmptyState icon={ReceiptText} title="Nicio factură găsită" description="Schimbă căutarea." />;
+	return (
+		<div className="space-y-7">
+			{groups.map((group) => {
+				const amount = group.all.reduce((n, row) => n + (group.key === "due" || group.key === "draft" ? row.balance || row.totals.gross : row.totals.gross), 0);
+				return (
+					<section key={group.key} className="space-y-3" aria-label={group.title}>
+						<SectionHeader title={group.title} subtitle={`${formatMoney(amount, currency)} · ${plural(group.all.length, "factură", "facturi")}${group.subtitle ? ` · ${group.subtitle}` : ""}`} />
+						<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+							{group.list.map((row) => {
+								const vehicle = vehicles[row.invoice.vehicleId];
+								const owed = group.key === "due" ? row.balance : row.totals.gross;
+								return (
+									<button key={row.invoice.id} type="button" onClick={() => onOpen(row)} className="flex min-w-0 flex-col gap-2.5 rounded-xl border bg-card p-3.5 text-left transition-colors hover:bg-accent/40">
+										<span className="flex min-w-0 items-center gap-2.5">
+											<MakeTile make={vehicle?.make} size={36} />
+											<span className="min-w-0">
+												<span className="block truncate text-[14px] font-semibold">{row.customerName}</span>
+												<span className="block truncate text-xs text-muted-foreground">
+													{row.invoice.status === "draft" ? "Ciornă" : row.number}
+													{vehicle ? ` · ${[vehicle.make, vehicle.model].filter(Boolean).join(" ")}` : ""}
+												</span>
+											</span>
+										</span>
+										<span className="text-[20px] leading-tight font-semibold tracking-tight tabular-nums">{formatMoney(owed, currency)}</span>
+										<span className="flex items-center justify-between gap-2">
+											<StatusDot color={TONE_COLOR[row.look.tone] ?? STATE.off}>{row.look.text}</StatusDot>
+											<span className="truncate text-xs text-muted-foreground">{fmtDate(row.invoice.issueDate, "d MMM")}</span>
+										</span>
+									</button>
+								);
+							})}
+						</div>
+						{group.all.length > group.list.length && <p className="text-xs text-muted-foreground">Și încă {group.all.length - group.list.length}; în „Tabel” le vezi pe toate.</p>}
+					</section>
+				);
+			})}
+		</div>
 	);
 }
