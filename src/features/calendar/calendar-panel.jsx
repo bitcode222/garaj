@@ -81,7 +81,7 @@ export function MiniMonth({ month, onMonth, today, range, busy, matchDays = null
 								inBand && (column === 6 || day === range.to) && "rounded-r-md",
 							)}
 						>
-							<span className={cn("flex size-6 items-center justify-center rounded-full @[22rem]:size-7", isToday ? "bg-brand font-semibold text-brand-foreground" : found ? "font-semibold ring-1 ring-brand" : "hover:bg-accent")}>{Number(day.slice(8))}</span>
+							<span className={cn("flex size-6 items-center justify-center rounded-full @[22rem]:size-7", isToday ? "bg-foreground font-semibold text-background" : found ? "font-semibold ring-1 ring-foreground" : "hover:bg-accent")}>{Number(day.slice(8))}</span>
 							{matchDays
 								? found && <span className="absolute bottom-0.5 size-1 rounded-full bg-brand" aria-hidden />
 								: count > 0 && <span className={cn("absolute bottom-0.5 size-1 rounded-full", isToday ? "bg-brand" : count > 5 ? "bg-foreground" : count > 2 ? "bg-foreground/60" : "bg-foreground/30")} aria-hidden />}

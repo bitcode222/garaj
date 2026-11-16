@@ -77,7 +77,7 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 	const lines = Math.max(1, Math.floor((height - 6) / 15));
 	const time = `${fmtTime(a.start)}–${fmtTime(a.end)}`;
 	const logo = f.make && <MakeLogo make={f.make} className="size-3 shrink-0" />;
-	const avatar = mechanic && <Initials name={mechanic.name} tone={mechanic.color} size="sm" className="size-3.5 shrink-0 text-[7px] ring-1 ring-card" />;
+	const avatar = mechanic && <Initials name={mechanic.name} tone="neutral" size="sm" className="size-3.5 shrink-0 text-[7px] ring-1 ring-card" />;
 	// Under the car, most important first: who owns it, its plate, what it is in for.
 	const details = [f.owner && { key: "owner", text: f.owner, className: "font-medium" }, f.plate && { key: "plate", text: f.plate, className: "font-mono tracking-wide" }, f.subject && { key: "subject", text: f.subject }].filter(Boolean);
 	// Six lines or more: the mechanic gets a line of their own (avatar and name); fewer, the avatar starts the last line.
@@ -91,7 +91,7 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 			aria-label={[time, f.name, f.owner, f.plate, f.subject, mechanic?.name, state?.text ?? APPOINTMENT_STATUS[a.status].label, alertSummary(alert)].filter(Boolean).join(" · ")}
 			data-mark={mark}
 			className={cn(
-				"absolute z-[5] flex flex-col overflow-hidden rounded-md border px-1.5 py-[3px] text-left text-2xs leading-[15px] transition-[box-shadow,opacity] select-none [-webkit-touch-callout:none]",
+				"absolute z-[5] flex flex-col overflow-hidden rounded-[7px] border px-1.5 py-[3px] text-left text-2xs leading-[15px] transition-[box-shadow,opacity] select-none [-webkit-touch-callout:none]",
 				// By car (docs/DESIGN.md §3): a light tint of its colour with that colour as the left edge. By mechanic or
 				// operation: outlined in that colour, white inside. Dashed while only booked.
 				byCar ? "border-y border-r" : cn("border", tone(toneName).line),
@@ -99,7 +99,7 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 				lookups.match && !lookups.match.has(a.id) && "opacity-15 saturate-50",
 				(a.status === "no_show" || a.status === "cancelled") && "line-through",
 				alertOutline(alert),
-				selected && "z-[6] ring-2 ring-brand shadow-md shadow-brand/25",
+				selected && "z-[6] ring-2 ring-foreground shadow-md shadow-black/15",
 				movable && "pointer-fine:cursor-grab",
 				dragging && "opacity-30",
 			)}
@@ -188,12 +188,12 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 const DayColumn = memo(function DayColumn({ day, left, width, slim, closed, events, columns, keyOf, hourPx, openMin, closeMin, colorBy, lookups, selectedId, dragId, now, editable, zebra, onOpen, onCreateAt }) {
 	if (slim) {
 		return (
-			<div data-day={day} data-slim className="absolute inset-y-0 border-l-2 border-foreground/40" style={{ left, width, ...columnBackground(hourPx, openMin, closeMin, true) }} title={`${fmtDate(day, "EEEE, d MMMM")} · închis`} />
+			<div data-day={day} data-slim className="absolute inset-y-0 border-l border-border" style={{ left, width, ...columnBackground(hourPx, openMin, closeMin, true) }} title={`${fmtDate(day, "EEEE, d MMMM")} · închis`} />
 		);
 	}
 	const colWidth = 100 / columns.length;
 	return (
-		<div data-day={day} className={cn("absolute inset-y-0 border-l-2 border-foreground/40", zebra && "bg-foreground/[0.035]")} style={{ left, width, ...columnBackground(hourPx, openMin, closeMin, closed) }}>
+		<div data-day={day} className={cn("absolute inset-y-0 border-l border-border", zebra && "bg-foreground/[0.035]")} style={{ left, width, ...columnBackground(hourPx, openMin, closeMin, closed) }}>
 			{columns.map((column, c) => {
 				const list = events.filter((a) => keyOf(a) === column.key);
 				const placed = layoutEvents(list);
@@ -207,7 +207,7 @@ const DayColumn = memo(function DayColumn({ day, left, width, slim, closed, even
 							const rect = event.currentTarget.getBoundingClientRect();
 							onCreateAt(day, ((event.clientY - rect.top) / hourPx) * 60, column.staffId);
 						}}
-						className={cn("absolute inset-y-0 cursor-copy", c > 0 && "border-l border-dashed border-foreground/45", columns.length > 1 && tone(column.color).lane)}
+						className={cn("absolute inset-y-0 cursor-copy", c > 0 && "border-l border-dashed border-border")}
 						style={{ left: `${c * colWidth}%`, width: `${colWidth}%` }}
 					>
 						{placed.map(({ event: a, lane, lanes }) => {
@@ -250,10 +250,10 @@ function NowLine({ layout, today, hourPx, gutter, totalWidth }) {
 	const index = layout.days[0] <= today && today <= layout.days.at(-1) ? indexOfDay(layout, today) : -1;
 	return (
 		<>
-			<div aria-hidden className="pointer-events-none absolute z-[7] h-px bg-brand/35" style={{ top: y, left: gutter, width: totalWidth }} />
+			<div aria-hidden className="pointer-events-none absolute z-[7] h-px bg-[#ff3b30]/35" style={{ top: y, left: gutter, width: totalWidth }} />
 			{index >= 0 && !layout.slim[index] && (
-				<div aria-hidden className="pointer-events-none absolute z-[8] h-0.5 -translate-y-1/2 bg-brand" style={{ top: y, left: gutter + layout.offsets[index], width: widthAt(layout, index) }}>
-					<span className="absolute -top-[3px] -left-1 size-2 rounded-full bg-brand" />
+				<div aria-hidden className="pointer-events-none absolute z-[8] h-0.5 -translate-y-1/2 bg-[#ff3b30]" style={{ top: y, left: gutter + layout.offsets[index], width: widthAt(layout, index) }}>
+					<span className="absolute -top-[3px] -left-1 size-2 rounded-full bg-[#ff3b30]" />
 				</div>
 			)}
 		</>
@@ -264,7 +264,7 @@ function NowPill({ hourPx }) {
 	const minute = useNowMinute();
 	if (minute == null) return null;
 	return (
-		<span aria-hidden className="absolute right-1 z-[9] -translate-y-1/2 rounded-md bg-brand px-1 text-2xs leading-4 font-semibold text-brand-foreground tabular-nums" style={{ top: yOf(minute, hourPx) }}>
+		<span aria-hidden className="absolute right-1 z-[9] -translate-y-1/2 rounded-md bg-[#ff3b30] px-1 text-2xs leading-4 font-semibold text-white tabular-nums" style={{ top: yOf(minute, hourPx) }}>
 			{hhmm(minute)}
 		</span>
 	);
@@ -805,7 +805,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 											key={day}
 											type="button"
 											onClick={() => onPickDay?.(day)}
-											className={cn("absolute top-0 flex items-end justify-center gap-1.5 border-l-2 border-foreground/40 pb-2 transition-colors hover:text-foreground")}
+											className={cn("absolute top-0 flex items-end justify-center gap-1.5 border-l border-border pb-2 transition-colors hover:text-foreground")}
 											style={{ left: layout.offsets[i], width, height: HEAD_PX }}
 											aria-label={`${fmtDate(day, "EEEE, d MMMM")}, ${plural(count, "programare", "programări")}${zi ? "" : ". Deschide ziua."}`}
 										>
@@ -813,7 +813,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 											<span className="sticky flex flex-col items-center gap-0.5" style={{ left: gutter + 8, right: 8 }}>
 												<span className="flex items-end gap-1.5">
 													<span className={cn("text-sm capitalize", isToday ? "text-foreground" : "text-muted-foreground")}>{fmtDate(day, "EEE").replace(".", "")}</span>
-													<span className={cn("flex h-6 min-w-6 items-center justify-center rounded-md px-1 text-sm tabular-nums", isToday ? "bg-brand font-semibold text-brand-foreground" : "text-muted-foreground")}>{Number(day.slice(8))}</span>
+													<span className={cn("flex h-6 min-w-6 items-center justify-center rounded-md px-1 text-sm tabular-nums", isToday ? "rounded-full bg-foreground font-semibold text-background" : "text-muted-foreground")}>{Number(day.slice(8))}</span>
 												</span>
 												{/* How many bookings the day has (as shown: the filters apply). */}
 												<span data-day-count={count} data-day-hits={hits ?? undefined} className={cn("text-2xs whitespace-nowrap text-muted-foreground tabular-nums", hits != null ? (hits ? "font-semibold text-brand" : "opacity-60") : !count && "opacity-60")}>
@@ -821,7 +821,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 												</span>
 											</span>
 											{/* A bracket under the name, as wide as the day: the mechanics' columns under it belong to it. */}
-											<span aria-hidden className={cn("absolute inset-x-1.5 bottom-0 h-0.5 rounded-full", isToday ? "bg-brand" : "bg-foreground/35")} />
+											<span aria-hidden className={cn("absolute inset-x-1.5 bottom-0 h-0.5 rounded-full", isToday ? "bg-foreground" : "bg-border")} />
 										</button>
 									);
 								})}
@@ -833,7 +833,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 								<div className="relative flex-1">
 									{indices.map((i) =>
 										layout.slim[i] ? null : (
-											<div key={layout.days[i]} className={cn("absolute top-0 flex border-l-2 border-foreground/40")} style={{ left: layout.offsets[i], width: widthAt(layout, i), height: STAFF_PX }}>
+											<div key={layout.days[i]} className={cn("absolute top-0 flex border-l border-border")} style={{ left: layout.offsets[i], width: widthAt(layout, i), height: STAFF_PX }}>
 												{/* The day's date at the left of its mechanics' lanes, kept in sight while the day is partly in view. */}
 												<span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 z-[1] flex w-full items-center">
 													<span className={cn("sticky rounded bg-background/85 px-1 text-[10px] leading-4 font-semibold capitalize tabular-nums shadow-xs", layout.days[i] === today ? "text-brand" : "text-foreground/80")} style={{ left: gutter + 4 }}>
@@ -842,7 +842,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 												</span>
 												{columns.map((column) => (
 													// The mechanic's colour, over the column it tints; the name opens the mechanic's card.
-													<span key={column.key} className={cn("flex min-w-0 flex-1 items-center justify-center border-b-2 px-1", tone(column.color).lane, tone(column.color).border)}>
+													<span key={column.key} className={cn("flex min-w-0 flex-1 items-center justify-center border-b px-1")}>
 														<MechanicLabel column={column} day={layout.days[i]} className="max-w-full px-1 py-0.5" />
 													</span>
 												))}
@@ -869,7 +869,7 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 								</button>
 								<div className="relative flex-1">
 									{indices.map((i) => (
-										<span key={layout.days[i]} aria-hidden className="absolute inset-y-0 border-l-2 border-foreground/40" style={{ left: layout.offsets[i] }} />
+										<span key={layout.days[i]} aria-hidden className="absolute inset-y-0 border-l border-border" style={{ left: layout.offsets[i] }} />
 									))}
 									{bars?.bars.map((bar) => {
 										const from = indexOfDay(layout, bar.from);

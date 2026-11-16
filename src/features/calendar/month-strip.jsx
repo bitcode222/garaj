@@ -44,7 +44,7 @@ export const WeekRow = memo(function WeekRow({ monday, top, height, month, today
 							type="button"
 							onClick={() => onPickDay(day)}
 							aria-label={`${fmtDate(day, "EEEE, d MMMM")}: ${list.length} programări. Deschide ziua.`}
-							className={cn("self-start rounded-md px-1.5 text-xs leading-6 tabular-nums transition-colors hover:bg-accent", away ? "text-muted-foreground/70" : "text-foreground", first && "font-semibold", day === today && "bg-brand font-semibold text-brand-foreground hover:bg-brand")}
+							className={cn("self-start rounded-md px-1.5 text-xs leading-6 tabular-nums transition-colors hover:bg-accent", away ? "text-muted-foreground/70" : "text-foreground", first && "font-semibold", day === today && "rounded-full bg-foreground font-semibold text-background hover:bg-foreground")}
 						>
 							{first ? fmtDate(day, "d MMM") : Number(day.slice(8))}
 						</button>
@@ -68,12 +68,12 @@ export const WeekRow = memo(function WeekRow({ monday, top, height, month, today
 										"flex h-[18px] min-w-0 shrink-0 items-center gap-1 rounded px-1 text-left text-2xs leading-none text-foreground transition-colors hover:bg-accent",
 										(a.status === "no_show" || a.status === "cancelled") && "line-through",
 										alertOutline(alert),
-										a.id === selectedId && "ring-2 ring-brand",
+										a.id === selectedId && "ring-2 ring-foreground",
 										lookups.match && !lookups.match.has(a.id) && "opacity-15 saturate-50",
 									)}
 								>
 									<span aria-hidden className={cn("size-1.5 shrink-0 rounded-full", a.status === "scheduled" ? cn("border", tone(toneName).line) : tone(toneName).solid)} />
-									<span className={cn("shrink-0 font-semibold tabular-nums", tone(toneName).text)}>{fmtTime(a.start)}</span>
+									<span className="shrink-0 font-semibold tabular-nums">{fmtTime(a.start)}</span>
 									<span className="min-w-0 flex-1 truncate">
 										<span className="font-semibold">{car}</span>
 										{f.owner && <span className="text-muted-foreground"> · {f.owner}</span>}
@@ -81,7 +81,7 @@ export const WeekRow = memo(function WeekRow({ monday, top, height, month, today
 									<AlertSign alert={alert} className="size-2.5" />
 									{/* Its state (booked, a job, finished) after the words, so the colour's dot leads. */}
 									<BlockMark state={state} mark={mark} small />
-									{lookups.staff?.[a.staffId] && <Initials name={lookups.staff[a.staffId].name} tone={lookups.staff[a.staffId].color} size="sm" className="size-3 shrink-0 text-[6px] ring-1 ring-card" />}
+									{lookups.staff?.[a.staffId] && <Initials name={lookups.staff[a.staffId].name} tone="neutral" size="sm" className="size-3 shrink-0 text-[6px] ring-1 ring-card" />}
 								</button>
 							);
 						})}

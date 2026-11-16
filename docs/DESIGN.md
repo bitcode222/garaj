@@ -48,6 +48,14 @@ choice on that device. A detail page follows the view it was opened from.
 
 The current home (hero search, day ruler, stage sections) is replaced by Azi A/B; its analytics move into Rapoarte.
 
+### Agendă, second pass (owner, 16 Nov 2026)
+
+The calendar keeps how it works (drag, filters, search, warnings, day/week/month, scrolling both ways, the mini month).
+Its head is the pages' head ("Agendă", what is in view under it; the view, ‹ › and Azi on the right; Calendar · Toate,
+the search and the settings under it). Blocks are a tint of the car's colour with that colour as the left edge in
+every view, a state is a plain dot, mechanics' avatars are neutral, their columns are no longer tinted, today is an ink
+circle and now is a red line, as on Azi.
+
 ## 5. Building blocks (in code)
 
 | Where | What |
