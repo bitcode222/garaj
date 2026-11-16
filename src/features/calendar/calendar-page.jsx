@@ -80,8 +80,9 @@ function CalendarSkeleton() {
  * endless strip of days, Lună endless weeks. The day and the view are kept in the address
  * (?day=…&view=…&id=…), so the home page and a booking's sheet open it where they mean.
  */
-const LOOKS = [
-	{ value: "editorial", label: "Editorial", icon: CalendarRange },
+// The week's two looks (owner, 16 Nov 2026): the hours grid on a white sheet, or the days as album cards.
+const WEEK_LOOKS = [
+	{ value: "grid", label: "Ore", icon: CalendarRange },
 	{ value: "albums", label: "Albume", icon: Columns3 },
 ];
 
@@ -125,9 +126,8 @@ export function CalendarPage() {
 	const [phonePanel, setPhonePanel] = useState(false);
 	const [selected, setSelected] = useState(paramId);
 	const strip = useRef(null);
-	// The owner kept two looks (16 Nov 2026): "Editorial", the calendar with its day, week and month; "Albume", the week as
-	// day cards. Kept on this device; on a phone the calendar shows.
-	const [look, lookSwitch] = useViewSwitch("garaj.agenda.look", LOOKS);
+	// Săptămână has two looks, its own switch beside the views (kept on this device; on a phone the hours grid shows).
+	const [weekLook, weekSwitch] = useViewSwitch("garaj.agenda.week", WEEK_LOOKS);
 	const [albumAnchor, setAlbumAnchor] = useState(null);
 	const gridArea = useRef(null); // where the booking details look for cards under the mouse, and the mini month floats
 	const searchInput = useRef(null);
@@ -483,7 +483,7 @@ export function CalendarPage() {
 		);
 		const searchNode = (className) => <CalendarSearch search={search} shown={(id) => shownIds.has(id)} selectedId={selected} now={new Date().toISOString()} lookups={lookups} onJump={jumpTo} onShowHidden={showHidden} inputRef={searchInput} className={className} />;
 	// "Albume": the week of the anchor (moved by its own arrows), on a desktop only.
-	const albums = desktop && look === "albums";
+	const albums = desktop && currentView === "week" && weekLook === "albums";
 	const anchor = albumAnchor ?? seen?.day ?? initialDay;
 	const albumMonday = mondayOf(anchor);
 	const albumCount = (() => {
@@ -518,7 +518,8 @@ export function CalendarPage() {
 									</p>
 								</div>
 								<div className="flex items-center gap-2">
-									{lookSwitch}
+									<Segmented aria-label="Vizualizare" value={currentView} onValueChange={changeView} options={VIEWS.map((v) => ({ value: v.value, label: v.label }))} />
+									{currentView === "week" && weekSwitch}
 									{albums ? (
 										<>
 											<span className="flex gap-1">
@@ -531,7 +532,6 @@ export function CalendarPage() {
 										</>
 									) : (
 										<>
-											<Segmented aria-label="Vizualizare" value={currentView} onValueChange={changeView} options={VIEWS.map((v) => ({ value: v.value, label: v.label }))} />
 											<span className="flex gap-1">
 												{stepButton(-1)}
 												{stepButton(1)}
@@ -594,7 +594,14 @@ export function CalendarPage() {
 						</div>
 					</div>
 				)}
-				<div ref={gridArea} className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+				{/* The week's hours grid sits on a white sheet (the owner's pick A); Albume and the other views fill the page. */}
+				<div
+					ref={gridArea}
+					className={cn(
+						"relative flex min-h-0 min-w-0 flex-1 flex-col",
+						desktop && currentView === "week" && !albums && "mx-6 mb-4 overflow-hidden rounded-[18px] bg-card shadow-[0_0_0_1px_var(--border),0_24px_48px_-32px_rgb(0_0_0/0.25)]",
+					)}
+				>
 					<BookingPeek host={gridArea} />
 					{albums && <AlbumWeek anchor={anchor} today={today} byDay={byDay} lookups={lookups} selectedId={selected} onOpen={open} onCreate={create} />}
 					{!albums && miniOpen && (

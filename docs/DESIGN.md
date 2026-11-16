@@ -74,12 +74,13 @@ sections are rounded groups.
 
 ### Agendă, third pass (owner's pick A + E, 16 Nov 2026, board https://claude.ai/artifact/QcYyQTxWy1eZ61cKtY7A4f)
 
-Two looks behind a switch kept on the device (`garaj.agenda.look`): **Editorial**, the calendar as it works (day, week,
-month, drag, filters, search, warnings) with the bookings as cards in their car's colour with depth, a soft glow of
-that colour and the logo large as a watermark (`features/calendar/craft.jsx`), the day numbers set large and today in
-red; **Albume** (desktop), the week as tall day cards side by side, each a stack of car cards in the day's order with
-its own ‹ › and Azi, a "+" per day (`features/calendar/album-week.jsx`). Bookings still to confirm: a dotted white
-outline (and an amber dot in Albume).
+The calendar keeps its views (Zi, Săptămână, Lună) and all it does (drag, filters, search, warnings). Bookings are
+cards in their car's colour with depth, a soft glow of that colour and the logo large as a watermark
+(`features/calendar/craft.jsx`); day numbers are set large, today in red; an hour is 64 px on a desktop (was 48).
+**Săptămână** has two looks, its own switch beside the views ("Ore · Albume", kept on the device, `garaj.agenda.week`):
+**Ore**, the hours grid on a white sheet (pick A); **Albume** (desktop), the week as tall day cards side by side, each a
+stack of car cards in the day's order, with its own ‹ › and Azi and a "+" per day (`features/calendar/album-week.jsx`,
+pick E). Bookings still to confirm: a dotted white outline (and an amber dot in Albume).
 
 ## 5. Building blocks (in code)
 
