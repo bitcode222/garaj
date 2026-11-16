@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CalendarPlus, CarFront, EllipsisVertical, FileSearch, Pencil, Plus, ReceiptText, Trash2, UserRound, Wrench } from "lucide-react";
+import { CalendarPlus, CarFront, ChevronLeft, EllipsisVertical, FileSearch, Pencil, Plus, ReceiptText, Trash2, UserRound, Wrench } from "lucide-react";
 import { useRemember } from "@/lib/recents";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
@@ -21,7 +21,9 @@ import { formatInvoiceNumber } from "@/domain/invoice";
 import { computeTotals } from "@/domain/lines";
 import { deadline, vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtWorkOrder, plural } from "@/lib/format";
-import { useQueryId } from "@/lib/hooks";
+import { useLocalPreference, useQueryId } from "@/lib/hooks";
+import { CarHeader } from "@/components/ds/car";
+import { PEOPLE_LOOK_KEY } from "@/features/common/people-look";
 import { CUSTOMER_TYPES, DEADLINE_STATUS, INVOICE_STATE, WORK_ORDER_STATUS } from "@/lib/labels";
 import { closeSheet, openSheet } from "@/lib/sheets";
 import { deleteCustomer } from "@/lib/store/actions";
@@ -69,6 +71,7 @@ function Customer({ customer, embedded = false }) {
 	const balance = docs.reduce((sum, i) => sum + (states.get(i.id)?.balance ?? 0), 0);
 	const spent = docs.reduce((sum, i) => (i.status !== "draft" ? sum + i.totals.gross : sum), 0);
 	const company = customer.type === "company";
+	const [look] = useLocalPreference(PEOPLE_LOOK_KEY, "list", ["list", "gallery"]);
 
 	const remove = async () => {
 		if (!(await confirm({ title: `Ștergi clientul ${customer.name}?`, description: "Se șterg și mașinile și programările lui.", confirmLabel: "Șterge", destructive: true }))) return;
@@ -82,11 +85,29 @@ function Customer({ customer, embedded = false }) {
 		}
 	};
 
+	// "Galerie" (docs/DESIGN.md §4): the client's page takes the colour of their car; "Listă" keeps the plain head.
+	const inColour = !embedded && look === "gallery" && cars.length > 0;
+
 	return (
 		<Page width="wide" embedded={embedded}>
+			{inColour && (
+				<CarHeader
+					className="mb-6"
+					make={cars[0].make}
+					eyebrow={[CUSTOMER_TYPES[customer.type] ?? CUSTOMER_TYPES.person, `client din ${fmtDate(customer.createdAt, "MMMM yyyy")}`, plural(orders.length, "vizită", "vizite")].join(" · ")}
+					title={customer.name}
+					facts={[formatPhone(customer.phone), customer.email, cars.map((c) => vehicleName(c)).filter(Boolean).join(", ")].filter(Boolean).join(" · ")}
+					back={
+						<Link href="/customers/" className="mb-4 inline-flex items-center gap-0.5 text-[13px] opacity-75 hover:opacity-100">
+							<ChevronLeft className="size-4" aria-hidden /> Clienți
+						</Link>
+					}
+				/>
+			)}
 			<PageHeader
-				embedded={embedded}
+				embedded={embedded || inColour}
 				back={{ href: "/customers/", label: "Clienți" }}
+				className={inColour ? "mb-6" : undefined}
 				title={customer.name}
 				meta={
 					<div className="space-y-2">

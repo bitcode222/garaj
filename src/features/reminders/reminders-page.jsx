@@ -7,7 +7,10 @@ import { toast } from "@/lib/toast";
 import { ContactActions } from "@/components/ds/contact";
 import { EmptyState } from "@/components/ds/data";
 import { FilterChips } from "@/components/ds/inputs";
-import { Page, PageHeader } from "@/components/ds/page";
+import { Page } from "@/components/ds/page";
+import { PageTitle, useViewSwitch } from "@/components/ds/blocks";
+import { MakeTile } from "@/components/ds/car";
+import { PEOPLE_LOOKS, PEOPLE_LOOK_KEY } from "@/features/common/people-look";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge } from "@/components/ds/tone";
@@ -64,6 +67,8 @@ export function RemindersPage() {
 		useCollection("contacts"),
 	);
 	const [type, setType] = useState("all");
+	const [look, lookSwitch] = useViewSwitch(PEOPLE_LOOK_KEY, PEOPLE_LOOKS);
+	const gallery = look === "gallery";
 	const [open, setOpen] = useState(null);
 
 	if (!ready || !today) return <ListPageSkeleton />;
@@ -80,10 +85,9 @@ export function RemindersPage() {
 
 	return (
 		<Page>
-			<PageHeader
-				title="De contactat"
-				description="Clienții de sunat azi: termene ITP și RCA, revizii, restanțe, mașini neridicate."
-			/>
+			<PageTitle title="De contactat" subtitle="Clienții de sunat azi: termene ITP și RCA, revizii, restanțe, mașini neridicate." className="mb-6">
+				{lookSwitch}
+			</PageTitle>
 			<FilterChips
 				className="mb-4"
 				value={type}
@@ -96,7 +100,7 @@ export function RemindersPage() {
 				]}
 			/>
 			{visible.length ? (
-				<ul className="space-y-3">
+				<ul className={gallery ? "grid items-start gap-3 lg:grid-cols-2" : "space-y-3"}>
 					{visible.map((r) => {
 						const meta = REMINDER_TYPES[r.type];
 						const customer = customers[r.customerId];
@@ -122,13 +126,15 @@ export function RemindersPage() {
 									</div>
 									{vehicle && (
 										<Link href={`/vehicles/detail/?id=${vehicle.id}`} className="flex items-center gap-2 text-sm">
-											<MakeLogo make={vehicle.make} className="size-4" />
+											<MakeTile make={vehicle.make} size={gallery ? 32 : 24} />
 											<span className="text-muted-foreground max-sm:hidden">{vehicleName(vehicle)}</span>
 											<PlateTag value={vehicle.plate} />
 										</Link>
 									)}
 								</div>
 
+								{/* "Galerie" shows the message ready to send; "Listă" folds it. */}
+								{!gallery && (
 								<button
 									type="button"
 									onClick={() => setOpen(open === r.key ? null : r.key)}
@@ -138,7 +144,8 @@ export function RemindersPage() {
 									<ChevronDown className={cn("size-3.5 transition-transform", open === r.key && "rotate-180")} aria-hidden />
 									Mesaj pregătit
 								</button>
-								{open === r.key && <p className="mt-2 rounded-lg bg-muted p-3 text-sm whitespace-pre-line">{message}</p>}
+								)}
+								{(gallery || open === r.key) && <p className="mt-2 rounded-lg bg-muted p-3 text-sm whitespace-pre-line">{message}</p>}
 								{blocked && (
 									<p className={cn("mt-2 text-xs", tone("yellow").text)}>
 										Clientul nu și-a dat acordul pentru mesaje de reamintire — doar apel telefonic.
