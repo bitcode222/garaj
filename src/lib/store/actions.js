@@ -20,6 +20,7 @@ import { laborLineFromOperation, operationFromService, operationVatRate } from "
 import { formatPlate, normalizePlate, addReading } from "@/domain/vehicle";
 import { defaultInspection, invoiceLinesFromOrder, toInvoiceDraft, transition } from "@/domain/work-order";
 import { dropLastRequest, logRequest, markReceived, newReview, noteCustomer } from "@/domain/review";
+import { setLineDone as markLineDone, startWork as startClock, stopClock } from "@/domain/work-clock";
 import { mergeSettings } from "./defaults";
 import { COLLECTIONS, atomic, commit, getState, replaceAllData, snapshotForBackup } from "./store";
 
@@ -528,6 +529,37 @@ export function setWorkOrderStatus(id, to, { reason = "" } = {}) {
 	if (appointment && to === "delivered" && appointment.status === "arrived") changes.appointments = follow("done");
 	if (appointment && order.status === "delivered" && to !== "delivered" && appointment.status === "done") changes.appointments = follow("arrived");
 	commit(changes);
+	return next;
+}
+
+// ── the running job (docs/DESIGN.md §1, rule 6; src/domain/work-clock.js) ────
+
+/**
+ * Starts work on a job for the mechanic at this device: moves it to "in progress" first when it is
+ * elsewhere (its booking follows, as with any status change), opens a time entry, and stops the same
+ * mechanic's other running job.
+ */
+export function startWork(id, { staffId = null } = {}) {
+	let order = mustGet("workOrders", id, "Lucrarea");
+	if (order.status !== "in_progress") order = setWorkOrderStatus(id, "in_progress");
+	const { order: next, stopped } = startClock(order, { staffId, now: now(), orders: values("workOrders") });
+	commit({ workOrders: { put: [next, ...stopped] } });
+	return next;
+}
+
+/** Pauses a job: its clock stops; it stays in progress. */
+export function stopWork(id) {
+	const order = mustGet("workOrders", id, "Lucrarea");
+	const next = stopClock(order, { now: now() });
+	if (next !== order) commit({ workOrders: { put: [next] } });
+	return next;
+}
+
+/** Ticks one of a job's lines off as done, or back. */
+export function setLineDone(id, lineId, done) {
+	const order = mustGet("workOrders", id, "Lucrarea");
+	const next = markLineDone(order, lineId, done, { now: now() });
+	commit({ workOrders: { put: [next] } });
 	return next;
 }
 
