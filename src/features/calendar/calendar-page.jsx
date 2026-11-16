@@ -507,6 +507,8 @@ export function CalendarPage() {
 			{dir < 0 ? <ChevronLeft /> : <ChevronRight />}
 		</Button>
 	);
+	// Zi "Linie" moves through the days sideways, as in the mockup, whichever way the other views scroll.
+	const sideways = currentView === "day" && dayLook === "line";
 	const onSheet = desktop && currentView === "week" && !albums;
 	const dayLine = desktop && currentView === "day" && dayLook === "line";
 	const nothingShown = !albums && byDay.size === 0 && allByDay.size > 0;
@@ -550,7 +552,7 @@ export function CalendarPage() {
 												{stepButton(1)}
 											</span>
 											{todayButton}
-											{scrollButton}
+											{!sideways && scrollButton}
 											{!miniOpen && miniButton}
 										</>
 									)}
@@ -590,7 +592,7 @@ export function CalendarPage() {
 							</div>
 							<div className="mt-2 flex items-center gap-1.5">
 								<ProgramariSwitch current="/calendar/" className="max-md:flex-1 max-sm:[&_[data-label]]:sr-only" />
-								{scrollButton}
+								{!sideways && scrollButton}
 								{viewMenu}
 								{todayButton}
 								{steps}
@@ -631,7 +633,7 @@ export function CalendarPage() {
 						) : (
 							<MonthPages key={`month:h:${opening?.day ?? ""}`} {...stripProps} onPickDay={openDay} />
 						)
-					) : direction === "vertical" ? (
+					) : direction === "vertical" && !sideways ? (
 						<DayRows
 							key={`${currentView}:v:${opening?.day ?? ""}:${columns.length}:${dayLook}`}
 							{...stripProps}
