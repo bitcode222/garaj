@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeftRight, ArrowUpDown, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { ArrowLeftRight, ArrowUpDown, CalendarDays, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, Columns3, SlidersHorizontal } from "lucide-react";
 import { Segmented } from "@/components/ds/inputs";
 import { Sheet } from "@/components/ds/sheet";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ import { updateSettings } from "@/lib/store/actions";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { selectActive, selectAppointmentsByDay } from "@/lib/store/selectors";
 import { cn } from "@/lib/utils";
+import { useViewSwitch } from "@/components/ds/blocks";
+import { AlbumWeek, mondayOf } from "./album-week";
 import { ProgramariSwitch } from "@/features/appointments/programari-switch";
 import { BookingPeek } from "./booking-peek";
 import { CalendarSettings, MiniMonth } from "./calendar-panel";
@@ -78,6 +80,11 @@ function CalendarSkeleton() {
  * endless strip of days, Lună endless weeks. The day and the view are kept in the address
  * (?day=…&view=…&id=…), so the home page and a booking's sheet open it where they mean.
  */
+const LOOKS = [
+	{ value: "editorial", label: "Editorial", icon: CalendarRange },
+	{ value: "albums", label: "Albume", icon: Columns3 },
+];
+
 export function CalendarPage() {
 	const ready = useIsReady();
 	const today = useToday();
@@ -118,6 +125,10 @@ export function CalendarPage() {
 	const [phonePanel, setPhonePanel] = useState(false);
 	const [selected, setSelected] = useState(paramId);
 	const strip = useRef(null);
+	// The owner kept two looks (16 Nov 2026): "Editorial", the calendar with its day, week and month; "Albume", the week as
+	// day cards. Kept on this device; on a phone the calendar shows.
+	const [look, lookSwitch] = useViewSwitch("garaj.agenda.look", LOOKS);
+	const [albumAnchor, setAlbumAnchor] = useState(null);
 	const gridArea = useRef(null); // where the booking details look for cards under the mouse, and the mini month floats
 	const searchInput = useRef(null);
 
@@ -471,7 +482,22 @@ export function CalendarPage() {
 			</Button>
 		);
 		const searchNode = (className) => <CalendarSearch search={search} shown={(id) => shownIds.has(id)} selectedId={selected} now={new Date().toISOString()} lookups={lookups} onJump={jumpTo} onShowHidden={showHidden} inputRef={searchInput} className={className} />;
-	const nothingShown = byDay.size === 0 && allByDay.size > 0;
+	// "Albume": the week of the anchor (moved by its own arrows), on a desktop only.
+	const albums = desktop && look === "albums";
+	const anchor = albumAnchor ?? seen?.day ?? initialDay;
+	const albumMonday = mondayOf(anchor);
+	const albumCount = (() => {
+		let n = 0;
+		for (let i = 0; i < 7; i += 1) n += byDay.get(addDaysISO(albumMonday, i))?.length ?? 0;
+		return n;
+	})();
+	const albumText = `${fmtDate(albumMonday, "d MMM")} – ${fmtDate(addDaysISO(albumMonday, 6), "d MMM")} · ${plural(albumCount, "programare", "programări")}`;
+	const albumStep = (dir) => (
+		<Button variant="outline" size="icon" className="size-8 shrink-0" onClick={() => setAlbumAnchor(addDaysISO(albumMonday, dir * 7))} aria-label={dir < 0 ? "Săptămâna anterioară" : "Săptămâna următoare"}>
+			{dir < 0 ? <ChevronLeft /> : <ChevronRight />}
+		</Button>
+	);
+	const nothingShown = !albums && byDay.size === 0 && allByDay.size > 0;
 	const stripProps = { ref: strip, today, settings, byDay, lookups, colorBy: prefs.colorBy, selectedId: selected, initialDay, onView, onOpen: open, onCreate: create };
 
 	return (
@@ -488,18 +514,33 @@ export function CalendarPage() {
 								<div className="min-w-0">
 									<p className="text-[1.625rem] leading-tight font-semibold tracking-tight">Agendă</p>
 									<p aria-live="polite" data-in-view className="mt-0.5 truncate text-[13.5px] text-muted-foreground first-letter:uppercase">
-										{title} · {inViewText}
+										{albums ? albumText : `${title} · ${inViewText}`}
 									</p>
 								</div>
 								<div className="flex items-center gap-2">
-									<Segmented aria-label="Vizualizare" value={currentView} onValueChange={changeView} options={VIEWS.map((v) => ({ value: v.value, label: v.label }))} />
-									<span className="flex gap-1">
-										{stepButton(-1)}
-										{stepButton(1)}
-									</span>
-									{todayButton}
-									{scrollButton}
-									{!miniOpen && miniButton}
+									{lookSwitch}
+									{albums ? (
+										<>
+											<span className="flex gap-1">
+												{albumStep(-1)}
+												{albumStep(1)}
+											</span>
+											<Button variant="outline" onClick={() => setAlbumAnchor(today)} title="Azi">
+												Azi
+											</Button>
+										</>
+									) : (
+										<>
+											<Segmented aria-label="Vizualizare" value={currentView} onValueChange={changeView} options={VIEWS.map((v) => ({ value: v.value, label: v.label }))} />
+											<span className="flex gap-1">
+												{stepButton(-1)}
+												{stepButton(1)}
+											</span>
+											{todayButton}
+											{scrollButton}
+											{!miniOpen && miniButton}
+										</>
+									)}
 								</div>
 							</div>
 							<div className="flex items-center gap-2">
@@ -555,12 +596,13 @@ export function CalendarPage() {
 				)}
 				<div ref={gridArea} className="relative flex min-h-0 min-w-0 flex-1 flex-col">
 					<BookingPeek host={gridArea} />
-					{miniOpen && (
+					{albums && <AlbumWeek anchor={anchor} today={today} byDay={byDay} lookups={lookups} selectedId={selected} onOpen={open} onCreate={create} />}
+					{!albums && miniOpen && (
 						<FloatingMonth area={gridArea} onClose={() => setMiniPref("closed")}>
 							{monthNode(true)}
 						</FloatingMonth>
 					)}
-					{currentView === "month" ? (
+					{albums ? null : currentView === "month" ? (
 						direction === "vertical" ? (
 							<MonthStrip key={`month:v:${opening?.day ?? ""}`} {...stripProps} onPickDay={openDay} />
 						) : (

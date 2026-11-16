@@ -72,6 +72,15 @@ and call, the invoice's Încasează and PDF, a form's Renunță and Salvează); 
 the left, value on the right, in rounded groups with their title above (`[data-field]` rows, `globals.css`); a view's
 sections are rounded groups.
 
+### Agendă, third pass (owner's pick A + E, 16 Nov 2026, board https://claude.ai/artifact/QcYyQTxWy1eZ61cKtY7A4f)
+
+Two looks behind a switch kept on the device (`garaj.agenda.look`): **Editorial**, the calendar as it works (day, week,
+month, drag, filters, search, warnings) with the bookings as cards in their car's colour with depth, a soft glow of
+that colour and the logo large as a watermark (`features/calendar/craft.jsx`), the day numbers set large and today in
+red; **Albume** (desktop), the week as tall day cards side by side, each a stack of car cards in the day's order with
+its own ‹ › and Azi, a "+" per day (`features/calendar/album-week.jsx`). Bookings still to confirm: a dotted white
+outline (and an amber dot in Albume).
+
 ## 5. Building blocks (in code)
 
 | Where | What |

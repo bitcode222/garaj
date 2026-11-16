@@ -13,7 +13,7 @@ import { APPOINTMENT_STATUS } from "@/lib/labels";
 import { BlockMark } from "./block-mark";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
-import { makeColor, makeTint } from "@/lib/colors";
+import { craftStyle, Watermark } from "./craft";
 import { DRAG_SLOP_PX, HOLD_MS, HOLD_SLOP_PX, drawSpan, edgeSpeed, shiftSpan, startAt, stretchSpan } from "@/features/dashboard/timeline-drag";
 import { centerLeft, dayAtCenter, dayAtLeft, dayWindow, daysInView, indexAt, indexOfDay, keepScroll, leftOf, nearEdge, stepDay, visibleDays, widthAt } from "./calendar-geometry";
 import { AlertSign, alertOutline, alertSummary } from "./booking-warnings";
@@ -80,8 +80,8 @@ const RowEvent = memo(function RowEvent({ appointment: a, mark = "booking", left
 				height >= 56 ? "justify-start gap-0.5 py-1.5" : "justify-center",
 				// By car (docs/DESIGN.md §3): a light tint of its colour with that colour as the left edge; by mechanic or operation:
 				// outlined in that colour. Dashed while only booked.
-				byCar ? "border-y border-r" : cn("border", tone(toneName).line),
-				a.status === "scheduled" && "border-dashed",
+				byCar ? "rounded-[10px] border-0 [&>span:not([aria-hidden])]:relative" : cn("border", tone(toneName).line),
+				a.status === "scheduled" && (byCar ? "outline-[1.5px] -outline-offset-4 outline-white/70 outline-dashed" : "border-dashed"),
 				lookups.match && !lookups.match.has(a.id) && "opacity-15 saturate-50",
 				(a.status === "no_show" || a.status === "cancelled") && "line-through",
 				alertOutline(alert),
@@ -94,9 +94,10 @@ const RowEvent = memo(function RowEvent({ appointment: a, mark = "booking", left
 				width: Math.max(width - 2, 14),
 				top,
 				height,
-				...(byCar && { background: makeTint(f.make), borderColor: `color-mix(in srgb, ${makeColor(f.make)} 30%, transparent)`, borderLeft: `3px solid ${makeColor(f.make)}` }),
+				...(byCar && craftStyle(f.make)),
 			}}
 		>
+			{byCar && <Watermark make={f.make} size={Math.max(28, Math.min(56, height - 6))} />}
 			<span className="flex min-w-0 items-center gap-1">
 				<BlockMark state={state} mark={mark} />
 				{width >= 90 && f.make && <MakeLogo make={f.make} className="size-3 shrink-0" />}
