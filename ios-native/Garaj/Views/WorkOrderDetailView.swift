@@ -36,62 +36,74 @@ struct WorkOrderDetailView: View {
         let next = WorkOrderRules.next[order.status]
         let others = (WorkOrderRules.transitions[order.status] ?? []).filter { $0 != next }
 
-        return List {
-            Section {
-                VStack(alignment: .leading, spacing: 6) {
-                    HStack(alignment: .center) {
-                        if let vehicle { MakeLogo(make: vehicle.make, size: 34); PlateBadge(plate: vehicle.plate) } else { Text("Fără mașină").foregroundStyle(.secondary) }
-                        Spacer()
-                        StatusPill(style: Labels.workOrder(order.status))
-                    }
-                    Text(vehicle?.title.nonEmpty ?? "Mașină").font(.title3.weight(.bold)).padding(.top, 6)
-                    let facts = [vehicle?.year.map(String.init), vehicle.flatMap { v in Inventory.fuels.first { $0.key == v.fuel }?.label.lowercased() },
-                                 order.mileage.map { "\($0.formatted(.number.locale(Locale(identifier: "ro_RO")))) km" }].compactMap { $0 }
-                    if !facts.isEmpty { Text(facts.joined(separator: " · ")).font(.subheadline).foregroundStyle(.secondary) }
-                    if let customer {
-                        Text([customer.name, customer.phone].filter { !$0.isEmpty }.joined(separator: " · "))
-                            .font(.subheadline.weight(.semibold)).foregroundStyle(Color.accentColor)
-                    }
-                }
-                .padding(.vertical, 6)
-                if let customer, !customer.phone.isEmpty {
-                    ContactButtons(phone: customer.phone, message: order.status == "ready"
-                        ? WorkOrderRules.readyMessage(customer: customer, vehicle: vehicle, settings: shop)
-                        : WorkOrderRules.estimateMessage(order: order, customer: customer, vehicle: vehicle, settings: shop))
-                }
-            }
+        let make = vehicle?.make ?? ""
+        let ink = Make.ink(make)
+        let message = customer.map { c in order.status == "ready"
+            ? WorkOrderRules.readyMessage(customer: c, vehicle: vehicle, settings: shop)
+            : WorkOrderRules.estimateMessage(order: order, customer: c, vehicle: vehicle, settings: shop) } ?? ""
+        let phone = customer?.phone ?? ""
 
-            if next != nil || !others.isEmpty {
-                Section {
-                    HStack(spacing: 8) {
+        return List {
+            // The cover (look 3): the car's logo and plate on its color, what the job is, the next step.
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 14) {
+                        if vehicle != nil { MakeArt(make: make, size: 64) }
+                        if let vehicle, !vehicle.plate.isEmpty { PlateBadge(plate: vehicle.plate) }
+                        Spacer()
+                        Text(Labels.workOrder(order.status).label).font(.footnote.weight(.semibold))
+                            .padding(.horizontal, 10).padding(.vertical, 5)
+                            .background(ink.opacity(0.18), in: .capsule)
+                    }
+                    Text(verbatim: "Lucrarea #\(order.number)\(customer.map { " · \($0.name)" } ?? "")")
+                        .font(.footnote.weight(.medium)).textCase(.uppercase).tracking(0.4).opacity(0.75).padding(.top, 8)
+                    Text(JobText.headline(order)).font(.title.weight(.bold)).lineLimit(3)
+                    let facts = [vehicle?.title.nonEmpty, vehicle?.year.map(String.init), vehicle.flatMap { v in Inventory.fuels.first { $0.key == v.fuel }?.label.lowercased() },
+                                 order.mileage.map { "\($0.formatted(.number.locale(Locale(identifier: "ro_RO")))) km" }].compactMap { $0 }
+                    if !facts.isEmpty { Text(facts.joined(separator: " · ")).font(.subheadline).opacity(0.8) }
+                    HStack(spacing: 10) {
                         if let next {
                             Button { move(order, to: next) } label: {
-                                Text(Labels.workOrderAction(from: order.status, to: next))
+                                Label(Labels.workOrderAction(from: order.status, to: next), systemImage: Labels.workOrder(next).symbol)
                             }
-                            .buttonStyle(.primary)
+                            .buttonStyle(.onColor)
                         }
-                        if !others.isEmpty {
+                        if !phone.isEmpty, let url = People.telURL(phone) {
+                            Link(destination: url) { Image(systemName: "phone.fill") }.buttonStyle(TintCircleStyle(ink: ink)).accessibilityLabel("Sună")
+                        }
+                        if !others.isEmpty || (!phone.isEmpty && People.smsURL(phone, body: message) != nil) {
                             Menu {
-                                ForEach(others, id: \.self) { to in
-                                    Button(role: to == "cancelled" ? .destructive : nil) {
-                                        if to == "cancelled" { confirmCancel = true } else { move(order, to: to) }
-                                    } label: {
-                                        Label(Labels.workOrderAction(from: order.status, to: to), systemImage: Labels.workOrder(to).symbol)
+                                Section {
+                                    ForEach(others, id: \.self) { to in
+                                        Button(role: to == "cancelled" ? .destructive : nil) {
+                                            if to == "cancelled" { confirmCancel = true } else { move(order, to: to) }
+                                        } label: {
+                                            Label(Labels.workOrderAction(from: order.status, to: to), systemImage: Labels.workOrder(to).symbol)
+                                        }
+                                    }
+                                }
+                                if !phone.isEmpty {
+                                    Section {
+                                        if let url = People.whatsappURL(phone, text: message) { Link(destination: url) { Label("Trimite pe WhatsApp", systemImage: "text.bubble") } }
+                                        if let url = People.smsURL(phone, body: message) { Link(destination: url) { Label("Trimite SMS", systemImage: "message") } }
                                     }
                                 }
                             } label: {
-                                Label(next == nil ? "Schimbă starea" : "Altă stare", systemImage: "ellipsis")
-                                    .labelStyle(next == nil ? AnyLabelStyle(.titleAndIcon) : AnyLabelStyle(.iconOnly))
+                                Image(systemName: "ellipsis").font(.headline).frame(width: 50, height: 50).background(ink.opacity(0.2), in: .circle)
                             }
-                            .buttonStyle(FillButtonStyle(kind: .secondary, fill: next == nil))
-                            .accessibilityLabel("Altă stare")
+                            .accessibilityLabel("Altă stare și mesaje")
                         }
+                        if next == nil { Spacer() }
                     }
-                } footer: {
-                    Text(Labels.workOrder(order.status).hint)
+                    .padding(.top, 8)
+                    Text(Labels.workOrder(order.status).hint).font(.footnote).opacity(0.7)
                 }
-                .bareRow()
+                .foregroundStyle(ink)
+                .tint(ink)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 8)
             }
+            .bareRow()
 
             Section {
                 TextField("Ce spune clientul", text: binding(order, \.complaint), axis: .vertical)
@@ -187,6 +199,7 @@ struct WorkOrderDetailView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .cover(Make.cover(vehicle?.make), height: 520)
         .navigationTitle(Text(verbatim: "Lucrarea #\(order.number)"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -270,25 +283,16 @@ struct AnyLabelStyle: LabelStyle {
 }
 
 /// Call, message, WhatsApp — with the estimate (or "ready") text prefilled.
-private struct ContactButtons: View {
-    let phone: String
-    let message: String
-
-    var body: some View {
-        HStack(spacing: 8) {
-            if let url = People.telURL(phone) {
-                Link(destination: url) { Label("Sună", systemImage: "phone.fill").frame(maxWidth: .infinity) }
-            }
-            if let url = People.smsURL(phone, body: message) {
-                Link(destination: url) { Label("SMS", systemImage: "message.fill").frame(maxWidth: .infinity) }
-            }
-            if let url = People.whatsappURL(phone, text: message) {
-                Link(destination: url) { Label("WhatsApp", systemImage: "text.bubble.fill").frame(maxWidth: .infinity) }
-            }
-        }
-        .buttonStyle(.secondarySmall)
-        .labelStyle(VerticalLabelStyle())
-        .font(.caption.weight(.medium))
+/// A round button on a car's color: the cover's ink, lightly filled.
+struct TintCircleStyle: ButtonStyle {
+    let ink: Color
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.headline)
+            .foregroundStyle(ink)
+            .frame(width: 50, height: 50)
+            .background(ink.opacity(0.2), in: .circle)
+            .opacity(configuration.isPressed ? 0.6 : 1)
     }
 }
 

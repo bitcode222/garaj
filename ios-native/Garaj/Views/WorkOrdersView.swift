@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Lucrări: every job, newest first; search, status filter, swipe to the next step, new job.
+/// Atelier: every job, newest first; open jobs as cards (look 3); search, status filter, swipe to the next step, new job.
 struct WorkOrdersView: View {
     @Environment(AppStore.self) private var store
     @Environment(UndoCenter.self) private var undo
@@ -132,7 +132,52 @@ struct WorkOrdersView: View {
         }
     }
 
-    private func rowView(_ row: WorkOrderRow.Model) -> some View {
+    @ViewBuilder private func rowView(_ row: WorkOrderRow.Model) -> some View {
+        if Self.open.contains(row.order.status) { card(row) } else { plainRow(row) }
+    }
+
+    /// An open job as a card (look 3): what it is, a summary, the next step as the main button.
+    private func card(_ row: WorkOrderRow.Model) -> some View {
+        let order = row.order
+        let staff = store.get(Staff.self, order.staffId)?.name
+        let phone = row.customer?.phone ?? ""
+        return JobCard(make: row.vehicle?.make ?? "",
+                       eyebrow: [row.vehicle?.title.nonEmpty, row.vehicle.map { People.formatPlate($0.plate) }].compactMap { $0 }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
+                       title: JobText.headline(order),
+                       status: Labels.workOrder(order.status),
+                       meta: [row.customer?.name.nonEmpty, order.lines.isEmpty ? nil : Money.format(row.gross, currency: store.currency, decimals: 0)].compactMap { $0 }.joined(separator: " · "),
+                       summary: [staff, JobText.summary(order)].compactMap { $0 }.joined(separator: ": "),
+                       next: WorkOrderRules.next[order.status].map { to in (Labels.workOrderAction(from: order.status, to: to), Labels.workOrder(to).symbol, { move(order, to: to) }) },
+                       phone: phone.isEmpty ? nil : People.telURL(phone),
+                       open: { path.append(order.id) }) {
+            Section {
+                ForEach(WorkOrderRules.transitions[order.status] ?? [], id: \.self) { to in
+                    Button(role: to == "cancelled" ? .destructive : nil) { move(order, to: to) } label: {
+                        Label(Labels.workOrderAction(from: order.status, to: to), systemImage: Labels.workOrder(to).symbol)
+                    }
+                }
+            }
+            if !phone.isEmpty, let url = People.whatsappURL(phone, text: "") {
+                Section { Link(destination: url) { Label("Scrie pe WhatsApp", systemImage: "text.bubble") } }
+            }
+            Section {
+                Button { path.append(order.id) } label: { Label("Deschide lucrarea #\(order.number)", systemImage: "arrow.up.right") }
+            }
+        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+        .swipeActions(edge: .leading) {
+            if let next = WorkOrderRules.next[order.status] {
+                Button { move(order, to: next) } label: {
+                    Label(Labels.workOrderAction(from: order.status, to: next), systemImage: Labels.workOrder(next).symbol)
+                }
+                .tint(Labels.workOrder(next).color)
+            }
+        }
+    }
+
+    private func plainRow(_ row: WorkOrderRow.Model) -> some View {
         NavigationLink(value: row.order.id) {
             WorkOrderRow(model: row, currency: store.currency)
         }
