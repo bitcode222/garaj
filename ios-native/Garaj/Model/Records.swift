@@ -170,6 +170,11 @@ struct Line: Codable, Hashable, Identifiable, Sendable {
 
     /// The client said no to this line at approval (docs/LUCRARE.md); it is never billed.
     var refused: Bool { extra["refused"] == .bool(true) }
+    /// Ticked off as done on the running job (src/domain/work-clock.js).
+    var done: Bool {
+        get { extra["done"] == .bool(true) }
+        set { extra["done"] = .bool(newValue) }
+    }
 }
 
 struct WorkOrder: Record {
@@ -179,7 +184,7 @@ struct WorkOrder: Record {
         "appointmentId": .null, "staffId": .null, "bayId": .null, "mileage": .null, "fuelLevel": .null,
         "complaint": .string(""), "diagnosis": .string(""), "lines": .array([]), "notes": .string(""),
         "invoiceId": .null, "createdAt": .string(""), "updatedAt": .string(""),
-        "dates": .object([:]), "activity": .array([]), "inspection": .array([]),
+        "dates": .object([:]), "activity": .array([]), "inspection": .array([]), "timeLog": .array([]),
     ]
     var id: String
     var number: Int
@@ -201,6 +206,8 @@ struct WorkOrder: Record {
     var dates: JSONObject
     var activity: [JSONValue]
     var inspection: [JSONValue]
+    /// Who worked on the job and when (src/domain/work-clock.js): `{ id, staffId, start, end }`.
+    var timeLog: [JSONValue] = []
 }
 
 struct Invoice: Record {

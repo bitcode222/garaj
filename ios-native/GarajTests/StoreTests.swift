@@ -13,6 +13,23 @@ struct StoreTests {
         return (AppStore(persistence: Persistence(url: url)), url)
     }
 
+    /// The real file lives under "Application Support": a folder with a space. What was saved must
+    /// come back on the next launch (it once didn't, and the old app's data came back instead).
+    @Test func savedDataComesBackFromAFolderWithASpace() async throws {
+        let url = URL.temporaryDirectory.appending(path: "Application Support \(UUID().uuidString)/garaj.json")
+        let first = AppStore(persistence: Persistence(url: url))
+        try await first.replaceAll(with: fixture())
+        await first.load()
+        var order = try #require(first.all(WorkOrder.self).first)
+        order.notes = "salvat"
+        first.save(order)
+        await first.flush()
+        let again = AppStore(persistence: Persistence(url: url))
+        await again.load()
+        #expect(again.origin == "Pe acest iPhone")
+        #expect(again.get(WorkOrder.self, order.id)?.notes == "salvat")
+    }
+
     @Test func importsAWebBackup() async throws {
         let (store, _) = makeStore()
         try await store.replaceAll(with: fixture())

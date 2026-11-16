@@ -549,7 +549,7 @@
  "greetings": [
   {
    "customer": {
-    "id": "0mwifurd62bb2r2bu",
+    "id": "0mwio8c5qe82uarka",
     "type": "person",
     "name": "Andreea Mocanu",
     "phone": "0788 291 972",
@@ -567,7 +567,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd6tfts138x",
+    "id": "0mwio8c5qt25lawhx",
     "type": "person",
     "name": "Cătălin Florea",
     "phone": "0754 301 783",
@@ -585,7 +585,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd6fuhtvgln",
+    "id": "0mwio8c5qz1qzqmc7",
     "type": "person",
     "name": "Andreea Toma",
     "phone": "0755 209 921",
@@ -603,7 +603,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd6q6a1tcb1",
+    "id": "0mwio8c5q9p7oix4c",
     "type": "person",
     "name": "Maria Toma",
     "phone": "0738 977 282",
@@ -621,7 +621,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd6iqosx8v8",
+    "id": "0mwio8c5qv805lej3",
     "type": "person",
     "name": "Andreea Enache",
     "phone": "0785 629 990",
@@ -639,7 +639,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd67szd4jcc",
+    "id": "0mwio8c5q02mjokn6",
     "type": "person",
     "name": "Dan Lazăr",
     "phone": "0779 738 296",
@@ -657,7 +657,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd6vxkt76td",
+    "id": "0mwio8c5qhkp2gehy",
     "type": "person",
     "name": "Adrian Ciobanu",
     "phone": "0785 256 471",
@@ -675,7 +675,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd6q1bdfka5",
+    "id": "0mwio8c5qx7m02dkw",
     "type": "person",
     "name": "Gabriela Radu",
     "phone": "0750 752 526",
@@ -693,7 +693,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd6by73723l",
+    "id": "0mwio8c5q7uh15igi",
     "type": "person",
     "name": "Vlad Ionescu",
     "phone": "0725 613 732",
@@ -711,7 +711,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd6rhvp3osa",
+    "id": "0mwio8c5q97j3f9ip",
     "type": "person",
     "name": "Marius Marin",
     "phone": "0741 805 191",
@@ -729,7 +729,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd660pnt8p6",
+    "id": "0mwio8c5qemyr61ay",
     "type": "person",
     "name": "Radu Dinu",
     "phone": "0728 245 239",
@@ -747,7 +747,7 @@
   },
   {
    "customer": {
-    "id": "0mwifurd6wiatnf54",
+    "id": "0mwio8c5qlmcevzih",
     "type": "person",
     "name": "Radu Florea",
     "phone": "0748 301 708",
@@ -767,23 +767,23 @@
  "messages": [
   {
    "order": {
-    "id": "0mwifurd8xj8s90os",
+    "id": "0mwio8c5rpfmcwoqg",
     "number": 1001,
     "status": "delivered",
-    "customerId": "0mwifurd8gnz7360b",
-    "vehicleId": "0mwifurd8hb0up5f1",
+    "customerId": "0mwio8c5rzpqpit1u",
+    "vehicleId": "0mwio8c5rth4btxp6",
     "appointmentId": null,
-    "staffId": "0mwifurd59zlriny8",
-    "bayId": "0mwifurd5r1fik28e",
+    "staffId": "0mwio8c5qti4kosmm",
+    "bayId": "0mwio8c5qpbvz567m",
     "mileage": 99838,
     "fuelLevel": 4,
     "complaint": "Schimb ulei și filtru, Înlocuire biellete antiruliu",
     "diagnosis": "",
     "lines": [
      {
-      "id": "0mwifurd8i3qajrpk",
+      "id": "0mwio8c5rbl2aq3i2",
       "kind": "labor",
-      "refId": "0mwifurd5ipuj1xik",
+      "refId": "0mwio8c5qwrlo1oa6",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -791,12 +791,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd59zlriny8"
+      "staffId": "0mwio8c5qti4kosmm"
      },
      {
-      "id": "0mwifurd8g5p5rswl",
+      "id": "0mwio8c5rcj91fbzg",
       "kind": "part",
-      "refId": "0mwifurd5sirbuf2k",
+      "refId": "0mwio8c5qpvxc35fj",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -807,9 +807,9 @@
       "staffId": null
      },
      {
-      "id": "0mwifurd8ucdigdye",
+      "id": "0mwio8c5rvvzpwcxv",
       "kind": "part",
-      "refId": "0mwifurd5kupwp1nf",
+      "refId": "0mwio8c5qlfenyitz",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -820,9 +820,9 @@
       "staffId": null
      },
      {
-      "id": "0mwifurd8rgr25i0v",
+      "id": "0mwio8c5rru2wk7pf",
       "kind": "labor",
-      "refId": "0mwifurd6zr709fwq",
+      "refId": "0mwio8c5q0oj2vlt5",
       "description": "Înlocuire biellete antiruliu",
       "qty": 0.8,
       "unit": "h",
@@ -830,12 +830,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd59zlriny8"
+      "staffId": "0mwio8c5qti4kosmm"
      },
      {
-      "id": "0mwifurd8sqmtwwzt",
+      "id": "0mwio8c5r08me91n8",
       "kind": "part",
-      "refId": "0mwifurd5c1paa37v",
+      "refId": "0mwio8c5qionr5e5m",
       "description": "Bieletă antiruliu Meyle",
       "qty": 2,
       "unit": "buc",
@@ -846,7 +846,7 @@
       "staffId": null
      },
      {
-      "id": "0mwifurd812g8830h",
+      "id": "0mwio8c5r98oepp4x",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -872,7 +872,7 @@
      }
     ],
     "notes": "",
-    "invoiceId": "0mwifuree2m6mh3td",
+    "invoiceId": "0mwio8c6efkw48o6n",
     "dates": {
      "estimate": "2025-11-15T08:30:00.000Z",
      "approved": "2025-11-15T08:30:00.000Z",
@@ -885,7 +885,7 @@
     "updatedAt": "2025-11-15T08:30:00.000Z"
    },
    "customer": {
-    "id": "0mwifurd8gnz7360b",
+    "id": "0mwio8c5rzpqpit1u",
     "type": "company",
     "name": "Construct Plus SRL",
     "contactName": "Cristian Ilie",
@@ -901,8 +901,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwifurd8hb0up5f1",
-    "customerId": "0mwifurd8gnz7360b",
+    "id": "0mwio8c5rth4btxp6",
+    "customerId": "0mwio8c5rzpqpit1u",
     "plate": "B501RGB",
     "vin": "UU1G0A5WAEVEYD09Y",
     "make": "Dacia",
@@ -982,23 +982,23 @@
   },
   {
    "order": {
-    "id": "0mwifurd9jxbytzqa",
+    "id": "0mwio8c5ry70albnv",
     "number": 1002,
     "status": "delivered",
-    "customerId": "0mwifurd81osjpxzo",
-    "vehicleId": "0mwifurd8tmv25whf",
+    "customerId": "0mwio8c5rftedmq8n",
+    "vehicleId": "0mwio8c5rbj029jlb",
     "appointmentId": null,
-    "staffId": "0mwifurd0g8galc98",
-    "bayId": "0mwifurd5g4rsrply",
+    "staffId": "0mwio8c5pjcy6hhkr",
+    "bayId": "0mwio8c5qmb1h7f0f",
     "mileage": 179096,
     "fuelLevel": 4,
     "complaint": "Schimb ulei și filtru",
     "diagnosis": "",
     "lines": [
      {
-      "id": "0mwifurd94vq2mk7s",
+      "id": "0mwio8c5r0x3rgi7h",
       "kind": "labor",
-      "refId": "0mwifurd5ipuj1xik",
+      "refId": "0mwio8c5qwrlo1oa6",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -1006,12 +1006,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd0g8galc98"
+      "staffId": "0mwio8c5pjcy6hhkr"
      },
      {
-      "id": "0mwifurd9in98rh7t",
+      "id": "0mwio8c5r15ydypeb",
       "kind": "part",
-      "refId": "0mwifurd5sirbuf2k",
+      "refId": "0mwio8c5qpvxc35fj",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -1022,9 +1022,9 @@
       "staffId": null
      },
      {
-      "id": "0mwifurd925wowq8f",
+      "id": "0mwio8c5r1kqq17wz",
       "kind": "part",
-      "refId": "0mwifurd5kupwp1nf",
+      "refId": "0mwio8c5qlfenyitz",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -1035,7 +1035,7 @@
       "staffId": null
      },
      {
-      "id": "0mwifurd90av2u6uv",
+      "id": "0mwio8c5rkkaodxud",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -1101,7 +1101,7 @@
      }
     ],
     "notes": "",
-    "invoiceId": "0mwifureef04q4aa3",
+    "invoiceId": "0mwio8c6earuxnrua",
     "dates": {
      "estimate": "2025-11-17T06:45:00.000Z",
      "approved": "2025-11-17T06:45:00.000Z",
@@ -1114,7 +1114,7 @@
     "updatedAt": "2025-11-17T06:45:00.000Z"
    },
    "customer": {
-    "id": "0mwifurd81osjpxzo",
+    "id": "0mwio8c5rftedmq8n",
     "type": "company",
     "name": "Brutăria Bunica SRL",
     "contactName": "Mihaela Lazăr",
@@ -1130,8 +1130,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwifurd8tmv25whf",
-    "customerId": "0mwifurd81osjpxzo",
+    "id": "0mwio8c5rbj029jlb",
+    "customerId": "0mwio8c5rftedmq8n",
     "plate": "B561UZP",
     "vin": "WF0FMRXMNGW0VGAEB",
     "make": "Ford",
@@ -1196,23 +1196,23 @@
   },
   {
    "order": {
-    "id": "0mwifurd9u5x61jiy",
+    "id": "0mwio8c5rwz8ox528",
     "number": 1003,
     "status": "delivered",
-    "customerId": "0mwifurd7qdzwzuct",
-    "vehicleId": "0mwifurd7b3vtza36",
+    "customerId": "0mwio8c5rizxgg5tx",
+    "vehicleId": "0mwio8c5ri3g3za34",
     "appointmentId": null,
-    "staffId": "0mwifurd0g8galc98",
-    "bayId": "0mwifurd59gu0sjrd",
+    "staffId": "0mwio8c5pjcy6hhkr",
+    "bayId": "0mwio8c5q0ohpz8fe",
     "mileage": 105400,
     "fuelLevel": 2,
     "complaint": "Înlocuire plăcuțe frână față",
     "diagnosis": "",
     "lines": [
      {
-      "id": "0mwifurd9q7cnq298",
+      "id": "0mwio8c5rad8i3t3s",
       "kind": "labor",
-      "refId": "0mwifurd532w50mec",
+      "refId": "0mwio8c5qj1uafm4b",
       "description": "Înlocuire plăcuțe frână față",
       "qty": 1,
       "unit": "h",
@@ -1220,12 +1220,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd0g8galc98"
+      "staffId": "0mwio8c5pjcy6hhkr"
      },
      {
-      "id": "0mwifurd9o0s9613f",
+      "id": "0mwio8c5rfqdh2rip",
       "kind": "part",
-      "refId": "0mwifurd57kg7lh7p",
+      "refId": "0mwio8c5q1j5yppny",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -1289,7 +1289,7 @@
      }
     ],
     "notes": "",
-    "invoiceId": "0mwifureew6djkxut",
+    "invoiceId": "0mwio8c6e15zdp6tm",
     "dates": {
      "estimate": "2025-11-17T09:15:00.000Z",
      "approved": "2025-11-17T09:15:00.000Z",
@@ -1302,7 +1302,7 @@
     "updatedAt": "2025-11-17T09:15:00.000Z"
    },
    "customer": {
-    "id": "0mwifurd7qdzwzuct",
+    "id": "0mwio8c5rizxgg5tx",
     "type": "person",
     "name": "Andreea Stoica",
     "phone": "0781 612 227",
@@ -1317,8 +1317,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwifurd7b3vtza36",
-    "customerId": "0mwifurd7qdzwzuct",
+    "id": "0mwio8c5ri3g3za34",
+    "customerId": "0mwio8c5rizxgg5tx",
     "plate": "GR10LYC",
     "vin": "WVWFPBYMT4MTDH5MR",
     "make": "Volkswagen",
@@ -1388,23 +1388,23 @@
   },
   {
    "order": {
-    "id": "0mwifurd9pa4v310a",
+    "id": "0mwio8c5rx4pxlhwf",
     "number": 1004,
     "status": "delivered",
-    "customerId": "0mwifurd6cu9196e0",
-    "vehicleId": "0mwifurd6p7ywnq36",
+    "customerId": "0mwio8c5qqoka0k2b",
+    "vehicleId": "0mwio8c5qbspv62i9",
     "appointmentId": null,
-    "staffId": "0mwifurd5ki9wggoq",
-    "bayId": "0mwifurd5g4rsrply",
+    "staffId": "0mwio8c5q61s8p8zw",
+    "bayId": "0mwio8c5qmb1h7f0f",
     "mileage": 221987,
     "fuelLevel": 4,
     "complaint": "Înlocuire discuri și plăcuțe față",
     "diagnosis": "",
     "lines": [
      {
-      "id": "0mwifurd94vg65oho",
+      "id": "0mwio8c5rjjdwxvj4",
       "kind": "labor",
-      "refId": "0mwifurd5onx0d947",
+      "refId": "0mwio8c5qur5v4ldv",
       "description": "Înlocuire discuri și plăcuțe față",
       "qty": 1.6,
       "unit": "h",
@@ -1412,12 +1412,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd5ki9wggoq"
+      "staffId": "0mwio8c5q61s8p8zw"
      },
      {
-      "id": "0mwifurd91xbujlqd",
+      "id": "0mwio8c5rkai8o2r6",
       "kind": "part",
-      "refId": "0mwifurd54ytgvtbn",
+      "refId": "0mwio8c5qmbagl3ye",
       "description": "Discuri frână față Brembo",
       "qty": 1,
       "unit": "set",
@@ -1428,9 +1428,9 @@
       "staffId": null
      },
      {
-      "id": "0mwifurd95hnvp5pq",
+      "id": "0mwio8c5rz1dndi2c",
       "kind": "part",
-      "refId": "0mwifurd57kg7lh7p",
+      "refId": "0mwio8c5q1j5yppny",
       "description": "Plăcuțe frână față ATE",
       "qty": 1,
       "unit": "set",
@@ -1494,7 +1494,7 @@
      }
     ],
     "notes": "",
-    "invoiceId": "0mwifuree329ep10i",
+    "invoiceId": "0mwio8c6e86lh27e5",
     "dates": {
      "estimate": "2025-11-18T06:15:00.000Z",
      "approved": "2025-11-18T06:15:00.000Z",
@@ -1507,7 +1507,7 @@
     "updatedAt": "2025-11-18T06:15:00.000Z"
    },
    "customer": {
-    "id": "0mwifurd6cu9196e0",
+    "id": "0mwio8c5qqoka0k2b",
     "type": "person",
     "name": "Cristian Dumitru",
     "phone": "0748 610 788",
@@ -1522,8 +1522,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwifurd6p7ywnq36",
-    "customerId": "0mwifurd6cu9196e0",
+    "id": "0mwio8c5qbspv62i9",
+    "customerId": "0mwio8c5qqoka0k2b",
     "plate": "AG16WCN",
     "vin": "VF1UYN2D775BMDM1X",
     "make": "Renault",
@@ -1588,23 +1588,23 @@
   },
   {
    "order": {
-    "id": "0mwifurd9yorlwu3t",
+    "id": "0mwio8c5r8r29d8jd",
     "number": 1005,
     "status": "delivered",
-    "customerId": "0mwifurd8xmbm0492",
-    "vehicleId": "0mwifurd8hrxvekem",
+    "customerId": "0mwio8c5rpscx4qor",
+    "vehicleId": "0mwio8c5r5debo150",
     "appointmentId": null,
-    "staffId": "0mwifurd5u0zklwqu",
-    "bayId": "0mwifurd5g4rsrply",
+    "staffId": "0mwio8c5qb9pbe20h",
+    "bayId": "0mwio8c5qmb1h7f0f",
     "mileage": 137691,
     "fuelLevel": 4,
     "complaint": "Geometrie roți",
     "diagnosis": "",
     "lines": [
      {
-      "id": "0mwifurd9pye85tcd",
+      "id": "0mwio8c5renzj6qo5",
       "kind": "labor",
-      "refId": "0mwifurd6071wj6g6",
+      "refId": "0mwio8c5q1055nvpk",
       "description": "Geometrie roți",
       "qty": 0.8,
       "unit": "h",
@@ -1612,7 +1612,7 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd5u0zklwqu"
+      "staffId": "0mwio8c5qb9pbe20h"
      }
     ],
     "inspection": [
@@ -1668,7 +1668,7 @@
      }
     ],
     "notes": "",
-    "invoiceId": "0mwifureeu3jmzjav",
+    "invoiceId": "0mwio8c6e4koncb85",
     "dates": {
      "estimate": "2025-11-18T07:15:00.000Z",
      "approved": "2025-11-18T07:15:00.000Z",
@@ -1681,7 +1681,7 @@
     "updatedAt": "2025-11-18T07:15:00.000Z"
    },
    "customer": {
-    "id": "0mwifurd8xmbm0492",
+    "id": "0mwio8c5rpscx4qor",
     "type": "company",
     "name": "Trans Logistic SRL",
     "contactName": "Raluca Florea",
@@ -1697,8 +1697,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwifurd8hrxvekem",
-    "customerId": "0mwifurd8xmbm0492",
+    "id": "0mwio8c5r5debo150",
+    "customerId": "0mwio8c5rpscx4qor",
     "plate": "B450SAM",
     "vin": "WF06G057HFMC40NPA",
     "make": "Ford",
@@ -1818,23 +1818,23 @@
   },
   {
    "order": {
-    "id": "0mwifurd97kajs94n",
+    "id": "0mwio8c5rh1joz1xu",
     "number": 1006,
     "status": "delivered",
-    "customerId": "0mwifurd8gnz7360b",
-    "vehicleId": "0mwifurd893mak0u4",
+    "customerId": "0mwio8c5rzpqpit1u",
+    "vehicleId": "0mwio8c5rjm6djp6p",
     "appointmentId": null,
-    "staffId": "0mwifurd0g8galc98",
-    "bayId": "0mwifurd5g4rsrply",
+    "staffId": "0mwio8c5pjcy6hhkr",
+    "bayId": "0mwio8c5qmb1h7f0f",
     "mileage": 3392,
     "fuelLevel": 4,
     "complaint": "Schimb ulei și filtru",
     "diagnosis": "",
     "lines": [
      {
-      "id": "0mwifurd9x11ygzww",
+      "id": "0mwio8c5r1y8gzftn",
       "kind": "labor",
-      "refId": "0mwifurd5ipuj1xik",
+      "refId": "0mwio8c5qwrlo1oa6",
       "description": "Schimb ulei și filtru",
       "qty": 0.6,
       "unit": "h",
@@ -1842,12 +1842,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd0g8galc98"
+      "staffId": "0mwio8c5pjcy6hhkr"
      },
      {
-      "id": "0mwifurd9jq78wevy",
+      "id": "0mwio8c5rr2cqah4y",
       "kind": "part",
-      "refId": "0mwifurd5sirbuf2k",
+      "refId": "0mwio8c5qpvxc35fj",
       "description": "Ulei motor 5W-30 Castrol",
       "qty": 4.5,
       "unit": "l",
@@ -1858,9 +1858,9 @@
       "staffId": null
      },
      {
-      "id": "0mwifurd9no4losqb",
+      "id": "0mwio8c5rczl9vtko",
       "kind": "part",
-      "refId": "0mwifurd5kupwp1nf",
+      "refId": "0mwio8c5qlfenyitz",
       "description": "Filtru ulei Mann-Filter",
       "qty": 1,
       "unit": "buc",
@@ -1924,7 +1924,7 @@
      }
     ],
     "notes": "",
-    "invoiceId": "0mwifureephf4cmaf",
+    "invoiceId": "0mwio8c6eya5jemeh",
     "dates": {
      "estimate": "2025-11-19T06:45:00.000Z",
      "approved": "2025-11-19T06:45:00.000Z",
@@ -1937,7 +1937,7 @@
     "updatedAt": "2025-11-19T06:45:00.000Z"
    },
    "customer": {
-    "id": "0mwifurd8gnz7360b",
+    "id": "0mwio8c5rzpqpit1u",
     "type": "company",
     "name": "Construct Plus SRL",
     "contactName": "Cristian Ilie",
@@ -1953,8 +1953,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwifurd893mak0u4",
-    "customerId": "0mwifurd8gnz7360b",
+    "id": "0mwio8c5rjm6djp6p",
+    "customerId": "0mwio8c5rzpqpit1u",
     "plate": "B616WSD",
     "vin": "VNKY11XZS12WF8KX3",
     "make": "Toyota",
@@ -2069,23 +2069,23 @@
   },
   {
    "order": {
-    "id": "0mwifurd96zkvvvom",
+    "id": "0mwio8c5shmbt4m95",
     "number": 1007,
     "status": "delivered",
-    "customerId": "0mwifurd7jrn8ogko",
-    "vehicleId": "0mwifurd7e5b66ish",
+    "customerId": "0mwio8c5rra5h5e28",
+    "vehicleId": "0mwio8c5roffnq0zv",
     "appointmentId": null,
-    "staffId": "0mwifurd5ki9wggoq",
-    "bayId": "0mwifurd5r1fik28e",
+    "staffId": "0mwio8c5q61s8p8zw",
+    "bayId": "0mwio8c5qpbvz567m",
     "mileage": 12266,
     "fuelLevel": 4,
     "complaint": "Schimb anvelope sezonier (4 buc.)",
     "diagnosis": "",
     "lines": [
      {
-      "id": "0mwifurd9adoww9kk",
+      "id": "0mwio8c5s02c0mn91",
       "kind": "labor",
-      "refId": "0mwifurd6lojgz2ha",
+      "refId": "0mwio8c5q6eht51h2",
       "description": "Schimb anvelope sezonier (4 buc.)",
       "qty": 0.6,
       "unit": "h",
@@ -2093,10 +2093,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd5ki9wggoq"
+      "staffId": "0mwio8c5q61s8p8zw"
      },
      {
-      "id": "0mwifurd9ditccocd",
+      "id": "0mwio8c5s7zn557f8",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -2162,7 +2162,7 @@
      }
     ],
     "notes": "",
-    "invoiceId": "0mwifureemutomkqj",
+    "invoiceId": "0mwio8c6ep9lrcwgb",
     "dates": {
      "estimate": "2025-11-19T07:00:00.000Z",
      "approved": "2025-11-19T07:00:00.000Z",
@@ -2175,7 +2175,7 @@
     "updatedAt": "2025-11-19T07:00:00.000Z"
    },
    "customer": {
-    "id": "0mwifurd7jrn8ogko",
+    "id": "0mwio8c5rra5h5e28",
     "type": "person",
     "name": "Bogdan Mocanu",
     "phone": "0735 940 719",
@@ -2190,8 +2190,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwifurd7e5b66ish",
-    "customerId": "0mwifurd7jrn8ogko",
+    "id": "0mwio8c5roffnq0zv",
+    "customerId": "0mwio8c5rra5h5e28",
     "plate": "CJ35DLP",
     "vin": "WDBWPSSH3YL3ALJDF",
     "make": "Mercedes-Benz",
@@ -2241,23 +2241,23 @@
   },
   {
    "order": {
-    "id": "0mwifurd9yozskh4z",
+    "id": "0mwio8c5reio0lp7s",
     "number": 1008,
     "status": "delivered",
-    "customerId": "0mwifurd7eloiz5z7",
-    "vehicleId": "0mwifurd7ojtbmasp",
+    "customerId": "0mwio8c5rsgn6ihyf",
+    "vehicleId": "0mwio8c5rrnexebn5",
     "appointmentId": null,
-    "staffId": "0mwifurd59zlriny8",
-    "bayId": "0mwifurd5r1fik28e",
+    "staffId": "0mwio8c5qti4kosmm",
+    "bayId": "0mwio8c5qpbvz567m",
     "mileage": 15048,
     "fuelLevel": 2,
     "complaint": "Înlocuire rulment roată, Diagnoză computerizată",
     "diagnosis": "",
     "lines": [
      {
-      "id": "0mwifurd9f5ml2e72",
+      "id": "0mwio8c5ra5239jm5",
       "kind": "labor",
-      "refId": "0mwifurd6438c5f7e",
+      "refId": "0mwio8c5qg2jin5z0",
       "description": "Înlocuire rulment roată",
       "qty": 1.5,
       "unit": "h",
@@ -2265,12 +2265,12 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd59zlriny8"
+      "staffId": "0mwio8c5qti4kosmm"
      },
      {
-      "id": "0mwifurd92lvj0jyd",
+      "id": "0mwio8c5rtz6h47s6",
       "kind": "part",
-      "refId": "0mwifurd5iq2bls2q",
+      "refId": "0mwio8c5q2n2gr2gn",
       "description": "Kit rulment roată SKF",
       "qty": 1,
       "unit": "buc",
@@ -2281,9 +2281,9 @@
       "staffId": null
      },
      {
-      "id": "0mwifurd9oor0078y",
+      "id": "0mwio8c5rt637llgu",
       "kind": "labor",
-      "refId": "0mwifurd55b3zmce3",
+      "refId": "0mwio8c5qdjl3tnn1",
       "description": "Diagnoză computerizată",
       "qty": 0.5,
       "unit": "h",
@@ -2291,10 +2291,10 @@
       "discountPct": 0,
       "vatRate": 21,
       "cost": 0,
-      "staffId": "0mwifurd59zlriny8"
+      "staffId": "0mwio8c5qti4kosmm"
      },
      {
-      "id": "0mwifurd9nicbb529",
+      "id": "0mwio8c5re5gt5cxn",
       "kind": "fee",
       "refId": null,
       "description": "Materiale consumabile",
@@ -2360,7 +2360,7 @@
      }
     ],
     "notes": "",
-    "invoiceId": "0mwifureej0fm9swa",
+    "invoiceId": "0mwio8c6esdpwp6hg",
     "dates": {
      "estimate": "2025-11-19T08:30:00.000Z",
      "approved": "2025-11-19T08:30:00.000Z",
@@ -2373,7 +2373,7 @@
     "updatedAt": "2025-11-19T08:30:00.000Z"
    },
    "customer": {
-    "id": "0mwifurd7eloiz5z7",
+    "id": "0mwio8c5rsgn6ihyf",
     "type": "person",
     "name": "Lucian Enache",
     "phone": "0763 206 867",
@@ -2388,8 +2388,8 @@
     "createdAt": "2025-11-15T07:00:00.000Z"
    },
    "vehicle": {
-    "id": "0mwifurd7ojtbmasp",
-    "customerId": "0mwifurd7eloiz5z7",
+    "id": "0mwio8c5rrnexebn5",
+    "customerId": "0mwio8c5rsgn6ihyf",
     "plate": "B538XLP",
     "vin": "SB105CZ03NABENA85",
     "make": "Toyota",
