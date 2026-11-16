@@ -255,6 +255,8 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 							<DialogPrimitive.Description className={description ? cn("mt-0.5 text-sm text-muted-foreground", car && "text-center") : "sr-only"}>
 								{description ?? title}
 							</DialogPrimitive.Description>
+							{/* On a car's sheet the main buttons sit under the title, as on the iPhone (the owner's pick, 16 Nov 2026). */}
+							{car && footer && <div data-sheet-actions className="mt-4 flex flex-wrap items-center justify-center gap-2 [&_button]:h-9 [&_p]:basis-full [&_p]:text-center [&_p]:text-xs">{footer}</div>}
 						</div>
 					</div>
 					<div ref={bounceThroughScrollLock} className="min-h-0 flex-1 overflow-y-scroll overscroll-contain">
@@ -263,7 +265,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 							<SheetDepth.Provider value={depth + 1}>{children}</SheetDepth.Provider>
 						</div>
 					</div>
-					{footer && (
+					{footer && !car && (
 						<div className={cn("flex shrink-0 flex-wrap justify-end gap-2 border-t px-4", car ? "bg-black/10" : "bg-card", " pt-3 pb-[calc(0.75rem+var(--safe-bottom))] md:px-6 md:pb-5 [&>*]:max-md:flex-1", footerClassName)}>
 							{footer}
 						</div>

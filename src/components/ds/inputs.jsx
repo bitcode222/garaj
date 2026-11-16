@@ -12,7 +12,7 @@ import { tone as toneOf } from "@/lib/tones";
 export function Field({ label, hint, error, required, className, children }) {
 	const id = useId();
 	return (
-		<div className={cn("grid content-start gap-1.5", className)}>
+		<div data-field className={cn("grid content-start gap-1.5", className)}>
 			{label && (
 				<Label htmlFor={id} className="text-[13px] font-medium text-muted-foreground">
 					{label}

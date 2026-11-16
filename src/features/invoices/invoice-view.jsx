@@ -1,6 +1,10 @@
 "use client";
 
+import { Banknote, Printer } from "lucide-react";
 import { DetailSheet } from "@/components/ds/detail-sheet";
+import { Button } from "@/components/ui/button";
+import { printPage } from "@/lib/hooks";
+import { openSheet } from "@/lib/sheets";
 import { EmbeddedLinks } from "@/components/ds/embedded-links";
 import { formatInvoiceNumber } from "@/domain/invoice";
 import { detailHref } from "@/lib/detail-mode";
@@ -31,6 +35,19 @@ export default function InvoiceView({ open, onOpenChange, id }) {
 			kind="invoice"
 			state={invoice && today ? invoiceLook(invoice, selectPaymentsByInvoice(payments).get(invoice.id) ?? [], { today, currency: settings.currency }) : undefined}
 			fullPage={invoice && detailHref("invoice", invoice.id)}
+			// The main button under the title (sheets "A"): collect what is still owed.
+			footer={
+				invoice && !draft && invoice.status === "issued" && !invoice.stornoOf ? (
+					<>
+						<Button onClick={() => openSheet("payment", { invoiceId: invoice.id })}>
+							<Banknote /> Încasează
+						</Button>
+						<Button variant="outline" onClick={() => printPage(`Factura ${formatInvoiceNumber(invoice.series, invoice.number)}`)}>
+							<Printer /> PDF
+						</Button>
+					</>
+				) : null
+			}
 		>
 			{invoice && (
 				<EmbeddedLinks>
