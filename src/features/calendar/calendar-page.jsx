@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeftRight, ArrowUpDown, CalendarDays, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, Columns3, SlidersHorizontal } from "lucide-react";
+import { ArrowLeftRight, ArrowUpDown, CalendarDays, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, Columns3, GalleryHorizontal, SlidersHorizontal, Users } from "lucide-react";
 import { Segmented } from "@/components/ds/inputs";
 import { Sheet } from "@/components/ds/sheet";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ import { CalendarSettings, MiniMonth } from "./calendar-panel";
 import { CalendarSearch, useCalendarSearch, useSearchIndex } from "./calendar-search";
 import { FloatingMonth } from "./floating-month";
 import { DayRows } from "./day-rows";
+import { DaySummary } from "./day-summary";
 import { DayStrip } from "./day-strip";
 import { MonthPages } from "./month-pages";
 import { MonthStrip } from "./month-strip";
@@ -86,6 +87,12 @@ const WEEK_LOOKS = [
 	{ value: "albums", label: "Albume", icon: Columns3 },
 ];
 
+// The day's two looks (owner's pick C, 16 Nov 2026): one wide line with the day at a glance beside it, or a column per mechanic.
+const DAY_LOOKS = [
+	{ value: "line", label: "Linie", icon: GalleryHorizontal },
+	{ value: "staff", label: "Mecanici", icon: Users },
+];
+
 export function CalendarPage() {
 	const ready = useIsReady();
 	const today = useToday();
@@ -129,6 +136,8 @@ export function CalendarPage() {
 	// Săptămână has two looks, its own switch beside the views (kept on this device; on a phone the hours grid shows).
 	const [weekLook, weekSwitch] = useViewSwitch("garaj.agenda.week", WEEK_LOOKS);
 	const [albumAnchor, setAlbumAnchor] = useState(null);
+	// Zi too: one line (pick C) or a column per mechanic, its own switch beside the views.
+	const [dayLook, daySwitch] = useViewSwitch("garaj.agenda.day", DAY_LOOKS);
 	const gridArea = useRef(null); // where the booking details look for cards under the mouse, and the mini month floats
 	const searchInput = useRef(null);
 
@@ -152,19 +161,20 @@ export function CalendarPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allByDay, hiddenStaffText, hiddenStatusText, staffMap]);
 
-	// Zi: a column (⇄) or band (⇅) per mechanic shown, and "Nealocat" when a booking has nobody; the avatar stays on every booking.
+	// Zi "Mecanici": a column (⇄) or band (⇅) per mechanic shown, and "Nealocat" when a booking has nobody; Zi "Linie" is one
+	// wide line. The avatar stays on every booking.
 	// Săptămână: one column per day. Either way, a booking made with one mechanic shown goes to that mechanic.
 	const singleStaff = visibleStaff.length === 1 ? visibleStaff[0].id : undefined;
 	const withUnassigned = hasUnassigned && !hiddenStaff.includes("none");
 	const columns = useMemo(() => {
-		if (currentView === "day" && visibleStaff.length + (withUnassigned ? 1 : 0) > 1) {
+		if (currentView === "day" && dayLook === "staff" && visibleStaff.length + (withUnassigned ? 1 : 0) > 1) {
 			const list = visibleStaff.map((s) => ({ key: s.id, staffId: s.id, name: s.name, label: s.name.split(" ")[0], color: s.color }));
 			if (withUnassigned) list.push({ key: "none", staffId: null, name: "Nealocat", label: "Nealocat", color: "neutral" });
 			return list;
 		}
 		return [{ key: "all", staffId: singleStaff, name: "", label: "", color: "neutral" }];
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentView, staff, hiddenStaffText, withUnassigned, singleStaff]);
+	}, [currentView, dayLook, staff, hiddenStaffText, withUnassigned, singleStaff]);
 	const keyOf = useMemo(() => {
 		const keys = new Set(columns.map((c) => c.key));
 		return columns.length === 1 ? () => "all" : (a) => (keys.has(a.staffId) ? a.staffId : "none");
@@ -497,8 +507,10 @@ export function CalendarPage() {
 			{dir < 0 ? <ChevronLeft /> : <ChevronRight />}
 		</Button>
 	);
+	const onSheet = desktop && currentView === "week" && !albums;
+	const dayLine = desktop && currentView === "day" && dayLook === "line";
 	const nothingShown = !albums && byDay.size === 0 && allByDay.size > 0;
-	const stripProps = { ref: strip, today, settings, byDay, lookups, colorBy: prefs.colorBy, selectedId: selected, initialDay, onView, onOpen: open, onCreate: create };
+	const stripProps = { ref: strip, alone: currentView === "day" && dayLook === "line", today, settings, byDay, lookups, colorBy: prefs.colorBy, selectedId: selected, initialDay, onView, onOpen: open, onCreate: create };
 
 	return (
 		<div className="flex h-[calc(100dvh-3.5rem-var(--safe-top)-var(--tabbar-h)-var(--safe-bottom))] md:h-dvh">
@@ -520,6 +532,7 @@ export function CalendarPage() {
 								<div className="flex items-center gap-2">
 									<Segmented aria-label="Vizualizare" value={currentView} onValueChange={changeView} options={VIEWS.map((v) => ({ value: v.value, label: v.label }))} />
 									{currentView === "week" && weekSwitch}
+									{currentView === "day" && daySwitch}
 									{albums ? (
 										<>
 											<span className="flex gap-1">
@@ -594,14 +607,17 @@ export function CalendarPage() {
 						</div>
 					</div>
 				)}
-				{/* The week's hours grid sits on a white sheet (the owner's pick A); Albume and the other views fill the page. */}
-				<div
-					ref={gridArea}
-					className={cn(
-						"relative flex min-h-0 min-w-0 flex-1 flex-col",
-						desktop && currentView === "week" && !albums && "mx-6 mb-4 overflow-hidden rounded-[18px] bg-card shadow-[0_0_0_1px_var(--border),0_24px_48px_-32px_rgb(0_0_0/0.25)]",
-					)}
-				>
+				{/* The week's hours grid and the day's line sit on a white sheet (the owner's picks A and C), the day with its
+				    summary beside it; Albume, Mecanici and the month fill the page. */}
+				<div className={cn("flex min-h-0 min-w-0 flex-1", dayLine && "gap-5 px-6 pb-4")}>
+					<div
+						ref={gridArea}
+						className={cn(
+							"relative flex min-h-0 min-w-0 flex-1 flex-col",
+							(onSheet || dayLine) && "overflow-hidden rounded-[18px] bg-card shadow-[0_0_0_1px_var(--border),0_24px_48px_-32px_rgb(0_0_0/0.25)]",
+							onSheet && "mx-6 mb-4",
+						)}
+					>
 					<BookingPeek host={gridArea} />
 					{albums && <AlbumWeek anchor={anchor} today={today} byDay={byDay} lookups={lookups} selectedId={selected} onOpen={open} onCreate={create} />}
 					{!albums && miniOpen && (
@@ -617,7 +633,7 @@ export function CalendarPage() {
 						)
 					) : direction === "vertical" ? (
 						<DayRows
-							key={`${currentView}:v:${opening?.day ?? ""}:${columns.length}`}
+							key={`${currentView}:v:${opening?.day ?? ""}:${columns.length}:${dayLook}`}
 							{...stripProps}
 							view={currentView}
 							allByDay={allByDay}
@@ -628,7 +644,7 @@ export function CalendarPage() {
 						/>
 					) : (
 						<DayStrip
-							key={`${currentView}:${opening?.day ?? ""}:${columns.length}`}
+							key={`${currentView}:${opening?.day ?? ""}:${columns.length}:${dayLook}`}
 							{...stripProps}
 							view={currentView}
 							allByDay={allByDay}
@@ -655,6 +671,19 @@ export function CalendarPage() {
 								Arată tot
 							</button>
 						</p>
+					)}
+					</div>
+					{dayLine && (
+						<DaySummary
+							day={seen?.day ?? initialDay}
+							today={today}
+							list={byDay.get(seen?.day ?? initialDay)}
+							staff={visibleStaff}
+							hours={settings.hours}
+							lookups={lookups}
+							onOpen={open}
+							onCreate={create}
+						/>
 					)}
 				</div>
 			</div>

@@ -82,6 +82,14 @@ cards in their car's colour with depth, a soft glow of that colour and the logo 
 stack of car cards in the day's order, with its own ‹ › and Azi and a "+" per day (`features/calendar/album-week.jsx`,
 pick E). Bookings still to confirm: a dotted white outline (and an amber dot in Albume).
 
+### Agendă, Zi (owner's pick C, 16 Nov 2026, board https://claude.ai/artifact/2mZRpiUQRqgMNNrqcxgMgX)
+
+**Zi** has its own switch beside the views ("Linie · Mecanici", kept on the device, `garaj.agenda.day`). **Linie** (pick C,
+the default): the day alone as one wide line on the white sheet, overlapping bookings side by side, and beside it
+"Ziua pe scurt" (`features/calendar/day-summary.jsx`): how many bookings, the ones still to confirm (open them), each
+mechanic's first free hour from now on (book it), each mechanic's load, and "Programare nouă". The free time and the load
+are rules in `src/domain/day-summary.js`. **Mecanici**: the column per mechanic, as before (drag between mechanics).
+
 ## 5. Building blocks (in code)
 
 | Where | What |

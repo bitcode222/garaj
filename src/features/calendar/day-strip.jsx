@@ -279,7 +279,7 @@ function NowPill({ hourPx }) {
  * The scroll position never becomes React state: one read per frame, state only when the
  * days to render change. `ref` exposes goTo(day), step(±1) and today().
  */
-export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns, keyOf, orders, showService, lookups, colorBy, selectedId, initialDay, onView, onOpen, onOpenOrder, onCreate, onReschedule, onPickDay }) {
+export function DayStrip({ ref, view, alone, today, settings, byDay, allByDay, columns, keyOf, orders, showService, lookups, colorBy, selectedId, initialDay, onView, onOpen, onOpenOrder, onCreate, onReschedule, onPickDay }) {
 	const touch = useMediaQuery("(pointer: coarse)");
 	const scroller = useRef(null);
 	const [size, setSize] = useState({ width: 0, height: 0 });
@@ -294,7 +294,8 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 	const openDays = settings.hours.days;
 	const zi = view === "day";
 	// Zi: the middle day whole and a share of each neighbour, less with every mechanic more (calendar-geometry.js sideShare).
-	const perView = visibleDays(view, size.width, zi ? columns.length : 1);
+	// Zi "Linie" (pick C) shows the day alone, full width (`alone`).
+	const perView = zi && alone ? 1 : visibleDays(view, size.width, zi ? columns.length : 1);
 
 	const attach = useCallback((el) => {
 		scroller.current = el;
