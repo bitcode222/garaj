@@ -464,3 +464,60 @@
 		left: calc(50% + 2rem);
 	}
 }
+
+/* ── A sheet in its car's colour (docs/DESIGN.md §4, sheets A, owner 16 Nov 2026) ─────────────────────────────
+   As the iPhone's carSheet: the whole panel in the car's cover colour, the rows a light veil of its ink, the main
+   button white (black on yellow makes). The tokens are redefined inside the panel, so every field, list and button
+   of the sheet keeps working and only takes the colours. Menus and pickers open in portals, outside it. */
+.car-sheet-dark {
+	--background: rgb(255 255 255 / 0.08);
+	--foreground: #ffffff;
+	--card: rgb(255 255 255 / 0.12);
+	--card-foreground: #ffffff;
+	--muted: rgb(255 255 255 / 0.12);
+	--muted-foreground: rgb(255 255 255 / 0.72);
+	--subtle-foreground: rgb(255 255 255 / 0.55);
+	--accent: rgb(255 255 255 / 0.16);
+	--accent-foreground: #ffffff;
+	--secondary: rgb(255 255 255 / 0.16);
+	--secondary-foreground: #ffffff;
+	--border: rgb(255 255 255 / 0.18);
+	--input: rgb(255 255 255 / 0.3);
+	--ring: rgb(255 255 255 / 0.6);
+	--primary: #ffffff;
+	--primary-foreground: #18181b;
+	color-scheme: dark;
+	color: var(--foreground);
+}
+.car-sheet-light {
+	--background: rgb(0 0 0 / 0.05);
+	--foreground: #111111;
+	--card: rgb(255 255 255 / 0.35);
+	--card-foreground: #111111;
+	--muted: rgb(0 0 0 / 0.07);
+	--muted-foreground: rgb(0 0 0 / 0.65);
+	--subtle-foreground: rgb(0 0 0 / 0.5);
+	--accent: rgb(0 0 0 / 0.08);
+	--accent-foreground: #111111;
+	--secondary: rgb(0 0 0 / 0.08);
+	--secondary-foreground: #111111;
+	--border: rgb(0 0 0 / 0.14);
+	--input: rgb(0 0 0 / 0.24);
+	--ring: rgb(0 0 0 / 0.45);
+	--primary: #111111;
+	--primary-foreground: #ffffff;
+	color-scheme: light;
+	color: var(--foreground);
+}
+/* On a dark car colour the kinds' and states' own text colours are too dark to read: they are lifted toward white.
+   The visit bar's sections read in the ink, their coloured line under them stays. */
+.car-sheet-dark :is([class*="text-teal-"], [class*="text-violet-"], [class*="text-orange-"], [class*="text-blue-"], [class*="text-emerald-"], [class*="text-amber-"], [class*="text-red-"], [class*="text-pink-"], [class*="text-zinc-"]):not([class*="bg-"]) {
+	filter: brightness(1.9) saturate(0.7);
+}
+.car-sheet-dark nav[aria-label="Vizita"] button {
+	color: #ffffff;
+	filter: none;
+}
+.car-sheet-light nav[aria-label="Vizita"] button {
+	color: #111111;
+}

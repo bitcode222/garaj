@@ -56,6 +56,16 @@ the search and the settings under it). Blocks are a tint of the car's colour wit
 every view, a state is a plain dot, mechanics' avatars are neutral, their columns are no longer tinted, today is an ink
 circle and now is a red line, as on Azi.
 
+### Sheets (owner's pick, 16 Nov 2026, board https://claude.ai/artifact/1yjxRSfQoMKsYEa6BPdeqJ: A)
+
+A sheet about one car is in that car's colour all over, as the iPhone's `carSheet`: the cover colour behind, the logo on
+its art, the title centred with the state as a quiet pill, rows and fields a light veil of the ink, the main button white
+(black on yellow makes). Done in `Sheet` (`tint`, or `make` with a visit bar) by redefining the colour tokens inside the
+panel (`.car-sheet-dark`, `.car-sheet-light` in `globals.css`), so every field stays editable as before. Car sheets:
+a visit's records (booking, estimate, job, invoice), the car, the client (their first car), the booking form and the car
+form once a car is chosen, Recepție once a car is chosen. Sheets with no car (parts, operations, payment, team) stay
+neutral.
+
 ## 5. Building blocks (in code)
 
 | Where | What |

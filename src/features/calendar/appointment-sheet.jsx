@@ -148,6 +148,7 @@ export default function AppointmentSheet({ open, onOpenChange, id, start, end, s
 		<Sheet
 			open={open}
 			onOpenChange={onOpenChange}
+			tint={vehicles[form.vehicleId]?.make ?? null}
 			title={existing ? `Editează programarea${existing.number != null ? ` #${existing.number}` : ""}` : "Programare nouă"}
 			description={existing ? undefined : "Rezervă un interval pentru client și mașină"}
 			footer={

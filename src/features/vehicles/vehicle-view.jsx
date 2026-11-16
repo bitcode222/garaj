@@ -19,6 +19,7 @@ export default function VehicleView({ open, onOpenChange, id }) {
 			entity={vehicle}
 			missing="Mașina a fost ștearsă."
 			title={vehicle ? vehicleName(vehicle) || "Mașină" : "Mașină"}
+			tint={vehicle?.make ?? null}
 			description={vehicle ? [vehicle.year, vehicle.engine, FUELS[vehicle.fuel], vehicle.color].filter(Boolean).join(" · ") || undefined : undefined}
 			fullPage={vehicle && detailHref("vehicle", vehicle.id)}
 			onEdit={() => openSheet("vehicle", { id: vehicle.id })}
