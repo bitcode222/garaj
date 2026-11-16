@@ -1,6 +1,6 @@
 import SwiftUI
 
-// The pieces of look A (the board picked on 15 Nov 2026, docs/IOS-NATIVE.md §7): status capsules,
+// The pieces of looks A and 3 (docs/IOS-NATIVE.md §7, §9): status capsules,
 // number tiles, shortcut tiles, Settings-style icon squares, the time column of a booking row.
 
 /// A status as a tinted capsule ("În lucru", "Plătită").
@@ -128,13 +128,51 @@ extension View {
     }
 }
 
-/// A section header of look A: small, uppercase, muted.
+/// A section header of look 3: the section's name in bold, optionally a › when tapping it shows
+/// everything, and one muted line under it saying what is in the section.
+struct SectionHeader: View {
+    let title: String
+    var subtitle: String?
+    var action: (() -> Void)?
+    init(_ title: String, subtitle: String? = nil, action: (() -> Void)? = nil) {
+        self.title = title
+        self.subtitle = subtitle
+        self.action = action
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            if let action {
+                Button(action: action) {
+                    HStack(spacing: 4) {
+                        Text(title)
+                        Image(systemName: "chevron.right").font(.body.weight(.bold)).foregroundStyle(.secondary)
+                    }
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Arată tot")
+            } else {
+                Text(title)
+            }
+            if let subtitle {
+                Text(subtitle).font(.subheadline).fontWeight(.regular).foregroundStyle(.secondary)
+            }
+        }
+        .font(.title3.weight(.bold))
+        .foregroundStyle(.primary)
+        .textCase(nil)
+        .padding(.leading, -4)
+        .padding(.bottom, 4)
+        .accessibilityAddTraits(.isHeader)
+    }
+}
+
+/// The plain section headers of the earlier looks now read as look 3's headers.
 struct CapsHeader: View {
     let text: String
     init(_ text: String) { self.text = text }
-    var body: some View {
-        Text(text).font(.footnote).foregroundStyle(.secondary).textCase(.uppercase)
-    }
+    var body: some View { SectionHeader(text) }
 }
 
 /// A Romanian number plate: blue EU strip with "RO", the number in bold on white.
@@ -163,7 +201,7 @@ struct PlateBadge: View {
     }
 }
 
-/// A filter chip with its count; the selected one is filled with the accent color.
+/// A filter chip with its count; the selected one is filled with ink (look 3).
 struct CountChip: View {
     let title: String
     let count: Int
@@ -174,13 +212,13 @@ struct CountChip: View {
         Button(action: action) {
             HStack(spacing: 5) {
                 Text(title)
-                Text("\(count)").monospacedDigit().foregroundStyle(on ? Color.white.opacity(0.85) : .secondary)
+                Text("\(count)").monospacedDigit().foregroundStyle(on ? Color(.systemBackground).opacity(0.7) : .secondary)
             }
             .font(.subheadline.weight(.medium))
             .padding(.horizontal, 12)
             .frame(minHeight: 32)
-            .foregroundStyle(on ? Color.white : .primary)
-            .background(on ? Color.accentColor : Color(.secondarySystemGroupedBackground), in: .capsule)
+            .foregroundStyle(on ? Color(.systemBackground) : .primary)
+            .background(on ? Color.primary : Color(.secondarySystemGroupedBackground), in: .capsule)
         }
         .buttonStyle(.plain)
         .frame(minHeight: 44)
@@ -199,28 +237,43 @@ struct ChipRow<Content: View>: View {
     }
 }
 
-/// The buttons of look A: a filled accent rectangle (primary) or a light accent tint (secondary),
-/// 50 pt tall with 12 pt corners; the small size (34 pt, 8 pt corners) sits inside rows.
+/// The buttons of look 3: the main action is an ink capsule (black, white in dark mode; white when it
+/// sits on a car's color), the others a light grey capsule. 50 pt tall, 36 pt when small, inside rows.
 struct FillButtonStyle: ButtonStyle {
-    enum Kind { case primary, secondary }
+    enum Kind { case primary, secondary, onColor }
     var kind: Kind = .primary
     var small = false
     /// Stretch to the row's width (a lone icon button keeps its own width).
     var fill = true
     @Environment(\.isEnabled) private var enabled
 
+    private var background: Color {
+        switch kind {
+        case .primary: Color.primary
+        case .secondary: Color(.tertiarySystemFill)
+        case .onColor: Color.white
+        }
+    }
+    private var foreground: Color {
+        switch kind {
+        case .primary: Color(.systemBackground)
+        case .secondary: Color.primary
+        case .onColor: Color.black
+        }
+    }
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(small ? .subheadline.weight(.semibold) : .headline)
             .lineLimit(1)
-            .foregroundStyle(kind == .primary ? Color.white : Color.accentColor)
-            .padding(.horizontal, small ? 12 : 16)
-            .frame(maxWidth: fill ? .infinity : nil, minHeight: small ? 34 : 50)
-            .frame(minWidth: small ? 34 : 50)
-            .background(kind == .primary ? Color.accentColor : Color.accentColor.opacity(0.12), in: .rect(cornerRadius: small ? 8 : 12))
-            .contentShape(.rect(cornerRadius: small ? 8 : 12))
+            .foregroundStyle(foreground)
+            .padding(.horizontal, small ? 14 : 20)
+            .frame(maxWidth: fill ? .infinity : nil, minHeight: small ? 36 : 50)
+            .frame(minWidth: small ? 36 : 50)
+            .background(background, in: .capsule)
+            .contentShape(.capsule)
             .opacity(enabled ? (configuration.isPressed ? 0.7 : 1) : 0.4)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .animation(.spring(duration: 0.2), value: configuration.isPressed)
     }
 }
@@ -230,6 +283,25 @@ extension ButtonStyle where Self == FillButtonStyle {
     static var secondary: FillButtonStyle { FillButtonStyle(kind: .secondary) }
     static var primarySmall: FillButtonStyle { FillButtonStyle(small: true) }
     static var secondarySmall: FillButtonStyle { FillButtonStyle(kind: .secondary, small: true) }
+    static var onColor: FillButtonStyle { FillButtonStyle(kind: .onColor) }
+}
+
+/// A round glass button for the secondary actions of look 3 (call, photo, "…").
+struct CircleButtonStyle: ButtonStyle {
+    var size: CGFloat = 46
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: size * 0.4, weight: .semibold))
+            .foregroundStyle(.primary)
+            .frame(width: size, height: size)
+            .glassEffect(.regular.interactive(), in: .circle)
+            .contentShape(.circle)
+            .opacity(configuration.isPressed ? 0.7 : 1)
+    }
+}
+
+extension ButtonStyle where Self == CircleButtonStyle {
+    static var circle: CircleButtonStyle { CircleButtonStyle() }
 }
 
 /// The toolbar's sort and group menu (look 2 round): two inline pickers, the choice remembered by the caller.

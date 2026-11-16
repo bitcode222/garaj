@@ -56,7 +56,6 @@ struct VehiclesView: View {
             }
         } }
         .overlay { if vehicles.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView("Nicio mașină", systemImage: "car")) : AnyView(ContentUnavailableView.search(text: query)) } }
-        .band(200)
         .navigationTitle("Mașini")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Număr, marcă, VIN, proprietar")
         .toolbar {
@@ -195,7 +194,6 @@ struct VehicleDetailView: View {
             Section { Button("Șterge mașina", role: .destructive) { confirmDelete = true } }
         }
         .listStyle(.insetGrouped)
-        .band(200)
         .navigationTitle(People.formatPlate(v.plate))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { Button("Editează") { editing = v } }

@@ -10,8 +10,6 @@ struct HomeView: View {
     @Environment(AppStore.self) private var store
     @Environment(UndoCenter.self) private var undo
     @State private var path: [Route] = []
-    @State private var query = ""
-    @State private var searching = false
     @State private var creatingJob = false
     @State private var booking: BookingForm.Target?
     @State private var paying: Invoice?
@@ -24,20 +22,15 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
-                    if query.isEmpty {
-                        shortcuts
-                        numbers(proxy)
-                        inShop.id("shop")
-                        toConfirm.id("confirm")
-                        toCollect.id("collect")
-                        analytics.id("analytics")
-                    } else {
-                        Section { SearchResults(query: query) { path.append($0) } }.bareRow()
-                    }
+                    shortcuts
+                    numbers(proxy)
+                    inShop.id("shop")
+                    toConfirm.id("confirm")
+                    toCollect.id("collect")
+                    analytics.id("analytics")
                 }
                 .listStyle(.insetGrouped)
                 .listSectionSpacing(20)
-                .band(query.isEmpty ? 300 : 0)
                 #if DEBUG
                 // Screenshots: `-GarajHomeSection collect` scrolls there.
                 .task {
@@ -50,7 +43,6 @@ struct HomeView: View {
             }
             .navigationTitle(greeting)
             .navigationSubtitle(dayLine)
-            .searchable(text: $query, isPresented: $searching, prompt: "Mașină, client, lucrare, factură")
             .toolbar {
                 Menu {
                     Button { booking = .new } label: { Label("Programare nouă", systemImage: "calendar.badge.plus") }
@@ -98,7 +90,6 @@ struct HomeView: View {
                 QuickAction(title: "Programare", symbol: "calendar.badge.plus") { booking = .new }
                 QuickAction(title: "Lucrare", symbol: "wrench.and.screwdriver") { creatingJob = true }
                 QuickAction(title: "Factură", symbol: "doc.badge.plus") { path.append(.invoice(store.createInvoiceDraft().id)) }
-                QuickAction(title: "Caută", symbol: "magnifyingglass") { searching = true }
             }
         }
         .bareRow()
@@ -460,7 +451,7 @@ private struct ChangeBadge: View {
 }
 
 /// What matches the search: cars, clients, jobs, invoices.
-private struct SearchResults: View {
+struct SearchResults: View {
     @Environment(AppStore.self) private var store
     let query: String
     let open: (HomeView.Route) -> Void
@@ -539,5 +530,34 @@ private struct ResultRow: View {
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
+    }
+}
+
+/// Caută: the search tab, apart from the others (look 3). Cars, clients, jobs, invoices.
+struct SearchView: View {
+    @State private var path: [HomeView.Route] = []
+    @Binding var query: String
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            List {
+                if query.trimmingCharacters(in: .whitespaces).isEmpty {
+                    ContentUnavailableView("Caută în atelier", systemImage: "magnifyingglass",
+                                           description: Text("Număr de înmatriculare, client, telefon, VIN, număr de lucrare sau de factură."))
+                        .bareRow()
+                } else {
+                    Section { SearchResults(query: query) { path.append($0) } }.bareRow()
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Caută")
+            .navigationDestination(for: HomeView.Route.self) { route in
+                switch route {
+                case .job(let id): WorkOrderDetailView(id: id)
+                case .invoice(let id): InvoiceDetailView(id: id)
+                case .appointment(let id): AppointmentDetailView(id: id)
+                }
+            }
+        }
     }
 }

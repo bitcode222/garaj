@@ -187,7 +187,6 @@ struct WorkOrderDetailView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .band(150)
         .navigationTitle(Text(verbatim: "Lucrarea #\(order.number)"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

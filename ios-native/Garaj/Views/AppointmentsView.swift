@@ -34,13 +34,12 @@ struct AppointmentsView: View {
             Group {
             if mode == "calendar" {
                 VStack(spacing: 8) {
-                    modePicker.onBand().padding(.horizontal, 16)
+                    modePicker.padding(.horizontal, 16)
                     CalendarDayView(day: $calendarDay, open: { path.append(.appointment($0)) }, book: { editing = .newAt($0, $1) })
                 }
-                .band(150)
             } else {
             List {
-                Section { modePicker.onBand() }.bareRow().listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                Section { modePicker }.bareRow().listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
                 if query.isEmpty {
                     Section { StatsRow(status: $status, period: $period) }.bareRow()
                     Section {
@@ -69,7 +68,6 @@ struct AppointmentsView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .band(260)
             .overlay {
                 if result.rows.isEmpty {
                     if query.isEmpty {
@@ -82,7 +80,7 @@ struct AppointmentsView: View {
             .searchable(text: $query, prompt: "Număr, client, telefon, mașină")
             }
             }
-            .navigationTitle(mode == "calendar" ? "Calendar" : "Programări")
+            .navigationTitle("Agendă")
             .navigationBarTitleDisplayMode(mode == "calendar" ? .inline : .large)
             .sensoryFeedback(.selection, trigger: mode)
             .toolbar {

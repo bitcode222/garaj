@@ -8,6 +8,9 @@ struct InvoicesView: View {
     @AppStorage("invoices.sort") private var sort = "new"
     @AppStorage("invoices.group") private var group = "month"
     @State private var path: [String] = []
+    /// Inside Registru's stack instead of its own (Registru → Facturi).
+    var embedded = false
+    @State private var pushed: String?
     @State private var creating = false
     @State private var paying: Invoice?
 
@@ -106,7 +109,16 @@ struct InvoicesView: View {
     }
 
     var body: some View {
-        NavigationStack(path: $path) {
+        if embedded {
+            page.navigationDestination(item: $pushed) { InvoiceDetailView(id: $0) }
+        } else {
+            NavigationStack(path: $path) { page }
+        }
+    }
+
+    private func open(_ id: String) { if embedded { pushed = id } else { path.append(id) } }
+
+    @ViewBuilder private var page: some View {
             let all = matching
             let rows = all.filter { filter.keeps($0.state) }
             let dueRows = all.filter { Filter.due.keeps($0.state) }
@@ -152,7 +164,6 @@ struct InvoicesView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .band(260)
             .sensoryFeedback(.selection, trigger: filter)
             .overlay {
                 if rows.isEmpty {
@@ -183,15 +194,14 @@ struct InvoicesView: View {
             .task {
                 guard let n = UserDefaults.standard.string(forKey: "GarajOpenInvoice") else { return }
                 let all = store.all(Invoice.self)
-                if let inv = n == "draft" ? all.first(where: { $0.status == "draft" }) : all.first(where: { $0.number.map(String.init) == n }) { path = [inv.id] }
+                if let inv = n == "draft" ? all.first(where: { $0.status == "draft" }) : all.first(where: { $0.number.map(String.init) == n }) { open(inv.id) }
             }
             #endif
             .confirmationDialog("Factură nouă", isPresented: $creating, titleVisibility: .hidden) {
-                Button("Factură fără lucrare") { path.append(store.createInvoiceDraft().id) }
+                Button("Factură fără lucrare") { open(store.createInvoiceDraft().id) }
             } message: {
                 Text("Factura unei lucrări se face din lucrare (butonul „Factură”).")
             }
-        }
     }
 }
 
