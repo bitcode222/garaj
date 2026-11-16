@@ -33,6 +33,7 @@ import { openCommandMenu } from "./command-state";
 import { AccountMenu } from "./account-menu";
 import { ThemeToggle } from "./theme-toggle";
 import { KeyHint } from "@/components/ds/blocks";
+import { RunningJobBar } from "@/features/running/running-job";
 
 const CommandMenu = dynamic(() => import("./command-menu").then((m) => m.CommandMenu), { ssr: false });
 const GlobalSheets = dynamic(() => import("./global-sheets").then((m) => m.GlobalSheets), { ssr: false });
@@ -485,6 +486,7 @@ export function AppShell({ children }) {
 			>
 				<Toolbar pathname={pathname} />
 				<PageTransition>{children}</PageTransition>
+				<RunningJobBar />
 			</main>
 			<TabBar pathname={pathname} badges={badges} />
 			<CommandMenu />

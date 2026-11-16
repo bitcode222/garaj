@@ -1,183 +1,380 @@
 "use client";
 
-import { Fragment, useState } from "react";
-import { DayRuler } from "@/components/ds/day-ruler";
-import { Segmented } from "@/components/ds/inputs";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { CalendarClock, ExternalLink, GalleryHorizontal, MoreHorizontal, Phone } from "lucide-react";
+import { CarCover, CoverButton, CoverIconButton, MakeTile } from "@/components/ds/car";
+import { PageTitle, SectionHeader, StatCard, StatusDot, useViewSwitch } from "@/components/ds/blocks";
 import { Page } from "@/components/ds/page";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useAccount } from "@/components/shell/account-menu";
+import { fmtDate, fmtTime, formatMoney, plural } from "@/lib/format";
+import { dayOfInstant } from "@/domain/dates";
+import { formatPlate } from "@/domain/vehicle";
+import { AREA, STATE, TONE_COLOR, makeColor, makeInk, makeTint } from "@/lib/colors";
+import { APPOINTMENT_STATUS, WORK_ORDER_STATUS } from "@/lib/labels";
+import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
-import { selectDayMarks, selectEstimates, selectJobs, selectToCollect, selectWeekBookings } from "@/lib/store/selectors";
-import { parseISODate } from "@/domain/dates";
-import { SPAN, clampSpan, clampWindow, spanOf, windowAround } from "@/domain/timeframe";
-import { plural } from "@/lib/format";
-import { RECORD_KIND } from "@/lib/labels";
-import { useLocalPreference, useNowMinute } from "@/lib/hooks";
-import { atMinute } from "@/features/calendar/utils";
+import { selectToCollect, selectToConfirm } from "@/lib/store/selectors";
+import { useNowMinute } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
+import { atMinute, toMinutes } from "@/features/calendar/utils";
+import { primaryAction } from "@/features/work-orders/job-action";
+import { jobHeadline, jobSummary } from "@/features/work-orders/job-text";
 import { HomeAnalytics } from "./home-analytics";
-import { HomeHero } from "./home-hero";
-import { JobStrip } from "./job-strip";
-import { ToCollect } from "./to-collect";
-import { ToConfirm } from "./to-confirm";
+import { JOB_FILTERS, dayLanes, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data";
 
-/** A section in the cards form, loading: its title column with its half donut, its chips and three cards. */
-function StripSkeleton() {
-	return (
-		<div className="flex flex-col gap-2 md:flex-row md:gap-4">
-			<div className="flex shrink-0 items-center justify-between gap-4 md:w-44 md:flex-col md:items-stretch md:justify-between md:pt-1.5">
-				<Skeleton className="h-5 w-36" />
-				<Skeleton className="h-[4.5rem] w-36 rounded-t-full rounded-b-none md:h-[5.5rem] md:w-full" />
-			</div>
-			<div className="flex min-w-0 flex-1 flex-col gap-2">
-				<div className="flex gap-1.5 overflow-hidden py-1.5 md:py-0">
-					{Array.from({ length: 4 }, (_, i) => (
-						<Skeleton key={i} className="h-8 w-24 shrink-0 rounded-full md:h-7" />
-					))}
-				</div>
-				<div className="flex gap-4 overflow-hidden">
-					{Array.from({ length: 3 }, (_, i) => (
-						<Skeleton key={i} className="h-52 w-[min(84vw,20rem)] shrink-0 rounded-lg md:w-80" />
-					))}
-				</div>
-			</div>
-		</div>
-	);
-}
+// Azi (docs/DESIGN.md §4): the owner kept two looks, switched at the top right and remembered on this device.
+// A, "Coperți": the cars in the shop as covers, the day's numbers, today's bookings and the money to collect.
+// B, "Ziua": the numbers, the day as a timeline per lift, then what waits for a call and the money.
+const LOOKS = [
+	{ value: "covers", label: "Coperți", icon: GalleryHorizontal },
+	{ value: "day", label: "Ziua", icon: CalendarClock },
+];
 
-/** Loading state with the page's own geometry: the hero, the four sections (Programări, Devize, Lucrări, Facturi), the analytics grid. */
-function HomeSkeleton() {
+const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).join(" ") || "Mașină";
+
+function AziSkeleton() {
 	return (
-		<Page>
-			<div className="space-y-14 md:space-y-20">
-				<div className="flex flex-col items-center gap-5 pt-2 md:gap-6 md:pt-8">
-					<Skeleton className="h-8 w-72 max-w-full rounded-full" />
-					<Skeleton className="h-9 w-80 max-w-full" />
-					<Skeleton className="h-[4.25rem] w-full max-w-3xl rounded-2xl" />
-					<Skeleton className="h-9 w-80 max-w-full rounded-full" />
-				</div>
-				<StripSkeleton />
-				<StripSkeleton />
-				<StripSkeleton />
-				<StripSkeleton />
-				<div className="space-y-3">
-					<Skeleton className="h-7 w-28" />
-					<div className="grid gap-4 md:grid-cols-2">
-						<Skeleton className="h-80 rounded-xl" />
-						<Skeleton className="h-80 rounded-xl" />
-					</div>
-					<div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-						{Array.from({ length: 4 }, (_, i) => (
-							<Skeleton key={i} className="h-48 rounded-xl" />
-						))}
-					</div>
-				</div>
+		<Page width="wide" className="space-y-7">
+			<div className="space-y-2">
+				<Skeleton className="h-8 w-32" />
+				<Skeleton className="h-4 w-56" />
+			</div>
+			<div className="flex gap-3.5 overflow-hidden">
+				{Array.from({ length: 4 }, (_, i) => (
+					<Skeleton key={i} className="h-[280px] w-[238px] shrink-0 rounded-[14px]" />
+				))}
+			</div>
+			<div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+				{Array.from({ length: 4 }, (_, i) => (
+					<Skeleton key={i} className="h-[86px] rounded-xl" />
+				))}
 			</div>
 		</Page>
 	);
 }
 
-// The home's two views: the sections as they stack (the default), or one visit stage at a time as tabs.
-const VIEWS = ["sections", "stages"];
-const VIEW_OPTIONS = [
-	{ value: "sections", label: "Secțiuni" },
-	{ value: "stages", label: "Etape" },
-];
-const STAGES = ["appointment", "estimate", "job", "invoice"];
-const STAGE_OPTIONS = STAGES.map((key) => ({ value: key, label: RECORD_KIND[key].label, icon: RECORD_KIND[key].icon }));
+/** The day's four numbers. */
+function Numbers({ collect, jobs, bookings, hours, staff, currency }) {
+	const due = collect.groups.filter((g) => g.key !== "draft").flatMap((g) => g.items);
+	const late = collect.groups.find((g) => g.key === "overdue")?.items.length ?? 0;
+	const working = jobs.filter((o) => o.status === "in_progress").length;
+	const arrived = bookings.filter((a) => a.status === "arrived").length;
+	const who = hours.byStaff
+		.filter(([id, ms]) => staff[id]?.name && ms >= 60_000)
+		.slice(0, 2)
+		.map(([id, ms]) => `${staff[id].name.split(" ")[0]} ${hoursText(ms)}`)
+		.join(" · ");
+	return (
+		<div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+			<StatCard label="De încasat" value={formatMoney(collect.due, currency, { decimals: 0 })} note={late ? `${plural(late, "factură restantă", "facturi restante")}` : plural(due.length, "factură", "facturi")} color={late ? STATE.late : AREA.factura} />
+			<StatCard label="Lucrări deschise" value={jobs.length} note={`${working} în lucru acum`} color={AREA.lucrare} />
+			<StatCard label="Programări azi" value={bookings.length} note={arrived ? `${plural(arrived, "sosită", "sosite")}` : "nicio mașină sosită"} color={AREA.programare} />
+			<StatCard label="Ore lucrate azi" value={hoursText(hours.total)} note={who || "niciun cronometru azi"} color={AREA.rapoarte} />
+		</div>
+	);
+}
 
-/**
- * What the ruler counts (docs/TIMEFRAME-RULER.md §4, §13): its stacks are monochrome; a hovered day's details name each
- * kind in its own colour (docs/RECORD-COLORS.md), the same colour with "!" for its deadline.
- */
-const MARK_KINDS = [
-	{ key: "booking", tone: RECORD_KIND.appointment.tone, label: "Programare", count: (n) => plural(n, "programare", "programări") },
-	{ key: "estimate", due: "estimateDue", tone: RECORD_KIND.estimate.tone, label: "Deviz", count: (n) => plural(n, "deviz creat", "devize create"), dueCount: (n) => plural(n, "deviz de aprobat", "devize de aprobat") },
-	{ key: "job", due: "jobDue", tone: RECORD_KIND.job.tone, label: "Lucrare", count: (n) => plural(n, "lucrare începută", "lucrări începute"), dueCount: (n) => plural(n, "lucrare de terminat", "lucrări de terminat") },
-	{ key: "invoice", due: "invoiceDue", tone: RECORD_KIND.invoice.tone, label: "Factură", count: (n) => plural(n, "factură creată", "facturi create"), dueCount: (n) => plural(n, "factură scadentă", "facturi scadente") },
-];
+/** A job as a cover: its car's colour, the next step, and "…" for the rest. */
+function JobCover({ order, vehicle, customer, staffId }) {
+	const router = useRouter();
+	const action = primaryAction(order, { staffId });
+	const open = () => router.push(`/work-orders/detail/?id=${order.id}`);
+	const light = makeInk(vehicle?.make) !== "#ffffff";
+	return (
+		<CarCover
+			make={vehicle?.make}
+			plate={vehicle?.plate}
+			status={WORK_ORDER_STATUS[order.status]?.label}
+			eyebrow={`Lucrarea #${order.number} · ${carName(vehicle)}`}
+			title={jobHeadline(order)}
+			detail={jobSummary(order)}
+			onOpen={open}
+			className="snap-start"
+			action={
+				action && (
+					<CoverButton icon={action.icon} onClick={action.run}>
+						{action.label}
+					</CoverButton>
+				)
+			}
+			menu={
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<CoverIconButton icon={MoreHorizontal} label="Mai multe" light={light} />
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="start" data-sheet-menu>
+						<DropdownMenuItem onSelect={open}>
+							<ExternalLink /> Deschide lucrarea
+						</DropdownMenuItem>
+						{customer?.phone && (
+							<DropdownMenuItem asChild>
+								<a href={`tel:${customer.phone}`}>
+									<Phone /> Sună: {customer.name}
+								</a>
+							</DropdownMenuItem>
+						)}
+					</DropdownMenuContent>
+				</DropdownMenu>
+			}
+		/>
+	);
+}
 
-/**
- * Azi, the home page (docs/HOME-PAGE.md), in the Cloudflare manner: the day, one big search and
- * the day ruler, then the sections in the cards form for the ruler's dates, in the order of a
- * visit: Programări, Devize, Lucrări, Facturi; and last the analytics grid. Nothing date-bound is rendered before the store and the clock are known.
- */
+/** Azi A's first section: the open jobs as covers, filtered by stage. */
+function InShop({ jobs, vehicles, customers, staffId }) {
+	const [filter, setFilter] = useState("all");
+	const keep = JOB_FILTERS.find((f) => f.value === filter)?.keep ?? (() => true);
+	const shown = jobs.filter(keep);
+	const working = jobs.filter((o) => o.status === "in_progress").length;
+	const ready = jobs.filter((o) => o.status === "ready").length;
+	return (
+		<section className="space-y-3" aria-label="În atelier">
+			<SectionHeader title="În atelier" subtitle={`${plural(jobs.length, "mașină", "mașini")} · ${working} în lucru, ${ready} gata de predat`} href="/work-orders/">
+				<div className="hidden gap-1.5 sm:flex" role="group" aria-label="Arată">
+					{JOB_FILTERS.map((f) => {
+						const count = jobs.filter(f.keep).length;
+						if (f.value !== "all" && !count) return null;
+						return (
+							<button
+								key={f.value}
+								type="button"
+								aria-pressed={filter === f.value}
+								onClick={() => setFilter(f.value)}
+								className={cn("inline-flex h-7 items-center gap-1 rounded-[7px] border px-2.5 text-xs font-medium", filter === f.value ? "border-transparent bg-primary text-primary-foreground" : "bg-card")}
+							>
+								{f.label}
+								{f.value !== "all" && <span className="tabular-nums opacity-60">{count}</span>}
+							</button>
+						);
+					})}
+				</div>
+			</SectionHeader>
+			{shown.length ? (
+				<div className="no-scrollbar -mx-4 flex snap-x gap-3.5 overflow-x-auto scroll-px-4 px-4 pb-1 md:mx-0 md:scroll-px-0 md:px-0">
+					{shown.map((order) => (
+						<JobCover key={order.id} order={order} vehicle={vehicles[order.vehicleId]} customer={customers[order.customerId]} staffId={staffId} />
+					))}
+				</div>
+			) : (
+				<div className="flex flex-col items-center gap-2 rounded-xl border border-dashed bg-card px-6 py-10 text-center">
+					<p className="text-[15px] font-semibold">Nicio mașină aici</p>
+					<p className="text-sm text-muted-foreground">Când primești o mașină, apare aici în culoarea ei.</p>
+					<button type="button" onClick={() => openSheet("checkin")} className="mt-1 inline-flex h-8 items-center rounded-[8px] bg-primary px-3 text-[13px] font-medium text-primary-foreground">
+						Primește o mașină
+					</button>
+				</div>
+			)}
+		</section>
+	);
+}
+
+function Row({ children, onClick, label }) {
+	return (
+		<li>
+			<button type="button" onClick={onClick} aria-label={label} className="flex min-h-[52px] w-full items-center gap-2.5 px-3.5 py-2 text-left transition-colors hover:bg-accent/50">
+				{children}
+			</button>
+		</li>
+	);
+}
+
+function BookingRows({ bookings, vehicles, customers, empty, today }) {
+	if (!bookings.length) return <p className="rounded-xl border bg-card px-4 py-6 text-center text-sm text-muted-foreground">{empty}</p>;
+	return (
+		<ul className="divide-y overflow-hidden rounded-xl border bg-card">
+			{bookings.map((a) => {
+				const vehicle = vehicles[a.vehicleId];
+				const status = APPOINTMENT_STATUS[a.status];
+				return (
+					<Row key={a.id} onClick={() => openSheet("appointment-view", { id: a.id })} label={`Programarea de la ${fmtTime(a.start)}`}>
+						<span className="w-11 shrink-0 text-[13px] font-semibold tabular-nums">
+							{fmtTime(a.start)}
+							{today && dayOfInstant(a.start) !== today && <span className="block text-[11px] font-normal text-muted-foreground">{fmtDate(a.start, "d MMM")}</span>}
+						</span>
+						<MakeTile make={vehicle?.make} size={32} />
+						<span className="min-w-0 flex-1">
+							<span className="block truncate text-[13.5px] font-medium">{[carName(vehicle), a.title].filter(Boolean).join(" · ")}</span>
+							<span className="block truncate text-xs text-muted-foreground">{[customers[a.customerId]?.name, vehicle?.plate && formatPlate(vehicle.plate)].filter(Boolean).join(" · ")}</span>
+						</span>
+						{status && <StatusDot color={TONE_COLOR[status.tone]}>{status.label}</StatusDot>}
+					</Row>
+				);
+			})}
+		</ul>
+	);
+}
+
+function MoneyRows({ collect, vehicles, customers, currency }) {
+	const router = useRouter();
+	const items = collect.groups.filter((g) => g.key !== "draft").flatMap((g) => g.items).slice(0, 5);
+	if (!items.length) return <p className="rounded-xl border bg-card px-4 py-6 text-center text-sm text-muted-foreground">Nimic de încasat. Toate facturile sunt plătite.</p>;
+	return (
+		<ul className="divide-y overflow-hidden rounded-xl border bg-card">
+			{items.map(({ invoice, balance, overdueDays, dueIn }) => {
+				const vehicle = vehicles[invoice.vehicleId];
+				const late = overdueDays > 0;
+				return (
+					<Row key={invoice.id} onClick={() => router.push(`/invoices/detail/?id=${invoice.id}`)} label={`Factura ${invoice.number ?? ""}`}>
+						<MakeTile make={vehicle?.make} size={32} />
+						<span className="min-w-0 flex-1">
+							<span className="block truncate text-[13.5px] font-medium">{customers[invoice.customerId]?.name ?? "Client"}</span>
+							<span className={cn("block truncate text-xs", late ? "text-[#ff3b30]" : "text-muted-foreground")}>
+								{late ? `întârziată ${plural(overdueDays, "zi", "zile")}` : dueIn === 0 ? "scadentă azi" : dueIn != null ? `scadentă ${fmtDate(invoice.dueDate, "d MMM")}` : "de încasat"}
+							</span>
+						</span>
+						<span className="text-[13.5px] font-semibold tabular-nums">{formatMoney(balance, currency)}</span>
+					</Row>
+				);
+			})}
+		</ul>
+	);
+}
+
+/** Azi B: the lifts as lanes across the opening hours, the cars as blocks tinted with their colour. */
+function DayLanes({ lanes, vehicles, settings, minute }) {
+	const router = useRouter();
+	const from = Math.floor(toMinutes(settings.hours?.open ?? "08:00") / 60) * 60;
+	const to = Math.ceil(toMinutes(settings.hours?.close ?? "18:00") / 60) * 60;
+	const span = Math.max(60, to - from);
+	const at = (iso) => {
+		const d = new Date(iso);
+		return Math.min(100, Math.max(0, ((d.getHours() * 60 + d.getMinutes() - from) / span) * 100));
+	};
+	const hours = [];
+	for (let m = from; m <= to; m += 60) hours.push(m);
+	const now = ((minute - from) / span) * 100;
+	if (!lanes.length) return <p className="rounded-xl border bg-card px-4 py-6 text-center text-sm text-muted-foreground">Adaugă elevatoarele în Setări → Service ca să vezi ziua pe fiecare.</p>;
+	return (
+		<div className="overflow-x-auto rounded-xl border bg-card">
+			<div className="grid min-w-[720px] grid-cols-[124px_minmax(0,1fr)]">
+				<div />
+				<div className="relative h-8 border-l">
+					{hours.map((m) => (
+						<span key={m} className="absolute top-2 -translate-x-1/2 text-[11px] text-muted-foreground tabular-nums first:translate-x-0" style={{ left: `${((m - from) / span) * 100}%` }}>
+							{`${Math.floor(m / 60)}:00`}
+						</span>
+					))}
+				</div>
+				{lanes.map((lane) => (
+					<div key={lane.id ?? "loose"} className="contents">
+						<div className="flex h-16 items-center border-t px-3.5 text-[13px] font-medium">{lane.name}</div>
+						<div
+							className="relative h-16 border-t border-l"
+							style={{ backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(60 / span) * 100}% - 1px), var(--border) calc(${(60 / span) * 100}% - 1px), var(--border) ${(60 / span) * 100}%)` }}
+						>
+							{lane.blocks.map((block) => {
+								const vehicle = vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId];
+								const left = at(block.start);
+								const width = Math.max(4, at(block.end) - left);
+								const title = block.appointment ? [carName(vehicle), block.appointment.title].filter(Boolean).join(" · ") : jobHeadline(block.order);
+								const open = () => (block.order ? router.push(`/work-orders/detail/?id=${block.order.id}`) : openSheet("appointment-view", { id: block.appointment.id }));
+								return (
+									<button
+										key={block.key}
+										type="button"
+										onClick={open}
+										className={cn("absolute top-2 bottom-2 flex min-w-0 items-center gap-2 overflow-hidden rounded-[7px] px-2 text-left text-xs", block.planned && "border border-dashed bg-card")}
+										style={{
+											left: `calc(${left}% + 2px)`,
+											width: `calc(${width}% - 4px)`,
+											...(block.planned ? { borderColor: `color-mix(in srgb, ${makeColor(vehicle?.make)} 60%, transparent)` } : { background: makeTint(vehicle?.make), boxShadow: `inset 3px 0 0 ${makeColor(vehicle?.make)}` }),
+										}}
+									>
+										{!block.planned && <MakeTile make={vehicle?.make} size={22} />}
+										<span className="min-w-0">
+											<span className="block truncate font-semibold">{title}</span>
+											<span className="block truncate text-muted-foreground">
+												{[vehicle?.plate && formatPlate(vehicle.plate), block.running ? "în lucru acum" : `${fmtTime(block.start)}–${fmtTime(block.end)}`].filter(Boolean).join(" · ")}
+											</span>
+										</span>
+									</button>
+								);
+							})}
+							{now >= 0 && now <= 100 && <span aria-hidden className="absolute inset-y-0 w-0.5 bg-[#ff3b30]" style={{ left: `${now}%` }} />}
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
 export function DashboardPage() {
 	const ready = useIsReady();
 	const today = useToday();
-	const settings = useSettings();
 	const minute = useNowMinute();
+	const settings = useSettings();
+	const workOrders = useCollection("workOrders");
+	const vehicles = useCollection("vehicles");
+	const customers = useCollection("customers");
 	const appointments = useCollection("appointments");
 	const invoices = useCollection("invoices");
 	const payments = useCollection("payments");
-	const customers = useCollection("customers");
-	const vehicles = useCollection("vehicles");
-	const workOrders = useCollection("workOrders");
 	const staff = useCollection("staff");
-	// The sections' dates, chosen on the day ruler under the search (docs/TIMEFRAME-RULER.md). Its length is
-	// remembered on this device; its place is not: until it is moved it is centred on today, and follows
-	// today past midnight. Moved, it stays where it was put.
-	const [storedSpan, setStoredSpan] = useLocalPreference("garaj.home.span", String(SPAN.initial));
-	const span = clampSpan(Number(storedSpan));
-	const [moved, setMoved] = useState(null);
-	// The view (the sections, or the visit stages as tabs) and the stage shown in it, both kept on this device.
-	const [view, setView] = useLocalPreference("garaj.home.view", "sections", VIEWS);
-	const [stage, setStage] = useLocalPreference("garaj.home.stage", STAGES[0], STAGES);
+	const bays = useCollection("bays");
+	const { member } = useAccount();
+	const [look, lookSwitch] = useViewSwitch("garaj.azi.look", LOOKS);
+	if (!ready || !today || minute == null) return <AziSkeleton />;
 
-	if (!ready || !today || minute == null) return <HomeSkeleton />;
-
-	const nowAt = atMinute(today, minute);
-	const lookups = { vehicles, customers, staff, workOrders, appointments, settings, today, nowAt };
-	const range = moved ?? windowAround(today, span);
-	// A day picked on the ruler (or its undoing) is a look at one day, not a length to keep.
-	const choose = (next, { remember = true } = {}) => {
-		const kept = clampWindow(next, today);
-		setMoved(kept);
-		if (remember && spanOf(kept) !== span) setStoredSpan(String(spanOf(kept)));
-	};
-	const openDays = settings.hours?.days;
-	const ruler = (
-		<DayRuler
-			from={range.from}
-			to={range.to}
-			today={today}
-			marks={selectDayMarks(appointments, workOrders, invoices, payments, today)}
-			kinds={MARK_KINDS}
-			isClosed={openDays ? (day) => !openDays.includes(parseISODate(day).getDay()) : undefined}
-			onChange={choose}
-			onReset={() => setMoved(null)}
-			atDefault={!moved}
-		/>
+	const now = atMinute(today, minute);
+	const currency = settings.currency;
+	const jobs = shopJobs(workOrders);
+	const bookings = todaysBookings(appointments, today);
+	const collect = selectToCollect(invoices, payments, today);
+	const hours = hoursToday(workOrders, today, new Date().toISOString());
+	const numbers = <Numbers collect={collect} jobs={jobs} bookings={bookings} hours={hours} staff={staff} currency={currency} />;
+	const money = (
+		<section className="space-y-3" aria-label="De încasat">
+			<SectionHeader title="De încasat" subtitle={`${formatMoney(collect.due, currency)} · ${plural(collect.groups.filter((g) => g.key !== "draft").reduce((n, g) => n + g.items.length, 0), "factură", "facturi")}`} href="/invoices/" />
+			<MoneyRows collect={collect} vehicles={vehicles} customers={customers} currency={currency} />
+		</section>
 	);
 
 	return (
-		<Page>
-			<div className="space-y-14 md:space-y-20">
-								<HomeHero settings={settings} today={today} minute={minute} />
-				{/* The dates of the sections below (docs/TIMEFRAME-RULER.md): its own section, left-aligned like them. */}
-				<div className="space-y-4">
-					<section aria-label="Interval">{ruler}</section>
-					<div className="flex justify-end">
-						<Segmented value={view} onValueChange={setView} options={VIEW_OPTIONS} aria-label="Cum se arată secțiunile" />
+		<Page width="wide" className="space-y-7">
+			<PageTitle title="Azi" subtitle={`${fmtDate(today, "EEEE, d MMMM")} · ${settings.shop.name}`}>
+				{lookSwitch}
+			</PageTitle>
+			{look === "covers" ? (
+				<>
+					<InShop jobs={jobs} vehicles={vehicles} customers={customers} staffId={member?.id ?? null} />
+					{numbers}
+					<div className="grid gap-7 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+						<section className="space-y-3" aria-label="Agendă azi">
+							<SectionHeader title="Agendă azi" subtitle={plural(bookings.length, "programare", "programări")} href="/calendar/" />
+							<BookingRows bookings={bookings} vehicles={vehicles} customers={customers} empty="Nicio programare azi." />
+						</section>
+						{money}
 					</div>
-				</div>
-				{/* Each stage's section, for the same dates: the booking, the estimate, the job, the invoice (the order of a visit). */}
-				{(() => {
-					const sections = {
-						appointment: () => <ToConfirm data={selectWeekBookings(appointments, nowAt, range.from, range.to)} lookups={lookups} today={today} range={range} />,
-						estimate: () => <JobStrip kind="estimates" data={selectEstimates(workOrders, appointments, range.from, range.to, settings)} lookups={lookups} today={today} range={range} />,
-						job: () => <JobStrip kind="jobs" data={selectJobs(workOrders, appointments, range.from, range.to, settings)} lookups={lookups} today={today} range={range} />,
-						invoice: () => <ToCollect data={selectToCollect(invoices, payments, today, range.from, range.to)} lookups={lookups} today={today} range={range} />,
-					};
-					return view === "sections" ? (
-						STAGES.map((key) => <Fragment key={key}>{sections[key]()}</Fragment>)
-					) : (
-						<div className="space-y-6">
-							<Segmented value={stage} onValueChange={setStage} options={STAGE_OPTIONS} aria-label="Etapa vizitei" />
-							{sections[stage]()}
-						</div>
-					);
-				})()}
-				<HomeAnalytics today={today} />
-			</div>
+				</>
+			) : (
+				<>
+					{numbers}
+					<section className="space-y-3" aria-label="Ziua în atelier">
+						<SectionHeader title="Ziua în atelier" subtitle="Ce e pe fiecare elevator; punctat, ce urmează din agendă" href="/calendar/" />
+						<DayLanes lanes={dayLanes({ bays, appointments, workOrders, today, now: new Date().toISOString() })} vehicles={vehicles} settings={settings} minute={minute} />
+					</section>
+					<div className="grid gap-7 lg:grid-cols-2">
+						<section className="space-y-3" aria-label="De confirmat">
+							{(() => {
+								const waiting = selectToConfirm(appointments, now).groups.filter((g) => g.key !== "past").flatMap((g) => g.items).slice(0, 5);
+								return (
+									<>
+										<SectionHeader title="De confirmat" subtitle={plural(waiting.length, "programare", "programări")} href="/appointments/" />
+										<BookingRows bookings={waiting} vehicles={vehicles} customers={customers} today={today} empty="Toate programările sunt confirmate." />
+									</>
+								);
+							})()}
+						</section>
+						{money}
+					</div>
+				</>
+			)}
+			{/* The analytics stay here until Rapoarte takes them (docs/DESIGN.md §6, part 5). */}
+			<HomeAnalytics today={today} />
 		</Page>
 	);
 }

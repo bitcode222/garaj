@@ -1,0 +1,58 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { dayLanes, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data.js";
+
+const today = "2026-11-16";
+const at = (hhmm) => new Date(`${today}T${hhmm}:00`).toISOString();
+
+test("the shop's jobs: running first, then by stage; closed jobs left out", () => {
+	const orders = {
+		a: { id: "a", status: "ready", updatedAt: "3" },
+		b: { id: "b", status: "approved", updatedAt: "2" },
+		c: { id: "c", status: "in_progress", timeLog: [{ start: at("09:00"), end: null }], updatedAt: "1" },
+		d: { id: "d", status: "delivered" },
+		e: { id: "e", status: "in_progress", updatedAt: "4" },
+	};
+	assert.deepEqual(shopJobs(orders).map((o) => o.id), ["c", "e", "b", "a"]);
+});
+
+test("today's bookings, by start, without the called-off ones", () => {
+	const list = todaysBookings(
+		{ x: { id: "x", start: at("14:00"), status: "scheduled" }, y: { id: "y", start: at("09:00"), status: "arrived" }, z: { id: "z", start: at("10:00"), status: "cancelled" }, w: { id: "w", start: "2026-11-17T09:00:00.000Z", status: "scheduled" } },
+		today,
+	);
+	assert.deepEqual(list.map((a) => a.id), ["y", "x"]);
+});
+
+test("hours worked today, per mechanic; a running clock counts to now", () => {
+	const orders = {
+		a: { timeLog: [{ staffId: "m", start: at("08:00"), end: at("10:30") }, { staffId: "v", start: at("11:00"), end: null }] },
+		b: { timeLog: [{ staffId: "m", start: "2026-11-15T15:00:00.000Z", end: "2026-11-15T16:00:00.000Z" }] },
+	};
+	const { total, byStaff } = hoursToday(orders, today, at("12:00"));
+	assert.equal(total, 3.5 * 3_600_000);
+	assert.deepEqual(byStaff.map(([id]) => id), ["m", "v"]);
+	assert.equal(hoursText(total), "3 h 30");
+	assert.equal(hoursText(35 * 60_000), "35 min");
+});
+
+test("the day's lanes: bookings on their lift, dashed until the car is in; logged work where the job is", () => {
+	const lanes = dayLanes({
+		bays: { l1: { id: "l1", name: "Elevator 1", order: 0 }, l2: { id: "l2", name: "Elevator 2", order: 1 } },
+		appointments: {
+			p: { id: "p", bayId: "l1", start: at("14:00"), end: at("16:00"), status: "confirmed" },
+			q: { id: "q", bayId: "l2", start: at("09:00"), end: at("10:00"), status: "arrived", workOrderId: "j" },
+		},
+		workOrders: {
+			j: { id: "j", bayId: "l2", timeLog: [{ id: "t1", start: at("09:10"), end: null }] },
+			k: { id: "k", bayId: null, timeLog: [{ id: "t2", start: at("08:00"), end: at("09:00") }] },
+		},
+		today,
+		now: at("12:00"),
+	});
+	assert.deepEqual(lanes.map((l) => l.name), ["Elevator 1", "Elevator 2", "Fără loc"]);
+	assert.equal(lanes[0].blocks[0].planned, true);
+	assert.equal(lanes[1].blocks.length, 1, "the job's clock is not drawn twice beside its booking");
+	assert.equal(lanes[1].blocks[0].running, true);
+	assert.equal(lanes[2].blocks[0].kind, "work");
+});

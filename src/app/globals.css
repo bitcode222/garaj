@@ -459,4 +459,8 @@
 	html[data-sidebar="rail"] #main {
 		padding-left: 4rem;
 	}
+	/* The running job's bar stays centred on the page, not the window. */
+	html[data-sidebar="rail"] [data-running-bar] {
+		left: calc(50% + 2rem);
+	}
 }

@@ -75,3 +75,16 @@ export function makeInk(make) {
 export function makeTint(make, amount = 12) {
 	return `color-mix(in srgb, ${makeColor(make)} ${amount}%, var(--card))`;
 }
+
+/** The old tones (src/lib/labels.js) as the new dots: a status's tone → its colour. */
+export const TONE_COLOR = {
+	green: STATE.ok,
+	yellow: STATE.wait,
+	red: STATE.late,
+	neutral: STATE.off,
+	orange: STATE.run,
+	teal: AREA.programare,
+	purple: AREA.deviz,
+	blue: AREA.factura,
+	pink: "#e26a8d",
+};

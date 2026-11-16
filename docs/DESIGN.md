@@ -63,7 +63,7 @@ The current home (hero search, day ruler, stage sections) is replaced by Azi A/B
 | Part | Content | Status |
 |---|---|---|
 | 1 | Foundations: tokens (neutrals, area, state and make colours, Inter), the first building blocks, the shell (quiet sidebar, toolbar with Nou, phone tab bar), `/design/` rebuilt. Job card, list, table, sheet and side panel come with the pages that first use them | done |
-| 2 | Azi A + B, and the running job: web store actions over `src/domain/work-clock.js`, the floating timer on every page | planned |
+| 2 | Azi A + B (`features/dashboard/dashboard-page.jsx`, data in `azi-data.js`), and the running job: `startWork`, `stopWork`, `setLineDone` in the store over `src/domain/work-clock.js`, the floating bar on every page (`features/running/running-job.jsx`), the next-step button (`features/work-orders/job-action.js`). The old home's pieces stay unused until part 7; its analytics stay at the bottom of Azi until part 5 | done |
 | 3 | Atelier A + B: stages and board (drag), Lucrare and Deviz as page and panel, Recepție | planned |
 | 4 | Agendă A: week calendar, list, booking sheet | planned |
 | 5 | Bani A + B: invoices, invoice, reports (with the old home analytics) | planned |
