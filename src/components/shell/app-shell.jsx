@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect } from "react";
 import { useTheme } from "next-themes";
 import { ChevronRight, ChevronsUpDown, Database, History, Palette, PanelLeftClose, PanelLeftOpen, Plus, Search, Store } from "lucide-react";
@@ -34,6 +34,14 @@ import { AccountMenu } from "./account-menu";
 import { ThemeToggle } from "./theme-toggle";
 import { KeyHint } from "@/components/ds/blocks";
 import { RunningJobBar } from "@/features/running/running-job";
+import { REST_LOOK_KEY, REST_VALUES } from "@/features/common/rest-look";
+
+/** "Caută": the ⌘K window with "Listă", the results page with "File" (docs/DESIGN.md §4). ⌘K itself always opens the window. */
+function useOpenSearch() {
+	const router = useRouter();
+	const [look] = useLocalPreference(REST_LOOK_KEY, REST_VALUES[0], REST_VALUES);
+	return () => (look === "tabs" ? router.push("/search/") : openCommandMenu());
+}
 
 const CommandMenu = dynamic(() => import("./command-menu").then((m) => m.CommandMenu), { ssr: false });
 const GlobalSheets = dynamic(() => import("./global-sheets").then((m) => m.GlobalSheets), { ssr: false });
@@ -245,6 +253,7 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 	// A group is open when its page is (or, for Recente, by default) unless it was closed by hand.
 	const isOpen = (key, fallback) => toggled[key] ?? fallback;
 	const toggle = (key, fallback) => setOpenText(JSON.stringify({ ...toggled, [key]: !isOpen(key, fallback) }));
+	const openSearch = useOpenSearch();
 	return (
 		<aside data-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r bg-[color-mix(in_srgb,var(--background)_60%,var(--card))] lg:flex">
 			<div className="border-b px-3 py-2.5">
@@ -253,7 +262,7 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 			<div className="px-3 pt-3 pb-2">
 				<button
 					type="button"
-					onClick={openCommandMenu}
+					onClick={openSearch}
 					className="flex h-8 w-full min-w-0 items-center gap-2 rounded-[7px] border bg-card px-2.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
 				>
 					<Search className="size-3.5 shrink-0" aria-hidden />
@@ -372,6 +381,7 @@ const tabClass = (active) =>
 /** The phone's tab bar, as the iPhone app's: Azi · Atelier · Agendă · Registru · Caută. */
 function TabBar({ pathname, badges }) {
 	const [programari] = useLocalPreference(PROGRAMARI_KEY, PROGRAMARI_PAGES[0], PROGRAMARI_PAGES);
+	const openSearch = useOpenSearch();
 	return (
 		<nav
 			data-print="hide"
@@ -383,7 +393,7 @@ function TabBar({ pathname, badges }) {
 					if (item.search) {
 						return (
 							<li key="search">
-								<button type="button" onClick={() => { haptics.selection(); openCommandMenu(); }} className={tabClass(false)}>
+								<button type="button" onClick={() => { haptics.selection(); openSearch(); }} className={tabClass(false)}>
 									<item.icon className="size-[22px]" aria-hidden />
 									{item.label}
 								</button>
