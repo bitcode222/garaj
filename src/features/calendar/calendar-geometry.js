@@ -14,7 +14,7 @@ export const WINDOW_WEEKS = 78; // the same for Lună
 export const EDGE_DAYS = 45; // nearer than this to an end of the window, it is moved
 export const EDGE_WEEKS = 8;
 export const SNAP_MIN = 15;
-export const HOUR_PX = 48; // desktop (Notion's density)
+export const HOUR_PX = 64; // desktop: roomy, as the owner's "Agenda, lucrată" (A); was 48
 export const HOUR_TOUCH_PX = 64; // phone: a quarter of an hour is 16 px under the finger
 export const GUTTER_PX = 56; // the hours column
 
