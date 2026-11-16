@@ -10,7 +10,7 @@ export const TONES = {
 		dot: "bg-zinc-500 text-white",
 		chip: "border-zinc-300 bg-zinc-100 text-zinc-700 dark:border-zinc-600 dark:bg-zinc-800/80 dark:text-zinc-300",
 		vivid: "border-zinc-700/45 bg-zinc-500 text-white hover:bg-zinc-600 dark:bg-zinc-600 dark:hover:bg-zinc-500",
-		// A calendar block (docs/DESIGN-SYSTEM.md, very small cards): white, outlined in the colour; its time in `text`.
+		// A calendar block (the old web design system (removed; now docs/DESIGN.md), very small cards): white, outlined in the colour; its time in `text`.
 		line: "border-zinc-400 bg-card text-foreground hover:bg-zinc-50 dark:hover:bg-zinc-800/40 dark:border-zinc-500",
 		block: "border-zinc-300 bg-zinc-100/70 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-800/60 dark:text-zinc-300 dark:hover:bg-zinc-800",
 		solid: "bg-zinc-400 dark:bg-zinc-500",
@@ -28,7 +28,7 @@ export const TONES = {
 		dot: "bg-blue-600 text-white dark:bg-blue-500",
 		chip: "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-700 dark:bg-blue-950/60 dark:text-blue-300",
 		vivid: "border-blue-800/55 bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-500",
-		// A calendar block (docs/DESIGN-SYSTEM.md, very small cards): white, outlined in the colour; its time in `text`.
+		// A calendar block (the old web design system (removed; now docs/DESIGN.md), very small cards): white, outlined in the colour; its time in `text`.
 		line: "border-blue-500 bg-card text-foreground hover:bg-blue-50/60 dark:hover:bg-blue-950/40 dark:border-blue-400",
 		block: "border-blue-300 bg-blue-50 text-blue-800 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950/60 dark:text-blue-200 dark:hover:bg-blue-950",
 		solid: "bg-blue-500",
@@ -46,7 +46,7 @@ export const TONES = {
 		dot: "bg-teal-600 text-white dark:bg-teal-500",
 		chip: "border-teal-300 bg-teal-50 text-teal-700 dark:border-teal-700 dark:bg-teal-950/60 dark:text-teal-300",
 		vivid: "border-teal-800/55 bg-teal-600 text-white hover:bg-teal-700 dark:hover:bg-teal-500",
-		// A calendar block (docs/DESIGN-SYSTEM.md, very small cards): white, outlined in the colour; its time in `text`.
+		// A calendar block (the old web design system (removed; now docs/DESIGN.md), very small cards): white, outlined in the colour; its time in `text`.
 		line: "border-teal-500 bg-card text-foreground hover:bg-teal-50/60 dark:hover:bg-teal-950/40 dark:border-teal-400",
 		block: "border-teal-300 bg-teal-50 text-teal-800 hover:bg-teal-100 dark:border-teal-700 dark:bg-teal-950/60 dark:text-teal-200 dark:hover:bg-teal-950",
 		solid: "bg-teal-500",
@@ -62,7 +62,7 @@ export const TONES = {
 		dot: "bg-violet-600 text-white dark:bg-violet-500",
 		chip: "border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-700 dark:bg-violet-950/60 dark:text-violet-300",
 		vivid: "border-violet-800/55 bg-violet-600 text-white hover:bg-violet-700 dark:hover:bg-violet-500",
-		// A calendar block (docs/DESIGN-SYSTEM.md, very small cards): white, outlined in the colour; its time in `text`.
+		// A calendar block (the old web design system (removed; now docs/DESIGN.md), very small cards): white, outlined in the colour; its time in `text`.
 		line: "border-violet-500 bg-card text-foreground hover:bg-violet-50/60 dark:hover:bg-violet-950/40 dark:border-violet-400",
 		block: "border-violet-300 bg-violet-50 text-violet-800 hover:bg-violet-100 dark:border-violet-700 dark:bg-violet-950/60 dark:text-violet-200 dark:hover:bg-violet-950",
 		solid: "bg-violet-500",
@@ -78,7 +78,7 @@ export const TONES = {
 		dot: "bg-orange-500 text-white",
 		chip: "border-orange-300 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-950/60 dark:text-orange-300",
 		vivid: "border-orange-800/55 bg-orange-600 text-white hover:bg-orange-700 dark:hover:bg-orange-500",
-		// A calendar block (docs/DESIGN-SYSTEM.md, very small cards): white, outlined in the colour; its time in `text`.
+		// A calendar block (the old web design system (removed; now docs/DESIGN.md), very small cards): white, outlined in the colour; its time in `text`.
 		line: "border-orange-500 bg-card text-foreground hover:bg-orange-50/60 dark:hover:bg-orange-950/40 dark:border-orange-400",
 		block: "border-orange-300 bg-orange-50 text-orange-800 hover:bg-orange-100 dark:border-orange-700 dark:bg-orange-950/60 dark:text-orange-200 dark:hover:bg-orange-950",
 		solid: "bg-orange-500",
@@ -94,7 +94,7 @@ export const TONES = {
 		dot: "bg-amber-400 text-amber-950",
 		chip: "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950/60 dark:text-amber-300",
 		vivid: "border-amber-600/75 bg-amber-400 text-amber-950 hover:bg-amber-500",
-		// A calendar block (docs/DESIGN-SYSTEM.md, very small cards): white, outlined in the colour; its time in `text`.
+		// A calendar block (the old web design system (removed; now docs/DESIGN.md), very small cards): white, outlined in the colour; its time in `text`.
 		line: "border-amber-500 bg-card text-foreground hover:bg-amber-50/60 dark:hover:bg-amber-950/40 dark:border-amber-400",
 		block: "border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950/60 dark:text-amber-200 dark:hover:bg-amber-950",
 		solid: "bg-amber-500",
@@ -111,7 +111,7 @@ export const TONES = {
 		dot: "bg-emerald-600 text-white dark:bg-emerald-500",
 		chip: "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300",
 		vivid: "border-emerald-800/55 bg-emerald-600 text-white hover:bg-emerald-700 dark:hover:bg-emerald-500",
-		// A calendar block (docs/DESIGN-SYSTEM.md, very small cards): white, outlined in the colour; its time in `text`.
+		// A calendar block (the old web design system (removed; now docs/DESIGN.md), very small cards): white, outlined in the colour; its time in `text`.
 		line: "border-emerald-500 bg-card text-foreground hover:bg-emerald-50/60 dark:hover:bg-emerald-950/40 dark:border-emerald-400",
 		block: "border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 dark:border-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-200 dark:hover:bg-emerald-950",
 		solid: "bg-emerald-500",
@@ -127,7 +127,7 @@ export const TONES = {
 		dot: "bg-red-600 text-white dark:bg-red-500",
 		chip: "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950/60 dark:text-red-300",
 		vivid: "border-red-800/55 bg-red-600 text-white hover:bg-red-700 dark:hover:bg-red-500",
-		// A calendar block (docs/DESIGN-SYSTEM.md, very small cards): white, outlined in the colour; its time in `text`.
+		// A calendar block (the old web design system (removed; now docs/DESIGN.md), very small cards): white, outlined in the colour; its time in `text`.
 		line: "border-red-500 bg-card text-foreground hover:bg-red-50/60 dark:hover:bg-red-950/40 dark:border-red-400",
 		block: "border-red-300 bg-red-50 text-red-800 hover:bg-red-100 dark:border-red-700 dark:bg-red-950/60 dark:text-red-200 dark:hover:bg-red-950",
 		solid: "bg-red-500",

@@ -4,7 +4,7 @@ Shop-management app for independent car repair shops: appointments → work orde
 Romanian UI, local-first (data lives on the device), works on the web and as a native iPhone app from the same code.
 
 - Plan, business rules, edge cases, reviews: [`docs/PLAN.md`](docs/PLAN.md)
-- Design system: [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md) · live at `/design/`
+- Design language: [`docs/DESIGN.md`](docs/DESIGN.md) · live at `/design/`
 
 ## Run
 

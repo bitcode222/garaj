@@ -24,22 +24,22 @@ export function logoKey(make) {
 }
 
 /** Brand mark before a make's name. Monochrome (follows the text colour); unknown makes get a monogram. */
-export function MakeLogo({ make, className }) {
+export function MakeLogo({ make, className, style }) {
 	const key = logoKey(make);
 	if (key) {
 		return (
-			<svg viewBox="0 0 24 24" aria-hidden className={cn("size-5 shrink-0 fill-current", className)}>
+			<svg viewBox="0 0 24 24" aria-hidden className={cn("size-5 shrink-0 fill-current", className)} style={style}>
 				<path d={LOGO_PATHS[key]} />
 			</svg>
 		);
 	}
 	const letter = String(make ?? "").trim().charAt(0).toUpperCase();
 	return letter ? (
-		<span aria-hidden className={cn("flex size-5 shrink-0 items-center justify-center rounded-full border text-[10px] leading-none font-semibold", className)}>
+		<span aria-hidden className={cn("flex size-5 shrink-0 items-center justify-center rounded-full border text-[10px] leading-none font-semibold", className)} style={style ? { ...style, fontSize: `calc(${style.width}px * 0.5)` } : undefined}>
 			{letter}
 		</span>
 	) : (
-		<CarFront aria-hidden className={cn("size-5 shrink-0 text-muted-foreground", className)} />
+		<CarFront aria-hidden className={cn("size-5 shrink-0 text-muted-foreground", className)} style={style} />
 	);
 }
 

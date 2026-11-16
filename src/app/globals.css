@@ -4,9 +4,10 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ── Garaj design tokens ─────────────────────────────────────────────────────
-   Reference: docs/DESIGN-SYSTEM.md · live: /design
-   Surfaces and text are neutral ("paper & ink"); color is reserved for meaning
-   (tones, src/lib/tones.js) and one brand accent. */
+   Reference: docs/DESIGN.md · live: /design
+   A neutral canvas with white cards on hairlines and one ink colour for the main
+   action. Colour comes from the car (src/lib/colors.js), each area keeps one,
+   and a state is a dot with words. */
 
 @theme inline {
 	--color-background: var(--background);
@@ -36,7 +37,7 @@
 	--color-chart-4: var(--chart-4);
 	--color-chart-5: var(--chart-5);
 
-	--font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+	--font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 	--font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
 	--radius-sm: calc(var(--radius) - 4px);
@@ -81,33 +82,33 @@
 }
 
 :root {
-	--radius: 0.625rem;
-	--background: oklch(0.985 0 0);
-	--foreground: oklch(0.145 0 0);
-	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.145 0 0);
-	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
-	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.967 0 0);
-	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.967 0 0);
-	--muted-foreground: oklch(0.52 0 0);
-	--subtle-foreground: oklch(0.66 0 0);
-	--accent: oklch(0.955 0 0);
-	--accent-foreground: oklch(0.205 0 0);
-	--destructive: oklch(0.577 0.245 27.325);
-	--brand: oklch(0.646 0.222 41.116);
-	--brand-foreground: oklch(0.99 0 0);
-	--border: oklch(0.89 0 0);
-	--input: oklch(0.87 0 0);
-	--ring: oklch(0.708 0 0);
-	--chart-1: oklch(0.646 0.222 41.116);
-	--chart-2: oklch(0.6 0.118 184.704);
-	--chart-3: oklch(0.398 0.07 227.392);
-	--chart-4: oklch(0.828 0.189 84.429);
-	--chart-5: oklch(0.769 0.188 70.08);
+	--radius: 0.75rem;
+	--background: #f7f7f8;
+	--foreground: #18181b;
+	--card: #ffffff;
+	--card-foreground: #18181b;
+	--popover: #ffffff;
+	--popover-foreground: #18181b;
+	--primary: #18181b;
+	--primary-foreground: #ffffff;
+	--secondary: #f1f1f3;
+	--secondary-foreground: #18181b;
+	--muted: #f1f1f3;
+	--muted-foreground: #6e6e76;
+	--subtle-foreground: #9a9aa2;
+	--accent: #efeff1;
+	--accent-foreground: #18181b;
+	--destructive: #e5322b;
+	--brand: #ed7a34;
+	--brand-foreground: #ffffff;
+	--border: #e5e5ea;
+	--input: #d9d9de;
+	--ring: #a1a1aa;
+	--chart-1: #3b82f6;
+	--chart-2: #ed7a34;
+	--chart-3: #36b385;
+	--chart-4: #8b5cf6;
+	--chart-5: #d9a321;
 	--safe-top: env(safe-area-inset-top, 0px);
 	--safe-bottom: env(safe-area-inset-bottom, 0px);
 	--safe-left: env(safe-area-inset-left, 0px);
@@ -120,32 +121,32 @@
 }
 
 .dark {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.195 0 0);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.215 0 0);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.93 0 0);
-	--primary-foreground: oklch(0.205 0 0);
-	--secondary: oklch(0.26 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.25 0 0);
-	--muted-foreground: oklch(0.72 0 0);
-	--subtle-foreground: oklch(0.56 0 0);
-	--accent: oklch(0.27 0 0);
-	--accent-foreground: oklch(0.985 0 0);
-	--destructive: oklch(0.704 0.191 22.216);
-	--brand: oklch(0.705 0.213 47.604);
-	--brand-foreground: oklch(0.2 0 0);
-	--border: oklch(1 0 0 / 12%);
-	--input: oklch(1 0 0 / 17%);
-	--ring: oklch(0.556 0 0);
-	--chart-1: oklch(0.705 0.213 47.604);
-	--chart-2: oklch(0.696 0.17 162.48);
-	--chart-3: oklch(0.769 0.188 70.08);
-	--chart-4: oklch(0.627 0.265 303.9);
-	--chart-5: oklch(0.645 0.246 16.439);
+	--background: #0f0f11;
+	--foreground: #f4f4f5;
+	--card: #18181b;
+	--card-foreground: #f4f4f5;
+	--popover: #1e1e22;
+	--popover-foreground: #f4f4f5;
+	--primary: #f4f4f5;
+	--primary-foreground: #18181b;
+	--secondary: #222226;
+	--secondary-foreground: #f4f4f5;
+	--muted: #222226;
+	--muted-foreground: #8f8f98;
+	--subtle-foreground: #66666e;
+	--accent: #26262b;
+	--accent-foreground: #f4f4f5;
+	--destructive: #ff5a52;
+	--brand: #f08a4b;
+	--brand-foreground: #18181b;
+	--border: #2a2a30;
+	--input: #38383f;
+	--ring: #71717a;
+	--chart-1: #4c8ff5;
+	--chart-2: #f08a4b;
+	--chart-3: #3fc293;
+	--chart-4: #9d75f7;
+	--chart-5: #e2b23a;
 	color-scheme: dark;
 }
 
@@ -177,7 +178,6 @@
 	}
 	body {
 		@apply bg-background text-foreground;
-		font-feature-settings: "ss01", "cv11";
 		overscroll-behavior-y: none;
 		overflow-x: clip; /* a page pushing in must not add a horizontal scrollbar */
 	}

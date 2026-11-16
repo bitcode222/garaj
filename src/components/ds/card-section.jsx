@@ -20,7 +20,7 @@ export const useLargeCards = () => useContext(LargeCards);
 export const LargeCardsProvider = LargeCards.Provider;
 
 /**
- * The carousel (Embla, docs/DESIGN-SYSTEM.md Cards form): the cards are its slides, dragged freely (momentum, no
+ * The carousel (Embla, the old web design system (removed; now docs/DESIGN.md) Cards form): the cards are its slides, dragged freely (momentum, no
  * snapping back to a card), by mouse, finger or pen; ‹ › and ← → step a card at a time.
  */
 const CAROUSEL = { align: "start", dragFree: true, containScroll: "trimSnaps", slides: "[data-card], [data-more]" };
@@ -94,7 +94,7 @@ export function CardSection({ label, kind, count, countText, href, aside, filter
 	// The carousel's api for the track's observer, which outlives a render.
 	const api = useRef(null);
 	// What the carousel holds, named by its filter. Once it has changed, every new set of cards is
-	// revealed (docs/DESIGN-SYSTEM.md, Cards form): the cards rise in one after another, so the change
+	// revealed (the old web design system (removed; now docs/DESIGN.md), Cards form): the cards rise in one after another, so the change
 	// is seen. Never on the first load.
 	const holds = filter?.label ?? "all";
 	const [seen, setSeen] = useState({ holds, reveal: false });

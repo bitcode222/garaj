@@ -32,6 +32,7 @@ import { useRecentRecords } from "./recents";
 import { openCommandMenu } from "./command-state";
 import { AccountMenu } from "./account-menu";
 import { ThemeToggle } from "./theme-toggle";
+import { KeyHint } from "@/components/ds/blocks";
 
 const CommandMenu = dynamic(() => import("./command-menu").then((m) => m.CommandMenu), { ssr: false });
 const GlobalSheets = dynamic(() => import("./global-sheets").then((m) => m.GlobalSheets), { ssr: false });
@@ -95,8 +96,11 @@ function parseOpen(text) {
 	}
 }
 
-const countPill = (count) =>
-	count > 0 ? <span className="min-w-5 rounded-full bg-muted px-1.5 text-center text-2xs leading-5 font-medium text-muted-foreground tabular-nums">{count > 99 ? "99+" : count}</span> : null;
+// A count at the row's end: plain grey, or a red pill for what is urgent (De contactat).
+const countPill = (count, urgent) =>
+	count > 0 ? (
+		<span className={cn("min-w-5 text-center text-xs tabular-nums", urgent ? "rounded-full bg-[#ff3b30] px-1.5 leading-[18px] font-semibold text-white" : "text-muted-foreground")}>{count > 99 ? "99+" : count}</span>
+	) : null;
 
 /** The shop row: the shop, and a menu for what belongs to it (its settings, the demo data, the theme, the design system). */
 function ShopMenu({ shopName, demo }) {
@@ -137,7 +141,7 @@ function ShopMenu({ shopName, demo }) {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem asChild>
 					<Link href="/design/">
-						<Palette /> Design system
+						<Palette /> Limbajul de design
 					</Link>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
@@ -156,7 +160,7 @@ function Children({ open, label, children }) {
 	);
 }
 
-const rowClass = (pill) => cn("flex h-10 items-center rounded-lg transition-colors", pill ? "bg-accent" : "hover:bg-accent/60");
+const rowClass = (pill) => cn("flex h-8 items-center rounded-[7px] transition-colors pointer-coarse:h-10", pill ? "bg-accent" : "hover:bg-accent/60");
 
 /** A group of items that opens and closes (its parent's chevron, or the whole row when it is not a page). */
 function Chevron({ open }) {
@@ -171,13 +175,14 @@ function NavItem({ item, pathname, badges, open, onToggle }) {
 	return (
 		<li>
 			<div className={rowClass(active && !childActive)}>
-				<Link href={item.href} aria-current={active && !childActive ? "page" : undefined} className={cn("flex h-full min-w-0 flex-1 items-center gap-3 pl-3 text-sm", item.children ? "pr-1" : "pr-3", active && "font-medium")}>
-					<item.icon className={cn("size-[18px] shrink-0", active ? "text-foreground" : "text-muted-foreground")} aria-hidden />
+				<Link href={item.href} aria-current={active && !childActive ? "page" : undefined} className={cn("flex h-full min-w-0 flex-1 items-center gap-2.5 pl-2.5 text-[13.5px]", item.children ? "pr-1" : "pr-2.5", active && "font-medium")}>
+					{/* Quiet icons; only the current page's takes its area's colour (the owner, 16 Nov 2026). */}
+					<item.icon className={cn("size-4 shrink-0", !active && "text-muted-foreground")} style={active ? { color: item.area } : undefined} aria-hidden />
 					<span className="flex-1 truncate">{item.label}</span>
-					{countPill(count)}
+					{countPill(count, item.urgent)}
 				</Link>
 				{item.children && (
-					<button type="button" onClick={onToggle} aria-expanded={open} aria-label={`${open ? "Ascunde" : "Arată"} paginile din ${item.label}`} className="mr-1 flex size-8 shrink-0 items-center justify-center rounded-md hover:bg-accent">
+					<button type="button" onClick={onToggle} aria-expanded={open} aria-label={`${open ? "Ascunde" : "Arată"} paginile din ${item.label}`} className="mr-0.5 flex size-7 shrink-0 items-center justify-center rounded-md hover:bg-accent">
 						<Chevron open={open} />
 					</button>
 				)}
@@ -188,7 +193,7 @@ function NavItem({ item, pathname, badges, open, onToggle }) {
 						const here = child === childActive;
 						return (
 							<li key={child.href}>
-								<Link href={child.href} aria-current={here ? "page" : undefined} className={cn("flex h-9 items-center gap-2 rounded-lg px-3 text-sm transition-colors", here ? "bg-accent font-medium" : "hover:bg-accent/60")}>
+								<Link href={child.href} aria-current={here ? "page" : undefined} className={cn("flex h-8 items-center gap-2 rounded-[7px] px-2.5 text-[13px] transition-colors pointer-coarse:h-10", here ? "bg-accent font-medium" : "hover:bg-accent/60")}>
 									<span className="flex-1 truncate">{child.label}</span>
 									{countPill(child.badge ? badges[child.badge] : 0)}
 								</Link>
@@ -207,8 +212,8 @@ function RecentItems({ open, onToggle }) {
 	if (!records.length) return null;
 	return (
 		<li>
-			<button type="button" onClick={onToggle} aria-expanded={open} className={cn(rowClass(false), "w-full gap-3 px-3 text-left text-sm")}>
-				<History className="size-[18px] shrink-0 text-muted-foreground" aria-hidden />
+			<button type="button" onClick={onToggle} aria-expanded={open} className={cn(rowClass(false), "w-full gap-2.5 px-2.5 text-left text-[13.5px]")}>
+				<History className="size-4 shrink-0 text-muted-foreground" aria-hidden />
 				<span className="flex-1 truncate">Recente</span>
 				<Chevron open={open} />
 			</button>
@@ -240,30 +245,26 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 	const isOpen = (key, fallback) => toggled[key] ?? fallback;
 	const toggle = (key, fallback) => setOpenText(JSON.stringify({ ...toggled, [key]: !isOpen(key, fallback) }));
 	return (
-		<aside data-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r bg-background lg:flex">
+		<aside data-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r bg-[color-mix(in_srgb,var(--background)_60%,var(--card))] lg:flex">
 			<div className="border-b px-3 py-2.5">
 				<ShopMenu shopName={shopName} demo={demo} />
 			</div>
-			<div className="flex gap-2 px-3 pt-3 pb-2">
+			<div className="px-3 pt-3 pb-2">
 				<button
 					type="button"
 					onClick={openCommandMenu}
-					className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border bg-card px-3 text-sm text-muted-foreground shadow-xs transition-colors hover:text-foreground"
+					className="flex h-8 w-full min-w-0 items-center gap-2 rounded-[7px] border bg-card px-2.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
 				>
-					<Search className="size-4 shrink-0" aria-hidden />
-					<span className="flex-1 truncate text-left">Caută…</span>
+					<Search className="size-3.5 shrink-0" aria-hidden />
+					<span className="flex-1 truncate text-left">Caută</span>
+					<KeyHint>⌘K</KeyHint>
 				</button>
-				<QuickCreate>
-					<Button variant="brand" size="icon" className="size-10 shrink-0 rounded-lg" aria-label="Nou">
-						<Plus />
-					</Button>
-				</QuickCreate>
 			</div>
 			<nav className="flex-1 overflow-y-auto px-3 pt-1 pb-4" aria-label="Navigare principală">
 				{groups.map((group, index) => (
-					<div key={group} className={cn(index > 0 && "mt-5")}>
-						{/* The first group has no title; later ones a plain, quiet one. */}
-						{index > 0 && <p className="px-3 pb-1 text-[13px] text-muted-foreground">{group}</p>}
+					<div key={group} className={cn(index > 0 && "mt-4")}>
+						{/* The first group has no title; later ones a small, quiet one. */}
+						{index > 0 && <p className="px-2.5 pb-1 text-[10.5px] font-medium tracking-[0.07em] text-muted-foreground uppercase">{group}</p>}
 						<ul className="space-y-0.5">
 							{NAV.filter((item) => item.group === group).flatMap((item, i) => {
 								const key = item.href;
@@ -301,7 +302,7 @@ function Rail({ pathname, badges }) {
 					<Search />
 				</Button>
 				<QuickCreate side="right">
-					<Button variant="brand" size="icon" aria-label="Nou">
+					<Button size="icon" aria-label="Nou">
 						<Plus />
 					</Button>
 				</QuickCreate>
@@ -321,9 +322,9 @@ function Rail({ pathname, badges }) {
 								active ? "bg-accent font-medium text-foreground" : "text-muted-foreground hover:text-foreground",
 							)}
 						>
-							<item.icon className="size-[18px]" aria-hidden />
+							<item.icon className="size-[18px]" style={active ? { color: item.area } : undefined} aria-hidden />
 							<span className="max-w-full truncate px-0.5">{item.label}</span>
-							{count > 0 && <span className="absolute top-1 right-2 size-1.5 rounded-full bg-brand" aria-hidden />}
+							{count > 0 && <span className={cn("absolute top-1 right-2 size-1.5 rounded-full", item.urgent ? "bg-[#ff3b30]" : "bg-muted-foreground")} aria-hidden />}
 						</Link>
 					);
 				})}
@@ -349,7 +350,7 @@ function TopBar({ shopName }) {
 					<Search className="size-5" />
 				</Button>
 				<QuickCreate>
-					<Button variant="brand" size="icon" className="size-9 rounded-full" aria-label="Nou">
+					<Button size="icon" className="size-9 rounded-[9px]" aria-label="Nou">
 						<Plus className="size-5" />
 					</Button>
 				</QuickCreate>
@@ -361,6 +362,13 @@ function TopBar({ shopName }) {
 
 const PROGRAMARI_KEY = "garaj.programari";
 
+const tabClass = (active) =>
+	cn(
+		"touch-none-callout relative flex h-full w-full flex-col items-center justify-center gap-1 text-[10px] font-medium transition-[color,transform,opacity] duration-100 active:scale-90 active:opacity-60",
+		active ? "text-foreground" : "text-muted-foreground",
+	);
+
+/** The phone's tab bar, as the iPhone app's: Azi · Atelier · Agendă · Registru · Caută. */
 function TabBar({ pathname, badges }) {
 	const [programari] = useLocalPreference(PROGRAMARI_KEY, PROGRAMARI_PAGES[0], PROGRAMARI_PAGES);
 	return (
@@ -371,12 +379,22 @@ function TabBar({ pathname, badges }) {
 		>
 			<ul className="grid h-14 grid-cols-5">
 				{TABS.map((item) => {
+					if (item.search) {
+						return (
+							<li key="search">
+								<button type="button" onClick={() => { haptics.selection(); openCommandMenu(); }} className={tabClass(false)}>
+									<item.icon className="size-[22px]" aria-hidden />
+									{item.label}
+								</button>
+							</li>
+						);
+					}
 					const active = isActive(item, pathname);
 					const count = item.badge ? badges[item.badge] : 0;
 					return (
 						<li key={item.href}>
 							<Link
-								href={item === NAV[1] ? programari : item.href}
+								href={item.href === "/calendar/" ? programari : item.href}
 								aria-current={active ? "page" : undefined}
 								onClick={(event) => {
 									haptics.selection();
@@ -386,27 +404,48 @@ function TabBar({ pathname, badges }) {
 										window.scrollTo({ top: 0, behavior: "smooth" });
 									}
 								}}
-								className={cn(
-									"touch-none-callout relative flex h-full flex-col items-center justify-center gap-1 text-[10px] font-medium transition-[color,transform,opacity] duration-100 active:scale-90 active:opacity-60",
-									active ? "text-foreground" : "text-muted-foreground",
-								)}
+								className={tabClass(active)}
 							>
 								<span className="relative">
-									<item.icon className={cn("size-[22px]", active && "stroke-[2.25]")} aria-hidden />
+									<item.icon className={cn("size-[22px]", active && "stroke-[2.25]")} style={active && item.area ? { color: item.area } : undefined} aria-hidden />
 									{count > 0 && (
-										<span className="absolute -top-1 -right-2.5 min-w-4 rounded-full bg-brand px-1 text-center text-[9px] leading-4 font-semibold text-brand-foreground tabular-nums">
+										<span className="absolute -top-1 -right-2.5 min-w-4 rounded-full bg-[#ff3b30] px-1 text-center text-[9px] leading-4 font-semibold text-white tabular-nums">
 											{count > 99 ? "99+" : count}
 										</span>
 									)}
 								</span>
 								{item.label}
-								{active && <span className="absolute top-0 h-0.5 w-8 rounded-b-full bg-brand" aria-hidden />}
 							</Link>
 						</li>
 					);
 				})}
 			</ul>
 		</nav>
+	);
+}
+
+/** Desktop and tablet: a thin bar over the page, with where you are, the black "Nou" and the account. It scrolls with the page. */
+function Toolbar({ pathname }) {
+	const item = NAV.find((entry) => isActive(entry, pathname));
+	const group = item && item.group !== NAV[0].group ? item.group : null;
+	return (
+		<div data-print="hide" className="hidden h-12 items-center gap-2 border-b bg-card px-4 md:flex lg:px-6">
+			<p className="flex min-w-0 flex-1 items-center gap-1.5 truncate text-[13px] text-muted-foreground">
+				{group && (
+					<>
+						<span>{group}</span>
+						<ChevronRight className="size-3.5" aria-hidden />
+					</>
+				)}
+				<span className="font-medium text-foreground">{item?.label ?? "Garaj"}</span>
+			</p>
+			<QuickCreate>
+				<Button size="sm" aria-label="Nou">
+					<Plus /> Nou
+				</Button>
+			</QuickCreate>
+			<AccountMenu className="size-8 border bg-card hover:bg-accent" />
+		</div>
 	);
 }
 
@@ -424,18 +463,27 @@ export function AppShell({ children }) {
 	useLayoutEffect(() => {
 		applySidebar(readSidebar());
 	}, [pathname]);
+	// ⌘K (Ctrl+K elsewhere) opens the search from anywhere, as the sidebar's field says.
+	useEffect(() => {
+		const onKey = (event) => {
+			if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+				event.preventDefault();
+				openCommandMenu();
+			}
+		};
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, []);
 	return (
 		<>
 			<Sidebar pathname={pathname} badges={badges} shopName={settings.shop.name} demo={demo} />
 			<Rail pathname={pathname} badges={badges} />
 			<TopBar shopName={settings.shop.name} />
-			<div className="fixed top-3 right-4 z-30 hidden md:block" data-print="hide">
-				<AccountMenu className="size-11 border bg-card shadow-xs hover:bg-accent" />
-			</div>
 			<main
 				id="main"
-				className="min-h-dvh pt-[calc(3.5rem+var(--safe-top))] pb-[calc(var(--tabbar-h)+var(--safe-bottom))] md:pt-0 md:pb-0 md:pl-16 lg:pl-64"
+				className="min-h-dvh pt-[calc(3.5rem+var(--safe-top))] pb-[calc(var(--tabbar-h)+var(--safe-bottom))] md:pt-0 md:pb-0 md:pl-16 lg:pl-60"
 			>
+				<Toolbar pathname={pathname} />
 				<PageTransition>{children}</PageTransition>
 			</main>
 			<TabBar pathname={pathname} badges={badges} />

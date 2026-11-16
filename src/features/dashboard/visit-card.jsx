@@ -50,7 +50,7 @@ export function visitFacts(visit, { vehicles, customers, staff, settings, today,
 }
 
 /**
- * The car's card, the same rows wherever it is (docs/DESIGN-SYSTEM.md, normal and small cards): a first line naming
+ * The car's card, the same rows wherever it is (the old web design system (removed; now docs/DESIGN.md), normal and small cards): a first line naming
  * the record's kind in its colour, with its state on the right in a normal card (the number in a small one), and a
  * divider under it; then the logo (or `icon` without a car), name over plate and number, what it is in for, the
  * customer and the clock; then, over the same divider, the mechanic, where it is on the calendar and the total. The
