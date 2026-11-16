@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CalendarPlus, EllipsisVertical, FileSearch, Gauge, Pencil, Shield, ShieldCheck, Trash2, Wrench } from "lucide-react";
+import { CalendarPlus, ChevronLeft, EllipsisVertical, FileSearch, Gauge, Pencil, Shield, ShieldCheck, Trash2, User, Wrench } from "lucide-react";
 import { useRemember } from "@/lib/recents";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
@@ -29,6 +29,8 @@ import { deleteVehicle, recordMileage } from "@/lib/store/actions";
 import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { selectWorkOrdersByVehicle } from "@/lib/store/selectors";
 import { cn } from "@/lib/utils";
+import { CarHeader, CoverButton, CoverIconButton, coverIconClass } from "@/components/ds/car";
+import { makeInk } from "@/lib/colors";
 
 export function VehicleDetail() {
 	const id = useQueryId();
@@ -197,6 +199,7 @@ function Vehicle({ vehicle, embedded = false }) {
 
 	return (
 		<Page width="wide" embedded={embedded}>
+			{embedded ? (
 			<PageHeader
 				embedded={embedded}
 				back={{ href: "/vehicles/", label: "Mașini" }}
@@ -255,6 +258,52 @@ function Vehicle({ vehicle, embedded = false }) {
 					</>
 				}
 			/>
+			) : (
+				<CarHeader
+					className="mb-6"
+					make={vehicle.make}
+					plate={vehicle.plate}
+					status={inShop ? `În atelier · ${fmtWorkOrder(inShop.number)}` : null}
+					eyebrow={[vehicle.year, vehicle.engine, FUELS[vehicle.fuel], vehicle.color].filter(Boolean).join(" · ") || "Mașină"}
+					title={vehicleName(vehicle) || "Mașină"}
+					facts={[owner?.name, vehicle.vin && `VIN ${vehicle.vin}`].filter(Boolean).join(" · ")}
+					back={
+						<Link href="/vehicles/" className="mb-4 inline-flex items-center gap-0.5 text-[13px] opacity-75 hover:opacity-100">
+							<ChevronLeft className="size-4" aria-hidden /> Mașini
+						</Link>
+					}
+					actions={
+						<>
+							{inShop ? (
+								<CoverButton large icon={Wrench} onClick={() => router.push(`/work-orders/detail/?id=${inShop.id}`)}>
+									Deschide lucrarea
+								</CoverButton>
+							) : (
+								<CoverButton large icon={Wrench} onClick={() => openSheet("checkin", { vehicleId: vehicle.id })}>
+									Primire
+								</CoverButton>
+							)}
+							<CoverIconButton large light={makeInk(vehicle.make) !== "#ffffff"} icon={CalendarPlus} label="Programează" onClick={() => openSheet("appointment", { vehicleId: vehicle.id })} />
+							<CoverIconButton large light={makeInk(vehicle.make) !== "#ffffff"} icon={Pencil} label="Editează" onClick={() => openSheet("vehicle", { id: vehicle.id })} />
+							{owner && (
+								<Link href={`/customers/detail/?id=${owner.id}`} aria-label={`Proprietar: ${owner.name}`} className={coverIconClass(makeInk(vehicle.make) !== "#ffffff", true)}>
+									<User className="size-3.5" aria-hidden />
+								</Link>
+							)}
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<CoverIconButton large light={makeInk(vehicle.make) !== "#ffffff"} icon={EllipsisVertical} label="Mai multe" />
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end">
+									<DropdownMenuItem variant="destructive" onSelect={remove}>
+										<Trash2 /> Șterge mașina
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</>
+					}
+				/>
+			)}
 
 			<div className="mb-6 grid gap-3 sm:grid-cols-3">
 				<DeadlineCard icon={ShieldCheck} title="ITP" info={itp} date={vehicle.itpExpiry} detail={vehicle.itpExpiry ? fmtRelativeTo(vehicle.itpExpiry, today) : "Adaugă data expirării"} action={itp.status === "soon" || itp.status === "expired" ? remind("itp", vehicle.itpExpiry, itp.days) : null} />

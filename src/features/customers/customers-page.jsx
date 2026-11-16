@@ -6,7 +6,10 @@ import { UserPlus, Users } from "lucide-react";
 import { EmptyState, Initials, Money } from "@/components/ds/data";
 import { FilterChips, SearchInput } from "@/components/ds/inputs";
 import { DataList, ListHeader, ListRow } from "@/components/ds/list";
-import { Page, PageHeader, Toolbar } from "@/components/ds/page";
+import { Page, Toolbar } from "@/components/ds/page";
+import { PageTitle, useViewSwitch } from "@/components/ds/blocks";
+import { MakeTile } from "@/components/ds/car";
+import { PEOPLE_LOOKS, PEOPLE_LOOK_KEY } from "@/features/common/people-look";
 import { MakeLogo } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge } from "@/components/ds/tone";
@@ -41,6 +44,7 @@ export function CustomersPage() {
 	const invoices = useCollection("invoices");
 	const payments = useCollection("payments");
 	const [filter, setFilter] = useState("all");
+	const [look, lookSwitch] = useViewSwitch(PEOPLE_LOOK_KEY, PEOPLE_LOOKS);
 	const [query, setQuery] = useState("");
 	const deferred = useDeferredValue(query);
 
@@ -91,19 +95,19 @@ export function CustomersPage() {
 
 	return (
 		<Page>
-			<PageHeader
-				title="Clienți"
-				description={plural(counts.all, "client", "clienți")}
-				actions={
-					<Button onClick={() => openSheet("customer")} className="max-md:hidden">
-						<UserPlus /> Client nou
-					</Button>
-				}
-			/>
+			<PageTitle title="Clienți" subtitle={plural(counts.all, "client", "clienți")} className="mb-6">
+				{lookSwitch}
+				<Button onClick={() => openSheet("customer")} className="max-md:hidden">
+					<UserPlus /> Client nou
+				</Button>
+			</PageTitle>
 			<Toolbar className="flex-col items-stretch md:flex-row md:items-center">
 				<SearchInput value={query} onChange={setQuery} placeholder="Nume, telefon, CUI, nr. înmatriculare…" className="md:w-80" />
 				<FilterChips value={filter} onChange={setFilter} options={FILTERS.map((f) => ({ ...f, count: counts[f.value] }))} />
 			</Toolbar>
+			{look === "gallery" ? (
+				<CustomerCards rows={visible} onOpen={(id) => openDetail("customer", id)} />
+			) : (
 			<DataList
 				items={visible}
 				getKey={(r) => r.customer.id}
@@ -154,6 +158,53 @@ export function CustomersPage() {
 					</SwipeRow>
 				)}
 			/>
+			)}
 		</Page>
+	);
+}
+
+/** "Galerie": each client as a card, with their cars as tiles. */
+function CustomerCards({ rows, onOpen }) {
+	if (!rows.length) return <EmptyState icon={Users} title="Niciun client găsit" description="Încearcă numărul de telefon sau de înmatriculare." />;
+	return (
+		<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			{rows.slice(0, 120).map(({ customer, cars, lastVisit, balance, visits }) => (
+				<button key={customer.id} type="button" onClick={() => onOpen(customer.id)} className="flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-3.5 text-left transition-colors hover:bg-accent/40">
+					<span className="flex min-w-0 items-center gap-3">
+						<Initials name={customer.name} tone={customer.type === "company" ? "purple" : "blue"} className="size-11 text-sm" />
+						<span className="min-w-0">
+							<span className="block truncate text-[14.5px] font-semibold">{customer.name}</span>
+							<span className="block truncate text-xs text-muted-foreground">{formatPhone(customer.phone) || "Fără telefon"}</span>
+						</span>
+					</span>
+					<span className="flex min-w-0 items-center gap-2 text-[12.5px]">
+						{cars.length ? (
+							<>
+								<span className="flex -space-x-1.5">
+									{cars.slice(0, 3).map((c) => (
+										<MakeTile key={c.id} make={c.make} size={24} className="ring-2 ring-card" />
+									))}
+								</span>
+								<span className="min-w-0 truncate">{cars.map((c) => [c.make, c.model].filter(Boolean).join(" ")).join(", ")}</span>
+							</>
+						) : (
+							<span className="text-muted-foreground">Nicio mașină</span>
+						)}
+					</span>
+					<span className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+						<span className="truncate">
+							{plural(visits, "vizită", "vizite")}
+							{lastVisit ? ` · ${fmtDate(lastVisit, "d MMM yyyy")}` : ""}
+						</span>
+						{balance > 0 && (
+							<span className="shrink-0 font-semibold text-[#ff3b30] tabular-nums">
+								<Money value={balance} decimals={0} />
+							</span>
+						)}
+					</span>
+				</button>
+			))}
+			{rows.length > 120 && <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-3 xl:col-span-4">Primii 120 din {rows.length}. Caută ca să-i găsești pe ceilalți.</p>}
+		</div>
 	);
 }

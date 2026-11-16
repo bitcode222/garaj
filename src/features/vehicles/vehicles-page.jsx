@@ -7,7 +7,10 @@ import { EmptyState } from "@/components/ds/data";
 import { MakeLogo } from "@/components/ds/make-logo";
 import { FilterChips, SearchInput } from "@/components/ds/inputs";
 import { DataList, ListHeader, ListRow } from "@/components/ds/list";
-import { Page, PageHeader, Toolbar } from "@/components/ds/page";
+import { Page, Toolbar } from "@/components/ds/page";
+import { PageTitle, useViewSwitch } from "@/components/ds/blocks";
+import { CarCover, MakeTile } from "@/components/ds/car";
+import { PEOPLE_LOOKS, PEOPLE_LOOK_KEY } from "@/features/common/people-look";
 import { PlateTag, VehicleLabel } from "@/components/ds/make-logo";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
 import { ToneBadge } from "@/components/ds/tone";
@@ -50,6 +53,7 @@ export function VehiclesPage() {
 	const customers = useCollection("customers");
 	const workOrders = useCollection("workOrders");
 	const [filter, setFilter] = useState("all");
+	const [look, lookSwitch] = useViewSwitch(PEOPLE_LOOK_KEY, PEOPLE_LOOKS);
 	const [query, setQuery] = useState("");
 	const deferred = useDeferredValue(query);
 
@@ -92,19 +96,43 @@ export function VehiclesPage() {
 
 	return (
 		<Page>
-			<PageHeader
-				title="Mașini"
-				description={plural(rows.length, "mașină", "mașini")}
-				actions={
-					<Button onClick={() => openSheet("vehicle")} className="max-md:hidden">
-						<Plus /> Mașină nouă
-					</Button>
-				}
-			/>
+			<PageTitle title="Mașini" subtitle={`${plural(rows.length, "mașină", "mașini")} · ${counts.shop} în atelier`} className="mb-6">
+				{lookSwitch}
+				<Button onClick={() => openSheet("vehicle")} className="max-md:hidden">
+					<Plus /> Mașină nouă
+				</Button>
+			</PageTitle>
 			<Toolbar className="flex-col items-stretch md:flex-row md:items-center">
 				<SearchInput value={query} onChange={setQuery} placeholder="Nr. înmatriculare, VIN, marcă, proprietar…" className="md:w-80" autoCapitalize="characters" />
 				<FilterChips value={filter} onChange={setFilter} options={FILTERS.map((f) => ({ ...f, count: counts[f.value] }))} />
 			</Toolbar>
+			{look === "gallery" ? (
+				visible.length ? (
+					<div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						{visible.slice(0, 120).map((r) => {
+							const late = [r.itp, r.rca].find((d) => d.status === "expired");
+							const soon = [r.itp, r.rca].find((d) => d.status === "soon");
+							return (
+								<CarCover
+									key={r.vehicle.id}
+									make={r.vehicle.make}
+									plate={r.vehicle.plate}
+									status={r.inShop ? "În atelier" : late ? "Acte expirate" : soon ? "Acte expiră curând" : null}
+									eyebrow={[r.vehicle.year, FUELS[r.vehicle.fuel]].filter(Boolean).join(" · ") || "Mașină"}
+									title={vehicleName(r.vehicle) || "Mașină"}
+									detail={[r.owner?.name, r.km != null ? fmtKm(r.km) : null].filter(Boolean).join(" · ")}
+									onOpen={() => openDetail("vehicle", r.vehicle.id)}
+									width="auto"
+									height={256}
+								/>
+							);
+						})}
+						{visible.length > 120 && <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-3 xl:col-span-4">Primele 120 din {visible.length}. Caută ca să le găsești pe celelalte.</p>}
+					</div>
+				) : (
+					<EmptyState icon={CarFront} title="Nicio mașină pentru filtrul ales" action={<Button onClick={() => openSheet("vehicle")}>Adaugă mașină</Button>} />
+				)
+			) : (
 			<DataList
 				items={visible}
 				getKey={(r) => r.vehicle.id}
@@ -126,7 +154,7 @@ export function VehiclesPage() {
 					>
 					<ListRow onClick={() => openDetail("vehicle", r.vehicle.id)} className="md:grid md:grid-cols-[minmax(0,1.2fr)_120px_minmax(0,1fr)_110px_minmax(0,1fr)] md:gap-3">
 						<div className="flex min-w-0 flex-1 items-center gap-3">
-							<MakeLogo make={r.vehicle.make} className="size-7 max-md:hidden" />
+							<MakeTile make={r.vehicle.make} size={32} className="max-md:hidden" />
 							<div className="min-w-0 flex-1">
 								<p className="flex items-center gap-2 text-[15px] font-medium md:text-sm">
 									<MakeLogo make={r.vehicle.make} className="md:hidden" />
@@ -153,6 +181,7 @@ export function VehiclesPage() {
 					</SwipeRow>
 				)}
 			/>
+			)}
 		</Page>
 	);
 }
