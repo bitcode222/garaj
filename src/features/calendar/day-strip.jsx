@@ -14,7 +14,7 @@ import { APPOINTMENT_STATUS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { BlockMark } from "./block-mark";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
-import { makeColor, makeTint } from "@/lib/colors";
+import { craftStyle, Watermark } from "./craft";
 import { DRAG_SLOP_PX, HOLD_MS, HOLD_SLOP_PX, drawSpan, edgeSpeed, shiftSpan, startAt, stretchSpan } from "@/features/dashboard/timeline-drag";
 import {
 	GUTTER_PX,
@@ -94,27 +94,25 @@ const EventBlock = memo(function EventBlock({ appointment: a, mark = "booking", 
 				"absolute z-[5] flex flex-col overflow-hidden rounded-[7px] border px-1.5 py-[3px] text-left text-2xs leading-[15px] transition-[box-shadow,opacity] select-none [-webkit-touch-callout:none]",
 				// By car (docs/DESIGN.md §3): a light tint of its colour with that colour as the left edge. By mechanic or
 				// operation: outlined in that colour, white inside. Dashed while only booked.
-				byCar ? "border-y border-r" : cn("border", tone(toneName).line),
-				a.status === "scheduled" && "border-dashed",
+				// By car (the owner's "Agenda, lucrată", A): the car's colour with depth, its logo as a watermark.
+				byCar ? "rounded-[10px] border-0 px-2 py-1 [&>span:not([aria-hidden])]:relative" : cn("border", tone(toneName).line),
+				a.status === "scheduled" && (byCar ? "outline-[1.5px] -outline-offset-4 outline-white/70 outline-dashed" : "border-dashed"),
 				lookups.match && !lookups.match.has(a.id) && "opacity-15 saturate-50",
 				(a.status === "no_show" || a.status === "cancelled") && "line-through",
 				alertOutline(alert),
-				selected && "z-[6] ring-2 ring-foreground shadow-md shadow-black/15",
+				selected && (byCar ? "z-[6] outline-2 outline-offset-2 outline-foreground" : "z-[6] ring-2 ring-foreground shadow-md shadow-black/15"),
 				movable && "pointer-fine:cursor-grab",
 				dragging && "opacity-30",
 			)}
 			style={{
 				top,
 				height,
-				left: `calc(${left}% + 2px)`,
-				width: `calc(${width}% - 4px)`,
-				...(byCar && {
-					background: makeTint(f.make),
-					borderColor: `color-mix(in srgb, ${makeColor(f.make)} 30%, transparent)`,
-					borderLeft: `3px solid ${makeColor(f.make)}`,
-				}),
+				left: `calc(${left}% + 3px)`,
+				width: `calc(${width}% - 6px)`,
+				...(byCar && craftStyle(f.make)),
 			}}
 		>
+			{byCar && <Watermark make={f.make} size={Math.max(28, Math.min(60, height - 8))} />}
 			{lines === 1 ? (
 				// One line: the mark, the time, the car and its owner, the avatar at the end.
 				<span className="flex min-w-0 items-center gap-1">
@@ -812,8 +810,8 @@ export function DayStrip({ ref, view, today, settings, byDay, allByDay, columns,
 											{/* Centred, but never out of sight: a day only partly in view (Zi's neighbours) keeps its name at the visible edge. */}
 											<span className="sticky flex flex-col items-center gap-0.5" style={{ left: gutter + 8, right: 8 }}>
 												<span className="flex items-end gap-1.5">
-													<span className={cn("text-sm capitalize", isToday ? "text-foreground" : "text-muted-foreground")}>{fmtDate(day, "EEE").replace(".", "")}</span>
-													<span className={cn("flex h-6 min-w-6 items-center justify-center rounded-md px-1 text-sm tabular-nums", isToday ? "rounded-full bg-foreground font-semibold text-background" : "text-muted-foreground")}>{Number(day.slice(8))}</span>
+													<span className={cn("text-[11px] font-semibold tracking-[0.1em] uppercase", isToday ? "text-[#ff3b30]" : "text-muted-foreground")}>{fmtDate(day, "EEE").replace(".", "")}</span>
+													<span className={cn("flex h-7 min-w-6 items-center justify-center px-0.5 tabular-nums", isToday ? "text-[26px] leading-none font-medium tracking-[-0.04em] text-[#ff3b30]" : "text-[26px] leading-none font-medium tracking-[-0.04em] text-foreground")}>{Number(day.slice(8))}</span>
 												</span>
 												{/* How many bookings the day has (as shown: the filters apply). */}
 												<span data-day-count={count} data-day-hits={hits ?? undefined} className={cn("text-2xs whitespace-nowrap text-muted-foreground tabular-nums", hits != null ? (hits ? "font-semibold text-brand" : "opacity-60") : !count && "opacity-60")}>
