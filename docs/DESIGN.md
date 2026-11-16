@@ -64,8 +64,8 @@ The current home (hero search, day ruler, stage sections) is replaced by Azi A/B
 |---|---|---|
 | 1 | Foundations: tokens (neutrals, area, state and make colours, Inter), the first building blocks, the shell (quiet sidebar, toolbar with Nou, phone tab bar), `/design/` rebuilt. Job card, list, table, sheet and side panel come with the pages that first use them | done |
 | 2 | Azi A + B (`features/dashboard/dashboard-page.jsx`, data in `azi-data.js`), and the running job: `startWork`, `stopWork`, `setLineDone` in the store over `src/domain/work-clock.js`, the floating bar on every page (`features/running/running-job.jsx`), the next-step button (`features/work-orders/job-action.js`). The old home's pieces stay unused until part 7; its analytics stay at the bottom of Azi until part 5 | done |
-| 3 | Atelier A + B: stages and board (drag), Lucrare and Deviz as page and panel, Recepție | planned |
+| 3 | Atelier A + B (`features/work-orders/work-orders-page.jsx`, `job-card.jsx`): stages and board (drag between columns, only moves the rules allow); Lucrare and Deviz as the full page with the car-coloured header, the clock line and the steps to tick (`job-progress.jsx`), or in the right panel from the board. Recepție stays the right panel in both looks for now | done |
 | 4 | Agendă A: week calendar, list, booking sheet | planned |
 | 5 | Bani A + B: invoices, invoice, reports (with the old home analytics) | planned |
 | 6 | Oameni și mașini A + B: clients, client, cars, car, De contactat | planned |
-| 7 | Catalog, Setări, Caută, Nou A + B; old components and docs that no longer apply are removed | planned |
+| 7 | Catalog, Setări, Caută, Nou A + B; sheets reworked (a car's sheet in its colour; Recepție centred in Atelier A); old components and docs that no longer apply are removed | planned |

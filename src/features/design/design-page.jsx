@@ -174,7 +174,7 @@ export function DesignPage() {
 
 			<Block title="Capul unei pagini de mașină">
 				<div className="overflow-hidden rounded-xl border">
-					<div className="px-4 md:px-6 lg:px-8">
+					<div className="px-4 pt-4 md:px-6 md:pt-6 lg:px-8 lg:pt-8">
 						<CarHeader
 							make="Volkswagen"
 							plate="B123GRJ"

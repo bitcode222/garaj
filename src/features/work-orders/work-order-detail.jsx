@@ -4,8 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
+	ChevronLeft,
 	ClipboardCheck,
 	EllipsisVertical,
+	MoreHorizontal,
+	Phone,
 	FileSearch,
 	FileText,
 	Fuel,
@@ -62,6 +65,12 @@ import { holdEdits } from "@/lib/pending-edits";
 import { VisitBarFor, visitTitle } from "@/features/flow/visit-bar";
 import { JobState, nextLabel, useJobMoves } from "./job-state";
 import { JobWarnings } from "@/features/calendar/booking-warnings";
+import { CarHeader, CoverButton, CoverIconButton, coverIconClass } from "@/components/ds/car";
+import { useAccount } from "@/components/shell/account-menu";
+import { makeInk } from "@/lib/colors";
+import { primaryAction } from "./job-action";
+import { jobHeadline } from "./job-text";
+import { ClockLine, JobSteps } from "./job-progress";
 import { useWalk } from "@/features/flow/visit-links";
 
 const ACTIVITY_LABEL = { created: "Lucrare deschisă" };
@@ -98,6 +107,7 @@ function WorkOrder({ order, embedded = false }) {
 	const vehicle = useEntity("vehicles", order.vehicleId);
 	const invoices = useCollection("invoices");
 	const staff = selectActive(useCollection("staff"));
+	const { member } = useAccount();
 	const bays = selectActive(useCollection("bays"));
 	const [estimateOpen, setEstimateOpen] = useState(false);
 	const [draft, update, flush] = useDraft(order, (next) =>
@@ -143,6 +153,34 @@ function WorkOrder({ order, embedded = false }) {
 		if (result === "copied") toast.success("Devizul a fost copiat.");
 	};
 
+
+	const estimateMenu = (
+<DropdownMenuContent align="end" className="w-56">
+			{customer?.phone && (
+				<>
+					<DropdownMenuItem asChild>
+						<a href={whatsappHref(customer.phone, message)} target="_blank" rel="noreferrer">
+							<MessageCircle /> Trimite pe WhatsApp
+						</a>
+					</DropdownMenuItem>
+					<DropdownMenuItem asChild>
+						<a href={smsHref(customer.phone, message)}>
+							<MessageSquareText /> Trimite prin SMS
+						</a>
+					</DropdownMenuItem>
+				</>
+			)}
+			<DropdownMenuItem onSelect={shareEstimate}>
+				<Share2 /> Distribuie…
+			</DropdownMenuItem>
+			<DropdownMenuItem onSelect={() => setEstimateOpen(true)}>
+				<Printer /> Tipărește devizul
+			</DropdownMenuItem>
+		</DropdownMenuContent>
+	);
+	const primary = primaryAction(order, { staffId: member?.id ?? null });
+	const light = makeInk(vehicle?.make) !== "#ffffff";
+
 	const snapshot = buildSnapshot({ settings, customer, vehicle, mileage: order.mileage });
 	const estimateDoc = { ...draft, series: "", number: order.number, issueDate: todayISO(), dueDate: null, notes: draft.complaint ? `Reclamație: ${draft.complaint}` : "" };
 
@@ -161,7 +199,8 @@ function WorkOrder({ order, embedded = false }) {
 
 	return (
 		<Page width="wide" embedded={embedded}>
-			<PageHeader
+			{embedded ? (
+				<PageHeader
 				embedded={embedded}
 				back={{ href: "/work-orders/", label: "Lucrări" }}
 				title={visitTitle({ vehicle }, fmtWorkOrder(order.number), customer?.name ?? (orderKind(order) === "estimate" ? "Deviz" : "Lucrare"))}
@@ -185,28 +224,7 @@ function WorkOrder({ order, embedded = false }) {
 									<Send /> <span className="max-sm:hidden">Deviz</span>
 								</Button>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end" className="w-56">
-								{customer?.phone && (
-									<>
-										<DropdownMenuItem asChild>
-											<a href={whatsappHref(customer.phone, message)} target="_blank" rel="noreferrer">
-												<MessageCircle /> Trimite pe WhatsApp
-											</a>
-										</DropdownMenuItem>
-										<DropdownMenuItem asChild>
-											<a href={smsHref(customer.phone, message)}>
-												<MessageSquareText /> Trimite prin SMS
-											</a>
-										</DropdownMenuItem>
-									</>
-								)}
-								<DropdownMenuItem onSelect={shareEstimate}>
-									<Share2 /> Distribuie…
-								</DropdownMenuItem>
-								<DropdownMenuItem onSelect={() => setEstimateOpen(true)}>
-									<Printer /> Tipărește devizul
-								</DropdownMenuItem>
-							</DropdownMenuContent>
+							{estimateMenu}
 						</DropdownMenu>
 						{order.status === "estimate" && !order.invoiceId && (
 							<DropdownMenu>
@@ -224,7 +242,66 @@ function WorkOrder({ order, embedded = false }) {
 						)}
 					</>
 				}
-			/>
+				/>
+
+			) : (
+				<>
+					{/* The page of a job takes its car's colour (docs/DESIGN.md §1): the header fades into the page. */}
+					<CarHeader
+						make={vehicle?.make}
+						plate={vehicle?.plate}
+						status={order.status === "estimate" ? "Deviz · așteaptă aprobarea" : WORK_ORDER_STATUS[order.status]?.label}
+						eyebrow={`${order.status === "estimate" ? "Devizul" : "Lucrarea"} #${order.number} · ${vehicleName(vehicle) || "Mașină"}`}
+						title={jobHeadline(order)}
+						facts={[customer?.name, customer?.phone, order.mileage != null ? fmtKm(order.mileage) : null, staff.find((m) => m.id === order.staffId)?.name, bays.find((b) => b.id === order.bayId)?.name].filter(Boolean).join(" · ")}
+						back={
+							<Link href="/work-orders/" className="mb-4 inline-flex items-center gap-0.5 text-[13px] opacity-75 hover:opacity-100">
+								<ChevronLeft className="size-4" aria-hidden /> Atelier
+							</Link>
+						}
+						actions={
+							<>
+								{primary && (
+									<CoverButton large icon={primary.icon} onClick={primary.run}>
+										{primary.label}
+									</CoverButton>
+								)}
+								{customer?.phone && (
+									<a href={`tel:${customer.phone}`} aria-label={`Sună: ${customer.name}`} className={coverIconClass(light, true)}>
+										<Phone className="size-3.5" aria-hidden />
+									</a>
+								)}
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<CoverIconButton large light={light} icon={Send} label="Trimite devizul" />
+									</DropdownMenuTrigger>
+									{estimateMenu}
+								</DropdownMenu>
+								{order.status === "estimate" && !order.invoiceId && (
+									<DropdownMenu>
+										<DropdownMenuTrigger asChild>
+											<CoverIconButton large light={light} icon={MoreHorizontal} label="Mai multe acțiuni" />
+										</DropdownMenuTrigger>
+										<DropdownMenuContent align="end" className="w-56">
+											<DropdownMenuItem variant="destructive" onSelect={remove}>
+												<Trash2 /> Șterge devizul
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								)}
+							</>
+						}
+						footer={<ClockLine order={order} />}
+					/>
+					<div className="mb-6 space-y-4">
+						<JobWarnings order={order} />
+						<JobState order={order} moves={moves} onReview={askReview} />
+						<p className="text-xs text-muted-foreground">Deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}</p>
+					</div>
+					<JobSteps order={order} locked={locked} />
+					<div className="h-6" />
+				</>
+			)}
 
 			<SplitView
 				stacked={embedded}

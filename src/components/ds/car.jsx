@@ -71,24 +71,23 @@ export function CarCover({ make, plate, status, eyebrow, title, detail, action, 
 }
 
 /** The one button on a cover: white on the car's colour. */
-export function CoverButton({ icon: Icon, children, ...props }) {
+export function CoverButton({ icon: Icon, large, children, ...props }) {
 	return (
-		<button type="button" className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-[7px] bg-white px-2.5 text-xs font-medium text-zinc-900 transition-transform active:scale-[0.98] pointer-coarse:h-9" {...props}>
+		<button type="button" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-[7px] bg-white font-medium text-zinc-900 transition-transform active:scale-[0.98]", large ? "h-8 px-3 text-[13px] pointer-coarse:h-10" : "h-7 px-2.5 text-xs pointer-coarse:h-9")} {...props}>
 			{Icon && <Icon className="size-3.5" aria-hidden />}
 			{children}
 		</button>
 	);
 }
 
+/** The classes of a round button on a car's colour, for a link that looks like one. */
+export const coverIconClass = (light, large = false) =>
+	cn("inline-flex shrink-0 items-center justify-center rounded-[7px]", large ? "size-8 pointer-coarse:size-10" : "size-7 pointer-coarse:size-9", light ? "bg-black/10" : "bg-white/15 ring-1 ring-white/20 ring-inset");
+
 /** A round button on a car's colour (call, "…"). */
-export function CoverIconButton({ icon: Icon, label, light, ...props }) {
+export function CoverIconButton({ icon: Icon, label, light, large, ...props }) {
 	return (
-		<button
-			type="button"
-			aria-label={label}
-			className={cn("inline-flex size-7 shrink-0 items-center justify-center rounded-[7px] pointer-coarse:size-9", light ? "bg-black/10" : "bg-white/15 ring-1 ring-white/20 ring-inset")}
-			{...props}
-		>
+		<button type="button" aria-label={label} className={coverIconClass(light, large)} {...props}>
 			<Icon className="size-3.5" aria-hidden />
 		</button>
 	);
@@ -98,12 +97,13 @@ export function CoverIconButton({ icon: Icon, label, light, ...props }) {
  * The head of a car's page (a job, an estimate, the car itself): the cover colour fading into the page, the logo on
  * its art, then the plate and status, an eyebrow, the title, a line of facts and the actions.
  */
-export function CarHeader({ make, plate, status, eyebrow, title, facts, actions, footer, className }) {
+export function CarHeader({ make, plate, status, eyebrow, title, facts, actions, footer, back, className }) {
 	return (
 		<header
-			className={cn("-mx-4 px-4 pt-6 pb-10 md:-mx-6 md:px-6 lg:-mx-8 lg:px-8", className)}
+			className={cn("-mx-4 -mt-4 px-4 pt-5 pb-10 md:-mx-6 md:-mt-6 md:px-6 lg:-mx-8 lg:-mt-8 lg:px-8", className)}
 			style={{ background: `linear-gradient(to bottom, ${makeCover(make)} 0, ${makeCover(make)} 72%, var(--background) 100%)`, color: makeInk(make) }}
 		>
+			{back}
 			<div className="flex flex-col gap-5 md:flex-row md:items-center md:gap-6">
 				<MakeArt make={make} size={104} className="hidden md:inline-flex" />
 				<div className="flex min-w-0 flex-1 flex-col gap-1.5">
