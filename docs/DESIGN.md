@@ -92,6 +92,22 @@ the default): the day alone as one wide line on the white sheet, overlapping boo
 mechanic's first free hour from now on (book it), each mechanic's load, and "Programare nouă". The free time and the load
 are rules in `src/domain/day-summary.js`. Linie always moves through the days sideways (the hours scroll down), whatever the "Derulare" setting; the ⇄/⇅ button hides there. **Mecanici**: the column per mechanic, as before (drag between mechanics).
 
+### Telefon ca iPhone (owner, 17 Nov 2026, board https://claude.ai/artifact/XZjoSBj5YhRWmdHKBATf8d)
+
+Under 768 px the web is a one-to-one copy of the iPhone app (`ios-native/`, checked side by side with the simulator at
+the same width). The desktop keeps everything above. The phone has one look per screen, the iPhone's: the A/B switches
+are a desktop thing. One exception, by the owner's choice: the Agendă calendar takes the iPhone's layout (Listă ·
+Calendar, the week as a row of days, the mechanics as a legend) with the web's car-coloured cards inside it.
+
+| Step | What | Status |
+|---|---|---|
+| 1 | The frame: no top bar; each page's nav row (round glass buttons: "+" by default, "‹ Registru" on its pages, the account on Registru) over a 34 px bold title that shrinks into the row as it scrolls away (`ds/nav-bar.jsx`, `PageTitle` `actions`, `inline`, `phoneTitle`); the tab bar as a floating glass capsule, the tab in view in a grey pill, orange, "Căutare" a tab with its page; the iOS grouped grey and the system font; the running job a light capsule | done |
+| 2 | Registru and Căutare | |
+| 3 | Atelier: the list and its card | |
+| 4 | Agendă: Listă and Calendar | |
+| 5 | Azi | |
+| 6 | The pages and sheets inside (job, booking, client, car, invoice, settings), from their iPhone screenshots | |
+
 ## 5. Building blocks (in code)
 
 | Where | What |

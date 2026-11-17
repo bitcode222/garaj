@@ -607,3 +607,21 @@
 	--lg-sheen: rgb(255 255 255 / 0.06);
 	--lg-shadow: 0 10px 28px -12px rgb(0 0 0 / 0.6);
 }
+
+/* The phone is the iPhone app (owner, 17 Nov 2026; docs/DESIGN.md "Telefon ca iPhone"): its grouped grey, its system
+   font, the floating tab bar's height. Under 768 px only; the desktop keeps its own look. */
+@media (max-width: 767px) {
+	:root {
+		--background: #f2f2f7;
+		--topbar-h: 2.75rem; /* the nav row: round buttons, the title once the large one scrolls away */
+		--tabbar-h: 4.75rem; /* the floating capsule (62 px) and the gap under it */
+	}
+	.dark {
+		--background: #000000;
+		--card: #1c1c1e;
+		--popover: #1c1c1e;
+	}
+	body {
+		font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
+	}
+}

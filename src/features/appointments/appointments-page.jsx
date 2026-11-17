@@ -287,7 +287,7 @@ export function AppointmentsPage() {
 					{groups.map((group) => (
 						<section key={group.day ?? "all"} aria-label={group.day ? fmtDate(group.day, "EEEE, d MMMM") : "Programări"}>
 							{group.day && (
-								<h2 className="sticky top-[calc(3.5rem+var(--safe-top))] z-10 flex flex-wrap items-baseline gap-x-2 border-b bg-card/95 px-4 py-2 text-xs backdrop-blur md:top-0">
+								<h2 className="sticky top-[calc(var(--topbar-h)+var(--safe-top))] z-10 flex flex-wrap items-baseline gap-x-2 border-b bg-card/95 px-4 py-2 text-xs backdrop-blur md:top-0">
 									<span className="font-semibold tracking-wider uppercase">{dayName(group.day, today)}</span>
 									<span className="text-muted-foreground first-letter:uppercase">{fmtDate(group.day, "EEEE, d MMMM")}</span>
 									<span className="text-muted-foreground">

@@ -10,6 +10,7 @@ import { runningEntry, runningJobs, steps, workedMs } from "@/domain/work-clock"
 import { formatPlate } from "@/domain/vehicle";
 import { setLineDone, stopWork } from "@/lib/store/actions";
 import { useCollection } from "@/lib/store/hooks";
+import { useMediaQuery } from "@/lib/hooks";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { clockText, jobHeadline, stepText } from "@/features/work-orders/job-text";
@@ -38,6 +39,8 @@ export function RunningJobBar() {
 	const running = runningJobs(Object.values(workOrders));
 	const order = running.find((o) => member && runningEntry(o).staffId === member.id) ?? running[0] ?? null;
 	const now = useTick(Boolean(order));
+	// On a phone it is the iPhone's capsule: light glass, dark text (dark glass on a desktop).
+	const phone = useMediaQuery("(max-width: 767px)");
 	if (!order) return null;
 	const vehicle = vehicles[order.vehicleId];
 	const { current } = steps(order);
@@ -55,14 +58,15 @@ export function RunningJobBar() {
 			{/* Room under the page's last row, so the bar never covers it. */}
 			<div aria-hidden className="h-20" />
 			<Glass
-				preset="float"
+				preset={phone ? "capsule" : "float"}
 				data-print="hide"
 				data-running-bar
 				role="region"
 				aria-label="Lucrarea pornită"
 				className={cn(
 					"fixed z-30 flex h-[52px] items-center gap-2.5 rounded-[14px] bg-zinc-900/95 pr-2 pl-1.5 text-white shadow-[0_12px_32px_rgb(0_0_0/0.28)] dark:bg-zinc-100/95 dark:text-zinc-900",
-					"inset-x-2 bottom-[calc(var(--tabbar-h)+var(--safe-bottom)+0.5rem)]",
+					"max-md:h-14 max-md:rounded-full max-md:border max-md:bg-card/90 max-md:pl-2 max-md:text-foreground max-md:shadow-[0_8px_30px_-12px_rgb(0_0_0/0.3)] max-md:dark:bg-card/90 max-md:dark:text-foreground",
+					"inset-x-3 bottom-[calc(var(--tabbar-h)+var(--safe-bottom)+0.125rem)]",
 					"md:inset-x-auto md:bottom-5 md:left-[calc(50%+2rem)] md:w-[460px] md:-translate-x-1/2 lg:left-[calc(50%+7.5rem)]",
 				)}
 			>

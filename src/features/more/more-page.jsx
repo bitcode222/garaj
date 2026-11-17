@@ -5,6 +5,7 @@ import { ChevronRight, History, Palette } from "lucide-react";
 import { Page } from "@/components/ds/page";
 import { PageTitle } from "@/components/ds/blocks";
 import { ThemeToggle } from "@/components/shell/theme-toggle";
+import { AccountMenu } from "@/components/shell/account-menu";
 import { NAV } from "@/components/shell/nav";
 import { useRecentRecords } from "@/components/shell/recents";
 import { AREA } from "@/lib/colors";
@@ -32,7 +33,8 @@ export function MorePage() {
 	const recents = useRecentRecords();
 	return (
 		<Page width="narrow" className="space-y-6">
-			<PageTitle title="Registru" />
+			{/* On a phone the account sits in the nav row (the top bar is gone, as on the iPhone). */}
+			<PageTitle title="Registru" actions={<AccountMenu className="size-11 border-0 bg-transparent" />} />
 			{recents.length > 0 && (
 				<section aria-label="Recente" className="space-y-1.5">
 					<h2 className="flex items-center gap-1.5 px-1 text-[11px] font-medium tracking-[0.07em] text-muted-foreground uppercase">
