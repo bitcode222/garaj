@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glass bench</title>
+<style>
+  body { margin: 0; font: 15px/1.4 -apple-system, system-ui, sans-serif; background: #f7f7f8; color: #18181b }
+  main { padding: 16px 16px 120px; display: grid; gap: 12px }
+  .card { border-radius: 14px; padding: 14px; color: #fff; min-height: 96px; display: flex; flex-direction: column; justify-content: flex-end }
+  .row { background: #fff; border-radius: 12px; padding: 12px; box-shadow: 0 0 0 1px #e4e4e7 }
+  .row b { display: block } .row span { color: #71717a; font-size: 13px }
+  .bar { position: fixed; left: 16px; right: 16px; bottom: 16px; height: 64px; border-radius: 32px; z-index: 10; display: flex; align-items: center; justify-content: space-around; font-weight: 600 }
+  .pill { position: fixed; top: 12px; left: 50%; width: 180px; margin-left: -90px; height: 40px; border-radius: 20px; z-index: 10; display: flex; align-items: center; justify-content: center; font-weight: 600 }
+  .css .bar, .css .pill { background: rgba(255,255,255,0.35); backdrop-filter: blur(14px) saturate(1.6); -webkit-backdrop-filter: blur(14px) saturate(1.6); box-shadow: 0 8px 24px -10px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.5) }
+  .none .bar, .none .pill { background: #fff; box-shadow: 0 8px 24px -10px rgba(0,0,0,.35) }
+</style>
+</head>
+<body>
+<div class="pill"><span>Agendă</span></div>
+<main id="list"></main>
+<nav class="bar"><span>Azi</span><span>Atelier</span><span>Agendă</span><span>Caută</span></nav>
+<script>
+  // A Garaj-like page: car-coloured cards and plain rows, ~6 screens tall.
+  const colors = ["#1c3d8c", "#2e7d4f", "#b3261e", "#1f1f23", "#ed7a34", "#0fa5a0", "#8b5cf6", "#3b82f6"];
+  const list = document.getElementById("list");
+  const N = Number(new URLSearchParams(location.search).get("n") || 40);
+  for (let i = 0; i < N; i++) {
+    const el = document.createElement("div");
+    if (i % 3 === 0) {
+      el.className = "card";
+      el.style.background = `linear-gradient(150deg, ${colors[i % 8]}, #111)`;
+      el.innerHTML = `<b>Mașina ${i}</b><span>B ${100 + i} ABC · Revizie</span>`;
+    } else {
+      el.className = "row";
+      el.innerHTML = `<b>Programare ${i}</b><span>Client ${i} · 10:${String(i % 60).padStart(2, "0")} · Frâne față</span>`;
+    }
+    list.appendChild(el);
+  }
+  const q = new URLSearchParams(location.search);
+  const mode = q.get("mode") || "none"; // none | css | lite
+  document.body.classList.add(mode);
+  window.__bench = { mode, t0: performance.now(), ready: mode !== "lite", initMs: null, longTasks: [] };
+  new PerformanceObserver((l) => { for (const e of l.getEntries()) window.__bench.longTasks.push(Math.round(e.duration)); }).observe({ type: "longtask", buffered: true });
+  function gpuName() {
+    try { const c = document.createElement("canvas").getContext("webgl"); const d = c.getExtension("WEBGL_debug_renderer_info"); return d ? c.getParameter(d.UNMASKED_RENDERER_WEBGL) : c.getParameter(c.RENDERER); } catch (e) { return "none"; }
+  }
+  window.__bench.gpu = gpuName();
+  window.__bench.webgpu = !!navigator.gpu;
+</script>
+<script>
+  window.__bench.snapshots = 0;
+  window.__grow = () => { const el = document.createElement("div"); el.className = "row"; el.innerHTML = "<b>Nou</b><span>adăugat</span>"; list.appendChild(el); };
+</script>
+<script type="module">
+  const q = new URLSearchParams(location.search);
+  if (q.get("mode") === "lite") {
+    const { liquidGlass: liquid } = await import("/src/lib/liquid-glass.js");
+    const t = performance.now();
+    for (const el of document.querySelectorAll(".bar, .pill")) liquid(el, { aberration: q.get("ab") === "1", refract: q.get("refract") !== "0" });
+    window.__bench.initMs = +(performance.now() - t).toFixed(1);
+    const bar = document.querySelector(".bar");
+    const wait = () => (q.get("refract") === "0" || getComputedStyle(bar).backdropFilter.includes("url") ? ((window.__bench.refractMs = Math.round(performance.now() - t)), (window.__bench.ready = true)) : requestAnimationFrame(wait));
+    wait();
+  }
+</script>
+</body>
+</html>
