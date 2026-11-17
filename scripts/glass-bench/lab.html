@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>lab</title>
+<style>
+  body { margin: 0; font: 600 22px/1.2 -apple-system, system-ui, sans-serif; color: #111;
+    background: repeating-linear-gradient(90deg, transparent 0 18px, #1c3d8c 18px 20px), repeating-linear-gradient(0deg, #fff 0 18px, #ed7a34 18px 20px); min-height: 200vh }
+  .txt { position: absolute; top: 70px; left: 20px; right: 20px; background: #fff; padding: 6px 10px; border-radius: 6px }
+  .pane { position: fixed; top: 40px; left: 30px; width: 330px; height: 110px; border-radius: 55px; z-index: 5; display: grid; place-items: center; color: #111 }
+  .css .pane { background: rgba(255,255,255,.1); backdrop-filter: blur(1px) saturate(1.6) }
+</style></head>
+<body>
+<div class="txt">Mașina 3 · B 103 ABC · Revizie 120.000 km</div>
+<div class="pane">Agendă</div>
+<script>window.__bench = { ready: false }; const q = new URLSearchParams(location.search); document.body.className = q.get("mode");</script>
+<script type="module">
+  const mode = q.get("mode");
+  if (mode === "lite") { const { liquidGlass: liquid } = await import("/src/lib/liquid-glass.js"); liquid(document.querySelector(".pane"), { strength: Number(q.get("s") || 40), aberration: q.get("ab") === "1" }); __bench.ready = true; }
+  else __bench.ready = true;
+</script>
+</body></html>
