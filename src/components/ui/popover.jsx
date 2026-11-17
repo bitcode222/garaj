@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+
+import { useGlass } from "@/components/ds/glass"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
@@ -19,13 +21,16 @@ function PopoverTrigger({
 
 function PopoverContent({
   className,
+  ref,
   align = "center",
   sideOffset = 4,
   ...props
 }) {
+  const glass = useGlass("menu", { outer: ref })
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
+        ref={glass}
         data-slot="popover-content"
         data-sheet-menu=""
         align={align}

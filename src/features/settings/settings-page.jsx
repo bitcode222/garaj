@@ -19,6 +19,7 @@ import { ToneBadge } from "@/components/ds/tone";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { GLASS_KEY, GLASS_VALUES } from "@/components/ds/glass";
 import { Textarea } from "@/components/ui/textarea";
 import { isValidCUI, isValidIBAN } from "@/domain/customer";
 import { todayISO } from "@/domain/dates";
@@ -190,6 +191,7 @@ function Settings({ settings }) {
 	const [look, lookSwitch] = useViewSwitch(REST_LOOK_KEY, REST_LOOKS);
 	const { theme, setTheme } = useTheme();
 	const [detailMode, setDetailMode] = useLocalPreference(DETAIL_MODE_KEY, "sheet", DETAIL_MODES);
+	const [glass, setGlass] = useLocalPreference(GLASS_KEY, "on", GLASS_VALUES);
 	const persistence = useStoreValue("persistence");
 	const demo = useStoreValue("demo");
 	const counters = useStoreValue("counters");
@@ -456,6 +458,14 @@ function Settings({ settings }) {
 						]}
 						className="max-sm:w-full max-sm:[&>button]:flex-1"
 					/>
+					{/* The safe way back (docs/LIQUID-GLASS.md): off, every bar, menu and the search are plain again. */}
+					<label className="mt-4 flex items-center justify-between gap-4">
+						<span className="min-w-0">
+							<span className="block text-sm font-medium">Sticlă lichidă</span>
+							<span className="block text-sm text-muted-foreground">Barele, meniurile, căutarea și lucrarea pornită, ca sticla. Oprită: suprafețe simple. Pe acest dispozitiv.</span>
+						</span>
+						<Switch checked={glass === "on"} onCheckedChange={(on) => setGlass(on ? "on" : "off")} aria-label="Sticlă lichidă" />
+					</label>
 					<p className="mt-3 text-sm text-muted-foreground">
 						Toate culorile și componentele sunt în{" "}
 						<Link href="/design/" className="font-medium text-foreground underline underline-offset-2">

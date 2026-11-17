@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Check, Pause } from "lucide-react";
 import { MakeTile } from "@/components/ds/car";
+import { Glass } from "@/components/ds/glass";
 import { useAccount } from "@/components/shell/account-menu";
 import { runningEntry, runningJobs, steps, workedMs } from "@/domain/work-clock";
 import { formatPlate } from "@/domain/vehicle";
@@ -53,7 +54,8 @@ export function RunningJobBar() {
 		<>
 			{/* Room under the page's last row, so the bar never covers it. */}
 			<div aria-hidden className="h-20" />
-			<div
+			<Glass
+				preset="float"
 				data-print="hide"
 				data-running-bar
 				role="region"
@@ -83,7 +85,7 @@ export function RunningJobBar() {
 						<Check className="size-4" aria-hidden />
 					</button>
 				)}
-			</div>
+			</Glass>
 		</>
 	);
 }

@@ -38,7 +38,25 @@ unless each changing element is registered, and has no low-power or reduced-moti
   same cost.
 - Not included, by design: the moving specular, fluid touch and drag (each needs a per-frame loop).
 
-## 3. Measuring it again
+## 3. Where the app uses it
+
+`src/components/ds/glass.jsx`: `useGlass(preset, { media, outer })` (a callback ref) and `<Glass as preset media>`.
+
+| Preset | Surfaces | Look |
+|---|---|---|
+| `bar` | the phone's top bar, tab bar, action bar (`StickyBar`) | 72 % card over 12 px frost, a gentle rim |
+| `float` | the running job's capsule | the ink colour at 72 %: dark glass, light in dark mode |
+| `menu` | menus, submenus, popovers, selects, the ⌘K window, the calendar's mini month | 78 % popover over 18 px frost |
+
+The rim, edge, sheen and shadow per theme are `--lg-*` in `globals.css`. Cards, sheets and pages stay solid.
+
+Ways back, from the lightest:
+1. Setări › Aspect › **Sticlă lichidă** off: this device gets the plain surfaces (`garaj.glass` = `off`).
+2. The system's "reduce transparency": the panes turn solid.
+3. A browser without `backdrop-filter`, or any error: the element keeps its own look.
+4. The code: `git checkout pre-liquid-glass` (main before the library), or revert the rollout's PR.
+
+## 4. Measuring it again
 
 `scripts/glass-bench/`: `index.html` (the list page, `?mode=none|css|lite&n=300&ab=1`), `lab.html` (grid lines behind
 a large pane, to see the bend), `run.mjs` (fresh Chrome per run: CPU throttling, idle and touch-scroll frame times,
