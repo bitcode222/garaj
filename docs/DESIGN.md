@@ -102,7 +102,7 @@ Calendar, the week as a row of days, the mechanics as a legend) with the web's c
 | Step | What | Status |
 |---|---|---|
 | 1 | The frame: no top bar; each page's nav row (round glass buttons: "+" by default, "‹ Registru" on its pages, the account on Registru) over a 34 px bold title that shrinks into the row as it scrolls away (`ds/nav-bar.jsx`, `PageTitle` `actions`, `inline`, `phoneTitle`); the tab bar as a floating glass capsule, the tab in view in a grey pill, orange, "Căutare" a tab with its page; the iOS grouped grey and the system font; the running job a light capsule | done |
-| 2 | Registru and Căutare | |
+| 2 | Registru (three groups, bold headers, the iPhone's area colours `IOS_AREA`, values: to collect, how many) and Căutare (large title, the grey search capsule, the empty state, matches in capped groups with their state as a pill), from `ds/ios.jsx` (`IosGroup`, `IosRow`, `IosPill`, `IosEmpty`, `IosSearchField`) | done |
 | 3 | Atelier: the list and its card | |
 | 4 | Agendă: Listă and Calendar | |
 | 5 | Azi | |

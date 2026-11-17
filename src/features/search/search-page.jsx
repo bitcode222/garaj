@@ -6,6 +6,9 @@ import { useState } from "react";
 import { ReceiptText, Search, Users, Wrench } from "lucide-react";
 import { MakeTile } from "@/components/ds/car";
 import { PageTitle, SectionHeader } from "@/components/ds/blocks";
+import { IosEmpty, IosGroup, IosPill, IosRow, IosSearchField } from "@/components/ds/ios";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
 import { Page } from "@/components/ds/page";
 import { Plate } from "@/components/ds/plate";
 import { ListPageSkeleton } from "@/components/ds/skeletons";
@@ -32,6 +35,7 @@ export function SearchPage() {
 	const vehicles = useCollection("vehicles");
 	const workOrders = useCollection("workOrders");
 	const search = useSearch(query, 60);
+	const phone = useMediaQuery(PHONE);
 	if (!ready) return <ListPageSkeleton />;
 
 	const change = (text) => {
@@ -41,6 +45,35 @@ export function SearchPage() {
 	const counts = Object.fromEntries(GROUPS.map((group) => [group.type, search.results[group.type]?.length ?? 0]));
 	const total = Object.values(counts).reduce((n, count) => n + count, 0);
 	const shown = GROUPS.filter((group) => counts[group.type] && (only === "all" || only === group.type));
+
+	// The phone: the iPhone's Caută (ios-native/Garaj/Views/HomeView.swift, SearchView): the large title, the field under
+	// it, the empty state while nothing is typed, the matches in grey-capped groups with their state as a pill.
+	if (phone) {
+		return (
+			<Page width="narrow" className="space-y-5">
+				<PageTitle title="Caută" actions={null} />
+				<IosSearchField value={query} onChange={change} placeholder="Mașină, client, lucrare, factură" />
+				{!search.tokens.length ? (
+					<IosEmpty icon={Search} title="Caută în atelier" className="pt-10">
+						Număr de înmatriculare, client, telefon, VIN, număr de lucrare sau de factură.
+					</IosEmpty>
+				) : !total ? (
+					<IosEmpty icon={Search} title={`Niciun rezultat pentru „${search.deferred}”`} className="pt-10">
+						Verifică ce ai scris sau încearcă altceva.
+					</IosEmpty>
+				) : (
+					shown.map((group) => (
+						<IosGroup key={group.type} caps={group.heading}>
+							{search.results[group.type].map((item) => {
+								const status = item.status && WORK_ORDER_STATUS[item.status];
+								return <IosRow key={item.id} href={group.href(item.id)} title={item.title} detail={item.subtitle} trailing={status ? <IosPill color={TONE_COLOR[status.tone]}>{status.label}</IosPill> : null} />;
+							})}
+						</IosGroup>
+					))
+				)}
+			</Page>
+		);
+	}
 
 	return (
 		<Page width="wide" className="space-y-6">
