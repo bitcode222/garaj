@@ -39,6 +39,9 @@ import { APPOINTMENT_ACTIONS, quickMoveAppointment } from "@/features/calendar/s
 import { atMinute } from "@/features/calendar/utils";
 import { timingClass, timingText } from "@/features/dashboard/visit-ui";
 import { ProgramariSwitch } from "./programari-switch";
+import { PhoneAppointments } from "./phone-appointments";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
 
 const STATUS_LABEL = { all: "Toate", "to-confirm": "De confirmat", confirmed: "Confirmate", arrived: "Sosite", done: "Finalizate", no_show: "Neprezentate", cancelled: "Anulate" };
 const STATUS_TONE = { "to-confirm": "yellow", confirmed: APPOINTMENT_STATUS.confirmed.tone, arrived: APPOINTMENT_STATUS.arrived.tone, done: APPOINTMENT_STATUS.done.tone, no_show: APPOINTMENT_STATUS.no_show.tone, cancelled: "neutral" };
@@ -154,6 +157,7 @@ export function AppointmentsPage() {
 		[appointmentsMap, status, period, customFrom, customTo, staffFilter, deferred, sort, today, now, customers, vehicles, services],
 	);
 	const { visible, hasMore, sentinelRef } = useProgressive(result.rows, 60);
+	const phone = useMediaQuery(PHONE);
 
 	if (!ready || !now) return <ListPageSkeleton stats rows={8} />;
 
@@ -179,6 +183,38 @@ export function AppointmentsPage() {
 			toast.error(error.message);
 		}
 	};
+
+	// A phone is the iPhone's Agendă · Listă (docs/DESIGN.md "Telefon ca iPhone").
+	if (phone) {
+		return (
+			<PhoneAppointments
+				result={result}
+				groups={groups}
+				counts={result.counts}
+				stats={stats}
+				status={status}
+				period={period}
+				staffFilter={staffFilter}
+				sort={sort}
+				staff={staff}
+				set={set}
+				query={query}
+				setQuery={(value) => {
+					setQuery(value);
+					set({ q: value });
+				}}
+				today={today}
+				now={now}
+				customers={customers}
+				vehicles={vehicles}
+				staffMap={staffMap}
+				hasMore={hasMore}
+				sentinelRef={sentinelRef}
+				onOpen={(a) => openDetail("appointment", a.id)}
+				onConfirm={confirm}
+			/>
+		);
+	}
 
 	return (
 		<Page>

@@ -83,6 +83,59 @@ export function IosSearchField({ value, onChange, placeholder, autoFocus, classN
 	);
 }
 
+/** The segmented picker as the iPhone's: a grey capsule track, the choice on a white pill. Options are links or buttons. */
+export function IosSegmented({ options, value, onChange, className, label }) {
+	return (
+		<div role="tablist" aria-label={label} className={cn("flex h-9 items-center rounded-full bg-foreground/[0.07] p-[3px]", className)}>
+			{options.map((option) => {
+				const on = option.value === value;
+				const cls = cn("flex h-full flex-1 items-center justify-center rounded-full text-[14px] font-semibold transition-[background-color,box-shadow] duration-200", on ? "bg-card shadow-[0_2px_6px_rgb(0_0_0/0.12)]" : "text-foreground/80");
+				return option.href ? (
+					<Link key={option.value} href={option.href} role="tab" aria-selected={on} onClick={() => onChange?.(option.value)} className={cls}>
+						{option.label}
+					</Link>
+				) : (
+					<button key={option.value} type="button" role="tab" aria-selected={on} onClick={() => onChange(option.value)} className={cls}>
+						{option.label}
+					</button>
+				);
+			})}
+		</div>
+	);
+}
+
+/** StatTile: the label, the number large, one line under it (coloured when it asks for attention); a tap filters. */
+export function IosStat({ label, value, detail, detailColor, onClick }) {
+	return (
+		<button type="button" onClick={onClick} className="flex min-w-0 flex-col items-start gap-0.5 rounded-[20px] bg-card px-4 py-3.5 text-left active:opacity-70">
+			<span className="w-full truncate text-[13px] text-muted-foreground">{label}</span>
+			<span className="text-[22px] leading-7 font-bold tabular-nums">{value}</span>
+			<span className={cn("w-full truncate text-[12px]", detailColor ? "font-semibold" : "text-muted-foreground")} style={detailColor ? { color: detailColor } : undefined}>
+				{detail}
+			</span>
+		</button>
+	);
+}
+
+/** CountChip: the label and its count; ink when chosen. */
+export function IosChip({ title, count, on, onClick }) {
+	return (
+		<button type="button" aria-pressed={on} onClick={onClick} className={cn("flex h-8 shrink-0 items-center gap-[5px] rounded-full px-3 text-[15px] font-medium", on ? "bg-foreground text-background" : "bg-card text-foreground")}>
+			{title}
+			{count != null && <span className={cn("tabular-nums", on ? "text-background/70" : "text-muted-foreground")}>{count}</span>}
+		</button>
+	);
+}
+
+/** ChipRow: chips in a row that scrolls sideways, edge to edge. */
+export function IosChipRow({ children, label }) {
+	return (
+		<div className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none]" role="group" aria-label={label}>
+			{children}
+		</div>
+	);
+}
+
 /** A state as the iPhone's pill: the colour as a light fill, the word in that colour. */
 export function IosPill({ color, children, className }) {
 	return (
