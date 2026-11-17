@@ -55,7 +55,7 @@ function useBack() {
  * The fixed row. `collapsed`: the large title is out of sight, so the row is glass and shows `title`. `actions`: the
  * buttons on the right (default: "+"); `null` for none.
  */
-export function PhoneNavBar({ title, collapsed, actions, leading }) {
+export function PhoneNavBar({ title, collapsed, actions, leading, ink }) {
 	const back = useBack();
 	const trailing = actions === undefined ? <NavNew /> : actions;
 	return (
@@ -70,7 +70,8 @@ export function PhoneNavBar({ title, collapsed, actions, leading }) {
 						</Link>
 					</NavGroup>
 				)}
-				<span aria-hidden={!collapsed} className={cn("pointer-events-none absolute inset-x-24 truncate text-center text-[17px] font-semibold transition-opacity duration-200", collapsed ? "opacity-100" : "opacity-0")}>
+				{/* `ink`: on a car's cover the title shows from the start, in the cover's ink, until the row turns to glass. */}
+				<span aria-hidden={!collapsed && !ink} className={cn("pointer-events-none absolute inset-x-24 truncate text-center text-[17px] font-semibold transition-[opacity,color] duration-200", collapsed || ink ? "opacity-100" : "opacity-0")} style={ink && !collapsed ? { color: ink } : undefined}>
 					{title}
 				</span>
 				<div className="flex-1" />
