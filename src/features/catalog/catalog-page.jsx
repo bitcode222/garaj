@@ -1,5 +1,8 @@
 "use client";
 
+import { PhoneCatalog } from "@/features/phone/registry-lists";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
 import { useSearchParams } from "next/navigation";
 import { useDeferredValue, useMemo, useState } from "react";
 import { Package, PackagePlus, Plus, Wrench } from "lucide-react";
@@ -25,6 +28,7 @@ import { selectList, selectReserved } from "@/lib/store/selectors";
 
 export function CatalogPage() {
 	const ready = useIsReady();
+	const phone = useMediaQuery(PHONE); // a phone: the iPhone's list (docs/DESIGN.md "Telefon ca iPhone")
 	const params = useSearchParams();
 	const [tab, setTab] = useState(params.get("tab") === "parts" ? "parts" : "services");
 	const [query, setQuery] = useState("");
@@ -45,6 +49,7 @@ export function CatalogPage() {
 	);
 
 	if (!ready) return <ListPageSkeleton stats />;
+	if (phone) return <PhoneCatalog />;
 
 	const tokens = queryTokens(deferred);
 	const stockValue = parts.reduce((sum, p) => sum + Math.max(0, p.stock) * (p.cost ?? 0), 0);

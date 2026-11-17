@@ -1,5 +1,8 @@
 "use client";
 
+import { PhoneInvoices } from "@/features/phone/registry-lists";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { FilePlus2, ReceiptText, Banknote, LayoutGrid, Rows3 } from "lucide-react";
@@ -41,6 +44,7 @@ const FILTERS = [
 
 export function InvoicesPage() {
 	const ready = useIsReady();
+	const phone = useMediaQuery(PHONE); // a phone: the iPhone's list (docs/DESIGN.md "Telefon ca iPhone")
 	const router = useRouter();
 	const openDetail = useOpenDetail();
 	const today = useToday();
@@ -115,6 +119,7 @@ export function InvoicesPage() {
 	}, [rows, filter, deferredQuery]);
 
 	if (!ready || !today) return <ListPageSkeleton stats />;
+	if (phone) return <PhoneInvoices />;
 
 	const newInvoice = () => {
 		const draft = createInvoiceDraft();

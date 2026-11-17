@@ -1,5 +1,8 @@
 "use client";
 
+import { PhoneReminders } from "@/features/phone/registry-lists";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
 import Link from "next/link";
 import { useState } from "react";
 import { BellRing, Check, ChevronDown, Clock3 } from "lucide-react";
@@ -51,6 +54,7 @@ function detail(r, invoice, settings) {
 
 export function RemindersPage() {
 	const ready = useIsReady();
+	const phone = useMediaQuery(PHONE); // a phone: the iPhone's list (docs/DESIGN.md "Telefon ca iPhone")
 	const today = useToday();
 	const settings = useSettings();
 	const vehicles = useCollection("vehicles");
@@ -72,6 +76,7 @@ export function RemindersPage() {
 	const [open, setOpen] = useState(null);
 
 	if (!ready || !today) return <ListPageSkeleton />;
+	if (phone) return <PhoneReminders />;
 
 	const counts = { all: reminders.length };
 	for (const r of reminders) counts[r.type] = (counts[r.type] ?? 0) + 1;

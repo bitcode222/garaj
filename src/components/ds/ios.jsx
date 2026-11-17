@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, Search as SearchIcon } from "lucide-react";
+import { Check, ChevronRight, Search as SearchIcon } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 // The iPhone app's building blocks for the phone (owner, 17 Nov 2026; docs/DESIGN.md "Telefon ca iPhone"), copied from
@@ -153,5 +154,36 @@ export function IosEmpty({ icon: Icon, title, children, className }) {
 			<p className="text-[20px] leading-[25px] font-bold">{title}</p>
 			{children && <p className="text-[17px] leading-[22px] text-muted-foreground">{children}</p>}
 		</div>
+	);
+}
+
+/**
+ * SortGroupMenu: the nav row's ⇅, two inline pickers (sort, group) remembered by the caller. `sorts`/`groups` are
+ * [key, label] pairs; leave `groups` out for a sort alone.
+ */
+export function IosSortMenu({ sorts, sort, onSort, groups, group, onGroup, children }) {
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="w-60">
+				<DropdownMenuLabel className="text-xs text-muted-foreground">Sortează după</DropdownMenuLabel>
+				{sorts.map(([key, label]) => (
+					<DropdownMenuItem key={key} onSelect={() => onSort(key)}>
+						<Check className={cn(sort !== key && "opacity-0")} /> {label}
+					</DropdownMenuItem>
+				))}
+				{groups && (
+					<>
+						<DropdownMenuSeparator />
+						<DropdownMenuLabel className="text-xs text-muted-foreground">Grupează după</DropdownMenuLabel>
+						{groups.map(([key, label]) => (
+							<DropdownMenuItem key={key} onSelect={() => onGroup(key)}>
+								<Check className={cn(group !== key && "opacity-0")} /> {label}
+							</DropdownMenuItem>
+						))}
+					</>
+				)}
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }

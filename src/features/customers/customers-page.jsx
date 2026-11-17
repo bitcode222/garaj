@@ -1,5 +1,8 @@
 "use client";
 
+import { PhoneCustomers } from "@/features/phone/registry-lists";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { UserPlus, Users } from "lucide-react";
@@ -35,6 +38,7 @@ const FILTERS = [
 
 export function CustomersPage() {
 	const ready = useIsReady();
+	const phone = useMediaQuery(PHONE); // a phone: the iPhone's list (docs/DESIGN.md "Telefon ca iPhone")
 	const router = useRouter();
 	const openDetail = useOpenDetail();
 	const today = useToday();
@@ -92,6 +96,7 @@ export function CustomersPage() {
 	}, [rows, filter, deferred]);
 
 	if (!ready || !today) return <ListPageSkeleton />;
+	if (phone) return <PhoneCustomers />;
 
 	return (
 		<Page>
