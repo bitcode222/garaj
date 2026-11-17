@@ -55,13 +55,14 @@ function useBack() {
  * The fixed row. `collapsed`: the large title is out of sight, so the row is glass and shows `title`. `actions`: the
  * buttons on the right (default: "+"); `null` for none.
  */
-export function PhoneNavBar({ title, collapsed, actions }) {
+export function PhoneNavBar({ title, collapsed, actions, leading }) {
 	const back = useBack();
 	const trailing = actions === undefined ? <NavNew /> : actions;
 	return (
 		<div data-print="hide" data-nav-bar className="fixed inset-x-0 top-0 z-30 md:hidden">
 			<div aria-hidden className={cn("absolute inset-0 border-b bg-background/80 backdrop-blur-xl transition-opacity duration-200", collapsed ? "opacity-100" : "border-transparent opacity-0")} />
 			<div className="relative flex h-11 items-center gap-2 px-4" style={{ marginTop: "var(--safe-top)" }}>
+				{leading}
 				{back && (
 					<NavGroup>
 						<Link href={back.href} aria-label={`Înapoi la ${back.label}`} className="flex size-11 items-center justify-center rounded-full active:opacity-60">

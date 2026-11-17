@@ -2,7 +2,10 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeftRight, ArrowUpDown, CalendarDays, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, Columns3, GalleryHorizontal, SlidersHorizontal, Users } from "lucide-react";
+import { ArrowLeftRight, ArrowUpDown, CalendarDays, CalendarRange, Check, ChevronDown, ChevronLeft, ChevronRight, Columns3, GalleryHorizontal, Plus, SlidersHorizontal, Users } from "lucide-react";
+import { IosSegmented } from "@/components/ds/ios";
+import { NavIcon, PHONE, PhoneNavBar } from "@/components/ds/nav-bar";
+import { PhoneMechanics, PhoneWeek } from "./phone-week";
 import { Segmented } from "@/components/ds/inputs";
 import { Sheet } from "@/components/ds/sheet";
 import { Button } from "@/components/ui/button";
@@ -62,7 +65,7 @@ function titleOf(view, seen, fallback) {
 
 function CalendarSkeleton() {
 	return (
-		<div className="flex h-[calc(100dvh-3.5rem-var(--safe-top)-var(--tabbar-h)-var(--safe-bottom))] flex-col md:h-dvh">
+		<div className="flex h-[calc(100dvh-var(--safe-top)-var(--tabbar-h)-var(--safe-bottom))] flex-col md:h-dvh">
 			<div className="flex items-center gap-3 border-b px-4 py-3">
 				<Skeleton className="h-8 w-48" />
 				<Skeleton className="ml-auto h-9 w-64" />
@@ -102,6 +105,8 @@ export function CalendarPage() {
 	const openDetail = useOpenDetail();
 	const reschedule = useReschedule();
 	const desktop = useMediaQuery("(min-width: 1024px)");
+	// A phone is the iPhone's calendar (docs/DESIGN.md "Telefon ca iPhone"): one day, a column per mechanic, sideways.
+	const phone = useMediaQuery(PHONE);
 	const appointmentsMap = useCollection("appointments");
 	const staffMap = useCollection("staff");
 	const customers = useCollection("customers");
@@ -126,7 +131,7 @@ export function CalendarPage() {
 	const paramDay = isISODate(params.get("day") ?? "") ? params.get("day") : null;
 	const paramId = params.get("id");
 	const [view, setViewState] = useState(paramView);
-	const currentView = view ?? storedView;
+	const currentView = phone ? "day" : (view ?? storedView);
 	const [opening, setOpening] = useState(null); // where a remounted strip opens: { day }
 	const [seen, setSeen] = useState(null); // what the strip says is in view: { day, from, to, month }
 	const [miniMonth, setMiniMonth] = useState(null); // the mini month's month, when moved by hand
@@ -138,6 +143,7 @@ export function CalendarPage() {
 	const [albumAnchor, setAlbumAnchor] = useState(null);
 	// Zi too: one line (pick C) or a column per mechanic, its own switch beside the views.
 	const [dayLook, daySwitch] = useViewSwitch("garaj.agenda.day", DAY_LOOKS);
+	const dayMode = phone ? "staff" : dayLook;
 	const gridArea = useRef(null); // where the booking details look for cards under the mouse, and the mini month floats
 	const searchInput = useRef(null);
 
@@ -167,14 +173,14 @@ export function CalendarPage() {
 	const singleStaff = visibleStaff.length === 1 ? visibleStaff[0].id : undefined;
 	const withUnassigned = hasUnassigned && !hiddenStaff.includes("none");
 	const columns = useMemo(() => {
-		if (currentView === "day" && dayLook === "staff" && visibleStaff.length + (withUnassigned ? 1 : 0) > 1) {
+		if (currentView === "day" && dayMode === "staff" && visibleStaff.length + (withUnassigned ? 1 : 0) > 1) {
 			const list = visibleStaff.map((s) => ({ key: s.id, staffId: s.id, name: s.name, label: s.name.split(" ")[0], color: s.color }));
 			if (withUnassigned) list.push({ key: "none", staffId: null, name: "Nealocat", label: "Nealocat", color: "neutral" });
 			return list;
 		}
 		return [{ key: "all", staffId: singleStaff, name: "", label: "", color: "neutral" }];
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentView, dayLook, staff, hiddenStaffText, withUnassigned, singleStaff]);
+	}, [currentView, dayMode, staff, hiddenStaffText, withUnassigned, singleStaff]);
 	const keyOf = useMemo(() => {
 		const keys = new Set(columns.map((c) => c.key));
 		return columns.length === 1 ? () => "all" : (a) => (keys.has(a.staffId) ? a.staffId : "none");
@@ -508,18 +514,18 @@ export function CalendarPage() {
 		</Button>
 	);
 	// Zi "Linie" moves through the days sideways, as in the mockup, whichever way the other views scroll.
-	const sideways = currentView === "day" && dayLook === "line";
+	const sideways = currentView === "day" && (dayMode === "line" || phone);
 	const onSheet = desktop && currentView === "week" && !albums;
-	const dayLine = desktop && currentView === "day" && dayLook === "line";
+	const dayLine = desktop && currentView === "day" && dayMode === "line";
 	const nothingShown = !albums && byDay.size === 0 && allByDay.size > 0;
-	const stripProps = { ref: strip, alone: currentView === "day" && dayLook === "line", today, settings, byDay, lookups, colorBy: prefs.colorBy, selectedId: selected, initialDay, onView, onOpen: open, onCreate: create };
+	const stripProps = { ref: strip, alone: currentView === "day" && (dayMode === "line" || phone), bare: phone, today, settings, byDay, lookups, colorBy: prefs.colorBy, selectedId: selected, initialDay, onView, onOpen: open, onCreate: create };
 
 	return (
-		<div className="flex h-[calc(100dvh-3.5rem-var(--safe-top)-var(--tabbar-h)-var(--safe-bottom))] md:h-dvh">
+		<div className="flex h-[calc(100dvh-var(--safe-top)-var(--tabbar-h)-var(--safe-bottom))] md:h-dvh">
 			<h1 className="sr-only">Calendar</h1>
 			<div className="flex min-w-0 flex-1 flex-col">
 				{/* The top bar. Desktop: one line, where you are on the left (the pages, ‹ Azi ›, the title) and what you do on the right (search, how it is drawn, settings). Phone: the title, which opens the panel, and the filters; the controls; the search. */}
-				<header className="border-b px-3 py-2 md:border-b-0 md:px-6 md:pt-5 md:pb-3">
+				<header className={cn("border-b px-3 py-2 md:border-b-0 md:px-6 md:pt-5 md:pb-3", phone && "border-b-0 px-0 pt-0 pb-0")}>
 					{desktop ? (
 						// The page's head, as the other pages (docs/DESIGN.md §3): "Agendă" and what is in view under it, how it is
 						// drawn and ‹ Azi › on the right; then the two pages, the search and the settings.
@@ -578,6 +584,39 @@ export function CalendarPage() {
 								</Button>
 							</div>
 						</div>
+					) : phone ? (
+						// The iPhone's: "Agendă" small in the row (Azi on the left once the day is another, "+" on the right),
+						// Listă · Calendar, the week strip, the mechanics over their columns.
+						<div className="flex flex-col gap-3">
+							<PhoneNavBar
+								title="Agendă"
+								collapsed
+								leading={
+									(seen?.day ?? initialDay) !== today ? (
+										<button type="button" onClick={() => strip.current?.today()} className="h-11 px-1 text-[17px] text-brand active:opacity-60">
+											Azi
+										</button>
+									) : null
+								}
+								actions={
+									<NavIcon label="Programare nouă" onClick={() => create()}>
+										<Plus />
+									</NavIcon>
+								}
+							/>
+							<div aria-hidden className="h-11" />
+							<IosSegmented
+								label="Vedere"
+								value="calendar"
+								className="mx-4"
+								options={[
+									{ value: "list", label: "Listă", href: "/appointments/" },
+									{ value: "calendar", label: "Calendar", href: "/calendar/" },
+								]}
+							/>
+							<PhoneWeek day={seen?.day ?? initialDay} today={today} busy={byDay} onPick={(d) => strip.current?.goTo(d)} onWeek={(dir) => strip.current?.goTo(addDaysISO(seen?.day ?? initialDay, 7 * dir))} />
+							{columns.length > 1 && <PhoneMechanics columns={columns} />}
+						</div>
 					) : (
 						<>
 							<div className="flex items-center gap-1.5">
@@ -635,7 +674,7 @@ export function CalendarPage() {
 						)
 					) : direction === "vertical" && !sideways ? (
 						<DayRows
-							key={`${currentView}:v:${opening?.day ?? ""}:${columns.length}:${dayLook}`}
+							key={`${currentView}:v:${opening?.day ?? ""}:${columns.length}:${dayMode}`}
 							{...stripProps}
 							view={currentView}
 							allByDay={allByDay}
@@ -646,14 +685,14 @@ export function CalendarPage() {
 						/>
 					) : (
 						<DayStrip
-							key={`${currentView}:${opening?.day ?? ""}:${columns.length}:${dayLook}`}
+							key={`${currentView}:${opening?.day ?? ""}:${columns.length}:${dayMode}`}
 							{...stripProps}
 							view={currentView}
 							allByDay={allByDay}
 							columns={columns}
 							keyOf={keyOf}
 							orders={orders}
-							showService={prefs.showService !== false}
+							showService={prefs.showService !== false && !phone}
 							onOpenOrder={(order) => openDetail("work-order", order.id)}
 							onReschedule={move}
 							onPickDay={openDay}

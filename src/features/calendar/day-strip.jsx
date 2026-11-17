@@ -279,7 +279,7 @@ function NowPill({ hourPx }) {
  * The scroll position never becomes React state: one read per frame, state only when the
  * days to render change. `ref` exposes goTo(day), step(±1) and today().
  */
-export function DayStrip({ ref, view, alone, today, settings, byDay, allByDay, columns, keyOf, orders, showService, lookups, colorBy, selectedId, initialDay, onView, onOpen, onOpenOrder, onCreate, onReschedule, onPickDay }) {
+export function DayStrip({ ref, view, alone, bare = false, today, settings, byDay, allByDay, columns, keyOf, orders, showService, lookups, colorBy, selectedId, initialDay, onView, onOpen, onOpenOrder, onCreate, onReschedule, onPickDay }) {
 	const touch = useMediaQuery("(pointer: coarse)");
 	const scroller = useRef(null);
 	const [size, setSize] = useState({ width: 0, height: 0 });
@@ -508,8 +508,9 @@ export function DayStrip({ ref, view, alone, today, settings, byDay, allByDay, c
 	const opened = serviceOpen === "open";
 	const lanes = opened ? (touch ? 2 : 3) : 1;
 	const serviceH = lanes * LANE_PX + 16; // the lanes, and a strip for "+N" under them (never over a car's name)
-	const staffHeader = zi && columns.length > 1; // Zi: a column per mechanic, named under the day
-	const headerPx = HEAD_PX + (staffHeader ? STAFF_PX : 0) + (showService ? serviceH : 0);
+	// `bare` (the phone, as the iPhone's): the page draws the week strip and the mechanics above, so no headers here.
+	const staffHeader = zi && columns.length > 1 && !bare; // Zi: a column per mechanic, named under the day
+	const headerPx = (bare ? 0 : HEAD_PX) + (staffHeader ? STAFF_PX : 0) + (showService ? serviceH : 0);
 
 	/** Where the pointer is: x in the days' coordinates, y in the hours', the day and the mechanic's column there. */
 	const pointAt = (clientX, clientY) => {
@@ -775,6 +776,7 @@ export function DayStrip({ ref, view, alone, today, settings, byDay, allByDay, c
 				<div className={cn("relative select-none", drag && (drag.kind === "move" ? "cursor-grabbing" : drag.kind === "create" ? "cursor-copy" : "cursor-ns-resize"))} style={{ width: gutter + totalWidth, height: headerPx + bodyHeight }}>
 					{/* The headers, as Notion's: one line per day, and the row of cars in service as its "All-day" row. They stick to the top. */}
 					<div className={cn("sticky top-0 z-30 bg-background", !showService && "border-b")} style={{ height: headerPx, width: gutter + totalWidth }}>
+						{!bare && (
 						<div className="flex" style={{ height: HEAD_PX }}>
 							<div className="sticky left-0 z-10 flex shrink-0 items-end justify-between bg-background pr-1.5 pb-1.5 pl-1 text-2xs text-muted-foreground" style={{ width: gutter }}>
 								<button type="button" onClick={() => onCreate?.({})} aria-label="Programare nouă" title="Programare nouă" className="flex size-6 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-foreground">
@@ -826,6 +828,7 @@ export function DayStrip({ ref, view, alone, today, settings, byDay, allByDay, c
 								})}
 							</div>
 						</div>
+						)}
 						{staffHeader && (
 							<div className="flex" style={{ height: STAFF_PX }}>
 								<div className="sticky left-0 z-10 shrink-0 bg-background" style={{ width: gutter }} />
