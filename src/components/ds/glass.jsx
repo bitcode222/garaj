@@ -15,6 +15,8 @@ const PRESETS = {
 	bar: { strength: 18, bevel: 12, frost: 12, saturate: 1.8, tint: "color-mix(in srgb, var(--card) 72%, transparent)", solid: "var(--card)" },
 	// The running job's capsule: dark glass in the light theme, light in the dark one (its text keeps its colour).
 	float: { strength: 36, frost: 8, saturate: 1.6, tint: "color-mix(in srgb, var(--foreground) 72%, transparent)", solid: "var(--foreground)" },
+	// The phone's floating capsules, as the iPhone's: the tab bar, the nav row's buttons, the running job.
+	capsule: { strength: 30, frost: 10, saturate: 1.8, tint: "color-mix(in srgb, var(--card) 70%, transparent)", solid: "var(--card)" },
 	// Menus, the search window, the mini month: well frosted, so their rows stay crisp.
 	menu: { strength: 28, frost: 18, saturate: 1.8, tint: "color-mix(in srgb, var(--popover) 78%, transparent)", solid: "var(--popover)" },
 };

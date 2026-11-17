@@ -4,6 +4,7 @@ import {
 	CalendarDays,
 	CarFront,
 	ChartColumn,
+	House,
 	LayoutGrid,
 	ReceiptText,
 	Search,
@@ -57,12 +58,13 @@ export const NAV = [
 ];
 
 /** The phone's tab bar, as the iPhone app's: Azi · Atelier · Agendă · Registru, and Caută (opens the search). */
+// The phone's tabs, with the iPhone app's symbols (house, wrench, calendar, grid, magnifier).
 export const TABS = [
-	NAV[0],
-	NAV[1],
-	NAV[2],
+	{ ...NAV[0], icon: House },
+	{ ...NAV[1], icon: Wrench },
+	{ ...NAV[2], icon: CalendarDays },
 	{ href: "/more/", label: "Registru", icon: LayoutGrid, badge: "reminders", matches: ["/customers", "/vehicles", "/reminders", "/catalog", "/reports", "/settings", "/design", "/more", "/invoices"] },
-	{ search: true, label: "Caută", icon: Search },
+	{ search: true, label: "Căutare", icon: Search },
 ];
 
 /** The two Programări pages, as the phone's tab and the switch at the top of both name them. */

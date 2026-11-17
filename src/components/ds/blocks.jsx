@@ -1,19 +1,41 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { useLocalPreference } from "@/lib/hooks";
+import { PHONE, PhoneNavBar } from "@/components/ds/nav-bar";
+import { useLocalPreference, useMediaQuery } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 
 // The text levels and small parts of the design language (docs/DESIGN.md §1, §3): page title 26 → section 15.5 with
 // "›" and a grey line → card → row. A state is a dot with words; an area's kind is its colour in small capitals.
 
-/** The page's title, its grey line, and what sits at its right (a switch, chips, a search). */
-export function PageTitle({ title, subtitle, children, className }) {
+/**
+ * The page's title, its grey line, and what sits at its right (a switch, chips, a search). On a phone it is the
+ * iPhone's: the nav row above (round glass buttons, `actions`, default "+"), the title large (34 bold) until it scrolls
+ * under the row, which then shows it small; `inline` keeps it small in the row from the start (as Atelier).
+ * `phoneTitle` replaces the large title on a phone (Azi's greeting).
+ */
+export function PageTitle({ title, subtitle, children, className, actions, inline = false, phoneTitle }) {
+	const phone = useMediaQuery(PHONE);
+	const heading = useRef(null);
+	const [gone, setGone] = useState(false);
+	useEffect(() => {
+		const el = heading.current;
+		if (!phone || inline || !el) return;
+		// The title is "gone" once its last line has passed under the 44 px row.
+		const observer = new IntersectionObserver(([entry]) => setGone(!entry.isIntersecting && entry.boundingClientRect.top < 120), { rootMargin: "-56px 0px 0px 0px" });
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [phone, inline]);
 	return (
 		<div className={cn("flex flex-wrap items-end justify-between gap-x-4 gap-y-3", className)}>
+			{phone && <PhoneNavBar title={title} collapsed={inline || gone} actions={actions} />}
+			{phone && <div aria-hidden className="h-7 w-full" />}
 			<div className="min-w-0">
-				<h1 className="text-[1.625rem] leading-tight font-semibold tracking-tight text-balance">{title}</h1>
+				<h1 ref={heading} className={cn("text-[1.625rem] leading-tight font-semibold tracking-tight text-balance", "max-md:text-[34px] max-md:leading-[41px] max-md:font-bold max-md:tracking-[0.01em]", inline && "max-md:sr-only")}>
+					{phone && phoneTitle ? phoneTitle : title}
+				</h1>
 				{subtitle && <p className="mt-0.5 text-[13.5px] text-muted-foreground">{subtitle}</p>}
 			</div>
 			{children && <div className="flex flex-wrap items-center gap-2">{children}</div>}

@@ -349,59 +349,40 @@ function Rail({ pathname, badges }) {
 	);
 }
 
-function TopBar({ shopName }) {
-	return (
-		<Glass as="header" preset="bar" media={PHONE} data-print="hide" className="fixed inset-x-0 top-0 z-30 border-b bg-card/90 pt-safe backdrop-blur-xl md:hidden">
-			<div className="flex h-14 items-center gap-2 px-4">
-				<Link href="/" className="flex min-w-0 flex-1 items-center gap-2.5">
-					<LogoMark className="size-7" />
-					<span className="truncate text-[15px] font-semibold">{shopName}</span>
-				</Link>
-				<Button variant="ghost" size="icon-touch" onClick={openCommandMenu} aria-label="Caută">
-					<Search className="size-5" />
-				</Button>
-				<QuickCreate>
-					<Button size="icon" className="size-9 rounded-[9px]" aria-label="Nou">
-						<Plus className="size-5" />
-					</Button>
-				</QuickCreate>
-				<AccountMenu />
-			</div>
-		</Glass>
-	);
-}
 
 const PROGRAMARI_KEY = "garaj.programari";
-const PHONE = "(max-width: 767px)"; // the top bar and the tab bar exist only there
+const PHONE = "(max-width: 767px)"; // the tab bar exists only there
 
+// The tab in view sits in a grey pill, its icon and name orange, as the iPhone's tab bar.
 const tabClass = (active) =>
 	cn(
-		"touch-none-callout relative flex h-full w-full flex-col items-center justify-center gap-1 text-[10px] font-medium transition-[color,transform,opacity] duration-100 active:scale-90 active:opacity-60",
-		active ? "text-foreground" : "text-muted-foreground",
+		"touch-none-callout relative flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-full text-[10px] font-semibold transition-[color,background-color,transform,opacity] duration-150 active:scale-95 active:opacity-70",
+		active ? "bg-foreground/[0.07] text-brand" : "text-foreground",
 	);
 
-/** The phone's tab bar, as the iPhone app's: Azi · Atelier · Agendă · Registru · Caută. */
+/** The phone's tab bar, as the iPhone app's: a floating glass capsule, Azi · Atelier · Agendă · Registru · Căutare. */
 function TabBar({ pathname, badges }) {
 	const [programari] = useLocalPreference(PROGRAMARI_KEY, PROGRAMARI_PAGES[0], PROGRAMARI_PAGES);
-	const openSearch = useOpenSearch();
 	return (
 		<Glass
 			as="nav"
-			preset="bar"
+			preset="capsule"
 			media={PHONE}
 			data-print="hide"
-			className="fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 pb-safe backdrop-blur-xl md:hidden"
+			className="fixed inset-x-3 bottom-[calc(var(--safe-bottom)+0.625rem)] z-40 h-[62px] rounded-full border bg-card/90 shadow-[0_8px_30px_-12px_rgb(0_0_0/0.3)] backdrop-blur-xl md:hidden"
 			aria-label="Navigare principală"
 		>
-			<ul className="grid h-14 grid-cols-5">
+			<ul className="grid h-full grid-cols-5 p-1">
 				{TABS.map((item) => {
+					// Căutare is a tab with its page, as on the iPhone (⌘K stays the window on a desktop).
 					if (item.search) {
+						const here = pathname.startsWith("/search");
 						return (
 							<li key="search">
-								<button type="button" onClick={() => { haptics.selection(); openSearch(); }} className={tabClass(false)}>
-									<item.icon className="size-[22px]" aria-hidden />
+								<Link href="/search/" aria-current={here ? "page" : undefined} onClick={() => haptics.selection()} className={tabClass(here)}>
+									<item.icon className={cn("size-6", here ? "stroke-[2.25]" : "stroke-[1.9]")} aria-hidden />
 									{item.label}
-								</button>
+								</Link>
 							</li>
 						);
 					}
@@ -423,7 +404,7 @@ function TabBar({ pathname, badges }) {
 								className={tabClass(active)}
 							>
 								<span className="relative">
-									<item.icon className={cn("size-[22px]", active && "stroke-[2.25]")} style={active && item.area ? { color: item.area } : undefined} aria-hidden />
+									<item.icon className={cn("size-6", active ? "stroke-[2.25]" : "stroke-[1.9]")} aria-hidden />
 									{count > 0 && (
 										<span className="absolute -top-1 -right-2.5 min-w-4 rounded-full bg-[#ff3b30] px-1 text-center text-[9px] leading-4 font-semibold text-white tabular-nums">
 											{count > 99 ? "99+" : count}
@@ -494,10 +475,9 @@ export function AppShell({ children }) {
 		<>
 			<Sidebar pathname={pathname} badges={badges} shopName={settings.shop.name} demo={demo} />
 			<Rail pathname={pathname} badges={badges} />
-			<TopBar shopName={settings.shop.name} />
 			<main
 				id="main"
-				className="min-h-dvh pt-[calc(3.5rem+var(--safe-top))] pb-[calc(var(--tabbar-h)+var(--safe-bottom))] md:pt-0 md:pb-0 md:pl-16 lg:pl-60"
+				className="min-h-dvh pt-[var(--safe-top)] pb-[calc(var(--tabbar-h)+var(--safe-bottom))] md:pt-0 md:pb-0 md:pl-16 lg:pl-60"
 			>
 				<Toolbar pathname={pathname} />
 				<PageTransition>{children}</PageTransition>
