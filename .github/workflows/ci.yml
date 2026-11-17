@@ -54,7 +54,8 @@ jobs:
   # Only on pushes to main, only on the self-hosted Mac (see docs/DEPLOY.md).
   deploy:
     needs: [check, image]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # A push to main, or the "Run workflow" button (redeploy), never a pull request.
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, macOS]
     timeout-minutes: 20
     steps:
