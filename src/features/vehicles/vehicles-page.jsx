@@ -1,5 +1,8 @@
 "use client";
 
+import { PhoneVehicles } from "@/features/phone/registry-lists";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { CarFront, Plus, Wrench } from "lucide-react";
@@ -46,6 +49,7 @@ function DeadlineChip({ label, info }) {
 
 export function VehiclesPage() {
 	const ready = useIsReady();
+	const phone = useMediaQuery(PHONE); // a phone: the iPhone's list (docs/DESIGN.md "Telefon ca iPhone")
 	const router = useRouter();
 	const openDetail = useOpenDetail();
 	const today = useToday();
@@ -93,6 +97,7 @@ export function VehiclesPage() {
 	const visible = rows.filter((r) => matchers[filter](r) && (!tokens.length || matchesTokens(r.hay, tokens)));
 
 	if (!ready || !today) return <ListPageSkeleton />;
+	if (phone) return <PhoneVehicles />;
 
 	return (
 		<Page>
