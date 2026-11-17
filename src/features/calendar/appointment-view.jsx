@@ -1,5 +1,7 @@
 "use client";
 
+import { PhoneBooking } from "./phone-booking";
+import { PHONE } from "@/components/ds/nav-bar";
 import { useEffect, useRef, useState } from "react";
 import { CalendarClock, ChevronRight, CircleX, Clock, Mail, Phone, Plus, Timer, UserX } from "lucide-react";
 import { Initials, Money } from "@/components/ds/data";
@@ -20,7 +22,7 @@ import { operationFigures, operationFromService, operationsEstimate, operationVa
 import { deadline, lastJob, lastReading } from "@/domain/vehicle";
 import { orderTotals } from "@/domain/work-order";
 import { fmtDate, fmtDays, fmtKm, fmtTime, fmtWorkOrder, formatPhone, plural } from "@/lib/format";
-import { useNowMinute } from "@/lib/hooks";
+import { useMediaQuery, useNowMinute } from "@/lib/hooks";
 import { APPOINTMENT_STATUS, CANCEL_REASON, DEADLINE_STATUS } from "@/lib/labels";
 import { useRemember } from "@/lib/recents";
 import { bookingLook, invoiceLook, orderKind, orderLook } from "@/lib/record-state";
@@ -64,7 +66,13 @@ function Section({ title, sectionRef, plain = false, className, children }) {
 	);
 }
 
-export default function AppointmentView({ open, onOpenChange, id, panel: openOn = null }) {
+/** A booking: on a phone the iPhone's page (phone-booking.jsx), elsewhere this sheet. */
+export default function AppointmentView(props) {
+	const phone = useMediaQuery(PHONE);
+	return phone ? <PhoneBooking open={props.open} onOpenChange={props.onOpenChange} id={props.id} /> : <BookingSheet {...props} />;
+}
+
+function BookingSheet({ open, onOpenChange, id, panel: openOn = null }) {
 	useNowMinute(); // "peste 45 min", late, missed: they all move with the clock
 	const settings = useSettings();
 	const today = useToday();
