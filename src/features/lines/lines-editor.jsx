@@ -18,7 +18,7 @@ import { CatalogPicker } from "./catalog-picker";
 const KIND_ICON = { labor: Wrench, part: Package, fee: Receipt };
 const TABLE_PX = 768; // the editor's width from which the lines are a table (Tailwind's @3xl, 48 rem)
 
-function LineSheet({ line, open, onOpenChange, onSave, onRemove, staff, vatPayer }) {
+export function LineSheet({ line, open, onOpenChange, onSave, onRemove, staff, vatPayer }) {
 	const [form, setForm] = useState(line);
 	const set = (patch) => setForm((f) => ({ ...f, ...patch }));
 	return (

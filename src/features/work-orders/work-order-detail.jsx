@@ -50,7 +50,9 @@ import { computeTotals } from "@/domain/lines";
 import { vehicleName } from "@/domain/vehicle";
 import { estimateMessage, inspectionSummary, isOpen, readyMessage } from "@/domain/work-order";
 import { fmtDate, fmtHours, fmtKm, fmtWorkOrder } from "@/lib/format";
-import { printPage, shareText, useDraft, useQueryId } from "@/lib/hooks";
+import { printPage, shareText, useDraft, useMediaQuery, useQueryId } from "@/lib/hooks";
+import { PHONE } from "@/components/ds/nav-bar";
+import { PhoneJob } from "./phone-job";
 import { FUEL_LEVELS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { deleteWorkOrder, updateWorkOrder } from "@/lib/store/actions";
 import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
@@ -79,7 +81,10 @@ export function WorkOrderDetail() {
 	const id = useQueryId();
 	const ready = useIsReady();
 	const order = useEntity("workOrders", id);
+	const phone = useMediaQuery(PHONE);
 	if (!ready) return <DetailPageSkeleton />;
+	// A phone is the iPhone's job page, strictly (docs/DESIGN.md "Telefon ca iPhone").
+	if (order && phone) return <PhoneJob key={order.id} order={order} />;
 	if (!order) {
 		return (
 			<Page>
