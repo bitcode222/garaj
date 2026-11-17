@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+
+import { useGlass } from "@/components/ds/glass"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
@@ -59,14 +61,17 @@ function SelectTrigger({
 
 function SelectContent({
   className,
+  ref,
   children,
   position = "popper",
   align = "center",
   ...props
 }) {
+  const glass = useGlass("menu", { outer: ref })
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
+        ref={glass}
         data-slot="select-content"
         data-sheet-menu=""
         className={cn(

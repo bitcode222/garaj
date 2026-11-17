@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { Glass } from "@/components/ds/glass";
 import { MakeLogo } from "@/components/ds/make-logo";
 import { KindMark, StateTag, kindText } from "@/components/ds/tone";
 import { cn } from "@/lib/utils";
@@ -125,7 +126,9 @@ export function Overline({ className, children }) {
 export function StickyBar({ inline = false, className, children }) {
 	if (inline) return <div className={cn("flex gap-2", className)}>{children}</div>;
 	return (
-		<div
+		<Glass
+			preset="bar"
+			media="(max-width: 767px)"
 			data-print="hide"
 			className={cn(
 				"fixed inset-x-0 bottom-[calc(var(--tabbar-h)+var(--safe-bottom))] z-30 flex gap-2 border-t bg-card/95 px-4 py-3 backdrop-blur md:static md:z-auto md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none",
@@ -133,6 +136,6 @@ export function StickyBar({ inline = false, className, children }) {
 			)}
 		>
 			{children}
-		</div>
+		</Glass>
 	);
 }

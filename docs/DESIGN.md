@@ -30,7 +30,9 @@ Neutral canvas (`#F7F7F8` light, `#0F0F11` dark), white cards with radius 12 and
 buttons 32 tall (28 small) with radius 8, square icon buttons with a hairline. Inter; page title 26, section 15.5
 semibold, rows 13.5, eyebrows 11 uppercase. Car colours keep their gradients (cover art, the Lucrare, Mașină and
 client headers fading into the page). Calendar and timeline blocks are a light tint of the car with a coloured edge.
-The running job is a dark floating bar (light in dark mode); glass only for the search window and menus.
+The floating surfaces are liquid glass ([`LIQUID-GLASS.md`](LIQUID-GLASS.md), `ds/glass.jsx`): the phone's top bar, tab bar
+and action bar, the running job (dark glass, light in dark mode), menus, popovers, selects, the ⌘K window and the
+mini month. Setări › Aspect › "Sticlă lichidă" turns it off on the device; cards and pages are never glass.
 
 ## 4. Screens (owner's picks)
 
@@ -96,6 +98,7 @@ are rules in `src/domain/day-summary.js`. Linie always moves through the days si
 |---|---|
 | `src/lib/colors.js` | `AREA`, `STATE`, `MAKE_COLORS`; `makeColor`, `makeCover` (deepened), `makeInk` (white, black on yellow makes), `makeTint` (calendar blocks) |
 | `src/components/ds/car.jsx` | `MakeTile`, `MakeArt`, `CarCover`, `CoverButton`, `CoverIconButton`, `CarHeader` (cover colour fading into the page) |
+| `src/components/ds/glass.jsx` | `Glass` and `useGlass(preset)` (`bar`, `float`, `menu`): liquid glass on a floating surface, off with the device's switch (`garaj.glass`) |
 | `src/components/ds/blocks.jsx` | `PageTitle`, `SectionHeader` (with "›" when it links), `StatusDot`, `KindLabel`, `StatCard`, `useViewSwitch` (the A/B switch, kept per device), `KeyHint` |
 | `src/components/ui/button.jsx` | 32 px buttons (28 small, 40 on touch screens), radius 8; the default is the black one |
 | `src/components/shell/` | Sidebar groups and area colours in `nav.js`; the toolbar with "Nou"; ⌘K; the phone tab bar with Registru and Caută |

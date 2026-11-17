@@ -33,6 +33,7 @@ import { openCommandMenu } from "./command-state";
 import { AccountMenu } from "./account-menu";
 import { ThemeToggle } from "./theme-toggle";
 import { KeyHint } from "@/components/ds/blocks";
+import { Glass } from "@/components/ds/glass";
 import { RunningJobBar } from "@/features/running/running-job";
 import { REST_LOOK_KEY, REST_VALUES } from "@/features/common/rest-look";
 
@@ -350,7 +351,7 @@ function Rail({ pathname, badges }) {
 
 function TopBar({ shopName }) {
 	return (
-		<header data-print="hide" className="fixed inset-x-0 top-0 z-30 border-b bg-card/90 pt-safe backdrop-blur-xl md:hidden">
+		<Glass as="header" preset="bar" media={PHONE} data-print="hide" className="fixed inset-x-0 top-0 z-30 border-b bg-card/90 pt-safe backdrop-blur-xl md:hidden">
 			<div className="flex h-14 items-center gap-2 px-4">
 				<Link href="/" className="flex min-w-0 flex-1 items-center gap-2.5">
 					<LogoMark className="size-7" />
@@ -366,11 +367,12 @@ function TopBar({ shopName }) {
 				</QuickCreate>
 				<AccountMenu />
 			</div>
-		</header>
+		</Glass>
 	);
 }
 
 const PROGRAMARI_KEY = "garaj.programari";
+const PHONE = "(max-width: 767px)"; // the top bar and the tab bar exist only there
 
 const tabClass = (active) =>
 	cn(
@@ -383,7 +385,10 @@ function TabBar({ pathname, badges }) {
 	const [programari] = useLocalPreference(PROGRAMARI_KEY, PROGRAMARI_PAGES[0], PROGRAMARI_PAGES);
 	const openSearch = useOpenSearch();
 	return (
-		<nav
+		<Glass
+			as="nav"
+			preset="bar"
+			media={PHONE}
 			data-print="hide"
 			className="fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 pb-safe backdrop-blur-xl md:hidden"
 			aria-label="Navigare principală"
@@ -431,7 +436,7 @@ function TabBar({ pathname, badges }) {
 					);
 				})}
 			</ul>
-		</nav>
+		</Glass>
 	);
 }
 

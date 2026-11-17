@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { GripHorizontal, X } from "lucide-react";
+import { Glass } from "@/components/ds/glass";
 import { Button } from "@/components/ui/button";
 import { useLocalPreference } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
@@ -93,7 +94,8 @@ export function FloatingMonth({ area, onClose, children }) {
 	};
 
 	return (
-		<div
+		<Glass
+			preset="menu"
 			data-floating-month
 			className={cn("absolute z-40 flex flex-col overflow-hidden rounded-xl border bg-popover/95 text-popover-foreground shadow-xl backdrop-blur-sm", kind && "select-none")}
 			style={{ right: box.right, bottom: box.bottom, width: box.width, height: box.height }}
@@ -128,6 +130,6 @@ export function FloatingMonth({ area, onClose, children }) {
 					<path d="M9 3 3 9M9 6 6 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
 				</svg>
 			</div>
-		</div>
+		</Glass>
 	);
 }

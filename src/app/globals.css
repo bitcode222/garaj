@@ -591,3 +591,19 @@
 :is(.car-sheet-dark, .car-sheet-light) form [data-field] input:not([type="checkbox"]):not([type="radio"]) {
 	text-align: right;
 }
+
+/* Liquid glass (docs/LIQUID-GLASS.md, src/lib/liquid-glass.js): the rim, edge and sheen of a pane in each theme. */
+:root {
+	--lg-rim: rgb(255 255 255 / 0.6);
+	--lg-rim-low: rgb(255 255 255 / 0.2);
+	--lg-edge: rgb(255 255 255 / 0.32);
+	--lg-sheen: rgb(255 255 255 / 0.3);
+	--lg-shadow: 0 10px 28px -12px rgb(0 0 0 / 0.3);
+}
+.dark {
+	--lg-rim: rgb(255 255 255 / 0.16);
+	--lg-rim-low: rgb(255 255 255 / 0.05);
+	--lg-edge: rgb(255 255 255 / 0.08);
+	--lg-sheen: rgb(255 255 255 / 0.06);
+	--lg-shadow: 0 10px 28px -12px rgb(0 0 0 / 0.6);
+}
