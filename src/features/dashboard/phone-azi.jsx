@@ -19,6 +19,7 @@ import { STATE, TONE_COLOR, makeColor, makeCover, makeInk } from "@/lib/colors";
 import { fmtDate, fmtHours, fmtNumber, fmtTime, formatMoney } from "@/lib/format";
 import { INVOICE_STATE, WORK_ORDER_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
+import { useOpenDetail } from "@/lib/detail-mode";
 import { createInvoiceDraft, setAppointmentStatus } from "@/lib/store/actions";
 import { useCollection, useSettings } from "@/lib/store/hooks";
 import { selectHomeAnalytics, selectToCollect, selectToConfirm } from "@/lib/store/selectors";
@@ -240,6 +241,7 @@ function groupLabel(group, today) {
 }
 
 function ToConfirm({ id, confirm, today, customers, vehicles }) {
+	const openDetail = useOpenDetail(); // a booking opens its sheet, as everywhere
 	const week = confirm.week;
 	const booked = Object.values(week).reduce((n, v) => n + v, 0) - (week.no_show ?? 0);
 	const doConfirm = (a) => {
@@ -262,7 +264,7 @@ function ToConfirm({ id, confirm, today, customers, vehicles }) {
 						const vehicle = vehicles[a.vehicleId];
 						return (
 							<li key={a.id} className="flex items-center gap-3 px-4 py-2.5 [&+li]:border-t">
-								<Link href={`/appointments/detail/?id=${a.id}`} className="flex min-w-0 flex-1 items-center gap-3">
+								<button type="button" onClick={() => openDetail("appointment", a.id)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
 									<span className="flex w-12 shrink-0 flex-col gap-px">
 										<span className="text-[15px] font-semibold tabular-nums">{fmtTime(a.start)}</span>
 										<span className="truncate text-[12px] text-muted-foreground">{late ? "a trecut" : groupLabel(g, today).toLowerCase()}</span>
@@ -271,7 +273,7 @@ function ToConfirm({ id, confirm, today, customers, vehicles }) {
 										<span className="truncate text-[17px] leading-[22px]">{customer?.name ?? "Client necunoscut"}</span>
 										<span className="truncate text-[15px] text-muted-foreground">{[a.title, vehicle?.plate && formatPlate(vehicle.plate)].filter(Boolean).join(" · ")}</span>
 									</span>
-								</Link>
+								</button>
 								<button type="button" onClick={() => (late ? openSheet("checkin", { appointmentId: a.id }) : doConfirm(a))} className="shrink-0 text-[17px] font-semibold text-brand active:opacity-60">
 									{late ? "A sosit" : "Confirmă"}
 								</button>
