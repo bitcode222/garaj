@@ -19,6 +19,19 @@ export const AREA = {
 };
 
 /** A record's state as a dot with words: done, waiting, late, closed, running now. */
+/** The iPhone app's area colours (ios-native/Garaj/Views/Look.swift, Area), for the phone's copy of it. */
+export const IOS_AREA = {
+	programari: "#3d99db",
+	lucrari: "#ed7734",
+	facturi: "#835ed1",
+	clienti: "#d9a521",
+	masini: "#36b386",
+	catalog: "#2ea7b8",
+	rapoarte: "#42ad60",
+	contact: "#ff3b30",
+	setari: "#8e8e93",
+};
+
 export const STATE = {
 	ok: "#16a34a",
 	wait: "#d97706",
