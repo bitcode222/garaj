@@ -23,6 +23,9 @@ import { atMinute, toMinutes } from "@/features/calendar/utils";
 import { primaryAction } from "@/features/work-orders/job-action";
 import { jobHeadline, jobSummary } from "@/features/work-orders/job-text";
 import { JOB_FILTERS, dayLanes, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data";
+import { PhoneAzi } from "./phone-azi";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
 
 // Azi (docs/DESIGN.md §4): the owner kept two looks, switched at the top right and remembered on this device.
 // A, "Coperți": the cars in the shop as covers, the day's numbers, today's bookings and the money to collect.
@@ -316,9 +319,12 @@ export function DashboardPage() {
 	const bays = useCollection("bays");
 	const { member } = useAccount();
 	const [look, lookSwitch] = useViewSwitch("garaj.azi.look", LOOKS);
+	const phone = useMediaQuery(PHONE);
 	if (!ready || !today || minute == null) return <AziSkeleton />;
 
 	const now = atMinute(today, minute);
+	// A phone is the iPhone's Azi (docs/DESIGN.md "Telefon ca iPhone").
+	if (phone) return <PhoneAzi today={today} now={now} />;
 	const currency = settings.currency;
 	const jobs = shopJobs(workOrders);
 	const bookings = todaysBookings(appointments, today);
