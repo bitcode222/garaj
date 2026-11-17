@@ -24,6 +24,9 @@ import { selectWorkOrdersSorted } from "@/lib/store/selectors";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { JobCard, JobStatus } from "./job-card";
+import { PhoneWorkOrders } from "./phone-list";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
 import { moveWorkOrder } from "./status";
 
 // Atelier (docs/DESIGN.md §4): two looks, switched at the top right and kept on this device.
@@ -61,6 +64,8 @@ export function WorkOrdersPage() {
 	const { member } = useAccount();
 	const [look, lookSwitch] = useViewSwitch("garaj.atelier.look", LOOKS);
 	const [filter, setFilter] = useState("open");
+	const [phoneStatus, setPhoneStatus] = useState(null); // the phone's chip: one state, or all
+	const phone = useMediaQuery(PHONE);
 	const [query, setQuery] = useState("");
 	const deferredQuery = useDeferredValue(query);
 
@@ -102,6 +107,11 @@ export function WorkOrdersPage() {
 	const statuses = FILTERS.find((f) => f.value === filter)?.statuses;
 	const shown = found.filter((r) => !statuses || statuses.includes(r.order.status));
 	const foundOpen = found.filter((r) => OPEN_STATUSES.includes(r.order.status));
+
+	// A phone is the iPhone's Atelier (docs/DESIGN.md "Telefon ca iPhone"); a job opens as its page.
+	if (phone) {
+		return <PhoneWorkOrders rows={found} query={query} setQuery={setQuery} status={phoneStatus} setStatus={setPhoneStatus} staffId={staffId} settings={settings} onOpen={(order) => router.push(`/work-orders/detail/?id=${order.id}`)} />;
+	}
 
 	return (
 		<Page width="wide" className="space-y-6">
