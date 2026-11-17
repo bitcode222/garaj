@@ -362,7 +362,8 @@ const tabClass = (active) =>
 
 /** The phone's tab bar, as the iPhone app's: a floating glass capsule, Azi · Atelier · Agendă · Registru · Căutare. */
 function TabBar({ pathname, badges }) {
-	const [programari] = useLocalPreference(PROGRAMARI_KEY, PROGRAMARI_PAGES[0], PROGRAMARI_PAGES);
+	// Agendă opens where it was left; the first time on the Listă, as the iPhone's.
+	const [programari] = useLocalPreference(PROGRAMARI_KEY, "/appointments/", PROGRAMARI_PAGES);
 	return (
 		<Glass
 			as="nav"
