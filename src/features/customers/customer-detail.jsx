@@ -21,7 +21,9 @@ import { formatInvoiceNumber } from "@/domain/invoice";
 import { computeTotals } from "@/domain/lines";
 import { deadline, vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtWorkOrder, plural } from "@/lib/format";
-import { useLocalPreference, useQueryId } from "@/lib/hooks";
+import { useLocalPreference, useMediaQuery, useQueryId } from "@/lib/hooks";
+import { PHONE } from "@/components/ds/nav-bar";
+import { PhoneClient } from "@/features/phone/record-pages";
 import { CarHeader } from "@/components/ds/car";
 import { PEOPLE_LOOK_KEY } from "@/features/common/people-look";
 import { CUSTOMER_TYPES, DEADLINE_STATUS, INVOICE_STATE, WORK_ORDER_STATUS } from "@/lib/labels";
@@ -37,7 +39,10 @@ export function CustomerDetail() {
 	const id = useQueryId();
 	const ready = useIsReady();
 	const customer = useEntity("customers", id);
+	const phone = useMediaQuery(PHONE);
 	if (!ready) return <DetailPageSkeleton />;
+	// A phone is the iPhone's client page, strictly (docs/DESIGN.md "Telefon ca iPhone").
+	if (customer && phone) return <PhoneClient key={customer.id} customer={customer} />;
 	if (!customer) {
 		return (
 			<Page>

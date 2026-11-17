@@ -55,8 +55,9 @@ function useBack() {
  * The fixed row. `collapsed`: the large title is out of sight, so the row is glass and shows `title`. `actions`: the
  * buttons on the right (default: "+"); `null` for none.
  */
-export function PhoneNavBar({ title, collapsed, actions, leading, ink }) {
-	const back = useBack();
+export function PhoneNavBar({ title, collapsed, actions, leading, ink, autoBack = true }) {
+	const registry = useBack();
+	const back = autoBack ? registry : null; // a record page brings its own "‹" (back where it came from)
 	const trailing = actions === undefined ? <NavNew /> : actions;
 	return (
 		<div data-print="hide" data-nav-bar className="fixed inset-x-0 top-0 z-30 md:hidden">
