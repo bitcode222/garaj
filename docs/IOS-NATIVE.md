@@ -119,7 +119,12 @@ Tabs: **Azi · Atelier · Agendă · Registru**, and search as its own tab (`Tab
 
 The owner asked for document scanning as a real feature, after a reference with a camera frame and a "Looking good?" review. They picked **Talon → car**. Round 2 put the button in the tab bar, added photos and Files as sources, and asks what comes next.
 
-- **Button:** "Scanează" is the round button beside the four tabs. The tab bar holds four tabs plus one round button, so the scanner took search's place; search stays at the top of Azi, with the same results. Choosing the button opens the scanner over the current tab.
+- **Where (round 3):** not in the tab bar, which is back to Azi · Atelier · Agendă · Registru (search sits at the top of Azi). Two places instead:
+  - **Azi:** a "Scanează talonul" quick button beside Programare / Deviz / Lucrare / Factură nouă. After the check, it asks **"Adaugi mașina la o lucrare?"**: add to the open job #N, Lucrare nouă, Deviz nou, Programare nouă, or "Nu, doar salvează mașina".
+  - **A car's page:** a Documente section (and a Scanează menu in the bar).
+    - **Scanează talonul** fills in that car: matched to it whatever was read. It warns when the VIN belongs to another car (and refuses to save) or differs from the one on file. Then "Actualizează mașina" or "Actualizează și fă un deviz" (asking first when a job is open).
+    - **Scanează un document** keeps any paper on the car under a name: ITP, RCA, CASCO, CIV, Factură piese, Deviz semnat, Proces-verbal, Garanție or typed. ITP and RCA can take their expiry date, which goes on the car (`itpExpiry`, `rcaExpiry`) and so into De contactat.
+    - **The list:** the talon and the documents show there, open full screen, and swipe to delete.
 - **Sources:**
   - **Camera:** live edge search (Vision, about 8 a second), with white corner marks that follow the page. "Ține nemișcat" shows once it holds still. Flash Auto / Pornit / Oprit and "Fă poza".
   - **Photo library or Files:** a picture, or a PDF whose first four pages are tried in turn.
@@ -140,10 +145,11 @@ The owner asked for document scanning as a real feature, after a reference with 
   - An open job asks "Deschide lucrarea #N" or a new one.
   - An upcoming booking asks to open it or make another.
   - "Renunță" saves nothing.
-- **Saving:** `AppStore.talonReview` and `AppStore.saveTalon(_:client:)` check the plate before writing anything. The picture is kept on the phone (`Scans/<car id>-talon.jpg`) and shown under Documente on the car. It is deleted with the car or its client, since it holds personal data.
+- **Saving:** `AppStore.talonReview(_:for:)` and `AppStore.saveTalon(_:client:into:)` check the plate and the VIN before writing anything. Documents live in `Scans/<car id>/` with an `index.json` (`CarDocuments`). The picture is kept on the phone (`Scans/<car id>-talon.jpg`) and shown under Documente on the car. It is deleted with the car or its client, since it holds personal data.
 - **Not on the web:** the web app has no scanner, and the talon picture stays on the phone.
 - **Debug:**
   - `-GarajScan 1` opens the scanner.
+  - `-GarajScanCar talon|document` with `-GarajOpenVehicle <id>` scans onto that car.
   - `-GarajScanImage <path>` starts from a picture, and `-GarajScanRead 1` confirms it.
   - `-GarajScanBottom 1` scrolls to "Ce urmează".
   - `-GarajScanNext car|estimate|job|booking` picks the next step.

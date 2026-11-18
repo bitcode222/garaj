@@ -220,5 +220,56 @@ enum TalonFiles {
 
     static func image(_ vehicleId: String) -> UIImage? { UIImage(contentsOfFile: url(vehicleId).path()) }
 
-    static func delete(_ vehicleId: String) { try? FileManager.default.removeItem(at: url(vehicleId)) }
+    /// The talon and every other document of the car (they hold personal data: they go with the car).
+    static func delete(_ vehicleId: String) {
+        try? FileManager.default.removeItem(at: url(vehicleId))
+        CarDocuments.deleteAll(vehicleId)
+    }
+}
+
+/// A document scanned onto a car besides its talon: ITP, RCA, a parts invoice, a signed estimate…
+struct CarDocument: Codable, Identifiable, Hashable, Sendable {
+    var id: String
+    var title: String
+    /// "YYYY-MM-DD", the day it was scanned.
+    var date: String
+}
+
+/// The car's other documents: pictures in `Scans/<car id>/`, listed in its `index.json`. On the phone only.
+enum CarDocuments {
+    private static func folder(_ vehicleId: String) -> URL {
+        URL.documentsDirectory.appending(path: "Scans/\(vehicleId)", directoryHint: .isDirectory)
+    }
+
+    private static func index(_ vehicleId: String) -> URL { folder(vehicleId).appending(path: "index.json") }
+
+    static func list(_ vehicleId: String) -> [CarDocument] {
+        guard let data = try? Data(contentsOf: index(vehicleId)) else { return [] }
+        return ((try? JSONDecoder().decode([CarDocument].self, from: data)) ?? []).sorted { $0.date > $1.date }
+    }
+
+    static func image(_ vehicleId: String, _ doc: CarDocument) -> UIImage? {
+        UIImage(contentsOfFile: folder(vehicleId).appending(path: "\(doc.id).jpg").path())
+    }
+
+    @discardableResult
+    static func add(_ image: UIImage, title: String, vehicleId: String) -> CarDocument? {
+        let dir = folder(vehicleId)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let doc = CarDocument(id: Ids.uid(), title: title, date: Dates.today())
+        guard let data = image.jpegData(compressionQuality: 0.82), (try? data.write(to: dir.appending(path: "\(doc.id).jpg"), options: .atomic)) != nil else { return nil }
+        save(list(vehicleId) + [doc], vehicleId)
+        return doc
+    }
+
+    static func delete(_ vehicleId: String, _ doc: CarDocument) {
+        try? FileManager.default.removeItem(at: folder(vehicleId).appending(path: "\(doc.id).jpg"))
+        save(list(vehicleId).filter { $0.id != doc.id }, vehicleId)
+    }
+
+    static func deleteAll(_ vehicleId: String) { try? FileManager.default.removeItem(at: folder(vehicleId)) }
+
+    private static func save(_ docs: [CarDocument], _ vehicleId: String) {
+        if let data = try? JSONEncoder().encode(docs) { try? data.write(to: index(vehicleId), options: .atomic) }
+    }
 }

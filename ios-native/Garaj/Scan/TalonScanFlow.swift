@@ -4,17 +4,38 @@ import PhotosUI
 import SwiftUI
 import UniformTypeIdentifiers
 
-// Scanning a talon (owner, 18 Nov 2026, after their reference): the camera with a frame that follows the page's
+// Scanning a talon or a car's document (owner, 18 Nov 2026, after their reference): the camera with a frame that follows the page's
 // corners and "Ține nemișcat" once they hold still; then "Arată bine?" with Decupează / Rotește, Confirmă or Refă;
 // then what was read, to check, with the client to pick; then what comes next (only the car, a deviz, a job or a
 // booking). The picture comes from the camera, the photo library or Files (a picture or a PDF).
 
+/// Where the scan started, which decides what it is for and how it ends.
+enum ScanMode: Equatable {
+    /// Azi's quick button: any car's talon; then add the car to a job (or a deviz, a booking, only the car).
+    case home
+    /// A car's page: its talon fills in that car; then, if wanted, a new deviz for it.
+    case talon(String)
+    /// A car's page: any document (ITP, RCA, an invoice…) kept on that car under a name.
+    case document(String)
+
+    var isDocument: Bool { if case .document = self { true } else { false } }
+    var carId: String? {
+        switch self {
+        case .home: nil
+        case .talon(let id), .document(let id): id
+        }
+    }
+}
+
 struct TalonScanFlow: View {
     @Environment(\.dismiss) private var dismiss
+    var mode: ScanMode = .home
     /// Debug: start from this picture instead of the camera.
     var startImage: UIImage? = nil
+    /// From a car's page: what to open there once the talon is saved (a new deviz, the open job).
+    var finished: ((TalonNext) -> Void)? = nil
 
-    private enum Step { case camera, review, reading, details, saved }
+    private enum Step { case camera, review, reading, details, naming, saved }
     @State private var step: Step
     /// A PDF's other pages, tried in turn when the first one doesn't read as a talon.
     @State private var extraPages: [UIImage] = []
@@ -27,30 +48,46 @@ struct TalonScanFlow: View {
     @State private var savedId: String?
     @State private var cropping = false
 
-    init(startImage: UIImage? = nil) {
+    init(mode: ScanMode = .home, startImage: UIImage? = nil, finished: ((TalonNext) -> Void)? = nil) {
+        self.mode = mode
         self.startImage = startImage
+        self.finished = finished
         _step = State(initialValue: startImage == nil ? .camera : .review)
     }
+
+    private var noun: String { mode.isDocument ? "documentul" : "talonul" }
 
     var body: some View {
         ZStack {
             switch step {
             case .camera:
-                TalonCameraScreen(close: { dismiss() }, took: { take($0, more: $1) })
+                TalonCameraScreen(noun: noun, close: { dismiss() }, took: { take($0, more: $1) })
                     .transition(.opacity)
             case .review, .reading:
-                TalonReviewScreen(page: page, reading: step == .reading,
+                TalonReviewScreen(noun: noun, confirmLabel: mode.isDocument ? "Atașează documentul" : "Confirmă talonul",
+                                  page: page, reading: step == .reading,
                                   back: { retake() }, crop: { cropping = true }, rotate: { rotate() },
-                                  confirm: { Task { await read() } }, retake: { retake() })
+                                  confirm: { if mode.isDocument { step = .naming } else { Task { await read() } } }, retake: { retake() })
                     .transition(.opacity)
             case .details:
-                TalonDetailsScreen(data: $data, page: page, retake: { retake() }, cancel: { dismiss() }) { id, then in
+                TalonDetailsScreen(data: $data, page: page, carId: mode.carId, retake: { retake() }, cancel: { dismiss() }) { id, then in
                     if let page { TalonFiles.save(page, vehicleId: id) }
-                    savedId = id
-                    next = then
-                    withAnimation { step = .saved }
+                    if mode.carId != nil {
+                        // Back on the car's page, which opens what was chosen.
+                        dismiss()
+                        finished?(then)
+                    } else {
+                        savedId = id
+                        next = then
+                        withAnimation { step = .saved }
+                    }
                 }
                 .transition(.move(edge: .trailing))
+            case .naming:
+                if let page, let carId = mode.carId {
+                    DocumentNameScreen(page: page, vehicleId: carId, back: { step = .review }) { dismiss() }
+                        .transition(.move(edge: .trailing))
+                }
             case .saved:
                 if let savedId { TalonDoneScreen(vehicleId: savedId, next: next, close: { dismiss() }).transition(.move(edge: .trailing)) }
             }
@@ -143,6 +180,8 @@ struct TalonScanFlow: View {
 // MARK: - Camera
 
 private struct TalonCameraScreen: View {
+    /// "talonul" or "documentul".
+    let noun: String
     let close: () -> Void
     /// The picture, and a PDF's other pages.
     let took: (UIImage, [UIImage]) -> Void
@@ -176,7 +215,7 @@ private struct TalonCameraScreen: View {
                     ContentUnavailableView {
                         Label("Camera nu e disponibilă", systemImage: "camera.fill")
                     } description: {
-                        Text("Dă voie aplicației la cameră din Setări, sau alege o poză ori un PDF al talonului.")
+                        Text("Dă voie aplicației la cameră din Setări, sau alege o poză ori un PDF.")
                     } actions: {
                         Button("Alege din galerie", systemImage: "photo.on.rectangle") { pickingPhoto = true }
                         Button("Alege din fișiere", systemImage: "folder") { pickingFile = true }
@@ -191,14 +230,14 @@ private struct TalonCameraScreen: View {
                         .animation(.easeOut(duration: 0.12), value: quad)
                 }
                 VStack(alignment: .leading, spacing: 18) {
-                    ScanHeader(title: "Scanează talonul", back: close)
-                    Label("Încadrează toate cele patru colțuri ale talonului.", systemImage: "info.circle")
+                    ScanHeader(title: "Scanează \(noun)", back: close)
+                    Label("Încadrează toate cele patru colțuri ale \(noun == "talonul" ? "talonului" : "documentului").", systemImage: "info.circle")
                         .font(.subheadline).foregroundStyle(.white.opacity(0.85))
                     Spacer()
                     if available == true {
                         HStack {
                             Spacer()
-                            Label(steady ? "Toate marginile găsite · Ține nemișcat" : quad != nil ? "Margini găsite · Ține nemișcat" : "Caut marginile talonului…",
+                            Label(steady ? "Toate marginile găsite · Ține nemișcat" : quad != nil ? "Margini găsite · Ține nemișcat" : "Caut marginile \(noun == "talonul" ? "talonului" : "documentului")…",
                                   systemImage: quad != nil ? "checkmark.circle" : "viewfinder")
                                 .font(.subheadline.weight(.medium))
                                 .padding(.horizontal, 16).padding(.vertical, 10)
@@ -427,6 +466,8 @@ private struct ScanHeader: View {
 // MARK: - Review
 
 private struct TalonReviewScreen: View {
+    let noun: String
+    let confirmLabel: String
     let page: UIImage?
     let reading: Bool
     let back: () -> Void
@@ -437,7 +478,7 @@ private struct TalonReviewScreen: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ScanHeader(title: "Scanează talonul", back: back)
+            ScanHeader(title: "Scanează \(noun)", back: back)
             Text("Arată bine?").font(.title.weight(.semibold)).padding(.top, 22)
             Text("Verifică dacă detaliile sunt clare și lizibile.").font(.body).foregroundStyle(.white.opacity(0.6)).padding(.top, 6)
             ZStack {
@@ -467,7 +508,7 @@ private struct TalonReviewScreen: View {
             .disabled(reading)
             VStack(spacing: 14) {
                 Button(action: confirm) {
-                    Label("Confirmă talonul", systemImage: "checkmark.circle.fill")
+                    Label(confirmLabel, systemImage: "checkmark.circle.fill")
                         .font(.headline).foregroundStyle(.black)
                         .padding(.horizontal, 28).frame(height: 54)
                         .background(.white, in: .capsule)
