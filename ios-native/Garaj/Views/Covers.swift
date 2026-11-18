@@ -262,8 +262,8 @@ extension View {
     }
 }
 
-/// Azi's top (owner, 18 Nov 2026: "a nice colorful gradient, Netflix inspired"): near-black lit by a deep red, the
-/// app's orange and a purple glow, behind the title, the search bar and the shortcuts; it fades into the grouped
+/// Azi's top (owner, 18 Nov 2026: "a nice colorful gradient, Netflix inspired", then "make it red"): near-black lit
+/// by reds, behind the title, the search bar and the shortcuts; it fades into the grouped
 /// background, follows the content up and stretches when pulled down. The bar reads white on it.
 struct HeroBackground: ViewModifier {
     var height: CGFloat = 470
@@ -287,12 +287,13 @@ struct HeroBackground: ViewModifier {
             .toolbarColorScheme(offset < height * 0.55 ? .dark : nil, for: .navigationBar)
     }
 
+    /// All red (owner): Netflix red top left, a brighter crimson top right, a deep wine low down, on near-black.
     static var glow: some View {
         ZStack {
-            Color(red: 0.08, green: 0.04, blue: 0.05)
-            RadialGradient(colors: [Color(red: 0.90, green: 0.04, blue: 0.08), .clear], center: UnitPoint(x: 0.1, y: 0.05), startRadius: 0, endRadius: 360)
-            RadialGradient(colors: [Color("AccentColor").opacity(0.9), .clear], center: UnitPoint(x: 0.95, y: 0.15), startRadius: 0, endRadius: 300)
-            RadialGradient(colors: [Color(red: 0.42, green: 0.12, blue: 0.78).opacity(0.85), .clear], center: UnitPoint(x: 0.45, y: 0.9), startRadius: 0, endRadius: 280)
+            Color(red: 0.09, green: 0.02, blue: 0.03)
+            RadialGradient(colors: [Color(red: 0.90, green: 0.04, blue: 0.08), .clear], center: UnitPoint(x: 0.1, y: 0.05), startRadius: 0, endRadius: 380)
+            RadialGradient(colors: [Color(red: 1.0, green: 0.22, blue: 0.24).opacity(0.85), .clear], center: UnitPoint(x: 0.95, y: 0.15), startRadius: 0, endRadius: 300)
+            RadialGradient(colors: [Color(red: 0.55, green: 0.02, blue: 0.10).opacity(0.9), .clear], center: UnitPoint(x: 0.45, y: 0.9), startRadius: 0, endRadius: 300)
         }
     }
 }

@@ -7,6 +7,9 @@ import SwiftUI
 struct HomeView: View {
     enum Route: Hashable { case job(String), invoice(String), appointment(String) }
 
+    /// The page's side margin (owner: less than the system's 20 pt).
+    static let inset: CGFloat = 16
+
     @Environment(AppStore.self) private var store
     @Environment(UndoCenter.self) private var undo
     @State private var path: [Route] = []
@@ -35,7 +38,17 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
-                    // The search bar is the page's first row: it scrolls with the page (owner: not pinned).
+                    // The page's title, over the search bar (owner), white on the gradient; it scrolls with the page.
+                    Section {
+                        Text("Dashboard")
+                            .font(.largeTitle.weight(.bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, HomeView.inset)
+                            .accessibilityAddTraits(.isHeader)
+                    }
+                    .bareRow()
+                    .listSectionMargins(.horizontal, 0)
+                    // The search bar scrolls with the page too (owner: not pinned).
                     Section { searchField }
                         .bareRow()
                         .listSectionMargins(.horizontal, 0)
@@ -49,11 +62,12 @@ struct HomeView: View {
                         Section { SearchResults(query: query) { path.append($0) } }.bareRow()
                     }
                 }
-                .hero(height: 380)
+                .hero(height: 470)
                 // The shortcuts end ~200 pt down the page: past that, "+" shows in the bar.
                 .onScrollGeometryChange(for: Bool.self) { $0.contentOffset.y + $0.contentInsets.top < 190 } action: { _, visible in shortcutsVisible = visible }
                 .listStyle(.insetGrouped)
-                .listSectionSpacing(20)
+                .listSectionSpacing(32) // owner: room between the sections
+                .listSectionMargins(.horizontal, HomeView.inset)
                 .scrollDismissesKeyboard(.interactively)
                 // Tapping anywhere outside the field hides the keyboard.
                 .simultaneousGesture(TapGesture().onEnded { searchFocused = false })
@@ -71,16 +85,13 @@ struct HomeView: View {
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Editează") { editingLayout = true }
-                        .tint(.primary) // white on the gradient (the bar is dark there), ink once scrolled
-                }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button { searchFocused = false } label: { Label("Ascunde", systemImage: "keyboard.chevron.compact.down") }
                 }
+                // Right side (owner): "+" (once the shortcuts have scrolled away), then Editează at the edge.
                 if !shortcutsVisible {
-                    ToolbarItem(placement: .primaryAction) {
+                    ToolbarItem(placement: .topBarTrailing) {
                         Menu {
                             Button { booking = .new } label: { Label("Programare nouă", systemImage: "calendar.badge.plus") }
                             Button { openJob("estimate") } label: { Label("Deviz nou", systemImage: "doc.text.magnifyingglass") }
@@ -90,6 +101,11 @@ struct HomeView: View {
                             Label("Adaugă", systemImage: "plus")
                         }
                     }
+                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Editează") { editingLayout = true }
+                        .tint(.primary) // white on the gradient (the bar is dark there), ink once scrolled
                 }
             }
             .animation(.snappy, value: shortcutsVisible)
@@ -138,7 +154,7 @@ struct HomeView: View {
                     shortcut("Factură nouă", symbol: "doc.badge.plus") { path.append(.invoice(store.createInvoiceDraft().id)) }
                 }
             }
-            .contentMargins(.horizontal, 20, for: .scrollContent)
+            .contentMargins(.horizontal, HomeView.inset, for: .scrollContent)
             .scrollIndicators(.hidden)
             .environment(\.colorScheme, .dark) // on the hero gradient: dark glass, white names
         }
@@ -178,13 +194,13 @@ struct HomeView: View {
                 .accessibilityLabel("Șterge căutarea")
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, HomeView.inset)
         .frame(height: 58)
         .contentShape(.capsule)
         .onTapGesture { searchFocused = true }
         .glassEffect(.regular.interactive(), in: .capsule)
         .environment(\.colorScheme, .dark) // on the hero gradient: dark glass, white text
-        .padding(.horizontal, 20)
+        .padding(.horizontal, HomeView.inset)
     }
 
     private func openJob(_ status: String) {
@@ -241,11 +257,11 @@ struct HomeView: View {
             homeHeader("Lucrări", subtitle: total == 0 ? nil : "\(total) \(total == 1 ? "mașină" : "mașini") în service · \(ready > 0 ? "\(ready) gata de predare" : "niciuna gata încă")") {
                 selectedTab.wrappedValue = "atelier"
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, HomeView.inset)
             .bareRow()
             if total > 0 {
                 // The stages as pills (owner: instead of the "Toate" menu).
-                ChipRow {
+                ChipRow(inset: HomeView.inset) {
                     CountChip(title: "Toate", count: total, on: stage == nil) { stage = nil; cover = nil }
                     ForEach(groups) { g in
                         CountChip(title: Labels.workOrder(g.key).label, count: g.items.count, on: stage == g.key) {
@@ -258,7 +274,7 @@ struct HomeView: View {
                 .bareRow()
             }
             if total == 0 {
-                Text("Nicio mașină în service acum.").foregroundStyle(.secondary).padding(.horizontal, 20).bareRow()
+                Text("Nicio mașină în service acum.").foregroundStyle(.secondary).padding(.horizontal, HomeView.inset).bareRow()
             } else {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 14) {
@@ -282,7 +298,7 @@ struct HomeView: View {
                 }
                 .scrollTargetBehavior(.viewAligned)
                 .scrollPosition(id: $cover)
-                .contentMargins(.horizontal, 20, for: .scrollContent)
+                .contentMargins(.horizontal, HomeView.inset, for: .scrollContent)
                 .scrollIndicators(.hidden)
                 .bareRow()
                 if shown.count > 1 {
@@ -297,7 +313,7 @@ struct HomeView: View {
                     .animation(.snappy, value: index)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Mașina \(index + 1) din \(shown.count)")
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, HomeView.inset)
                     .bareRow()
                 }
             }
@@ -337,10 +353,10 @@ struct HomeView: View {
         let items = bookings.groups.flatMap { g in g.items.map { (group: g, appointment: $0) } }
         return Section {
             homeHeader("De confirmat", subtitle: bookings.total == 0 ? nil : "\(bookings.total) \(bookings.total == 1 ? "programare" : "programări") de confirmat")
-                .padding(.horizontal, 20)
+                .padding(.horizontal, HomeView.inset)
                 .bareRow()
             if items.isEmpty {
-                Text("Toate programările sunt confirmate.").foregroundStyle(.secondary).padding(.horizontal, 20).bareRow()
+                Text("Toate programările sunt confirmate.").foregroundStyle(.secondary).padding(.horizontal, HomeView.inset).bareRow()
             } else {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 14) {
@@ -355,13 +371,13 @@ struct HomeView: View {
                     .scrollTargetLayout()
                 }
                 .scrollTargetBehavior(.viewAligned)
-                .contentMargins(.horizontal, 20, for: .scrollContent)
+                .contentMargins(.horizontal, HomeView.inset, for: .scrollContent)
                 .scrollIndicators(.hidden)
                 .bareRow()
             }
         } footer: {
             if booked > 0 {
-                Text("\(booked - (week["scheduled"] ?? 0)) din \(booked) confirmate în următoarele 7 zile.").padding(.horizontal, 20)
+                Text("\(booked - (week["scheduled"] ?? 0)) din \(booked) confirmate în următoarele 7 zile.").padding(.horizontal, HomeView.inset)
             }
         }
         .bareRow()
@@ -429,7 +445,7 @@ struct HomeView: View {
         }
         .font(.title3.weight(.bold))
         .foregroundStyle(.primary)
-        .padding(.bottom, 4)
+        .padding(.bottom, 10)
         .accessibilityAddTraits(.isHeader)
     }
 
@@ -443,7 +459,7 @@ struct HomeView: View {
             }
             .font(.subheadline.weight(.medium))
             .foregroundStyle(.secondary)
-            .padding(.horizontal, 20)
+            .padding(.horizontal, HomeView.inset)
             .bareRow()
         }
         .listSectionMargins(.horizontal, 0)
@@ -458,9 +474,9 @@ struct HomeView: View {
                 toConfirm.id("confirm")
             }
         case "shop": inShop.id("shop")
-        case "collect": toCollect.id("collect")
-        case "numbers": numbers(proxy).id("numbers")
-        case "analytics": analytics.id("analytics")
+        case "collect": toCollect.listSectionMargins(.horizontal, HomeView.inset).id("collect")
+        case "numbers": numbers(proxy).listSectionMargins(.horizontal, HomeView.inset).id("numbers")
+        case "analytics": analytics.listSectionMargins(.horizontal, HomeView.inset).id("analytics")
         default: EmptyView()
         }
     }

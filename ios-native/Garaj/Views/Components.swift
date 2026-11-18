@@ -228,10 +228,11 @@ struct CountChip: View {
 
 /// A row of chips that scrolls sideways, on the grouped background.
 struct ChipRow<Content: View>: View {
+    var inset: CGFloat = 20
     @ViewBuilder let content: Content
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) { content }.padding(.horizontal, 20)
+            HStack(spacing: 8) { content }.padding(.horizontal, inset)
         }
         .scrollClipDisabled()
     }
