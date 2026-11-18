@@ -24,7 +24,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { isValidCUI, isValidIBAN } from "@/domain/customer";
 import { todayISO } from "@/domain/dates";
 import { DETAIL_MODES, DETAIL_MODE_KEY } from "@/lib/detail-mode";
-import { useDraft, useHydrated, useLocalPreference } from "@/lib/hooks";
+import { useDraft, useHydrated, useLocalPreference, useMediaQuery } from "@/lib/hooks";
+import { PHONE } from "@/components/ds/nav-bar";
+import { PhoneSettings } from "@/features/phone/phone-settings";
 import { BAY_KINDS, STAFF_ROLES } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
 import { addStressInvoices, exportBackup, importBackup, resetToDemo, setNextInvoiceNumber, startFresh, updateSettings } from "@/lib/store/actions";
@@ -204,6 +206,7 @@ function Settings({ settings }) {
 	const fileRef = useRef(null);
 	const logoRef = useRef(null);
 	const mounted = useHydrated();
+	const phone = useMediaQuery(PHONE);
 
 	useEffect(() => {
 		navigator.storage?.estimate?.().then(async (estimate) => {
@@ -297,6 +300,11 @@ function Settings({ settings }) {
 			setBusy(false);
 		}
 	};
+
+	if (phone) {
+		const data = { demo, persistence, storage, doExport, doImport, doFresh, doDemo };
+		return <PhoneSettings {...{ draft, update, setShop, setInvoicing, setHours, counterValue, nextNumber, setNextNumber, saveCounter, onLogo, staff, bays, setTheme, glass, setGlass, data }} theme={mounted ? (theme ?? "system") : "system"} />;
+	}
 
 	return (
 		<Page width={look === "tabs" ? "default" : "narrow"}>
