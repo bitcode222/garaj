@@ -2,8 +2,10 @@
 // with one point per day (per month over a year) for its chart, and its change against
 // the period before, of the same length. Money is in bani; nothing here formats.
 
-import { addDaysISO, addMonthsISO, dayOfInstant, monthKey } from "./dates.js";
+import { addDaysISO, addMonthsISO, dayOfInstant, diffDaysISO, monthKey } from "./dates.js";
+import { invoiceState, sumPayments } from "./invoice.js";
 import { isRevenue } from "./reports.js";
+import { orderTotals } from "./work-order.js";
 
 export const PERIODS = ["7d", "30d", "12m"];
 
@@ -145,4 +147,96 @@ export function homeAnalytics({ payments, workOrders, invoices, appointments }, 
 		stay: metric((w) => timeInService(workOrders, w), { better: "down" }),
 		hours: metric((w) => billedHours(invoices, w)),
 	};
+}
+
+// Azi's money row (docs/DESIGN.md §4, Azi A): what came in today, what can still come in today, and the month so far.
+
+/** The payment methods in the order Azi shows them; anything else counts as "other". */
+export const PAYMENT_METHOD_ORDER = ["card", "cash", "transfer"];
+
+/** Money collected on one day, in total and per method (only the methods used, largest first). */
+export function collectedOn(payments, day) {
+	const byMethod = new Map();
+	let total = 0;
+	let count = 0;
+	for (const payment of payments) {
+		if (payment.date !== day) continue;
+		const method = PAYMENT_METHOD_ORDER.includes(payment.method) ? payment.method : "other";
+		byMethod.set(method, (byMethod.get(method) ?? 0) + payment.amount);
+		total += payment.amount;
+		count += 1;
+	}
+	const methods = [...byMethod.entries()]
+		.map(([method, amount]) => ({ method, amount }))
+		.sort((a, b) => b.amount - a.amount || PAYMENT_METHOD_ORDER.indexOf(a.method) - PAYMENT_METHOD_ORDER.indexOf(b.method));
+	return { total, count, methods };
+}
+
+/** Today's takings, and their change against the same weekday a week before (null when that day took nothing). */
+export function takingsToday(payments, today) {
+	const now = collectedOn(payments, today);
+	const before = collectedOn(payments, addDaysISO(today, -7));
+	return { ...now, previous: before.total, change: change(now.total, before.total) };
+}
+
+/**
+ * What can still come in today: the cars ready to hand over (what is left on a ready job's issued invoice, or the job's
+ * total while it is not invoiced; a paid one is left out) and the other invoices that fall due today. Gross, in bani.
+ *   { cars: { count, amount, ids }, invoices: { count, amount, ids }, total }
+ */
+export function stillToCollectToday({ workOrders, invoices, paymentsByInvoice, today, settings }) {
+	const byId = new Map(invoices.map((invoice) => [invoice.id, invoice]));
+	const paymentsOf = (invoice) => paymentsByInvoice.get(invoice.id) ?? [];
+	const cars = { count: 0, amount: 0, ids: [] };
+	const counted = new Set();
+	for (const order of workOrders) {
+		if (order.status !== "ready") continue;
+		const invoice = order.invoiceId ? byId.get(order.invoiceId) : null;
+		const billed = invoice && invoice.status !== "draft" && invoice.status !== "cancelled" && !invoice.stornoOf;
+		if (invoice) counted.add(invoice.id);
+		const amount = billed ? Math.max(0, invoice.totals.gross - sumPayments(paymentsOf(invoice))) : orderTotals(order, settings).gross;
+		if (amount <= 0) continue;
+		cars.count += 1;
+		cars.amount += amount;
+		cars.ids.push(order.id);
+	}
+	const due = { count: 0, amount: 0, ids: [] };
+	for (const invoice of invoices) {
+		if (counted.has(invoice.id) || invoice.dueDate !== today) continue;
+		const payments = paymentsOf(invoice);
+		const state = invoiceState(invoice, payments, today);
+		if (state !== "issued" && state !== "partial") continue;
+		due.count += 1;
+		due.amount += invoice.totals.gross - sumPayments(payments);
+		due.ids.push(invoice.id);
+	}
+	return { cars, invoices: due, total: cars.amount + due.amount };
+}
+
+/**
+ * The month so far against the month before: money collected, added up day by day. `points` runs from the 1st to today,
+ * `previousPoints` over the whole month before; `previousToDate` is that month up to the same day (its last day when it
+ * is shorter), and `change` compares the two.
+ */
+export function monthToDate(payments, today) {
+	const first = `${monthKey(today)}-01`;
+	const previousFirst = addMonthsISO(first, -1);
+	const length = (start) => diffDaysISO(start, addMonthsISO(start, 1));
+	const running = (start, days) => {
+		const perDay = Array(days).fill(0);
+		const month = monthKey(start);
+		for (const payment of payments) {
+			if (!payment.date || monthKey(payment.date) !== month) continue;
+			const i = Number(payment.date.slice(8, 10)) - 1;
+			if (i < days) perDay[i] += payment.amount;
+		}
+		let total = 0;
+		return perDay.map((v) => (total += v));
+	};
+	const day = Number(today.slice(8, 10));
+	const points = running(first, day);
+	const previousPoints = running(previousFirst, length(previousFirst));
+	const value = points[points.length - 1];
+	const previousToDate = previousPoints[Math.min(day, previousPoints.length) - 1];
+	return { value, points, days: length(first), previousPoints, previousToDate, previousTotal: previousPoints[previousPoints.length - 1], change: change(value, previousToDate) };
 }

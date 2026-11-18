@@ -2,147 +2,147 @@
  "laborRate": 18000,
  "services": [
   {
-   "id": "0mwio8c5qwrlo1oa6",
+   "id": "0mwlk0lxzit2tc5op",
    "name": "Schimb ulei și filtru",
    "category": "maintenance",
    "hours": 0.6,
    "price": 10800,
    "parts": [
     {
-     "partId": "0mwio8c5qpvxc35fj",
+     "partId": "0mwlk0lxys2djykay",
      "qty": 4.5
     },
     {
-     "partId": "0mwio8c5qlfenyitz",
+     "partId": "0mwlk0lxymu45y20z",
      "qty": 1
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5qkfl5zzg8",
+   "id": "0mwlk0lxzxctqxg8a",
    "name": "Revizie completă (ulei și filtre)",
    "category": "maintenance",
    "hours": 1.5,
    "price": 27000,
    "parts": [
     {
-     "partId": "0mwio8c5qpvxc35fj",
+     "partId": "0mwlk0lxys2djykay",
      "qty": 4.5
     },
     {
-     "partId": "0mwio8c5qlfenyitz",
+     "partId": "0mwlk0lxymu45y20z",
      "qty": 1
     },
     {
-     "partId": "0mwio8c5qib1uyyic",
+     "partId": "0mwlk0lxy717yzsp8",
      "qty": 1
     },
     {
-     "partId": "0mwio8c5q6rxtkscn",
+     "partId": "0mwlk0lxy2324owvo",
      "qty": 1
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5qj1uafm4b",
+   "id": "0mwlk0lxzv93t1dda",
    "name": "Înlocuire plăcuțe frână față",
    "category": "brakes",
    "hours": 1,
    "price": 18000,
    "parts": [
     {
-     "partId": "0mwio8c5q1j5yppny",
+     "partId": "0mwlk0lxy5qwbsoy1",
      "qty": 1
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5qccn9a5kv",
+   "id": "0mwlk0lxz0yxsqg7v",
    "name": "Înlocuire plăcuțe frână spate",
    "category": "brakes",
    "hours": 1,
    "price": 18000,
    "parts": [
     {
-     "partId": "0mwio8c5q0a2ctn0b",
+     "partId": "0mwlk0lxyr93rsc2j",
      "qty": 1
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5qur5v4ldv",
+   "id": "0mwlk0lxz06l05n6y",
    "name": "Înlocuire discuri și plăcuțe față",
    "category": "brakes",
    "hours": 1.6,
    "price": 28800,
    "parts": [
     {
-     "partId": "0mwio8c5qmbagl3ye",
+     "partId": "0mwlk0lxyfe9ir30q",
      "qty": 1
     },
     {
-     "partId": "0mwio8c5q1j5yppny",
+     "partId": "0mwlk0lxy5qwbsoy1",
      "qty": 1
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5q3z27wijy",
+   "id": "0mwlk0lxze2x5uxfa",
    "name": "Înlocuire lichid de frână",
    "category": "brakes",
    "hours": 0.7,
    "price": 12600,
    "parts": [
     {
-     "partId": "0mwio8c5qmf98bmox",
+     "partId": "0mwlk0lxyu8gvyuhn",
      "qty": 1
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5qkeav3udg",
+   "id": "0mwlk0lxzcp8gwm2f",
    "name": "Înlocuire kit distribuție și pompă apă",
    "category": "engine",
    "hours": 4,
    "price": 72000,
    "parts": [
     {
-     "partId": "0mwio8c5qqt0ujwuk",
+     "partId": "0mwlk0lxy85eevqq9",
      "qty": 1
     },
     {
-     "partId": "0mwio8c5qjl33aj0w",
+     "partId": "0mwlk0lxy18fli4ak",
      "qty": 3
     },
     {
-     "partId": "0mwio8c5ql2nyuf9j",
+     "partId": "0mwlk0lxyz0rrrfvo",
      "qty": 1
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5q3o7vxg73",
+   "id": "0mwlk0lxzikxf1419",
    "name": "Înlocuire bujii",
    "category": "engine",
    "hours": 0.6,
    "price": 10800,
    "parts": [
     {
-     "partId": "0mwio8c5qh4cc0sa0",
+     "partId": "0mwlk0lxyt4eb1sp8",
      "qty": 4
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5qdjl3tnn1",
+   "id": "0mwlk0lxzbhnwdbyq",
    "name": "Diagnoză computerizată",
    "category": "diagnostics",
    "hours": 0.5,
@@ -151,35 +151,35 @@
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5qugi62sum",
+   "id": "0mwlk0lxzdimv1o71",
    "name": "Înlocuire acumulator",
    "category": "electrical",
    "hours": 0.3,
    "price": 5400,
    "parts": [
     {
-     "partId": "0mwio8c5q6p54dk6h",
+     "partId": "0mwlk0lxyinb2x27o",
      "qty": 1
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5qa70z210r",
+   "id": "0mwlk0lxzh78zfh1k",
    "name": "Înlocuire bec far",
    "category": "electrical",
    "hours": 0.3,
    "price": 5400,
    "parts": [
     {
-     "partId": "0mwio8c5qw1nnvr81",
+     "partId": "0mwlk0lxzz9as8uyd",
      "qty": 1
     }
    ],
    "createdAt": "2025-11-15T07:00:00.000Z"
   },
   {
-   "id": "0mwio8c5q1055nvpk",
+   "id": "0mwlk0lxzf8cqmqwp",
    "name": "Geometrie roți",
    "category": "tires",
    "hours": 0.8,
@@ -204,84 +204,84 @@
  ],
  "fromService": [
   {
-   "serviceId": "0mwio8c5qwrlo1oa6",
+   "serviceId": "0mwlk0lxzit2tc5op",
    "name": "Schimb ulei și filtru",
    "hours": 0.6,
    "price": 10800,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5qkfl5zzg8",
+   "serviceId": "0mwlk0lxzxctqxg8a",
    "name": "Revizie completă (ulei și filtre)",
    "hours": 1.5,
    "price": 27000,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5qj1uafm4b",
+   "serviceId": "0mwlk0lxzv93t1dda",
    "name": "Înlocuire plăcuțe frână față",
    "hours": 1,
    "price": 18000,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5qccn9a5kv",
+   "serviceId": "0mwlk0lxz0yxsqg7v",
    "name": "Înlocuire plăcuțe frână spate",
    "hours": 1,
    "price": 18000,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5qur5v4ldv",
+   "serviceId": "0mwlk0lxz06l05n6y",
    "name": "Înlocuire discuri și plăcuțe față",
    "hours": 1.6,
    "price": 28800,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5q3z27wijy",
+   "serviceId": "0mwlk0lxze2x5uxfa",
    "name": "Înlocuire lichid de frână",
    "hours": 0.7,
    "price": 12600,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5qkeav3udg",
+   "serviceId": "0mwlk0lxzcp8gwm2f",
    "name": "Înlocuire kit distribuție și pompă apă",
    "hours": 4,
    "price": 72000,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5q3o7vxg73",
+   "serviceId": "0mwlk0lxzikxf1419",
    "name": "Înlocuire bujii",
    "hours": 0.6,
    "price": 10800,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5qdjl3tnn1",
+   "serviceId": "0mwlk0lxzbhnwdbyq",
    "name": "Diagnoză computerizată",
    "hours": 0.5,
    "price": 9000,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5qugi62sum",
+   "serviceId": "0mwlk0lxzdimv1o71",
    "name": "Înlocuire acumulator",
    "hours": 0.3,
    "price": 5400,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5qa70z210r",
+   "serviceId": "0mwlk0lxzh78zfh1k",
    "name": "Înlocuire bec far",
    "hours": 0.3,
    "price": 5400,
    "cost": 0
   },
   {
-   "serviceId": "0mwio8c5q1055nvpk",
+   "serviceId": "0mwlk0lxzf8cqmqwp",
    "name": "Geometrie roți",
    "hours": 0.8,
    "price": 14400,
@@ -305,7 +305,7 @@
  "ops": [
   {
    "id": "op0",
-   "serviceId": "0mwio8c5qwrlo1oa6",
+   "serviceId": "0mwlk0lxzit2tc5op",
    "name": "Schimb ulei și filtru",
    "hours": 0.6,
    "price": 10800,
@@ -313,7 +313,7 @@
   },
   {
    "id": "op1",
-   "serviceId": "0mwio8c5qkfl5zzg8",
+   "serviceId": "0mwlk0lxzxctqxg8a",
    "name": "Revizie completă (ulei și filtre)",
    "hours": 1.5,
    "price": 27000,
@@ -321,7 +321,7 @@
   },
   {
    "id": "op2",
-   "serviceId": "0mwio8c5qj1uafm4b",
+   "serviceId": "0mwlk0lxzv93t1dda",
    "name": "Înlocuire plăcuțe frână față",
    "hours": 1,
    "price": 18000,
@@ -329,7 +329,7 @@
   },
   {
    "id": "op3",
-   "serviceId": "0mwio8c5qccn9a5kv",
+   "serviceId": "0mwlk0lxz0yxsqg7v",
    "name": "Înlocuire plăcuțe frână spate",
    "hours": 1,
    "price": 18000,
@@ -337,7 +337,7 @@
   },
   {
    "id": "op4",
-   "serviceId": "0mwio8c5qur5v4ldv",
+   "serviceId": "0mwlk0lxz06l05n6y",
    "name": "Înlocuire discuri și plăcuțe față",
    "hours": 1.6,
    "price": 28800,
@@ -345,7 +345,7 @@
   },
   {
    "id": "op5",
-   "serviceId": "0mwio8c5q3z27wijy",
+   "serviceId": "0mwlk0lxze2x5uxfa",
    "name": "Înlocuire lichid de frână",
    "hours": 0.7,
    "price": 12600,
@@ -353,7 +353,7 @@
   },
   {
    "id": "op6",
-   "serviceId": "0mwio8c5qkeav3udg",
+   "serviceId": "0mwlk0lxzcp8gwm2f",
    "name": "Înlocuire kit distribuție și pompă apă",
    "hours": 4,
    "price": 72000,
@@ -361,7 +361,7 @@
   },
   {
    "id": "op7",
-   "serviceId": "0mwio8c5q3o7vxg73",
+   "serviceId": "0mwlk0lxzikxf1419",
    "name": "Înlocuire bujii",
    "hours": 0.6,
    "price": 10800,
@@ -369,7 +369,7 @@
   },
   {
    "id": "op8",
-   "serviceId": "0mwio8c5qdjl3tnn1",
+   "serviceId": "0mwlk0lxzbhnwdbyq",
    "name": "Diagnoză computerizată",
    "hours": 0.5,
    "price": 9000,
@@ -377,7 +377,7 @@
   },
   {
    "id": "op9",
-   "serviceId": "0mwio8c5qugi62sum",
+   "serviceId": "0mwlk0lxzdimv1o71",
    "name": "Înlocuire acumulator",
    "hours": 0.3,
    "price": 5400,
@@ -385,7 +385,7 @@
   },
   {
    "id": "op10",
-   "serviceId": "0mwio8c5qa70z210r",
+   "serviceId": "0mwlk0lxzh78zfh1k",
    "name": "Înlocuire bec far",
    "hours": 0.3,
    "price": 5400,
@@ -393,7 +393,7 @@
   },
   {
    "id": "op11",
-   "serviceId": "0mwio8c5q1055nvpk",
+   "serviceId": "0mwlk0lxzf8cqmqwp",
    "name": "Geometrie roți",
    "hours": 0.8,
    "price": 14400,

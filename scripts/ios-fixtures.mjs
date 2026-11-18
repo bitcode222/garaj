@@ -144,7 +144,7 @@ write("rules.json", {
 	];
 	// Only what the rules read (lines only where an amount is computed from them), to keep the file small.
 	const open = new Set(["estimate", "approved", "in_progress", "waiting_parts", "ready"]);
-	const workOrders = c.workOrders.map((o) => ({ ...pick(o, ["id", "number", "status", "createdAt", "dates", "appointmentId"]), lines: open.has(o.status) ? o.lines : [] }));
+	const workOrders = c.workOrders.map((o) => ({ ...pick(o, ["id", "number", "status", "createdAt", "dates", "appointmentId", "invoiceId"]), lines: open.has(o.status) ? o.lines : [] }));
 	const invoices = c.invoices.map((i) => ({ ...pick(i, ["id", "status", "series", "number", "issueDate", "dueDate", "createdAt", "stornoOf"]), totals: i.totals && pick(i.totals, ["net", "vat", "gross", "hours"]), lines: i.status === "draft" ? i.lines : [] }));
 	const payments = c.payments;
 	const byInvoice = new Map();
@@ -164,6 +164,13 @@ write("rules.json", {
 			const m = (x) => ({ value: x.value, points: x.points, empty: x.empty, change: x.change });
 			return { period, window: h.window, collected: m(h.collected), received: m(h.received), ticket: m(h.ticket), show: m(h.show), stay: m(h.stay), hours: m(h.hours) };
 		}),
+		// Azi's money row, on the fixture's day and on a day with payments and a ready car (the last payment's day).
+		money: [today, payments.map((p) => p.date).sort().at(-1)].map((day) => ({
+			today: day,
+			takings: analytics.takingsToday(payments, day),
+			still: analytics.stillToCollectToday({ workOrders, invoices, paymentsByInvoice: byInvoice, today: day, settings }),
+			month: analytics.monthToDate(payments, day),
+		})),
 	}, { compact: true });
 }
 

@@ -3,7 +3,7 @@
 // of its inputs actually changed — and every component shares the result.
 
 import { ESTIMATE_STAGES, JOB_STAGES, bookingsToConfirm, dayMarks, invoicesToCollect, jobsToShow } from "@/domain/agenda";
-import { homeAnalytics } from "@/domain/analytics";
+import { homeAnalytics, monthToDate, stillToCollectToday, takingsToday } from "@/domain/analytics";
 import { dayOfInstant } from "@/domain/dates";
 import { invoiceBalance, invoiceState, sumPayments } from "@/domain/invoice";
 import { reservedByPart } from "@/domain/inventory";
@@ -230,3 +230,13 @@ export const selectDayMarks = memo((appointments, workOrders, invoices, payments
 export const selectHomeAnalytics = memo((payments, workOrders, invoices, appointments, today, period) =>
 	homeAnalytics({ payments: Object.values(payments), workOrders: Object.values(workOrders), invoices: Object.values(invoices), appointments: Object.values(appointments) }, { today, period }),
 );
+
+/** Azi's money row (docs/DESIGN.md §4): today's takings by method, what can still come in today, the month so far. */
+export const selectAziMoney = memo((payments, workOrders, invoices, settings, today) => {
+	const list = Object.values(payments);
+	return {
+		takings: takingsToday(list, today),
+		still: stillToCollectToday({ workOrders: Object.values(workOrders), invoices: Object.values(invoices), paymentsByInvoice: selectPaymentsByInvoice(payments), today, settings }),
+		month: monthToDate(list, today),
+	};
+});
