@@ -100,6 +100,7 @@ struct ReportsView: View {
                 Text("Total de încasat: \(Money.format(aging.total, currency: currency)).")
             }
         }
+        .groupedBackground()
         .listStyle(.insetGrouped)
         .navigationTitle("Rapoarte")
         .sensoryFeedback(.selection, trigger: period)
@@ -227,6 +228,7 @@ private struct RevenueTable: View {
                 .accessibilityElement(children: .combine)
             }
         }
+        .groupedBackground()
         .navigationTitle(daily ? "Pe zile" : "Pe luni")
         .navigationBarTitleDisplayMode(.inline)
     }

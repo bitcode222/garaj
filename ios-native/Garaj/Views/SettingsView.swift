@@ -185,6 +185,7 @@ struct SettingsView: View {
                 Text("Totul stă pe acest iPhone, fără cont. Fă un backup săptămânal.\n\nGaraj \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")")
             }
         }
+        .groupedBackground()
         .navigationTitle("Setări")
         .scrollDismissesKeyboard(.interactively)
         .sheet(item: $editingStaff) { StaffForm(staff: $0) }
@@ -350,6 +351,7 @@ private struct StaffForm: View {
                     }
                 }
             }
+            .groupedBackground()
             .navigationTitle(existing ? "Membru în echipă" : "Membru nou")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -395,6 +397,7 @@ private struct BayForm: View {
                     }
                 }
             }
+            .groupedBackground()
             .navigationTitle(existing ? "Post de lucru" : "Post nou")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

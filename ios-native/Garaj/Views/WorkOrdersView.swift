@@ -56,6 +56,7 @@ struct WorkOrdersView: View {
                     }
                 }
             }
+            .groupedBackground()
             .listStyle(.insetGrouped)
             .sensoryFeedback(.selection, trigger: status)
             .overlay {

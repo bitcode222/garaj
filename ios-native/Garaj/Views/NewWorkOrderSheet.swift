@@ -57,6 +57,7 @@ struct NewWorkOrderSheet: View {
                     }
                 }
             }
+            .groupedBackground()
             .onChange(of: customerId) { _, new in
                 if let v = store.get(Vehicle.self, vehicleId), v.customerId != new { vehicleId = nil }
                 if vehicleId == nil, mine.count == 1 { vehicleId = mine.first?.id }
@@ -123,6 +124,7 @@ struct SearchPicker<Item: Identifiable>: View where Item.ID == String {
             }
             .tint(.primary)
         }
+        .groupedBackground()
         .overlay { if shown.isEmpty { ContentUnavailableView.search(text: query) } }
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always))
         .navigationTitle(title)

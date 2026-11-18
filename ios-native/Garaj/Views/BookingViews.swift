@@ -109,6 +109,7 @@ struct AppointmentDetailView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .groupedBackground()
         .navigationTitle(Text(verbatim: a.number.map { "Programarea #\($0)" } ?? "Programare"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -255,6 +256,7 @@ struct BookingForm: View {
                     TextField("Note", text: $notes, axis: .vertical)
                 }
             }
+            .groupedBackground()
             .navigationTitle(editingId == nil ? "Programare nouă" : "Programare")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

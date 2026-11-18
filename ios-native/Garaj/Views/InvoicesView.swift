@@ -163,6 +163,7 @@ struct InvoicesView: View {
                     }
                 }
             }
+            .groupedBackground()
             .listStyle(.insetGrouped)
             .sensoryFeedback(.selection, trigger: filter)
             .overlay {
@@ -282,6 +283,7 @@ struct PaymentSheet: View {
                     if let problem, !amount.isEmpty { Text(problem).foregroundStyle(.red) }
                 }
             }
+            .groupedBackground()
             .navigationTitle("Încasare")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

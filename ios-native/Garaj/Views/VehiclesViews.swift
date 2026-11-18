@@ -55,6 +55,7 @@ struct VehiclesView: View {
                 }
             }
         } }
+        .groupedBackground()
         .overlay { if vehicles.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView {
             Label("Nicio mașină", systemImage: "car")
         } description: {
@@ -310,6 +311,7 @@ struct VehicleForm: View {
                 }
                 Section { TextField("Note", text: $vehicle.notes, axis: .vertical) }
             }
+            .groupedBackground()
             .navigationTitle(isNew ? "Mașină nouă" : "Mașină")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {

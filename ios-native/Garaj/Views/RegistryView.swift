@@ -36,6 +36,7 @@ struct RegistryView: View {
                     SectionHeader("Atelier")
                 }
             }
+            .groupedBackground()
             .navigationTitle("Registru")
             #if DEBUG
             // Screenshots: `-GarajMore clienti|masini`, `-GarajOpenVehicle <id>`, `-GarajOpenCustomer <id>`.
@@ -110,6 +111,7 @@ struct DataView: View {
                 Text("Datele aplicației de dinainte rămân pe telefon. Folosește asta doar dacă la prima pornire nu s-au mutat toate.")
             }
         }
+        .groupedBackground()
         .confirmationDialog("Înlocuiești datele de acum cu cele din aplicația veche?", isPresented: $confirmLegacy, titleVisibility: .visible) {
             Button("Mută datele", role: .destructive) {
                 Task {

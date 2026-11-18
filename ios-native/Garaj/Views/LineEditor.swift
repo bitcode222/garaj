@@ -99,7 +99,8 @@ struct LineEditor: View {
                 }
                 .coverRows(coverMake)
             }
-            .scrollContentBackground(coverMake == nil ? .automatic : .hidden)
+            .scrollContentBackground(.hidden)
+            .background(coverMake == nil ? Color.groupedBackground : Color.clear)
             .navigationTitle(isNew ? "Linie nouă" : "Linie")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -178,6 +179,7 @@ struct AddLineSheet: View {
                     }
                 }
             }
+            .groupedBackground()
             .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: source == .service ? "Caută manopera" : "Caută piesa")
             .navigationTitle(source == .service ? "Manoperă din catalog" : "Piesă din stoc")
             .navigationBarTitleDisplayMode(.inline)

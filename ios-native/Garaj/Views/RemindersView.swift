@@ -39,6 +39,7 @@ struct RemindersView: View {
                 }
             }
         }
+        .groupedBackground()
         .listStyle(.insetGrouped)
         .overlay {
             if reminders.isEmpty {

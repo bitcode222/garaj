@@ -250,7 +250,8 @@ struct OperationSheet: View {
                 }
                 .coverRows(coverMake)
             }
-            .scrollContentBackground(coverMake == nil ? .automatic : .hidden)
+            .scrollContentBackground(.hidden)
+            .background(coverMake == nil ? Color.groupedBackground : Color.clear)
             .navigationTitle(isNew ? "Operație nouă" : "Operație")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -319,6 +320,7 @@ struct ServicePicker: View {
                     } header: { CapsHeader(Inventory.categoryLabel(key)) }
                 }
             }
+            .groupedBackground()
             .sensoryFeedback(.selection, trigger: picked.count)
             .overlay { if services.isEmpty { ContentUnavailableView.search(text: query) } }
             .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Caută o operație")
