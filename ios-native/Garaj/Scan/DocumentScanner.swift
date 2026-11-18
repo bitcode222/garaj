@@ -1,6 +1,7 @@
 @preconcurrency import AVFoundation
 import CoreImage
 import CoreImage.CIFilterBuiltins
+import PDFKit
 import UIKit
 import Vision
 
@@ -130,12 +131,27 @@ enum DocumentProcessor {
         return await Task.detached(priority: .userInitiated) { detect(VNImageRequestHandler(cgImage: cg, orientation: .up)) }.value
     }
 
-    /// The picture drawn upright (photos carry their rotation as a flag; Vision and Core Image want pixels).
+    /// The picture drawn upright (photos carry their rotation as a flag; Vision and Core Image want pixels) and no
+    /// larger than 3000 px on its long side, which reads as well and keeps memory low for 48 MP photos.
     static func upright(_ image: UIImage) -> UIImage {
-        guard image.imageOrientation != .up else { return image }
+        let pixels = CGSize(width: image.size.width * image.scale, height: image.size.height * image.scale)
+        let shrink = min(1, 3000 / max(pixels.width, pixels.height))
+        guard image.imageOrientation != .up || shrink < 1 || image.scale != 1 else { return image }
+        let size = CGSize(width: (pixels.width * shrink).rounded(), height: (pixels.height * shrink).rounded())
         let format = UIGraphicsImageRendererFormat.default()
         format.scale = 1
-        return UIGraphicsImageRenderer(size: image.size, format: format).image { _ in image.draw(in: CGRect(origin: .zero, size: image.size)) }
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in image.draw(in: CGRect(origin: .zero, size: size)) }
+    }
+
+    /// A PDF's first pages as pictures, about 2400 px on the long side, on white.
+    @MainActor
+    static func images(of pdf: PDFDocument, limit: Int) -> [UIImage] {
+        (0..<min(limit, pdf.pageCount)).compactMap { i in
+            guard let page = pdf.page(at: i) else { return nil }
+            let box = page.bounds(for: .mediaBox)
+            let s = 2400 / max(box.width, box.height)
+            return page.thumbnail(of: CGSize(width: box.width * s, height: box.height * s), for: .mediaBox)
+        }
     }
 
     /// The page cut out along the four corners and straightened to a rectangle, a little crisper.
@@ -203,4 +219,6 @@ enum TalonFiles {
     }
 
     static func image(_ vehicleId: String) -> UIImage? { UIImage(contentsOfFile: url(vehicleId).path()) }
+
+    static func delete(_ vehicleId: String) { try? FileManager.default.removeItem(at: url(vehicleId)) }
 }

@@ -29,7 +29,7 @@ extension AppStore {
         if all(WorkOrder.self).contains(where: { $0.customerId == id }) {
             throw DomainError(code: "in_use", message: "Clientul are lucrări înregistrate. Păstrează-l în evidență.")
         }
-        for v in all(Vehicle.self) where v.customerId == id { delete(Vehicle.self, v.id) }
+        for v in all(Vehicle.self) where v.customerId == id { delete(Vehicle.self, v.id); TalonFiles.delete(v.id) }
         for a in all(Appointment.self) where a.customerId == id { delete(Appointment.self, a.id) }
         for i in all(Invoice.self) where i.customerId == id && i.status == "draft" { delete(Invoice.self, i.id) }
         delete(Customer.self, id)
@@ -77,5 +77,6 @@ extension AppStore {
         }
         for a in all(Appointment.self) where a.vehicleId == id { delete(Appointment.self, a.id) }
         delete(Vehicle.self, id)
+        TalonFiles.delete(id) // the talon picture holds personal data: it goes with the car
     }
 }

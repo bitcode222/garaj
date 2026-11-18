@@ -158,8 +158,16 @@ struct BookingForm: View {
     enum Target: Identifiable, Hashable {
         case new
         case newAt(String, String?) // start instant, mechanic
+        case newFor(String, String?) // client, car (a scanned talon's)
         case edit(String)
-        var id: String { switch self { case .new: "new"; case .newAt(let s, let staff): "at-\(s)-\(staff ?? "")"; case .edit(let id): id } }
+        var id: String {
+            switch self {
+            case .new: "new"
+            case .newAt(let s, let staff): "at-\(s)-\(staff ?? "")"
+            case .newFor(let c, let v): "for-\(c)-\(v ?? "")"
+            case .edit(let id): id
+            }
+        }
     }
 
     @Environment(AppStore.self) private var store
@@ -290,6 +298,11 @@ struct BookingForm: View {
             start = Dates.parseInstant(s) ?? .now
             staffId = staff
             minutes = Int(store.settings["calendar"]?["defaultDuration"]?.number ?? 60)
+        case .newFor(let c, let v):
+            start = nextOpenSlot()
+            minutes = Int(store.settings["calendar"]?["defaultDuration"]?.number ?? 60)
+            customerId = c
+            vehicleId = v
         case .edit(let id):
             guard let a = store.get(Appointment.self, id) else { return }
             customerId = a.customerId; vehicleId = a.vehicleId; staffId = a.staffId; bayId = a.bayId

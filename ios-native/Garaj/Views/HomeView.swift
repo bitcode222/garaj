@@ -824,37 +824,6 @@ private struct ResultRow: View {
     }
 }
 
-/// Caută: the search tab, apart from the others (look 3). Cars, clients, jobs, invoices.
-struct SearchView: View {
-    @State private var path: [HomeView.Route] = []
-    @State private var query = ""
-
-    var body: some View {
-        NavigationStack(path: $path) {
-            List {
-                if query.trimmingCharacters(in: .whitespaces).isEmpty {
-                    ContentUnavailableView("Caută în atelier", systemImage: "magnifyingglass",
-                                           description: Text("Număr de înmatriculare, client, telefon, VIN, număr de lucrare sau de factură."))
-                        .bareRow()
-                } else {
-                    Section { SearchResults(query: query) { path.append($0) } }.bareRow()
-                }
-            }
-            .groupedBackground()
-            .listStyle(.insetGrouped)
-            .navigationTitle("Caută")
-            .searchable(text: $query, prompt: "Mașină, client, lucrare, factură")
-            .navigationDestination(for: HomeView.Route.self) { route in
-                switch route {
-                case .job(let id): WorkOrderDetailView(id: id)
-                case .invoice(let id): InvoiceDetailView(id: id)
-                case .appointment(let id): AppointmentDetailView(id: id)
-                }
-            }
-        }
-    }
-}
-
 /// Azi's sections under the search bar and the shortcuts: which ones and in which order (Editează), kept on the phone.
 enum HomeLayout {
     static let orderKey = "home.sections"
