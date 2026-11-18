@@ -114,3 +114,15 @@ Tabs: **Azi · Atelier · Agendă · Registru**, and search as its own tab (`Tab
 | 3 | Car-colored sheets (`.carSheet(make)`: the job's line editor, the booking's operation sheet), Mașina page (cover with logo, plate, facts, owner; history cards tinted by the kind of work; deadlines), empty lists with a sentence and a button (jobs, invoices, clients, cars, bookings) | merged (#48) |
 | 4 | The running job: `src/domain/work-clock.js` (time log `timeLog: [{ id, staffId, start, end }]`, starting work moves the job to in progress and stops the mechanic's other running job; `line.done`; steps = labor lines) with tests, `Domain/WorkClock.swift` against `work-clock.json`; `Views/RunningJob.swift`: the bar above the tabs (`tabViewBottomAccessory`, timer, step, Pauză, ✓ for the step; tap opens the job) and the main button of a job (Începe/Continuă/Pauză). Fixed with it: the data file was looked up with a percent-encoded path, so every launch re-imported the old app's data | merged (#49) |
 
+
+## 10. Talon scanner (18 Nov 2026, iPhone only)
+
+The owner asked for document scanning as a real feature, after a reference with a camera frame and a "Looking good?" review; they picked **Talon → car** and **a round button beside the job bar**.
+
+- **Button:** the bar above the tab bar is always shown now. It holds the running job, or "Scanează talonul" when none runs, and a white round camera button on the right.
+- **Camera** (`Scan/DocumentScanner.swift`, `Scan/TalonScanFlow.swift`): the back camera with a live search for the page's edges (Vision, about 8 a second). White corner marks follow the page and say "Ține nemișcat" once it holds still. Flash Auto / Pornit / Oprit, "Fă poza", or pick a photo.
+- **Review:** "Arată bine?" with the page cut along its corners and straightened. Decupează (drag the four corners), Rotește, Confirmă talonul, Refă.
+- **Reading:** text recognition, then `TalonParser` reads the EU codes: A plate, B first registration (year), C.2/C.1 owner and address, D.1 make, D.3 model, E VIN, P.1 cc, P.3 fuel, R colour. The plate and VIN are also found by their shape, Cyrillic look-alikes and O/0, I/1 in the VIN are fixed, and a sideways photo is tried all four ways.
+- **Saving:** "Ce am citit" shows every field to check. It matches an existing car by plate or VIN and the owner by name, then adds or updates (`AppStore.saveTalon`). The picture is kept in the app's documents (`Scans/<car id>-talon.jpg`) and shown under Documente on the car.
+- **Not on the web:** the web app has no scanner, and the talon picture stays on the phone.
+- **Debug:** `-GarajScan 1` opens the camera. `-GarajScanImage <path>` starts from a picture, and `-GarajScanRead 1` also confirms it.

@@ -128,10 +128,28 @@ struct VehicleDetailView: View {
     @State private var reading = ""
     @State private var confirmDelete = false
     @State private var error: String?
+    @State private var showTalon: UIImage?
 
     var body: some View {
-        if let v = store.get(Vehicle.self, id) { content(v) } else { ContentUnavailableView("Mașina nu mai există", systemImage: "car") }
+        Group {
+            if let v = store.get(Vehicle.self, id) { content(v) } else { ContentUnavailableView("Mașina nu mai există", systemImage: "car") }
+        }
+        .sheet(item: Binding(get: { showTalon.map(TalonPicture.init) }, set: { showTalon = $0?.image })) { t in
+            NavigationStack {
+                ScrollView([.horizontal, .vertical]) { Image(uiImage: t.image).resizable().scaledToFit().containerRelativeFrame(.horizontal) }
+                    .navigationTitle("Talon")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) { Button("Închide") { showTalon = nil } }
+                        ToolbarItem(placement: .primaryAction) {
+                            ShareLink(item: Image(uiImage: t.image), preview: SharePreview("Talon", image: Image(uiImage: t.image)))
+                        }
+                    }
+            }
+        }
     }
+
+    private struct TalonPicture: Identifiable { let image: UIImage; var id: ObjectIdentifier { ObjectIdentifier(image) } }
 
     private func content(_ v: Vehicle) -> some View {
         let today = Dates.today()
@@ -173,6 +191,19 @@ struct VehicleDetailView: View {
                 .padding(.bottom, 8)
             }
             .bareRow()
+            // The scanned talon, when there is one (Scanează talonul above the tab bar).
+            if let talon = TalonFiles.image(v.id) {
+                Section("Documente") {
+                    Button { showTalon = talon } label: {
+                        HStack(spacing: 14) {
+                            Image(uiImage: talon).resizable().scaledToFill().frame(width: 56, height: 40).clipShape(.rect(cornerRadius: 6))
+                            Text("Talon").foregroundStyle(.primary)
+                            Spacer()
+                            Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
+                        }
+                    }
+                }
+            }
             if !orders.isEmpty {
                 Section {
                     ScrollView(.horizontal) {
