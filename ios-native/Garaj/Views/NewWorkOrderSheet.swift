@@ -1,10 +1,12 @@
 import SwiftUI
 
-/// Lucrare nouă: client, car, what's wrong, km, mechanic. Opens as a Deviz.
+/// Deviz nou or Lucrare nouă: client, car, what's wrong, km, mechanic. `status`: "estimate" (a Deviz, the default)
+/// or "in_progress" (a Lucrare, already approved).
 struct NewWorkOrderSheet: View {
     @Environment(AppStore.self) private var store
     @Environment(UndoCenter.self) private var undo
     @Environment(\.dismiss) private var dismiss
+    var status: String = "estimate"
     let onCreated: (String) -> Void
 
     @State private var customerId: String?
@@ -65,7 +67,7 @@ struct NewWorkOrderSheet: View {
             .onChange(of: vehicleId) { _, new in
                 if let owner = store.get(Vehicle.self, new)?.customerId, customerId == nil { customerId = owner }
             }
-            .navigationTitle("Lucrare nouă")
+            .navigationTitle(status == "estimate" ? "Deviz nou" : "Lucrare nouă")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Renunță") { dismiss() } }
@@ -83,7 +85,7 @@ struct NewWorkOrderSheet: View {
         do {
             let km = Int(mileage.filter(\.isNumber))
             let (order, warning) = try store.createWorkOrder(customerId: customerId, vehicleId: vehicleId, complaint: complaint,
-                                                             mileage: km, staffId: staffId, serviceIds: serviceIds)
+                                                             mileage: km, staffId: staffId, serviceIds: serviceIds, status: status)
             if let warning { undo.show(warning) }
             dismiss()
             onCreated(order.id)
