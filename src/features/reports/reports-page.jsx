@@ -17,6 +17,9 @@ import { formatMoney } from "@/domain/money";
 import { monthRange, paymentMix, receivablesAging, revenueByDay, revenueByMonth, staffProductivity, summarize, topServices } from "@/domain/reports";
 import { fmtDate, fmtHours, fmtNumber, plural } from "@/lib/format";
 import { PAYMENT_METHODS } from "@/lib/labels";
+import { PHONE } from "@/components/ds/nav-bar";
+import { useMediaQuery } from "@/lib/hooks";
+import { PhoneReports } from "@/features/phone/phone-reports";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { selectList, selectPaymentsByInvoice } from "@/lib/store/selectors";
 import { BarList, MixBar, StackedColumns } from "./charts";
@@ -54,6 +57,7 @@ export function ReportsPage() {
 		{ value: "panel", label: "Panou", icon: LayoutDashboard },
 	]);
 	const panel = look === "panel";
+	const phone = useMediaQuery(PHONE);
 
 	const report = useMemo(() => {
 		if (!today) return null;
@@ -80,6 +84,8 @@ export function ReportsPage() {
 	}, [invoicesMap, paymentsMap, today, period]);
 
 	if (!ready || !report) return <ListPageSkeleton stats rows={4} />;
+
+	if (phone) return <PhoneReports report={report} periods={PERIODS} period={period} onPeriod={setPeriod} staff={staff} currency={settings.currency} />;
 
 	const { summary, rows, top, people, mix, aging, range } = report;
 	const daily = period === "month";
