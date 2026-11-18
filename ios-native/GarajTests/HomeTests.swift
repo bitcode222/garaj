@@ -27,6 +27,12 @@ struct HomeTests {
         let jobs: [Job]
         let passed: [Passed]
         let analytics: [Period]
+        struct Share: Decodable { let count: Int; let amount: Int; let ids: [String] }
+        struct Takings: Decodable { let total: Int; let count: Int; let methods: [Analytics.MethodAmount]; let previous: Int; let change: Change? }
+        struct Still: Decodable { let cars: Share; let invoices: Share; let total: Int }
+        struct Month: Decodable { let value: Int; let points: [Int]; let days: Int; let previousPoints: [Int]; let previousToDate: Int; let previousTotal: Int; let change: Change? }
+        struct Money: Decodable { let today: String; let takings: Takings; let still: Still; let month: Month }
+        let money: [Money]
     }
 
     let f: Fixtures
@@ -108,6 +114,26 @@ struct HomeTests {
             check(h.show, p.show, "\(p.period) show")
             check(h.stay, p.stay, "\(p.period) stay")
             check(h.hours, p.hours, "\(p.period) hours")
+        }
+    }
+
+    @Test func aziMoney() {
+        let byInvoice = Dictionary(grouping: payments, by: \.invoiceId)
+        for m in f.money {
+            let t = Analytics.takingsToday(payments, today: m.today)
+            #expect(t.total == m.takings.total && t.count == m.takings.count && t.previous == m.takings.previous, "\(m.today) takings")
+            #expect(t.methods == m.takings.methods, "\(m.today) methods")
+            #expect((t.change == nil) == (m.takings.change == nil), "\(m.today) takings change")
+            if let g = t.change, let c = m.takings.change { #expect(same(g.pct, c.pct) && g.direction == c.direction) }
+            let s = Analytics.stillToCollectToday(orders: orders, invoices: invoices, paymentsByInvoice: byInvoice, today: m.today, vatPayer: true)
+            #expect(s.cars.ids == m.still.cars.ids && s.cars.amount == m.still.cars.amount, "\(m.today) cars")
+            #expect(s.invoices.ids == m.still.invoices.ids && s.invoices.amount == m.still.invoices.amount, "\(m.today) invoices")
+            #expect(s.total == m.still.total)
+            let mo = Analytics.monthToDate(payments, today: m.today)
+            #expect(mo.points == m.month.points && mo.previousPoints == m.month.previousPoints && mo.days == m.month.days, "\(m.today) month")
+            #expect(mo.previousToDate == m.month.previousToDate && mo.previousTotal == m.month.previousTotal)
+            #expect((mo.change == nil) == (m.month.change == nil))
+            if let g = mo.change, let c = m.month.change { #expect(same(g.pct, c.pct) && g.direction == c.direction) }
         }
     }
 }

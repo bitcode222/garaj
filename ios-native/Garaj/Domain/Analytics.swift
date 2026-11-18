@@ -126,4 +126,109 @@ enum Analytics {
                     stay: metric({ timeInService(orders, $0) }, better: "down"),
                     hours: metric { billedHours(invoices, $0) })
     }
+
+    // MARK: Azi's money row (src/domain/analytics.js): today's takings by method, what can still come in today, the month so far.
+
+    static let paymentMethodOrder = ["card", "cash", "transfer"]
+
+    struct MethodAmount: Equatable, Decodable { let method: String; let amount: Int }
+
+    struct Takings: Equatable {
+        let total: Int
+        let count: Int
+        let methods: [MethodAmount]
+        var previous = 0
+        var change: Change? = nil
+    }
+
+    /// Money collected on one day, in total and per method (only the methods used, largest first; unknown ones are "other").
+    static func collected(on day: String, _ payments: [Payment]) -> Takings {
+        var byMethod: [String: Int] = [:], total = 0, count = 0
+        for p in payments where p.date == day {
+            let method = paymentMethodOrder.contains(p.method) ? p.method : "other"
+            byMethod[method, default: 0] += p.amount
+            total += p.amount
+            count += 1
+        }
+        let rank = { (m: String) in paymentMethodOrder.firstIndex(of: m) ?? -1 }
+        let methods = byMethod.map { MethodAmount(method: $0.key, amount: $0.value) }
+            .sorted { $0.amount != $1.amount ? $0.amount > $1.amount : rank($0.method) < rank($1.method) }
+        return Takings(total: total, count: count, methods: methods)
+    }
+
+    /// Today's takings, and their change against the same weekday a week before (nil when that day took nothing).
+    static func takingsToday(_ payments: [Payment], today: String) -> Takings {
+        var now = collected(on: today, payments)
+        let before = collected(on: Dates.addDays(today, -7), payments)
+        now.previous = before.total
+        now.change = change(Double(now.total), Double(before.total))
+        return now
+    }
+
+    struct Share: Equatable { var count = 0; var amount = 0; var ids: [String] = [] }
+    struct StillToday: Equatable {
+        let cars: Share
+        let invoices: Share
+        var total: Int { cars.amount + invoices.amount }
+    }
+
+    /// What can still come in today: ready cars (what is left on an issued invoice, or the job's total while not invoiced;
+    /// paid ones left out) and the other invoices falling due today. Gross, in bani.
+    static func stillToCollectToday(orders: [WorkOrder], invoices: [Invoice], paymentsByInvoice: [String: [Payment]], today: String, vatPayer: Bool) -> StillToday {
+        let byId = Dictionary(invoices.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        var cars = Share(), due = Share(), counted = Set<String>()
+        for o in orders where o.status == "ready" {
+            let inv = o.invoiceId.flatMap { byId[$0] }
+            if let inv { counted.insert(inv.id) }
+            let amount: Int
+            if let inv, inv.status != "draft", inv.status != "cancelled", inv.stornoOf == nil {
+                amount = max(0, InvoiceRules.balance(inv, paymentsByInvoice[inv.id] ?? []))
+            } else {
+                amount = Lines.totals(o.lines, vatPayer: vatPayer).gross
+            }
+            guard amount > 0 else { continue }
+            cars.count += 1; cars.amount += amount; cars.ids.append(o.id)
+        }
+        for inv in invoices where !counted.contains(inv.id) && inv.dueDate == today {
+            let pays = paymentsByInvoice[inv.id] ?? []
+            let state = InvoiceRules.state(inv, payments: pays, today: today)
+            guard state == "issued" || state == "partial" else { continue }
+            due.count += 1; due.amount += InvoiceRules.balance(inv, pays); due.ids.append(inv.id)
+        }
+        return StillToday(cars: cars, invoices: due)
+    }
+
+    struct MonthToDate: Equatable {
+        let value: Int
+        let points: [Int]
+        let days: Int
+        let previousPoints: [Int]
+        let previousToDate: Int
+        let previousTotal: Int
+        let change: Change?
+    }
+
+    /// The month so far against the month before, money collected added up day by day.
+    static func monthToDate(_ payments: [Payment], today: String) -> MonthToDate {
+        let first = "\(Dates.monthKey(today))-01"
+        let previousFirst = Dates.addMonths(first, -1)
+        func length(_ start: String) -> Int { Dates.diffDays(start, Dates.addMonths(start, 1)) }
+        func running(_ start: String, _ days: Int) -> [Int] {
+            var perDay = Array(repeating: 0, count: days)
+            let month = Dates.monthKey(start)
+            for p in payments where !p.date.isEmpty && Dates.monthKey(p.date) == month {
+                let i = (Int(p.date.suffix(2)) ?? 1) - 1
+                if i < days { perDay[i] += p.amount }
+            }
+            var total = 0
+            return perDay.map { total += $0; return total }
+        }
+        let day = Int(today.suffix(2)) ?? 1
+        let points = running(first, day)
+        let previous = running(previousFirst, length(previousFirst))
+        let value = points.last ?? 0
+        let toDate = previous[min(day, previous.count) - 1]
+        return MonthToDate(value: value, points: points, days: length(first), previousPoints: previous, previousToDate: toDate,
+                           previousTotal: previous.last ?? 0, change: change(Double(value), Double(toDate)))
+    }
 }

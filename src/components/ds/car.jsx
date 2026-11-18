@@ -41,7 +41,8 @@ export function MakeArt({ make, size = 120, className }) {
  * A record as a cover: the car's colour, its logo and plate, a short status, what it is about, and one button for the
  * next step (white on the colour). `menu` is the round "…" beside it.
  */
-export function CarCover({ make, plate, status, eyebrow, title, detail, action, menu, onOpen, width = 238, height = 280, className }) {
+/** `statusColor` paints the status label in a state's colour (a booking still to accept: STATE.wait); grey glass otherwise. */
+export function CarCover({ make, plate, status, statusColor, eyebrow, title, detail, action, menu, onOpen, width = 238, height = 280, className }) {
 	const ink = makeInk(make);
 	const art = Math.round(height * 0.42);
 	return (
@@ -53,7 +54,11 @@ export function CarCover({ make, plate, status, eyebrow, title, detail, action, 
 			<button type="button" onClick={onOpen} className="flex min-h-0 flex-1 flex-col gap-0.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-[10px]">
 				<span className="relative mb-2 flex shrink-0 items-center justify-center rounded-[9px]" style={{ height: art, background: makeArt(make) }}>
 					<MakeLogo make={make} className="-translate-y-2 text-current" style={{ width: art * 0.46, height: art * 0.46 }} />
-					{status && <span className="absolute top-2.5 right-2.5 rounded-[5px] bg-black/30 px-2 py-0.5 text-[11px] font-medium text-white">{status}</span>}
+					{status && (
+						<span className={cn("absolute top-2.5 right-2.5 rounded-[5px] px-2 py-0.5 text-[11px] font-medium text-white", !statusColor && "bg-black/30")} style={statusColor ? { background: statusColor } : undefined}>
+							{status}
+						</span>
+					)}
 					{plate && <Plate value={plate} size="sm" className="absolute bottom-2.5 left-2.5" />}
 				</span>
 				{eyebrow && <span className="truncate text-[11px] font-semibold tracking-[0.05em] uppercase opacity-70">{eyebrow}</span>}

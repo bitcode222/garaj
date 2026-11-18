@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CalendarClock, ExternalLink, GalleryHorizontal, MoreHorizontal, Phone } from "lucide-react";
 import { CarCover, CoverButton, CoverIconButton, MakeTile } from "@/components/ds/car";
 import { PageTitle, SectionHeader, StatCard, StatusDot, useViewSwitch } from "@/components/ds/blocks";
@@ -16,19 +16,22 @@ import { AREA, STATE, TONE_COLOR, makeColor, makeInk, makeTint } from "@/lib/col
 import { APPOINTMENT_STATUS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
-import { selectToCollect, selectToConfirm } from "@/lib/store/selectors";
+import { selectAziMoney, selectToCollect, selectToConfirm } from "@/lib/store/selectors";
 import { useNowMinute } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import { atMinute, toMinutes } from "@/features/calendar/utils";
 import { primaryAction } from "@/features/work-orders/job-action";
 import { jobHeadline, jobSummary } from "@/features/work-orders/job-text";
 import { JOB_FILTERS, dayLanes, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data";
+import { MoneyRow } from "./money-row";
 import { PhoneAzi } from "./phone-azi";
+import { ToAccept } from "./to-accept";
 import { PHONE } from "@/components/ds/nav-bar";
 import { useMediaQuery } from "@/lib/hooks";
 
 // Azi (docs/DESIGN.md §4): the owner kept two looks, switched at the top right and remembered on this device.
-// A, "Coperți": the cars in the shop as covers, the day's numbers, today's bookings and the money to collect.
+// A, "Coperți": the bookings still to accept and the cars in the shop as covers, then the money (today, still to come
+// today, the month so far) and the day per lift.
 // B, "Ziua": the numbers, the day as a timeline per lift, then what waits for a call and the money.
 const LOOKS = [
 	{ value: "covers", label: "Coperți", icon: GalleryHorizontal },
@@ -126,14 +129,13 @@ function JobCover({ order, vehicle, customer, staffId }) {
 }
 
 /** Azi A's first section: the open jobs as covers, filtered by stage. */
-function InShop({ jobs, vehicles, customers, staffId }) {
-	const [filter, setFilter] = useState("all");
+function InShop({ jobs, vehicles, customers, staffId, filter, setFilter, sectionRef }) {
 	const keep = JOB_FILTERS.find((f) => f.value === filter)?.keep ?? (() => true);
 	const shown = jobs.filter(keep);
 	const working = jobs.filter((o) => o.status === "in_progress").length;
 	const ready = jobs.filter((o) => o.status === "ready").length;
 	return (
-		<section className="space-y-3" aria-label="În atelier">
+		<section ref={sectionRef} className="scroll-mt-20 space-y-3" aria-label="În atelier">
 			<SectionHeader title="În atelier" subtitle={`${plural(jobs.length, "mașină", "mașini")} · ${working} în lucru, ${ready} gata de predat`} href="/work-orders/">
 				<div className="hidden gap-1.5 sm:flex" role="group" aria-label="Arată">
 					{JOB_FILTERS.map((f) => {
@@ -319,6 +321,8 @@ export function DashboardPage() {
 	const bays = useCollection("bays");
 	const { member } = useAccount();
 	const [look, lookSwitch] = useViewSwitch("garaj.azi.look", LOOKS);
+	const [shopFilter, setShopFilter] = useState("all");
+	const shopRef = useRef(null);
 	const phone = useMediaQuery(PHONE);
 	if (!ready || !today || minute == null) return <AziSkeleton />;
 
@@ -331,6 +335,12 @@ export function DashboardPage() {
 	const collect = selectToCollect(invoices, payments, today);
 	const hours = hoursToday(workOrders, today, new Date().toISOString());
 	const numbers = <Numbers collect={collect} jobs={jobs} bookings={bookings} hours={hours} staff={staff} currency={currency} />;
+	const lanes = (
+		<section className="space-y-3" aria-label="Ziua în atelier">
+			<SectionHeader title="Ziua în atelier" subtitle="Ce e pe fiecare elevator; punctat, ce urmează din agendă" href="/calendar/" />
+			<DayLanes lanes={dayLanes({ bays, appointments, workOrders, today, now: new Date().toISOString() })} vehicles={vehicles} settings={settings} minute={minute} />
+		</section>
+	);
 	const money = (
 		<section className="space-y-3" aria-label="De încasat">
 			<SectionHeader title="De încasat" subtitle={`${formatMoney(collect.due, currency)} · ${plural(collect.groups.filter((g) => g.key !== "draft").reduce((n, g) => n + g.items.length, 0), "factură", "facturi")}`} href="/invoices/" />
@@ -345,23 +355,23 @@ export function DashboardPage() {
 			</PageTitle>
 			{look === "covers" ? (
 				<>
-					<InShop jobs={jobs} vehicles={vehicles} customers={customers} staffId={member?.id ?? null} />
-					{numbers}
-					<div className="grid gap-7 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-						<section className="space-y-3" aria-label="Agendă azi">
-							<SectionHeader title="Agendă azi" subtitle={plural(bookings.length, "programare", "programări")} href="/calendar/" />
-							<BookingRows bookings={bookings} vehicles={vehicles} customers={customers} empty="Nicio programare azi." />
-						</section>
-						{money}
-					</div>
+					<ToAccept groups={selectToConfirm(appointments, now).groups} today={today} vehicles={vehicles} customers={customers} staff={staff} bays={bays} />
+					<InShop jobs={jobs} vehicles={vehicles} customers={customers} staffId={member?.id ?? null} filter={shopFilter} setFilter={setShopFilter} sectionRef={shopRef} />
+					<MoneyRow
+						{...selectAziMoney(payments, workOrders, invoices, settings, today)}
+						today={today}
+						currency={currency}
+						onShowReady={() => {
+							setShopFilter("ready");
+							shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+						}}
+					/>
+					{lanes}
 				</>
 			) : (
 				<>
 					{numbers}
-					<section className="space-y-3" aria-label="Ziua în atelier">
-						<SectionHeader title="Ziua în atelier" subtitle="Ce e pe fiecare elevator; punctat, ce urmează din agendă" href="/calendar/" />
-						<DayLanes lanes={dayLanes({ bays, appointments, workOrders, today, now: new Date().toISOString() })} vehicles={vehicles} settings={settings} minute={minute} />
-					</section>
+					{lanes}
 					<div className="grid gap-7 lg:grid-cols-2">
 						<section className="space-y-3" aria-label="De confirmat">
 							{(() => {
