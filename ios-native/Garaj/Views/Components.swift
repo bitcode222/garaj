@@ -327,3 +327,20 @@ struct SortGroupMenu: View {
         .sensoryFeedback(.selection, trigger: sort)
     }
 }
+
+// MARK: Background
+
+extension Color {
+    /// The screens' background: in light, a shade darker than the system's grouped grey (#F2F2F7 → #E9E9EE) so the
+    /// white cards stand out more (owner, 18 Nov 2026); in dark, the system's own black.
+    static let groupedBackground = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark ? .systemGroupedBackground : UIColor(red: 233 / 255, green: 233 / 255, blue: 238 / 255, alpha: 1)
+    })
+}
+
+extension View {
+    /// A List or Form on `Color.groupedBackground` instead of the system's grey.
+    func groupedBackground() -> some View {
+        scrollContentBackground(.hidden).background(Color.groupedBackground)
+    }
+}

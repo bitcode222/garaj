@@ -85,6 +85,7 @@ struct CatalogView: View {
                 } footer: { Text("Stocul scade la emiterea facturii; piesele de pe lucrările deschise sunt rezervate.") }
             }
         }
+        .groupedBackground()
         .listStyle(.insetGrouped)
         .navigationTitle("Catalog")
         .searchable(text: $query, prompt: tab == "services" ? "Caută o operație" : "Caută o piesă, cod, raft")
@@ -124,6 +125,7 @@ private struct ServiceForm: View {
                     LabeledContent("Preț fără TVA") { TextField(Money.toInput(suggested), text: $price).keyboardType(.decimalPad).multilineTextAlignment(.trailing) }
                 } footer: { Text("Gol = \(Money.format(suggested, currency: store.currency)) (\(JS.number(h)) h × tariful de \(Money.format(store.shop.laborRate, currency: store.currency))/h).") }
             }
+            .groupedBackground()
             .navigationTitle(store.get(Service.self, service.id) == nil ? "Operație nouă" : "Operație")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear { hours = JS.number(service.hours).replacingOccurrences(of: ".", with: ","); price = service.price == 0 ? "" : Money.toInput(service.price) }
@@ -181,6 +183,7 @@ private struct PartForm: View {
                     TextField("Raft / locație", text: $part.location)
                 }
             }
+            .groupedBackground()
             .navigationTitle(store.get(Part.self, part.id) == nil ? "Piesă nouă" : "Piesă")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
@@ -225,6 +228,7 @@ private struct ReceiveSheet: View {
                     Text("În stoc acum: \(Money.formatQuantity(part.stock)) \(part.unit)\(q > 0 ? " → \(Money.formatQuantity(part.stock + q))" : "")")
                 }
             }
+            .groupedBackground()
             .navigationTitle("Recepție")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

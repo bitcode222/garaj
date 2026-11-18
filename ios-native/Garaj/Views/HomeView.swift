@@ -32,6 +32,7 @@ struct HomeView: View {
                     toCollect.id("collect")
                     analytics.id("analytics")
                 }
+                .groupedBackground()
                 .listStyle(.insetGrouped)
                 .listSectionSpacing(20)
                 #if DEBUG
@@ -599,6 +600,7 @@ struct SearchView: View {
                     Section { SearchResults(query: query) { path.append($0) } }.bareRow()
                 }
             }
+            .groupedBackground()
             .listStyle(.insetGrouped)
             .navigationTitle("Caută")
             .searchable(text: $query, prompt: "Mașină, client, lucrare, factură")

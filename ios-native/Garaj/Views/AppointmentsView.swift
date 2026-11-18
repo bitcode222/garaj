@@ -67,6 +67,7 @@ struct AppointmentsView: View {
                     }
                 }
             }
+            .groupedBackground()
             .listStyle(.insetGrouped)
             .overlay {
                 if result.rows.isEmpty {
@@ -329,6 +330,7 @@ struct CancelSheet: View {
                 .labelsHidden()
                 TextField("Notă (opțional)", text: $note, axis: .vertical)
             }
+            .groupedBackground()
             .navigationTitle("Anulezi programarea?")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -80,6 +80,7 @@ struct CustomersView: View {
                 if let url = People.whatsappURL(c.phone, text: "") { Link(destination: url) { Label("WhatsApp", systemImage: "text.bubble") } }
             }
         } } header: { if !section.title.isEmpty { CapsHeader("\(section.title) · \(section.rows.count)") } } } }
+        .groupedBackground()
         .overlay { if customers.isEmpty { query.isEmpty ? AnyView(ContentUnavailableView {
             Label("Niciun client", systemImage: "person.2")
         } description: {
@@ -209,6 +210,7 @@ struct CustomerDetailView: View {
             Section { Button("Șterge clientul", role: .destructive) { confirmDelete = true } }
         }
         .listStyle(.insetGrouped)
+        .groupedBackground()
         .navigationTitle(c.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { Button("Editează") { editing = c } }
@@ -265,6 +267,7 @@ struct CustomerForm: View {
                     TextField("Note", text: $customer.notes, axis: .vertical)
                 }
             }
+            .groupedBackground()
             .navigationTitle(isNew ? "Client nou" : "Client")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

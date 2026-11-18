@@ -222,8 +222,8 @@ struct CoverBackground: ViewModifier {
             .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y + $0.contentInsets.top } action: { _, y in offset = y }
             .background(alignment: .top) {
                 ZStack(alignment: .top) {
-                    Color(.systemGroupedBackground)
-                    LinearGradient(stops: [.init(color: color, location: 0), .init(color: color, location: 0.6), .init(color: Color(.systemGroupedBackground), location: 1)],
+                    Color.groupedBackground
+                    LinearGradient(stops: [.init(color: color, location: 0), .init(color: color, location: 0.6), .init(color: Color.groupedBackground, location: 1)],
                                    startPoint: .top, endPoint: .bottom)
                         .frame(height: max(0, height - offset))
                 }
