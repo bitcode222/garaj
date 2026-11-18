@@ -81,7 +81,7 @@ struct InvoiceDetailView: View {
                     VStack(spacing: 10) {
                         if ["issued", "partial", "overdue"].contains(state) {
                             Button { paying = invoice } label: {
-                                Label("Încasează \(Money.format(balance, currency: currency))", systemImage: "checkmark.seal.fill")
+                                Label("Încasează \(Money.format(balance, currency: currency))", systemImage: "checkmark.seal")
                             }
                             .buttonStyle(.primary)
                         }
