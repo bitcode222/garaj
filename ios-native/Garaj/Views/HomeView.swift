@@ -39,7 +39,7 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
-                    // The page's title (owner: "Home", larger, light), and under it what's due on the left and
+                    // The page's title (owner: "Home", larger, light, the system font at its normal width), and under it what's due on the left and
                     // the month's takings on the right, in the hero colour's inverse; it scrolls with the page.
                     Section { heroHeader }
                     .bareRow()
@@ -167,7 +167,6 @@ struct HomeView: View {
         return VStack(alignment: .leading, spacing: 14) {
             Text("Home")
                 .font(.system(size: 50, weight: .light))
-                .fontWidth(.expanded)
                 .accessibilityAddTraits(.isHeader)
             HStack(alignment: .bottom, spacing: 12) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
@@ -180,7 +179,6 @@ struct HomeView: View {
                     Text("\(month) până acum").font(.caption.weight(.medium)).opacity(0.85)
                     Text(Money.format(earned, currency: store.currency, decimals: 0))
                         .font(.system(size: 26, weight: .light))
-                        .fontWidth(.expanded)
                         .monospacedDigit()
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
