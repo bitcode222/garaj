@@ -317,9 +317,10 @@ private struct HeroGlow: View {
                 RadialGradient(colors: [color.opacity(0.35), .clear], center: UnitPoint(x: 0.95, y: 0.0), startRadius: 0, endRadius: 300)
             }
         } else {
-            ZStack {
-                RadialGradient(colors: [color.opacity(0.45), color.opacity(0.12), .clear], center: UnitPoint(x: 0.1, y: 0.1), startRadius: 0, endRadius: 440)
-                RadialGradient(colors: [color.opacity(0.22), .clear], center: UnitPoint(x: 0.95, y: 0.0), startRadius: 0, endRadius: 320)
+            ZStack { // vivid (owner: the first wash was too faded), still fading into the page, never through grey
+                LinearGradient(colors: [color.opacity(0.55), color.opacity(0.25), .clear], startPoint: .top, endPoint: .bottom)
+                RadialGradient(colors: [color.opacity(0.95), color.opacity(0.4), .clear], center: UnitPoint(x: 0.1, y: 0.08), startRadius: 0, endRadius: 460)
+                RadialGradient(colors: [color.opacity(0.6), .clear], center: UnitPoint(x: 0.95, y: 0.0), startRadius: 0, endRadius: 340)
             }
         }
     }

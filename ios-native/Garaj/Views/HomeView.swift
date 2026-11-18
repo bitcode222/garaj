@@ -45,9 +45,8 @@ struct HomeView: View {
                             Text("Dashboard")
                                 .font(.largeTitle.weight(.bold))
                                 .accessibilityAddTraits(.isHeader)
-                            Label { Text(mood.text).foregroundStyle(.secondary) } icon: {
-                                Image(systemName: mood.symbol).foregroundStyle(mood.mood.color)
-                            }
+                            Label(mood.text, systemImage: mood.symbol) // on the mood's colour, so in the text's colour
+                                .foregroundStyle(Color.primary.opacity(0.8))
                             .font(.subheadline.weight(.medium))
                         }
                         .padding(.horizontal, HomeView.inset)
