@@ -31,10 +31,10 @@ struct HomeView: View {
                 List {
                     if query.trimmingCharacters(in: .whitespaces).isEmpty {
                         shortcuts
-                        numbers(proxy)
                         toConfirm.id("confirm")
                         inShop.id("shop")
                         toCollect.id("collect")
+                        numbers(proxy)
                         analytics.id("analytics")
                     } else {
                         Section { SearchResults(query: query) { path.append($0) } }.bareRow()
@@ -60,6 +60,7 @@ struct HomeView: View {
             .navigationSubtitle(dayLine)
             .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Mașină, client, lucrare, factură")
             .searchFocused($searchFocused)
+            .searchPresentationToolbarBehavior(.avoidHidingContent) // the bar and the title stay put while searching
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
@@ -108,17 +109,36 @@ struct HomeView: View {
         return "\(day) · \(openDays.contains(weekday - 1) ? "deschis \(shop.hoursOpen)–\(shop.hoursClose)" : "închis azi")"
     }
 
-    /// The four ways to start something, as the iPhone's shortcuts.
+    /// The four ways to start something: liquid glass buttons, two by two, the symbol before the name.
     private var shortcuts: some View {
         Section {
-            HStack(spacing: 8) {
-                QuickAction(title: "Programare", symbol: "calendar.badge.plus") { booking = .new }
-                QuickAction(title: "Lucrare", symbol: "wrench.and.screwdriver") { openJob("in_progress") }
-                QuickAction(title: "Deviz", symbol: "doc.text.magnifyingglass") { openJob("estimate") }
-                QuickAction(title: "Factură", symbol: "doc.badge.plus") { path.append(.invoice(store.createInvoiceDraft().id)) }
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                shortcut("Programare", symbol: "calendar.badge.plus") { booking = .new }
+                shortcut("Lucrare", symbol: "wrench.and.screwdriver.fill") { openJob("in_progress") }
+                shortcut("Deviz", symbol: "list.bullet.clipboard.fill") { openJob("estimate") }
+                shortcut("Factură", symbol: "doc.text.fill") { path.append(.invoice(store.createInvoiceDraft().id)) }
             }
         }
         .bareRow()
+    }
+
+    private func shortcut(_ title: String, symbol: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: symbol)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 24)
+                Text(title).font(.body.weight(.semibold)).foregroundStyle(.primary).lineLimit(1).minimumScaleFactor(0.85)
+                Spacer(minLength: 0)
+            }
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(.rect)
+        }
+        .buttonStyle(.glass)
+        .controlSize(.large)
+        .accessibilityLabel(title == "Factură" || title == "Programare" ? "\(title) nouă" : "\(title) nou")
     }
 
     private func openJob(_ status: String) {
@@ -191,9 +211,10 @@ struct HomeView: View {
                     .tint(.primary)
                 }
             }
+            .padding(.horizontal, 20)
             .bareRow()
             if total == 0 {
-                Text("Nicio mașină în service acum.").foregroundStyle(.secondary).bareRow()
+                Text("Nicio mașină în service acum.").foregroundStyle(.secondary).padding(.horizontal, 20).bareRow()
             } else {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 14) {
@@ -210,7 +231,6 @@ struct HomeView: View {
                                       open: { path.append(.job(order.id)) }) {
                                 jobMenu(order, customer: customer)
                             }
-                            .frame(width: 300)
                             .id(order.id)
                         }
                     }
@@ -218,6 +238,7 @@ struct HomeView: View {
                 }
                 .scrollTargetBehavior(.viewAligned)
                 .scrollPosition(id: $cover)
+                .contentMargins(.horizontal, 20, for: .scrollContent)
                 .scrollIndicators(.hidden)
                 .bareRow()
                 if shown.count > 1 {
@@ -232,11 +253,13 @@ struct HomeView: View {
                     .animation(.snappy, value: index)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Mașina \(index + 1) din \(shown.count)")
+                    .padding(.horizontal, 20)
                     .bareRow()
                 }
             }
         }
         .bareRow()
+        .listSectionMargins(.horizontal, 0) // edge to edge: the cards scroll to the screen's edge, not the section's
     }
 
     /// The "…" and long-press menu of a job, grouped: its states, the client, the job.
@@ -270,36 +293,77 @@ struct HomeView: View {
         let items = bookings.groups.flatMap { g in g.items.map { (group: g, appointment: $0) } }
         return Section {
             homeHeader("De confirmat", subtitle: bookings.total == 0 ? nil : "\(bookings.total) \(bookings.total == 1 ? "programare" : "programări") de confirmat")
+                .padding(.horizontal, 20)
                 .bareRow()
             if items.isEmpty {
-                Text("Toate programările sunt confirmate.").foregroundStyle(.secondary).bareRow()
+                Text("Toate programările sunt confirmate.").foregroundStyle(.secondary).padding(.horizontal, 20).bareRow()
             } else {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 14) {
                         ForEach(items, id: \.appointment.id) { item in
-                            let a = item.appointment
-                            bookingCard(item.group, a,
-                                        customer: customers[a.customerId ?? ""],
-                                        vehicle: vehicles[a.vehicleId ?? ""],
-                                        staff: staff[a.staffId ?? ""],
-                                        bay: bays[a.bayId ?? ""])
-                                .frame(width: 300)
+                            bookingCover(item.group, item.appointment,
+                                         customer: customers[item.appointment.customerId ?? ""],
+                                         vehicle: vehicles[item.appointment.vehicleId ?? ""],
+                                         staff: staff[item.appointment.staffId ?? ""],
+                                         bay: bays[item.appointment.bayId ?? ""])
                         }
                     }
                     .scrollTargetLayout()
                 }
                 .scrollTargetBehavior(.viewAligned)
+                .contentMargins(.horizontal, 20, for: .scrollContent)
                 .scrollIndicators(.hidden)
                 .bareRow()
             }
         } footer: {
-            if booked > 0 { Text("\(booked - (week["scheduled"] ?? 0)) din \(booked) confirmate în următoarele 7 zile.") }
+            if booked > 0 {
+                Text("\(booked - (week["scheduled"] ?? 0)) din \(booked) confirmate în următoarele 7 zile.").padding(.horizontal, 20)
+            }
         }
         .bareRow()
+        .listSectionMargins(.horizontal, 0)
     }
 
-    /// A section's name and one line under it, flush with the row's edge (the cards' edge). Its own helper, since
-    /// `SectionHeader` is set 4 pt out for the other pages.
+    /// A booking as the jobs' cover card: the car's colour, logo and plate, when; the client, what for, who and where;
+    /// its own next step (Confirmă, or A sosit once the time has passed) and its own menu.
+    private func bookingCover(_ g: Agenda.BookingGroup, _ a: Appointment, customer: Customer?, vehicle: Vehicle?, staff: Staff?, bay: Bay?) -> some View {
+        let late = g.key == "past"
+        let time = Dates.timeOfInstant(a.start)
+        let when = late ? "Întârziată" : groupLabel(g) // short: the cover's pill must clear the logo
+        let phone = customer?.phone ?? ""
+        let next: (label: String, symbol: String, run: () -> Void) = late
+            ? ("A sosit", "car.fill", { checkIn(a) })
+            : ("Confirmă", "checkmark.circle.fill", { act("Confirmată") { try store.setAppointmentStatus(a.id, to: "confirmed") } })
+        return CoverCard(make: vehicle?.make ?? "", plate: vehicle?.plate,
+                         eyebrow: [vehicle?.title.nonEmpty, customer?.name.nonEmpty].compactMap { $0 }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
+                         title: a.title.nonEmpty ?? "Programare",
+                         detail: [time, staff?.name, bay?.name].compactMap { $0 }.joined(separator: " · "),
+                         status: StatusStyle(label: when, symbol: "clock", color: late ? .red : .orange),
+                         next: next,
+                         open: { path.append(.appointment(a.id)) }) {
+            Section {
+                if late {
+                    Button { act("Confirmată") { try store.setAppointmentStatus(a.id, to: "confirmed") } } label: { Label("Confirmă", systemImage: "checkmark.circle") }
+                    Button(role: .destructive) { act("Neprezentat") { try store.markNoShow(a.id) } } label: { Label("Neprezentat", systemImage: "person.slash") }
+                } else {
+                    Button { checkIn(a) } label: { Label("A sosit", systemImage: "car") }
+                }
+                Button { booking = .edit(a.id) } label: { Label("Mută sau editează", systemImage: "calendar") }
+            }
+            if !phone.isEmpty {
+                Section {
+                    if let url = People.telURL(phone) { Link(destination: url) { Label("Sună pe \(customer?.name ?? "client")", systemImage: "phone") } }
+                    if let url = People.whatsappURL(phone, text: "") { Link(destination: url) { Label("Scrie pe WhatsApp", systemImage: "text.bubble") } }
+                }
+            }
+            Section {
+                Button { path.append(.appointment(a.id)) } label: { Label("Deschide programarea", systemImage: "arrow.up.right") }
+            }
+        }
+    }
+
+    /// A section's name and one line under it, on the cards' edge. Its own helper, since `SectionHeader` is set 4 pt
+    /// out for the other pages.
     private func homeHeader(_ title: String, subtitle: String?, action: (() -> Void)? = nil) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             if let action {
@@ -307,15 +371,13 @@ struct HomeView: View {
                     HStack(spacing: 4) {
                         Text(title)
                         Image(systemName: "chevron.right").font(.body.weight(.bold)).foregroundStyle(.secondary)
-                            .padding(.trailing, 4)
                     }
                     .contentShape(.rect)
                 }
                 .buttonStyle(.plain)
-                .padding(.leading, 2)
                 .accessibilityHint("Arată tot")
             } else {
-                Text(title).padding(.leading, 2)
+                Text(title)
             }
             if let subtitle {
                 Text(subtitle).font(.subheadline).fontWeight(.regular).foregroundStyle(.secondary)
@@ -325,72 +387,6 @@ struct HomeView: View {
         .foregroundStyle(.primary)
         .padding(.bottom, 4)
         .accessibilityAddTraits(.isHeader)
-    }
-
-    /// One booking as a card: when, who and which car, what for, who and where, the phone, the next step.
-    private func bookingCard(_ g: Agenda.BookingGroup, _ a: Appointment, customer: Customer?, vehicle: Vehicle?, staff: Staff?, bay: Bay?) -> some View {
-        let late = g.key == "past"
-        return VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(Dates.timeOfInstant(a.start)).font(.title.weight(.bold)).monospacedDigit()
-                    Text(late ? "a trecut" : groupLabel(g)).font(.subheadline.weight(late ? .semibold : .regular)).foregroundStyle(late ? Color.red : .secondary)
-                }
-                Spacer(minLength: 8)
-                if let number = a.number {
-                    Text("#\(number)").font(.footnote.weight(.semibold)).foregroundStyle(.secondary).monospacedDigit()
-                }
-            }
-            VStack(alignment: .leading, spacing: 3) {
-                Text(customer?.name ?? "Client necunoscut").font(.headline).lineLimit(1)
-                if let vehicle {
-                    Text("\(vehicle.title) · \(People.formatPlate(vehicle.plate))").font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
-                }
-                if !a.title.isEmpty {
-                    Text(a.title).font(.subheadline).lineLimit(2)
-                }
-            }
-            if staff != nil || bay != nil {
-                HStack(spacing: 14) {
-                    if let staff { Label(staff.name, systemImage: "person") }
-                    if let bay { Label(bay.name, systemImage: "wrench") }
-                }
-                .font(.footnote).foregroundStyle(.secondary).lineLimit(1)
-            }
-            if !a.notes.isEmpty {
-                Text(a.notes).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
-            }
-            Spacer(minLength: 0)
-            HStack(spacing: 10) {
-                if late {
-                    Button { checkIn(a) } label: { Text("A sosit").frame(maxWidth: .infinity) }
-                        .buttonStyle(.borderedProminent)
-                } else {
-                    Button { act("Confirmată") { try store.setAppointmentStatus(a.id, to: "confirmed") } } label: { Text("Confirmă").frame(maxWidth: .infinity) }
-                        .buttonStyle(.borderedProminent)
-                }
-                if let phone = customer?.phone, !phone.isEmpty, let url = People.telURL(phone) {
-                    Link(destination: url) { Image(systemName: "phone.fill").frame(width: 22) }
-                        .buttonStyle(.bordered)
-                        .accessibilityLabel("Sună pe \(customer?.name ?? "client")")
-                }
-                Menu {
-                    Button { path.append(.appointment(a.id)) } label: { Label("Deschide programarea", systemImage: "arrow.up.right") }
-                    if late {
-                        Button(role: .destructive) { act("Neprezentat") { try store.markNoShow(a.id) } } label: { Label("Neprezentat", systemImage: "person.slash") }
-                    }
-                } label: {
-                    Image(systemName: "ellipsis").frame(width: 22)
-                }
-                .buttonStyle(.bordered)
-            }
-            .controlSize(.large)
-        }
-        .padding(16)
-        .frame(height: 300, alignment: .topLeading)
-        .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 20))
-        .contentShape(.rect(cornerRadius: 20))
-        .onTapGesture { path.append(.appointment(a.id)) }
     }
 
     private func groupLabel(_ g: Agenda.BookingGroup) -> String {
