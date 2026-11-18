@@ -923,10 +923,10 @@ private struct HomeLayoutSheet: View {
     }
 }
 
-/// Glass looks under trial (owner: "more liquid, less frosted, refraction on the edges"). Debug: `-GarajGlass clear`.
+/// The dashboard's glass (owner picked C on the glass board, 18 Nov 2026: clear with a white sheen). Debug: `-GarajGlass regular`.
 enum GlassLook: String {
     case regular, clear, tinted, merged
-    static var current: GlassLook { GlassLook(rawValue: UserDefaults.standard.string(forKey: "GarajGlass") ?? "") ?? .regular }
+    static var current: GlassLook { GlassLook(rawValue: UserDefaults.standard.string(forKey: "GarajGlass") ?? "") ?? .tinted }
     var merge: Bool { self == .merged }
     var glass: Glass {
         switch self {
