@@ -28,7 +28,7 @@ function LineIcon({ line, services }) {
 	return <IosIconSquare icon={Wrench} color={TONE_COLOR[SERVICE_CATEGORIES[category]?.tone] ?? "#ff9500"} />;
 }
 
-export function IosLines({ lines, onChange, staff = [], vatPayer = true, readOnly = false, defaultStaffId = null, currency = "RON", onToggleDone }) {
+export function IosLines({ lines, onChange, staff = [], vatPayer = true, readOnly = false, defaultStaffId = null, currency = "RON", onToggleDone, hideTotal = false, addLabel = "Adaugă o operație sau o piesă" }) {
 	const services = useCollection("services");
 	const [editing, setEditing] = useState(null);
 	const [picker, setPicker] = useState(false);
@@ -79,7 +79,7 @@ export function IosLines({ lines, onChange, staff = [], vatPayer = true, readOnl
 							<span className="flex size-[22px] items-center justify-center rounded-full bg-brand text-white">
 								<Plus className="size-4" strokeWidth={3} aria-hidden />
 							</span>
-							Adaugă o operație sau o piesă
+							{addLabel}
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="start" className="w-64">
 							<DropdownMenuItem onSelect={() => setPicker(true)}>
@@ -102,7 +102,7 @@ export function IosLines({ lines, onChange, staff = [], vatPayer = true, readOnl
 					</DropdownMenu>
 				</li>
 			)}
-			{lines.length > 0 && (
+			{lines.length > 0 && !hideTotal && (
 				<li className="flex items-baseline gap-3 px-4 py-3">
 					<span className="flex min-w-0 flex-1 flex-col gap-0.5">
 						<span className="text-[17px] font-semibold">{vatPayer ? "Total cu TVA" : "Total"}</span>
