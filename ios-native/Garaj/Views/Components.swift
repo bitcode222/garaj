@@ -335,7 +335,7 @@ extension Color {
     /// The screens' background: in light, a shade darker than the system's grouped grey (#F2F2F7 → #D4D4DC) so the
     /// white cards stand out more (owner, 18 Nov 2026); in dark, the system's own black.
     static let groupedBackground = Color(UIColor { traits in
-        traits.userInterfaceStyle == .dark ? .systemGroupedBackground : UIColor(red: 212 / 255, green: 212 / 255, blue: 220 / 255, alpha: 1)
+        traits.userInterfaceStyle == .dark ? .systemGroupedBackground : UIColor(red: 242 / 255, green: 242 / 255, blue: 246 / 255, alpha: 1)
     })
 }
 
