@@ -38,13 +38,19 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
-                    // The page's title, over the search bar (owner), white on the gradient; it scrolls with the page.
+                    // The page's title, over the search bar (owner), white on the hero; it scrolls with the page.
+                    // Under it, in words, why the hero has its colour (colour alone doesn't say it).
                     Section {
-                        Text("Dashboard")
-                            .font(.largeTitle.weight(.bold))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, HomeView.inset)
-                            .accessibilityAddTraits(.isHeader)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Dashboard")
+                                .font(.largeTitle.weight(.bold))
+                                .accessibilityAddTraits(.isHeader)
+                            Label(mood.text, systemImage: mood.symbol)
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.white.opacity(0.85))
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, HomeView.inset)
                     }
                     .bareRow()
                     .listSectionMargins(.horizontal, 0)
@@ -62,7 +68,7 @@ struct HomeView: View {
                         Section { SearchResults(query: query) { path.append($0) } }.bareRow()
                     }
                 }
-                .hero(height: 470)
+                .hero(height: 470, mood: mood.mood)
                 // The shortcuts end ~200 pt down the page: past that, "+" shows in the bar.
                 .onScrollGeometryChange(for: Bool.self) { $0.contentOffset.y + $0.contentInsets.top < 190 } action: { _, visible in shortcutsVisible = visible }
                 .listStyle(.insetGrouped)
@@ -129,6 +135,37 @@ struct HomeView: View {
 
     // MARK: The day
 
+    /// The shop's state for the hero (owner): red when a booking is late or an invoice is past its due date,
+    /// yellow when bookings wait to be confirmed or an invoice falls due within 3 days, green otherwise.
+    private var mood: (mood: HeroMood, text: String, symbol: String) {
+        let today = Dates.today()
+        let bookings = Agenda.bookingsToConfirm(store.all(Appointment.self), now: Dates.instant())
+        let collect = Agenda.invoicesToCollect(store.all(Invoice.self), paymentsByInvoice: Dictionary(grouping: store.all(Payment.self), by: \.invoiceId),
+                                               today: today, vatPayer: store.shop.vatPayer)
+        let lateBookings = bookings.groups.first { $0.key == "past" }?.items.count ?? 0
+        let overdue = collect.groups.first { $0.key == "overdue" }?.items.count ?? 0
+        let waiting = bookings.total - lateBookings
+        let dueSoon = collect.groups.filter { $0.key == "issued" || $0.key == "partial" }
+            .flatMap(\.items).filter { ($0.dueIn ?? 99) <= 3 }.count
+        func n(_ k: Int, _ one: String, _ many: String) -> String { k == 1 ? "1 \(one)" : "\(k) \(many)" }
+        switch UserDefaults.standard.string(forKey: "GarajMood") { // screenshots: `-GarajMood good|attention`
+        case "good": return (.good, "Totul e în regulă", "checkmark.circle.fill")
+        case "attention": return (.attention, "3 programări de confirmat", "clock.fill")
+        default: break
+        }
+        if lateBookings + overdue > 0 {
+            let parts = [lateBookings > 0 ? n(lateBookings, "programare întârziată", "programări întârziate") : nil,
+                         overdue > 0 ? n(overdue, "factură restantă", "facturi restante") : nil].compactMap { $0 }
+            return (.late, parts.joined(separator: " · "), "exclamationmark.triangle.fill")
+        }
+        if waiting + dueSoon > 0 {
+            let parts = [waiting > 0 ? n(waiting, "programare de confirmat", "programări de confirmat") : nil,
+                         dueSoon > 0 ? n(dueSoon, "factură scadentă curând", "facturi scadente curând") : nil].compactMap { $0 }
+            return (.attention, parts.joined(separator: " · "), "clock.fill")
+        }
+        return (.good, "Totul e în regulă", "checkmark.circle.fill")
+    }
+
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: .now)
         return hour >= 5 && hour < 11 ? "Bună dimineața" : hour >= 11 && hour < 18 ? "Bună ziua" : "Bună seara"
@@ -147,16 +184,18 @@ struct HomeView: View {
     private var shortcuts: some View {
         Section {
             ScrollView(.horizontal) {
-                HStack(spacing: 10) {
+                GlassEffectContainer(spacing: GlassLook.current.merge ? 22 : 0) {
+                HStack(spacing: GlassLook.current.merge ? 6 : 10) {
                     shortcut("Programare nouă", symbol: "calendar.badge.plus") { booking = .new }
                     shortcut("Deviz nou", symbol: "doc.text.magnifyingglass") { openJob("estimate") }
                     shortcut("Lucrare nouă", symbol: "car.badge.gearshape") { openJob("in_progress") }
                     shortcut("Factură nouă", symbol: "doc.badge.plus") { path.append(.invoice(store.createInvoiceDraft().id)) }
                 }
+                }
             }
             .contentMargins(.horizontal, HomeView.inset, for: .scrollContent)
             .scrollIndicators(.hidden)
-            .environment(\.colorScheme, .dark) // on the hero gradient: dark glass, white names
+            .environment(\.colorScheme, .dark) // on the dark hero: dark glass, white names
         }
         .bareRow()
         .listSectionMargins(.horizontal, 0)
@@ -169,11 +208,12 @@ struct HomeView: View {
                 Text(title).font(.body).lineLimit(1).fixedSize()
             }
             .foregroundStyle(.white)
-            .padding(.vertical, 6)
-            .padding(.horizontal, 4)
+            .padding(.vertical, 14)
+            .padding(.horizontal, 18)
+            .contentShape(.capsule)
         }
-        .buttonStyle(.glass)
-        .controlSize(.large)
+        .buttonStyle(.plain)
+        .glassEffect(GlassLook.current.glass, in: .capsule)
     }
 
     /// A large search field on liquid glass (owner: larger than the system's, and glass), the page's first row.
@@ -198,8 +238,8 @@ struct HomeView: View {
         .frame(height: 58)
         .contentShape(.capsule)
         .onTapGesture { searchFocused = true }
-        .glassEffect(.regular.interactive(), in: .capsule)
-        .environment(\.colorScheme, .dark) // on the hero gradient: dark glass, white text
+        .glassEffect(GlassLook.current.glass, in: .capsule)
+        .environment(\.colorScheme, .dark) // on the dark hero: dark glass, white text
         .padding(.horizontal, HomeView.inset)
     }
 
@@ -880,5 +920,19 @@ private struct HomeLayoutSheet: View {
         }
         .presentationDetents([.medium, .large])
         .sensoryFeedback(.selection, trigger: orderRaw)
+    }
+}
+
+/// The dashboard's glass (owner picked C on the glass board, 18 Nov 2026: clear with a white sheen). Debug: `-GarajGlass regular`.
+enum GlassLook: String {
+    case regular, clear, tinted, merged
+    static var current: GlassLook { GlassLook(rawValue: UserDefaults.standard.string(forKey: "GarajGlass") ?? "") ?? .tinted }
+    var merge: Bool { self == .merged }
+    var glass: Glass {
+        switch self {
+        case .regular: .regular.interactive()
+        case .clear, .merged: .clear.interactive()
+        case .tinted: .clear.tint(.white.opacity(0.12)).interactive()
+        }
     }
 }
