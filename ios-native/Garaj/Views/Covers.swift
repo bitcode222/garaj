@@ -89,9 +89,25 @@ struct CoverCard<Actions: View>: View {
     let title: String
     let detail: String
     let status: StatusStyle
+    /// Top left of the cover, in the status pill's style (a job's number).
+    var corner: String? = nil
+    /// Shown first, with a person icon, in place of the eyebrow (the car's owner).
+    var person: String? = nil
+    /// Small counts under the text, each an icon and a number (a job's operations and parts).
+    var counts: [(symbol: String, text: String)] = []
+    /// Just above the button: who works on it (left) and the total in bold (right).
+    var worker: String? = nil
+    var total: String? = nil
     var next: (label: String, symbol: String, run: () -> Void)?
     let open: () -> Void
     @ViewBuilder let actions: Actions
+
+    private func pill(_ text: String) -> some View {
+        Text(text).font(.caption.weight(.semibold)).monospacedDigit().foregroundStyle(.white)
+            .padding(.horizontal, 9).padding(.vertical, 4)
+            .background(.black.opacity(0.3), in: .capsule)
+            .padding(12)
+    }
 
     var body: some View {
         let ink = Make.ink(make)
@@ -102,23 +118,47 @@ struct CoverCard<Actions: View>: View {
                         .fill(RadialGradient(colors: [Make.color(make), Make.cover(make).mix(with: .black, by: 0.25)], center: .topTrailing, startRadius: 10, endRadius: 260))
                         .frame(height: 150)
                         .overlay { MakeArt(make: make, size: 76).offset(y: -14) }
-                        .overlay(alignment: .bottomLeading) { if let plate, !plate.isEmpty { PlateBadge(plate: plate).padding(12) } }
-                        .overlay(alignment: .topTrailing) {
-                            Text(status.label).font(.caption.weight(.semibold)).foregroundStyle(.white)
-                                .padding(.horizontal, 9).padding(.vertical, 4)
-                                .background(.black.opacity(0.3), in: .capsule)
-                                .padding(12)
-                        }
+                        .overlay(alignment: .bottomTrailing) { if let plate, !plate.isEmpty { PlateBadge(plate: plate).padding(12) } }
+                        .overlay(alignment: .topLeading) { if let corner { pill(corner) } }
+                        .overlay(alignment: .topTrailing) { pill(status.label) }
+                        .drawingGroup() // the cover is static art: flatten it once, so scrolling only moves pixels
                         .padding(.bottom, 10)
-                    Text(eyebrow).font(.footnote.weight(.medium)).textCase(.uppercase).tracking(0.4).lineLimit(1).opacity(0.72)
+                    if let person {
+                        Label(person, systemImage: "person.crop.circle.fill")
+                            .font(.subheadline.weight(.semibold)).lineLimit(1).opacity(0.85)
+                    } else {
+                        Text(eyebrow).font(.footnote.weight(.medium)).textCase(.uppercase).tracking(0.4).lineLimit(1).opacity(0.72)
+                    }
                     Text(title).font(.title3.weight(.semibold)).lineLimit(2).multilineTextAlignment(.leading)
                     Text(detail).font(.subheadline).lineLimit(1).opacity(0.72)
+                    if !counts.isEmpty {
+                        HStack(spacing: 6) {
+                            ForEach(counts, id: \.text) { c in
+                                HStack(spacing: 4) { Image(systemName: c.symbol).imageScale(.small); Text(c.text) }
+                                    .font(.footnote.weight(.semibold)).monospacedDigit().lineLimit(1).fixedSize()
+                                    .padding(.horizontal, 8).padding(.vertical, 5)
+                                    .background(ink.opacity(0.14), in: .capsule)
+                                    .accessibilityElement(children: .combine)
+                            }
+                        }
+                        .padding(.top, 6)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)
             Spacer(minLength: 10)
+            if worker != nil || total != nil {
+                HStack(spacing: 8) {
+                    if let worker {
+                        Label(worker, systemImage: "wrench.adjustable").font(.subheadline.weight(.medium)).lineLimit(1).opacity(0.85)
+                    }
+                    Spacer(minLength: 4)
+                    if let total { Text(total).font(.headline).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7) }
+                }
+                .padding(.bottom, 8)
+            }
             HStack(spacing: 10) {
                 if let next {
                     Button(action: next.run) { Label(next.label, systemImage: next.symbol) }
@@ -137,7 +177,7 @@ struct CoverCard<Actions: View>: View {
         }
         .foregroundStyle(ink)
         .padding(16)
-        .frame(width: 300, height: 380)
+        .frame(width: 300, height: counts.isEmpty ? 380 : 410)
         .background(Make.cover(make), in: .rect(cornerRadius: 34))
         .contextMenu { actions }
         .accessibilityElement(children: .contain)
@@ -330,6 +370,7 @@ private struct HeroGlow: View {
                 blob(deep, alpha: dark ? 0.45 : 0.55, x: 0.50 + 0.25 * sin(t / 11.0), y: 0.40 + 0.08 * cos(t / 7.5),
                      radius: 260 * (1 + 0.12 * sin(t / 6.5)))
             }
+            .drawingGroup() // one Metal pass per frame instead of three blended layers
         }
     }
 
