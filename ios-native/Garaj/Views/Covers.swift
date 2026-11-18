@@ -261,3 +261,42 @@ extension View {
         listRowBackground(make.map { Make.ink($0).opacity(0.12) })
     }
 }
+
+/// Azi's top (owner, 18 Nov 2026: "a nice colorful gradient, Netflix inspired"): near-black lit by a deep red, the
+/// app's orange and a purple glow, behind the title, the search bar and the shortcuts; it fades into the grouped
+/// background, follows the content up and stretches when pulled down. The bar reads white on it.
+struct HeroBackground: ViewModifier {
+    var height: CGFloat = 470
+    @State private var offset: CGFloat = 0
+
+    func body(content: Content) -> some View {
+        content
+            .scrollContentBackground(.hidden)
+            .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y + $0.contentInsets.top } action: { _, y in offset = y }
+            .background(alignment: .top) {
+                ZStack(alignment: .top) {
+                    Color.groupedBackground
+                    Self.glow
+                        .frame(height: max(0, height - offset))
+                        .mask(LinearGradient(stops: [.init(color: .black, location: 0), .init(color: .black, location: 0.62), .init(color: .clear, location: 1)],
+                                             startPoint: .top, endPoint: .bottom))
+                }
+                .ignoresSafeArea()
+                .accessibilityHidden(true)
+            }
+            .toolbarColorScheme(offset < height * 0.55 ? .dark : nil, for: .navigationBar)
+    }
+
+    static var glow: some View {
+        ZStack {
+            Color(red: 0.08, green: 0.04, blue: 0.05)
+            RadialGradient(colors: [Color(red: 0.90, green: 0.04, blue: 0.08), .clear], center: UnitPoint(x: 0.1, y: 0.05), startRadius: 0, endRadius: 360)
+            RadialGradient(colors: [Color("AccentColor").opacity(0.9), .clear], center: UnitPoint(x: 0.95, y: 0.15), startRadius: 0, endRadius: 300)
+            RadialGradient(colors: [Color(red: 0.42, green: 0.12, blue: 0.78).opacity(0.85), .clear], center: UnitPoint(x: 0.45, y: 0.9), startRadius: 0, endRadius: 280)
+        }
+    }
+}
+
+extension View {
+    func hero(height: CGFloat = 470) -> some View { modifier(HeroBackground(height: height)) }
+}

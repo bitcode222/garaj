@@ -15,6 +15,9 @@ struct HomeView: View {
     @State private var jobStatus = "estimate"
     @State private var query = ""
     @FocusState private var searchFocused: Bool
+    /// Past the hero gradient: the search bar goes back to the page's own light or dark.
+    @State private var pastHero = false
+    @Environment(\.colorScheme) private var colorScheme
     @State private var booking: BookingForm.Target?
     @State private var paying: Invoice?
     @State private var period = "7d"
@@ -40,7 +43,10 @@ struct HomeView: View {
                         Section { SearchResults(query: query) { path.append($0) } }.bareRow()
                     }
                 }
-                .groupedBackground()
+                .hero()
+                // The search bar, pinned under the title (it follows the title up as it collapses).
+                .safeAreaInset(edge: .top, spacing: 0) { searchField }
+                .onScrollGeometryChange(for: Bool.self) { $0.contentOffset.y + $0.contentInsets.top > 220 } action: { _, past in pastHero = past }
                 .listStyle(.insetGrouped)
                 .listSectionSpacing(20)
                 .scrollDismissesKeyboard(.interactively)
@@ -57,11 +63,18 @@ struct HomeView: View {
                 #endif
             }
             .navigationTitle(greeting)
-            .navigationSubtitle(dayLine)
-            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Mașină, client, lucrare, factură")
-            .searchFocused($searchFocused)
-            .searchPresentationToolbarBehavior(.avoidHidingContent) // the bar and the title stay put while searching
             .toolbar {
+                // The large title sits on the hero gradient: white, the day under it.
+                ToolbarItem(placement: .largeTitle) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(greeting).font(.largeTitle.weight(.bold))
+                        Text(dayLine).font(.subheadline.weight(.semibold)).opacity(0.8)
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isHeader)
+                }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button { searchFocused = false } label: { Label("Ascunde", systemImage: "keyboard.chevron.compact.down") }
@@ -109,36 +122,68 @@ struct HomeView: View {
         return "\(day) · \(openDays.contains(weekday - 1) ? "deschis \(shop.hoursOpen)–\(shop.hoursClose)" : "închis azi")"
     }
 
-    /// The four ways to start something: liquid glass buttons, two by two, the symbol before the name.
+    /// The four ways to start something, as the "+" menu reads (owner's reference): each its own dark liquid glass
+    /// capsule, the white symbol before the name, in one row that scrolls sideways when they don't all fit.
     private var shortcuts: some View {
         Section {
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                shortcut("Programare", symbol: "calendar.badge.plus") { booking = .new }
-                shortcut("Lucrare", symbol: "wrench.and.screwdriver.fill") { openJob("in_progress") }
-                shortcut("Deviz", symbol: "list.bullet.clipboard.fill") { openJob("estimate") }
-                shortcut("Factură", symbol: "doc.text.fill") { path.append(.invoice(store.createInvoiceDraft().id)) }
+            ScrollView(.horizontal) {
+                HStack(spacing: 10) {
+                    shortcut("Programare nouă", symbol: "calendar.badge.plus") { booking = .new }
+                    shortcut("Deviz nou", symbol: "doc.text.magnifyingglass") { openJob("estimate") }
+                    shortcut("Lucrare nouă", symbol: "car.badge.gearshape") { openJob("in_progress") }
+                    shortcut("Factură nouă", symbol: "doc.badge.plus") { path.append(.invoice(store.createInvoiceDraft().id)) }
+                }
             }
+            .contentMargins(.horizontal, 20, for: .scrollContent)
+            .scrollIndicators(.hidden)
+            .environment(\.colorScheme, .dark) // on the hero gradient: dark glass, white names
         }
         .bareRow()
+        .listSectionMargins(.horizontal, 0)
     }
 
     private func shortcut(_ title: String, symbol: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 10) {
-                Image(systemName: symbol)
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(Color.accentColor)
-                    .frame(width: 24)
-                Text(title).font(.body.weight(.semibold)).foregroundStyle(.primary).lineLimit(1).minimumScaleFactor(0.85)
-                Spacer(minLength: 0)
+                Image(systemName: symbol).font(.system(size: 18)).frame(width: 24)
+                Text(title).font(.body).lineLimit(1).fixedSize()
             }
-            .padding(.vertical, 8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(.rect)
+            .foregroundStyle(.white)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 4)
         }
         .buttonStyle(.glass)
         .controlSize(.large)
-        .accessibilityLabel(title == "Factură" || title == "Programare" ? "\(title) nouă" : "\(title) nou")
+    }
+
+    /// A large search field on liquid glass (owner: larger than the system's, and glass).
+    private var searchField: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "magnifyingglass").font(.system(size: 20, weight: .medium)).foregroundStyle(Color.primary.opacity(0.6))
+            TextField("", text: $query, prompt: Text("Mașină, client, lucrare, factură").foregroundStyle(Color.primary.opacity(0.5)))
+                .font(.system(size: 19))
+                .focused($searchFocused)
+                .submitLabel(.search)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+            if !query.isEmpty {
+                Button { query = "" } label: {
+                    Image(systemName: "xmark.circle.fill").font(.system(size: 20)).foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Șterge căutarea")
+            }
+        }
+        .padding(.horizontal, 20)
+        .frame(height: 58)
+        .contentShape(.capsule)
+        .onTapGesture { searchFocused = true }
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .environment(\.colorScheme, pastHero ? colorScheme : .dark) // on the hero gradient: dark glass, white text
+        .animation(.easeInOut(duration: 0.2), value: pastHero)
+        .padding(.horizontal, 20)
+        .padding(.top, 4)
+        .padding(.bottom, 10)
     }
 
     private func openJob(_ status: String) {
