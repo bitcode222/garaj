@@ -29,7 +29,6 @@ struct HomeView: View {
     @State private var paying: Invoice?
     @State private var period = "7d"
     @State private var stage: String?
-    @State private var cover: String?
     /// The app's tab, to jump to Atelier from the section header.
     var selectedTab: Binding<String> = .constant("azi")
     @State private var done = 0
@@ -320,7 +319,6 @@ struct HomeView: View {
         let ready = groups.first { $0.key == "ready" }?.items.count ?? 0
         let shown = groups.filter { stage == nil || $0.key == stage }.flatMap(\.items)
         let vehicles = byId(Vehicle.self), customers = byId(Customer.self), staff = byId(Staff.self)
-        let index = shown.firstIndex { $0.id == cover } ?? 0
         return Section {
             homeHeader("Lucrări", subtitle: total == 0 ? nil : "\(total) \(total == 1 ? "mașină" : "mașini") în service · \(ready > 0 ? "\(ready) gata de predare" : "niciuna gata încă")") {
                 selectedTab.wrappedValue = "atelier"
@@ -330,11 +328,10 @@ struct HomeView: View {
             if total > 0 {
                 // The stages as pills (owner: instead of the "Toate" menu).
                 ChipRow(inset: HomeView.inset) {
-                    CountChip(title: "Toate", count: total, on: stage == nil) { stage = nil; cover = nil }
+                    CountChip(title: "Toate", count: total, on: stage == nil) { stage = nil }
                     ForEach(groups) { g in
                         CountChip(title: Labels.workOrder(g.key).label, count: g.items.count, on: stage == g.key) {
                             stage = stage == g.key ? nil : g.key
-                            cover = nil
                         }
                     }
                 }
@@ -344,56 +341,34 @@ struct HomeView: View {
             if total == 0 {
                 Text("Nicio mașină în service acum.").foregroundStyle(.secondary).padding(.horizontal, HomeView.inset).bareRow()
             } else {
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 14) {
-                        ForEach(shown) { order in
-                            let vehicle = vehicles[order.vehicleId ?? ""]
-                            let customer = customers[order.customerId ?? ""]
-                            // Owner first (with an icon), the job, the car, how many operations and parts; above the button
-                            // the mechanic (left) and the total (right); the job's number top left of the cover, the plate bottom right.
-                            let lines = order.lines.filter { !$0.refused }
-                            let ops = lines.filter { $0.kind == "labor" }.count
-                            let parts = lines.filter { $0.kind == "part" }.count
-                            CoverCard(make: vehicle?.make ?? "", plate: vehicle?.plate,
-                                      eyebrow: vehicle?.title.nonEmpty ?? "Fără mașină",
-                                      title: JobText.headline(order),
-                                      detail: vehicle?.title.nonEmpty ?? "Fără mașină",
-                                      status: Labels.workOrder(order.status),
-                                      corner: "#\(order.number)",
-                                      person: customer?.name.nonEmpty,
-                                      counts: [("wrench.and.screwdriver", ops == 1 ? "1 operație" : "\(ops) operații"),
-                                               ("shippingbox", parts == 1 ? "1 piesă" : "\(parts) piese")],
-                                      worker: staff[order.staffId ?? ""]?.name.nonEmpty ?? "Nealocat",
-                                      total: amount(Lines.totals(lines, vatPayer: store.shop.vatPayer).gross),
-                                      next: JobAction.primary(order, store: store, move: { moveJob(order, to: $0) }, failed: { error = $0 }),
-                                      open: { path.append(.job(order.id)) }) {
-                                jobMenu(order, customer: customer)
-                            }
-                            .id(order.id)
-                        }
+                // Its own view and state: scrolling moves only the carousel and its dots, never the whole page.
+                CoverCarousel(ids: shown.map(\.id)) { i in
+                    let order = shown[i]
+                    let vehicle = vehicles[order.vehicleId ?? ""]
+                    let customer = customers[order.customerId ?? ""]
+                    // Owner first (with an icon), the job, the car, how many operations and parts; above the button
+                    // the mechanic (left) and the total (right); the job's number top left of the cover, the plate bottom right.
+                    let lines = order.lines.filter { !$0.refused }
+                    let ops = lines.filter { $0.kind == "labor" }.count
+                    let parts = lines.filter { $0.kind == "part" }.count
+                    CoverCard(make: vehicle?.make ?? "", plate: vehicle?.plate,
+                              eyebrow: vehicle?.title.nonEmpty ?? "Fără mașină",
+                              title: JobText.headline(order),
+                              detail: vehicle?.title.nonEmpty ?? "Fără mașină",
+                              status: Labels.workOrder(order.status),
+                              corner: "#\(order.number)",
+                              person: customer?.name.nonEmpty,
+                              counts: [("wrench.and.screwdriver", ops == 1 ? "1 operație" : "\(ops) operații"),
+                                       ("shippingbox", parts == 1 ? "1 piesă" : "\(parts) piese")],
+                              worker: staff[order.staffId ?? ""]?.name.nonEmpty ?? "Nealocat",
+                              total: amount(Lines.totals(lines, vatPayer: store.shop.vatPayer).gross),
+                              next: JobAction.primary(order, store: store, move: { moveJob(order, to: $0) }, failed: { error = $0 }),
+                              open: { path.append(.job(order.id)) }) {
+                        jobMenu(order, customer: customer)
                     }
-                    .scrollTargetLayout()
                 }
-                .scrollTargetBehavior(.viewAligned)
-                .scrollPosition(id: $cover)
-                .contentMargins(.horizontal, HomeView.inset, for: .scrollContent)
-                .scrollIndicators(.hidden)
+                .id(stage ?? "all") // a new filter starts at the first card
                 .bareRow()
-                if shown.count > 1 {
-                    HStack(spacing: 10) {
-                        Capsule().fill(Color(.tertiarySystemFill)).frame(width: 110, height: 4)
-                            .overlay(alignment: .leading) {
-                                Capsule().fill(Color.primary).frame(width: max(14, 110 / CGFloat(shown.count)), height: 4)
-                                    .offset(x: (110 - max(14, 110 / CGFloat(shown.count))) * CGFloat(index) / CGFloat(max(1, shown.count - 1)))
-                            }
-                        Text("\(index + 1) / \(shown.count)").font(.footnote).monospacedDigit().foregroundStyle(.secondary)
-                    }
-                    .animation(.snappy, value: index)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Mașina \(index + 1) din \(shown.count)")
-                    .padding(.horizontal, HomeView.inset)
-                    .bareRow()
-                }
             }
         }
         .bareRow()
@@ -436,21 +411,14 @@ struct HomeView: View {
             if items.isEmpty {
                 Text("Toate programările sunt confirmate.").foregroundStyle(.secondary).padding(.horizontal, HomeView.inset).bareRow()
             } else {
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 14) {
-                        ForEach(items, id: \.appointment.id) { item in
-                            bookingCover(item.group, item.appointment,
-                                         customer: customers[item.appointment.customerId ?? ""],
-                                         vehicle: vehicles[item.appointment.vehicleId ?? ""],
-                                         staff: staff[item.appointment.staffId ?? ""],
-                                         bay: bays[item.appointment.bayId ?? ""])
-                        }
-                    }
-                    .scrollTargetLayout()
+                CoverCarousel(ids: items.map(\.appointment.id)) { i in
+                    let item = items[i]
+                    bookingCover(item.group, item.appointment,
+                                 customer: customers[item.appointment.customerId ?? ""],
+                                 vehicle: vehicles[item.appointment.vehicleId ?? ""],
+                                 staff: staff[item.appointment.staffId ?? ""],
+                                 bay: bays[item.appointment.bayId ?? ""])
                 }
-                .scrollTargetBehavior(.viewAligned)
-                .contentMargins(.horizontal, HomeView.inset, for: .scrollContent)
-                .scrollIndicators(.hidden)
                 .bareRow()
             }
         } footer: {
@@ -1001,4 +969,66 @@ private struct ShopBadge: View {
 
 private extension String {
     func ifEmpty(_ fallback: String) -> String { isEmpty ? fallback : self }
+}
+
+/// A sideways row of cover cards (owner: smooth, free drag, native white dots). It keeps its own scroll position,
+/// so moving through the cards updates only this view and its dots, never the page around it. A flick can travel
+/// across several cards and then settles on one.
+private struct CoverCarousel<Card: View>: View {
+    let ids: [String]
+    @ViewBuilder let card: (Int) -> Card
+    @State private var position: String?
+
+    var body: some View {
+        VStack(spacing: 12) {
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 14) {
+                    ForEach(ids.indices, id: \.self) { i in card(i).id(ids[i]) }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.viewAligned(limitBehavior: .never))
+            .scrollPosition(id: $position)
+            .contentMargins(.horizontal, HomeView.inset, for: .scrollContent)
+            .scrollIndicators(.hidden)
+            if ids.count > 1 {
+                PageDots(ids: ids, position: $position).fixedSize()
+            }
+        }
+    }
+}
+
+/// The system's page dots (UIPageControl): white, on the system's dark translucent platter in both themes.
+/// Tapping or scrubbing them moves the carousel.
+private struct PageDots: UIViewRepresentable {
+    let ids: [String]
+    @Binding var position: String?
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    func makeUIView(context: Context) -> UIPageControl {
+        let dots = UIPageControl()
+        dots.backgroundStyle = .prominent
+        dots.overrideUserInterfaceStyle = .dark // the dark platter in light mode too, so the white dots always read
+        dots.currentPageIndicatorTintColor = .white
+        dots.pageIndicatorTintColor = UIColor.white.withAlphaComponent(0.4)
+        dots.addTarget(context.coordinator, action: #selector(Coordinator.changed(_:)), for: .valueChanged)
+        return dots
+    }
+
+    func updateUIView(_ dots: UIPageControl, context: Context) {
+        context.coordinator.parent = self
+        if dots.numberOfPages != ids.count { dots.numberOfPages = ids.count }
+        let page = ids.firstIndex { $0 == position } ?? 0
+        if dots.currentPage != page { dots.currentPage = page }
+    }
+
+    final class Coordinator: NSObject {
+        var parent: PageDots
+        init(_ parent: PageDots) { self.parent = parent }
+        @objc func changed(_ dots: UIPageControl) {
+            guard parent.ids.indices.contains(dots.currentPage) else { return }
+            withAnimation(.snappy) { parent.position = parent.ids[dots.currentPage] }
+        }
+    }
 }

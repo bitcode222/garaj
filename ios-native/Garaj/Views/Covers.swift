@@ -121,6 +121,7 @@ struct CoverCard<Actions: View>: View {
                         .overlay(alignment: .bottomTrailing) { if let plate, !plate.isEmpty { PlateBadge(plate: plate).padding(12) } }
                         .overlay(alignment: .topLeading) { if let corner { pill(corner) } }
                         .overlay(alignment: .topTrailing) { pill(status.label) }
+                        .drawingGroup() // the cover is static art: flatten it once, so scrolling only moves pixels
                         .padding(.bottom, 10)
                     if let person {
                         Label(person, systemImage: "person.crop.circle.fill")
@@ -369,6 +370,7 @@ private struct HeroGlow: View {
                 blob(deep, alpha: dark ? 0.45 : 0.55, x: 0.50 + 0.25 * sin(t / 11.0), y: 0.40 + 0.08 * cos(t / 7.5),
                      radius: 260 * (1 + 0.12 * sin(t / 6.5)))
             }
+            .drawingGroup() // one Metal pass per frame instead of three blended layers
         }
     }
 
