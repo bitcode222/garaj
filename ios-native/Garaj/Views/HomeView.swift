@@ -26,6 +26,8 @@ struct HomeView: View {
     @AppStorage(HomeLayout.orderKey) private var orderRaw = HomeLayout.defaultOrder
     @AppStorage(HomeLayout.hiddenKey) private var hiddenRaw = ""
     @State private var booking: BookingForm.Target?
+    /// The talon scanner, from the quick buttons (docs/IOS-NATIVE.md §10).
+    @State private var scanning = false
     @State private var paying: Invoice?
     @State private var period = "7d"
     @State private var stage: String?
@@ -113,6 +115,14 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $creatingJob) { NewWorkOrderSheet(status: jobStatus) { path.append(.job($0)) } }
+            .fullScreenCover(isPresented: $scanning) { TalonScanFlow(mode: .home, startImage: debugScanImage) }
+            #if DEBUG
+            // Screenshots: `-GarajScan 1` opens the scanner; `-GarajScanImage <path>` starts it from that picture.
+            .task {
+                let d = UserDefaults.standard
+                if d.string(forKey: "GarajScan") != nil || (d.string(forKey: "GarajScanImage") != nil && d.string(forKey: "GarajOpenVehicle") == nil) { scanning = true }
+            }
+            #endif
             .sheet(item: $booking) { BookingForm(target: $0) }
             .sheet(item: $paying) { PaymentSheet(invoice: $0) }
             .sensoryFeedback(.success, trigger: done)
@@ -199,6 +209,14 @@ struct HomeView: View {
         .animation(.easeInOut(duration: 0.6), value: state.mood)
     }
 
+    private var debugScanImage: UIImage? {
+        #if DEBUG
+        UserDefaults.standard.string(forKey: "GarajScanImage").flatMap { UIImage(contentsOfFile: $0) }
+        #else
+        nil
+        #endif
+    }
+
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: .now)
         return hour >= 5 && hour < 11 ? "Bună dimineața" : hour >= 11 && hour < 18 ? "Bună ziua" : "Bună seara"
@@ -222,6 +240,7 @@ struct HomeView: View {
                     shortcut("Deviz nou", symbol: "doc.text.magnifyingglass") { openJob("estimate") }
                     shortcut("Lucrare nouă", symbol: "car.badge.gearshape") { openJob("in_progress") }
                     shortcut("Factură nouă", symbol: "doc.badge.plus") { path.append(.invoice(store.createInvoiceDraft().id)) }
+                    shortcut("Scanează talonul", symbol: "doc.viewfinder") { scanning = true }
                 }
                 }
             }

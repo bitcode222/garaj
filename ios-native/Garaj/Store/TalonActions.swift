@@ -17,6 +17,8 @@ struct TalonReview {
     var plateTakenBy: Vehicle?
     /// Matched by plate, but the car on file has another VIN: maybe a different car with a moved plate.
     var vinDiffers: Bool
+    /// Another car already has the talon's VIN (scanning onto a chosen car: it is probably that other car's talon).
+    var vinTakenBy: Vehicle?
     /// The fields the talon would change on `match`, by their labels.
     var changes: [String]
     var currentOwner: Customer?
@@ -29,13 +31,15 @@ struct TalonReview {
 }
 
 extension AppStore {
-    func talonReview(_ t: TalonData) -> TalonReview {
+    /// `vehicleId`: the talon is scanned onto this car (from its page), so it is the match whatever was read.
+    func talonReview(_ t: TalonData, for vehicleId: String? = nil) -> TalonReview {
         let plate = People.normalizePlate(t.plate)
         let vin = t.vin.uppercased()
         let cars = all(Vehicle.self)
         let byVin = vin.count == 17 ? cars.first { $0.vin.uppercased() == vin } : nil
         let byPlate = plate.isEmpty ? nil : cars.first { People.normalizePlate($0.plate) == plate }
-        let match = byVin ?? byPlate
+        let chosen = vehicleId.flatMap { get(Vehicle.self, $0) }
+        let match = chosen ?? byVin ?? byPlate
         var changes: [String] = []
         if let m = match {
             let differs = { (new: String, old: String) in !new.isEmpty && Search.fold(new) != Search.fold(old) }
@@ -53,7 +57,8 @@ extension AppStore {
         return TalonReview(
             match: match,
             plateTakenBy: byPlate.flatMap { $0.id == match?.id ? nil : $0 },
-            vinDiffers: byVin == nil && vin.count == 17 && !(match?.vin.isEmpty ?? true) && match?.vin.uppercased() != vin,
+            vinDiffers: (chosen != nil || byVin == nil) && vin.count == 17 && !(match?.vin.isEmpty ?? true) && match?.vin.uppercased() != vin,
+            vinTakenBy: byVin.flatMap { $0.id == match?.id ? nil : $0 },
             changes: changes,
             currentOwner: get(Customer.self, match?.customerId),
             nameMatches: customersNamed(t.owner),
@@ -73,13 +78,16 @@ extension AppStore {
     /// Saves what was read: the client (the chosen one, or a new one from the talon's name) and the car (the
     /// matching one updated with every field that was read, else a new one). Checks everything before writing.
     @discardableResult
-    func saveTalon(_ t: TalonData, client: TalonClient) throws -> Vehicle {
-        let review = talonReview(t)
+    func saveTalon(_ t: TalonData, client: TalonClient, into vehicleId: String? = nil) throws -> Vehicle {
+        let review = talonReview(t, for: vehicleId)
         let existing = review.match
         let plate = People.formatPlate(t.plate.isEmpty ? existing?.plate ?? "" : t.plate)
         if People.normalizePlate(plate).isEmpty { throw DomainError(code: "invalid", message: "Completează numărul de înmatriculare.") }
         if let other = all(Vehicle.self).first(where: { $0.id != existing?.id && People.normalizePlate($0.plate) == People.normalizePlate(plate) }) {
             throw DomainError(code: "duplicate", message: "Numărul \(plate) e deja pe altă mașină (\(other.title.nonEmpty ?? "fără model")). Verifică numărul sau VIN-ul.")
+        }
+        if let other = review.vinTakenBy {
+            throw DomainError(code: "duplicate", message: "VIN-ul \(t.vin) e deja pe mașina \(People.formatPlate(other.plate)) (\(other.title.nonEmpty ?? "fără model")). Talonul pare al acelei mașini.")
         }
         let ownerId: String
         switch client {

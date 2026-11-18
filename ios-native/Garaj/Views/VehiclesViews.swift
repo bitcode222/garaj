@@ -129,10 +129,40 @@ struct VehicleDetailView: View {
     @State private var confirmDelete = false
     @State private var error: String?
     @State private var showTalon: UIImage?
+    /// Scanning onto this car: its talon, or another document.
+    @State private var scan: ScanMode?
+    /// What to open once the talon is in: a new deviz for the car, or its open job.
+    @State private var afterScan: TalonNext?
+    @State private var openedJob: String?
+    @State private var docs: [CarDocument] = []
+    @State private var talon: UIImage?
+    @State private var removing: CarDocument?
 
     var body: some View {
         Group {
             if let v = store.get(Vehicle.self, id) { content(v) } else { ContentUnavailableView("Mașina nu mai există", systemImage: "car") }
+        }
+        .fullScreenCover(item: Binding(get: { scan.map(ScanTarget.init) }, set: { scan = $0?.mode }), onDismiss: { reload(); runAfterScan() }) { t in
+            TalonScanFlow(mode: t.mode, startImage: debugScanImage) { afterScan = $0 }
+        }
+        .sheet(isPresented: Binding(get: { afterScan == .estimate && scan == nil }, set: { if !$0 { afterScan = nil } })) {
+            let car = store.get(Vehicle.self, id)
+            NewWorkOrderSheet(status: "estimate", customerId: car?.customerId, vehicleId: id) { openedJob = $0 }
+        }
+        .navigationDestination(item: $openedJob) { WorkOrderDetailView(id: $0) }
+        .confirmationDialog("Ștergi documentul?", isPresented: Binding(get: { removing != nil }, set: { if !$0 { removing = nil } }), titleVisibility: .visible, presenting: removing) { d in
+            Button("Șterge \(d.title)", role: .destructive) { CarDocuments.delete(id, d); reload() }
+        } message: { _ in Text("Poza se șterge de pe telefon.") }
+        .task {
+            reload()
+            #if DEBUG
+            // Screenshots: `-GarajScanCar talon|document` with `-GarajScanImage <path>` scans onto this car.
+            switch UserDefaults.standard.string(forKey: "GarajScanCar") {
+            case "talon": scan = .talon(id)
+            case "document": scan = .document(id)
+            default: break
+            }
+            #endif
         }
         .sheet(item: Binding(get: { showTalon.map(TalonPicture.init) }, set: { showTalon = $0?.image })) { t in
             NavigationStack {
@@ -150,6 +180,44 @@ struct VehicleDetailView: View {
     }
 
     private struct TalonPicture: Identifiable { let image: UIImage; var id: ObjectIdentifier { ObjectIdentifier(image) } }
+    private func docRow(_ image: UIImage, title: String, detail: String, open: @escaping () -> Void) -> some View {
+        Button(action: open) {
+            HStack(spacing: 14) {
+                Image(uiImage: image).resizable().scaledToFill().frame(width: 56, height: 40).clipShape(.rect(cornerRadius: 6))
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(title).foregroundStyle(.primary)
+                    Text(detail).font(.caption).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
+            }
+        }
+    }
+
+    private struct ScanTarget: Identifiable { let mode: ScanMode; var id: String { "\(mode)" } }
+
+    /// The documents live in files, not in the store: read again after a scan or a delete.
+    private func reload() {
+        talon = TalonFiles.image(id)
+        docs = CarDocuments.list(id)
+    }
+
+    /// The talon is in: open a new deviz, or the car's open job, as chosen in the scanner.
+    private func runAfterScan() {
+        switch afterScan {
+        case .openJob(let job): openedJob = job; afterScan = nil
+        case .estimate: break // the deviz sheet opens on its own once the scanner is gone
+        default: afterScan = nil
+        }
+    }
+
+    private var debugScanImage: UIImage? {
+        #if DEBUG
+        UserDefaults.standard.string(forKey: "GarajScanImage").flatMap { UIImage(contentsOfFile: $0) }
+        #else
+        nil
+        #endif
+    }
 
     private func content(_ v: Vehicle) -> some View {
         let today = Dates.today()
@@ -191,18 +259,27 @@ struct VehicleDetailView: View {
                 .padding(.bottom, 8)
             }
             .bareRow()
-            // The scanned talon, when there is one (Scanează talonul above the tab bar).
-            if let talon = TalonFiles.image(v.id) {
-                Section("Documente") {
-                    Button { showTalon = talon } label: {
-                        HStack(spacing: 14) {
-                            Image(uiImage: talon).resizable().scaledToFill().frame(width: 56, height: 40).clipShape(.rect(cornerRadius: 6))
-                            Text("Talon").foregroundStyle(.primary)
-                            Spacer()
-                            Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
-                        }
+            // The car's papers (owner): its talon, which also fills in the car, and any other document kept on it.
+            Section {
+                if let talon {
+                    docRow(talon, title: "Talon", detail: "Certificatul de înmatriculare") { showTalon = talon }
+                }
+                ForEach(docs) { d in
+                    if let image = CarDocuments.image(v.id, d) {
+                        docRow(image, title: d.title, detail: "Scanat \(Dates.display(d.date))") { showTalon = image }
+                            .swipeActions { Button("Șterge", role: .destructive) { removing = d } }
                     }
                 }
+                Button { scan = .talon(v.id) } label: {
+                    Label(talon == nil ? "Scanează talonul" : "Scanează din nou talonul", systemImage: "doc.viewfinder")
+                }
+                Button { scan = .document(v.id) } label: {
+                    Label("Scanează un document", systemImage: "doc.badge.plus")
+                }
+            } header: {
+                CapsHeader("Documente")
+            } footer: {
+                Text("Talonul completează datele mașinii. Documentele (ITP, RCA, facturi) rămân pe mașină, doar pe acest telefon.")
             }
             if !orders.isEmpty {
                 Section {
@@ -270,7 +347,16 @@ struct VehicleDetailView: View {
         .cover(Make.cover(v.make), height: 560)
         .navigationTitle(People.formatPlate(v.plate))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { Button("Editează") { editing = v } }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button("Scanează talonul", systemImage: "doc.viewfinder") { scan = .talon(v.id) }
+                    Button("Scanează un document", systemImage: "doc.badge.plus") { scan = .document(v.id) }
+                } label: { Label("Scanează", systemImage: "doc.viewfinder") }
+            }
+            ToolbarSpacer(.fixed, placement: .primaryAction)
+            ToolbarItem(placement: .primaryAction) { Button("Editează") { editing = v } }
+        }
         .sheet(item: $editing) { VehicleForm(vehicle: $0, isNew: false) }
         .confirmationDialog("Ștergi mașina?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Șterge", role: .destructive) { do { try store.deleteVehicle(v.id); dismiss() } catch { self.error = error.localizedDescription } }

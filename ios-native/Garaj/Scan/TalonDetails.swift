@@ -14,6 +14,8 @@ struct TalonDetailsScreen: View {
     @Environment(AppStore.self) private var store
     @Binding var data: TalonData
     let page: UIImage?
+    /// Scanned from this car's page: the talon fills in this car.
+    let carId: String?
     let retake: () -> Void
     let cancel: () -> Void
     let done: (String, TalonNext) -> Void
@@ -31,7 +33,7 @@ struct TalonDetailsScreen: View {
     }
 
     var body: some View {
-        let review = store.talonReview(data)
+        let review = store.talonReview(data, for: carId)
         NavigationStack {
             ScrollViewReader { proxy in
             Form {
@@ -70,7 +72,7 @@ struct TalonDetailsScreen: View {
             .task {
                 guard let n = UserDefaults.standard.string(forKey: "GarajScanNext") else { return }
                 try? await Task.sleep(for: .seconds(1))
-                act(["estimate": .estimate, "job": .job, "booking": .booking][n] ?? .car, store.talonReview(data))
+                act(["estimate": .estimate, "job": .job, "booking": .booking][n] ?? .car, store.talonReview(data, for: carId))
             }
             #endif
             .onChange(of: otherClient) { _, id in if let id { client = .existing(id) } }
@@ -111,7 +113,7 @@ struct TalonDetailsScreen: View {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Image(systemName: "checkmark.seal.fill").foregroundStyle(.green).font(.title3)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Mașina e deja în registru").font(.headline)
+                        Text(carId != nil ? "Talonul completează această mașină" : "Mașina e deja în registru").font(.headline)
                         Text([People.formatPlate(m.plate), m.title.nonEmpty, r.currentOwner?.name].compactMap { $0 }.joined(separator: " · "))
                             .font(.subheadline).foregroundStyle(.secondary)
                         Text(r.changes.isEmpty ? "Talonul nu aduce nimic nou." : "Se actualizează: \(r.changes.joined(separator: ", ")).")
@@ -131,6 +133,13 @@ struct TalonDetailsScreen: View {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.red)
                     Text("Numărul \(People.formatPlate(other.plate)) e pe altă mașină (\(other.title.nonEmpty ?? "fără model")\(other.vin.isEmpty ? "" : ", VIN \(other.vin)")). Verifică numărul și VIN-ul: nu pot exista două mașini cu același număr.")
+                        .font(.subheadline)
+                }
+            }
+            if let other = r.vinTakenBy {
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.red)
+                    Text("VIN-ul \(data.vin) e pe altă mașină: \(People.formatPlate(other.plate)) (\(other.title.nonEmpty ?? "fără model")). Talonul pare al acelei mașini, nu se poate salva aici.")
                         .font(.subheadline)
                 }
             }
@@ -197,18 +206,35 @@ struct TalonDetailsScreen: View {
         }
     }
 
-    private func nextSection(_ r: TalonReview) -> some View {
+    @ViewBuilder private func nextSection(_ r: TalonReview) -> some View {
         let unchanged = r.match != nil && r.changes.isEmpty && client == r.currentOwner.map { .existing($0.id) }
-        return Section {
-            nextRow(r.match == nil ? "Adaugă mașina" : unchanged ? "Deschide mașina" : "Actualizează mașina",
-                    detail: "Doar mașina și clientul", symbol: "car.fill", next: .car, review: r)
-            nextRow("Deviz nou", detail: "Pentru o constatare și o ofertă", symbol: "doc.text.magnifyingglass", next: .estimate, review: r)
-            nextRow("Lucrare nouă", detail: "Mașina intră în lucru acum", symbol: "car.badge.gearshape", next: .job, review: r)
-            nextRow("Programare nouă", detail: "Pentru altă zi", symbol: "calendar.badge.plus", next: .booking, review: r)
-        } header: {
-            Text("Ce urmează")
-        } footer: {
-            Text("Mașina și clientul se salvează, apoi se deschide ce alegi. Poza talonului rămâne pe mașină, doar pe acest telefon.")
+        let saveCar = r.match == nil ? "Adaugă mașina" : unchanged ? "Păstrează mașina așa" : "Actualizează mașina"
+        if carId != nil {
+            // From the car's page: fill it in; a new deviz for it, if wanted.
+            Section {
+                nextRow(unchanged ? "Gata, nimic de schimbat" : "Actualizează mașina", detail: "Completează datele din talon", symbol: "car.fill", next: .car, review: r)
+                nextRow("Actualizează și fă un deviz", detail: "Un deviz nou pentru această mașină", symbol: "doc.text.magnifyingglass", next: .estimate, review: r)
+            } header: {
+                Text("Ce urmează")
+            } footer: {
+                Text("Poza talonului rămâne pe mașină, doar pe acest telefon.")
+            }
+        } else {
+            // From Azi (owner): the question is whether the car goes on a job.
+            Section {
+                if let o = r.openJob {
+                    nextRow("Adaugă la lucrarea #" + String(o.number), detail: "Deschisă · " + Labels.workOrder(o.status).label.lowercased(),
+                            symbol: "wrench.and.screwdriver", next: .openJob(o.id), review: r)
+                }
+                nextRow("Lucrare nouă", detail: "Mașina intră în lucru acum", symbol: "car.badge.gearshape", next: .job, review: r)
+                nextRow("Deviz nou", detail: "Pentru o constatare și o ofertă", symbol: "doc.text.magnifyingglass", next: .estimate, review: r)
+                nextRow("Programare nouă", detail: "Pentru altă zi", symbol: "calendar.badge.plus", next: .booking, review: r)
+                nextRow("Nu, doar \(saveCar.lowercased())", detail: "Fără lucrare acum", symbol: "car.fill", next: .car, review: r)
+            } header: {
+                Text("Adaugi mașina la o lucrare?")
+            } footer: {
+                Text("Mașina și clientul se salvează, apoi se deschide ce alegi. Poza talonului rămâne pe mașină, doar pe acest telefon.")
+            }
         }
     }
 
@@ -296,7 +322,7 @@ struct TalonDetailsScreen: View {
 
     private func save(_ next: TalonNext) {
         guard let client else { error = "Alege clientul căruia îi aparține mașina."; return }
-        do { done(try store.saveTalon(data, client: client).id, next) } catch { self.error = error.localizedDescription }
+        do { done(try store.saveTalon(data, client: client, into: carId).id, next) } catch { self.error = error.localizedDescription }
     }
 
     private func field(_ label: String, text: Binding<String>, caps: Bool = false) -> some View {
@@ -349,4 +375,86 @@ struct TalonDoneScreen: View {
     }
 
     private struct JobStatus: Identifiable { let status: String; var id: String { status } }
+}
+
+/// A scanned document kept on a car: its name (picked from the usual ones or typed), and for ITP and RCA the
+/// expiry date, which goes on the car so the reminders know about it.
+struct DocumentNameScreen: View {
+    @Environment(AppStore.self) private var store
+    let page: UIImage
+    let vehicleId: String
+    let back: () -> Void
+    let saved: () -> Void
+
+    @State private var title = ""
+    @State private var expires = false
+    @State private var expiry = Calendar.current.date(byAdding: .year, value: 1, to: .now) ?? .now
+    @State private var error: String?
+
+    private static let usual = ["ITP", "RCA", "CASCO", "CIV", "Factură piese", "Deviz semnat", "Proces-verbal", "Garanție"]
+    /// The car field an expiry date goes to.
+    private var expiryField: WritableKeyPath<Vehicle, String?>? {
+        switch title.trimmingCharacters(in: .whitespaces).uppercased() {
+        case "ITP": \.itpExpiry
+        case "RCA": \.rcaExpiry
+        default: nil
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Image(uiImage: page).resizable().scaledToFit().frame(maxHeight: 220).frame(maxWidth: .infinity)
+                        .clipShape(.rect(cornerRadius: 8))
+                }
+                .listRowBackground(Color.clear)
+                Section {
+                    TextField("Denumire", text: $title)
+                    ScrollView(.horizontal) {
+                        HStack(spacing: 8) {
+                            ForEach(Self.usual, id: \.self) { name in
+                                Button(name) { title = name }
+                                    .buttonStyle(.bordered)
+                                    .tint(title == name ? Color("AccentColor") : .secondary)
+                            }
+                        }
+                    }
+                    .scrollIndicators(.hidden)
+                } header: {
+                    Text("Ce document e")
+                }
+                if expiryField != nil {
+                    Section {
+                        Toggle("Are dată de expirare", isOn: $expires)
+                        if expires { DatePicker("Expiră la", selection: $expiry, displayedComponents: .date) }
+                    } footer: {
+                        Text("Data trece pe mașină, la \(title.uppercased()), și apare în De contactat când se apropie.")
+                    }
+                }
+            }
+            .navigationTitle("Document nou")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Înapoi", systemImage: "chevron.left", action: back) }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Salvează") { save() }.fontWeight(.semibold)
+                        .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+            .alert("Nu se poate salva", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
+                Button("OK", role: .cancel) {}
+            } message: { Text(error ?? "") }
+        }
+    }
+
+    private func save() {
+        let name = title.trimmingCharacters(in: .whitespaces)
+        guard CarDocuments.add(page, title: name, vehicleId: vehicleId) != nil else { error = "Poza nu s-a putut salva pe telefon."; return }
+        if expires, let field = expiryField, var car = store.get(Vehicle.self, vehicleId) {
+            car[keyPath: field] = Dates.isoDate(expiry)
+            do { try store.saveVehicle(car) } catch { self.error = error.localizedDescription; return }
+        }
+        saved()
+    }
 }
