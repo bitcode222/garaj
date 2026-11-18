@@ -331,10 +331,10 @@ struct SortGroupMenu: View {
 // MARK: Background
 
 extension Color {
-    /// The screens' background: in light, a shade darker than the system's grouped grey (#F2F2F7 → #E9E9EE) so the
+    /// The screens' background: in light, a shade darker than the system's grouped grey (#F2F2F7 → #DEDEE5) so the
     /// white cards stand out more (owner, 18 Nov 2026); in dark, the system's own black.
     static let groupedBackground = Color(UIColor { traits in
-        traits.userInterfaceStyle == .dark ? .systemGroupedBackground : UIColor(red: 233 / 255, green: 233 / 255, blue: 238 / 255, alpha: 1)
+        traits.userInterfaceStyle == .dark ? .systemGroupedBackground : UIColor(red: 222 / 255, green: 222 / 255, blue: 229 / 255, alpha: 1)
     })
 }
 
