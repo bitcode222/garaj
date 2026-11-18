@@ -265,8 +265,23 @@ extension View {
 /// Azi's top (owner, 18 Nov 2026: "a nice colorful gradient, Netflix inspired", then "make it red"): near-black lit
 /// by reds, behind the title, the search bar and the shortcuts; it fades into the grouped
 /// background, follows the content up and stretches when pulled down. The bar reads white on it.
+/// How the shop stands right now, shown as the colour of the dashboard's top (owner): green when all is well,
+/// yellow when something waits on you or a deadline is close, red when something is past its deadline.
+enum HeroMood: Equatable {
+    case good, attention, late
+
+    var color: Color {
+        switch self {
+        case .good: Color(red: 0.22, green: 0.62, blue: 0.40)
+        case .attention: Color(red: 0.86, green: 0.62, blue: 0.10)
+        case .late: Color(red: 0.86, green: 0.12, blue: 0.14)
+        }
+    }
+}
+
 struct HeroBackground: ViewModifier {
     var height: CGFloat = 470
+    var mood: HeroMood = .good
     @State private var offset: CGFloat = 0
 
     func body(content: Content) -> some View {
@@ -276,28 +291,32 @@ struct HeroBackground: ViewModifier {
             .background(alignment: .top) {
                 ZStack(alignment: .top) {
                     Color.groupedBackground
-                    Self.glow
+                    HeroGlow(color: mood.color)
                         .frame(height: max(0, height - offset))
                         .mask(LinearGradient(stops: [.init(color: .black, location: 0), .init(color: .black, location: 0.62), .init(color: .clear, location: 1)],
                                              startPoint: .top, endPoint: .bottom))
                 }
                 .ignoresSafeArea()
+                .animation(.easeInOut(duration: 0.6), value: mood)
                 .accessibilityHidden(true)
             }
             .toolbarColorScheme(offset < height * 0.55 ? .dark : nil, for: .navigationBar)
     }
+}
 
-    /// All red (owner): Netflix red top left, a brighter crimson top right, a deep wine low down, on near-black.
-    static var glow: some View {
+/// Near-black with the mood's colour glowing from the top left and fading out, like a lit room seen from the dark.
+private struct HeroGlow: View {
+    let color: Color
+
+    var body: some View {
         ZStack {
-            Color(red: 0.09, green: 0.02, blue: 0.03)
-            RadialGradient(colors: [Color(red: 0.90, green: 0.04, blue: 0.08), .clear], center: UnitPoint(x: 0.1, y: 0.05), startRadius: 0, endRadius: 380)
-            RadialGradient(colors: [Color(red: 1.0, green: 0.22, blue: 0.24).opacity(0.85), .clear], center: UnitPoint(x: 0.95, y: 0.15), startRadius: 0, endRadius: 300)
-            RadialGradient(colors: [Color(red: 0.55, green: 0.02, blue: 0.10).opacity(0.9), .clear], center: UnitPoint(x: 0.45, y: 0.9), startRadius: 0, endRadius: 300)
+            Color(red: 0.05, green: 0.06, blue: 0.06)
+            RadialGradient(colors: [color.opacity(0.85), color.opacity(0.25), .clear], center: UnitPoint(x: 0.1, y: 0.15), startRadius: 0, endRadius: 420)
+            RadialGradient(colors: [color.opacity(0.35), .clear], center: UnitPoint(x: 0.95, y: 0.0), startRadius: 0, endRadius: 300)
         }
     }
 }
 
 extension View {
-    func hero(height: CGFloat = 470) -> some View { modifier(HeroBackground(height: height)) }
+    func hero(height: CGFloat = 470, mood: HeroMood = .good) -> some View { modifier(HeroBackground(height: height, mood: mood)) }
 }
