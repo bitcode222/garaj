@@ -300,19 +300,27 @@ struct HeroBackground: ViewModifier {
                 .animation(.easeInOut(duration: 0.6), value: mood)
                 .accessibilityHidden(true)
             }
-            .toolbarColorScheme(offset < height * 0.55 ? .dark : nil, for: .navigationBar)
     }
 }
 
-/// Near-black with the mood's colour glowing from the top left and fading out, like a lit room seen from the dark.
+/// The mood's colour glowing from the top left. Dark mode: on near-black, like a lit room seen from the dark.
+/// Light mode: a soft wash straight on the page's own background, so the fade never passes through grey or black.
 private struct HeroGlow: View {
     let color: Color
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
-        ZStack {
-            Color(red: 0.05, green: 0.06, blue: 0.06)
-            RadialGradient(colors: [color.opacity(0.85), color.opacity(0.25), .clear], center: UnitPoint(x: 0.1, y: 0.15), startRadius: 0, endRadius: 420)
-            RadialGradient(colors: [color.opacity(0.35), .clear], center: UnitPoint(x: 0.95, y: 0.0), startRadius: 0, endRadius: 300)
+        if scheme == .dark {
+            ZStack {
+                Color(red: 0.05, green: 0.06, blue: 0.06)
+                RadialGradient(colors: [color.opacity(0.85), color.opacity(0.25), .clear], center: UnitPoint(x: 0.1, y: 0.15), startRadius: 0, endRadius: 420)
+                RadialGradient(colors: [color.opacity(0.35), .clear], center: UnitPoint(x: 0.95, y: 0.0), startRadius: 0, endRadius: 300)
+            }
+        } else {
+            ZStack {
+                RadialGradient(colors: [color.opacity(0.45), color.opacity(0.12), .clear], center: UnitPoint(x: 0.1, y: 0.1), startRadius: 0, endRadius: 440)
+                RadialGradient(colors: [color.opacity(0.22), .clear], center: UnitPoint(x: 0.95, y: 0.0), startRadius: 0, endRadius: 320)
+            }
         }
     }
 }

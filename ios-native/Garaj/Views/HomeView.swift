@@ -38,18 +38,18 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
-                    // The page's title, over the search bar (owner), white on the hero; it scrolls with the page.
+                    // The page's title, over the search bar (owner); it scrolls with the page.
                     // Under it, in words, why the hero has its colour (colour alone doesn't say it).
                     Section {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Dashboard")
                                 .font(.largeTitle.weight(.bold))
                                 .accessibilityAddTraits(.isHeader)
-                            Label(mood.text, systemImage: mood.symbol)
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.white.opacity(0.85))
+                            Label { Text(mood.text).foregroundStyle(.secondary) } icon: {
+                                Image(systemName: mood.symbol).foregroundStyle(mood.mood.color)
+                            }
+                            .font(.subheadline.weight(.medium))
                         }
-                        .foregroundStyle(.white)
                         .padding(.horizontal, HomeView.inset)
                     }
                     .bareRow()
@@ -195,7 +195,6 @@ struct HomeView: View {
             }
             .contentMargins(.horizontal, HomeView.inset, for: .scrollContent)
             .scrollIndicators(.hidden)
-            .environment(\.colorScheme, .dark) // on the dark hero: dark glass, white names
         }
         .bareRow()
         .listSectionMargins(.horizontal, 0)
@@ -207,7 +206,7 @@ struct HomeView: View {
                 Image(systemName: symbol).font(.system(size: 18)).frame(width: 24)
                 Text(title).font(.body).lineLimit(1).fixedSize()
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(.primary)
             .padding(.vertical, 14)
             .padding(.horizontal, 18)
             .contentShape(.capsule)
@@ -239,7 +238,6 @@ struct HomeView: View {
         .contentShape(.capsule)
         .onTapGesture { searchFocused = true }
         .glassEffect(GlassLook.current.glass, in: .capsule)
-        .environment(\.colorScheme, .dark) // on the dark hero: dark glass, white text
         .padding(.horizontal, HomeView.inset)
     }
 
