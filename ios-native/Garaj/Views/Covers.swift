@@ -270,12 +270,23 @@ extension View {
 enum HeroMood: Equatable {
     case good, attention, late
 
-    var color: Color {
+    var rgb: (r: Double, g: Double, b: Double) {
         switch self {
-        case .good: Color(red: 0.22, green: 0.62, blue: 0.40)
-        case .attention: Color(red: 0.86, green: 0.62, blue: 0.10)
-        case .late: Color(red: 0.86, green: 0.12, blue: 0.14)
+        case .good: (0.22, 0.62, 0.40)
+        case .attention: (0.86, 0.62, 0.10)
+        case .late: (0.86, 0.12, 0.14)
         }
+    }
+
+    var color: Color { Color(red: rgb.r, green: rgb.g, blue: rgb.b) }
+
+    /// The text colour on the hero (owner: inverted against the background): the inverse of the colour that sits
+    /// under the title (light mode: the vivid colour; dark mode: its glow on near-black), made darker or lighter to read.
+    func ink(_ scheme: ColorScheme) -> Color {
+        // A mid-tone inverts to a mid-tone, so keep the inverse hue and push it away from the background's lightness.
+        let k = scheme == .dark ? 0.6 : 1.0, base = scheme == .dark ? 0.05 : 0.0
+        let inverse = Color(red: 1 - (rgb.r * k + base), green: 1 - (rgb.g * k + base), blue: 1 - (rgb.b * k + base))
+        return scheme == .dark ? inverse.mix(with: .white, by: 0.4) : inverse.mix(with: .black, by: 0.5)
     }
 }
 
@@ -303,26 +314,36 @@ struct HeroBackground: ViewModifier {
     }
 }
 
-/// The mood's colour glowing from the top left. Dark mode: on near-black, like a lit room seen from the dark.
-/// Light mode: a soft wash straight on the page's own background, so the fade never passes through grey or black.
+/// The mood's colour glowing from the top left, slowly drifting and breathing (owner: "moving, breathing").
+/// Dark mode: on near-black, like a lit room seen from the dark. Light mode: straight on the page's own background,
+/// so the fade never passes through grey or black. Still when Reduce Motion is on.
 private struct HeroGlow: View {
     let color: Color
     @Environment(\.colorScheme) private var scheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        if scheme == .dark {
+        TimelineView(.animation(minimumInterval: 1 / 30, paused: reduceMotion)) { context in
+            let t = reduceMotion ? 0 : context.date.timeIntervalSinceReferenceDate
+            let dark = scheme == .dark
+            let light = color.mix(with: .white, by: 0.35)
+            let deep = color.mix(with: .black, by: 0.25)
             ZStack {
-                Color(red: 0.05, green: 0.06, blue: 0.06)
-                RadialGradient(colors: [color.opacity(0.85), color.opacity(0.25), .clear], center: UnitPoint(x: 0.1, y: 0.15), startRadius: 0, endRadius: 420)
-                RadialGradient(colors: [color.opacity(0.35), .clear], center: UnitPoint(x: 0.95, y: 0.0), startRadius: 0, endRadius: 300)
-            }
-        } else {
-            ZStack { // vivid (owner: the first wash was too faded), still fading into the page, never through grey
-                LinearGradient(colors: [color.opacity(0.55), color.opacity(0.25), .clear], startPoint: .top, endPoint: .bottom)
-                RadialGradient(colors: [color.opacity(0.95), color.opacity(0.4), .clear], center: UnitPoint(x: 0.1, y: 0.08), startRadius: 0, endRadius: 460)
-                RadialGradient(colors: [color.opacity(0.6), .clear], center: UnitPoint(x: 0.95, y: 0.0), startRadius: 0, endRadius: 340)
+                if dark { Color(red: 0.05, green: 0.06, blue: 0.06) } else {
+                    LinearGradient(colors: [color.opacity(0.55), color.opacity(0.25), .clear], startPoint: .top, endPoint: .bottom)
+                }
+                blob(color, alpha: dark ? 0.85 : 0.95, x: 0.12 + 0.10 * sin(t / 7.0), y: 0.10 + 0.06 * cos(t / 9.0),
+                     radius: 450 * (1 + 0.08 * sin(t / 4.0)))
+                blob(light, alpha: dark ? 0.40 : 0.70, x: 0.85 + 0.12 * cos(t / 8.0), y: 0.05 + 0.08 * sin(t / 6.0),
+                     radius: 320 * (1 + 0.10 * cos(t / 5.0)))
+                blob(deep, alpha: dark ? 0.45 : 0.55, x: 0.50 + 0.25 * sin(t / 11.0), y: 0.40 + 0.08 * cos(t / 7.5),
+                     radius: 260 * (1 + 0.12 * sin(t / 6.5)))
             }
         }
+    }
+
+    private func blob(_ c: Color, alpha: Double, x: Double, y: Double, radius: Double) -> some View {
+        RadialGradient(colors: [c.opacity(alpha), c.opacity(alpha * 0.35), .clear], center: UnitPoint(x: x, y: y), startRadius: 0, endRadius: radius)
     }
 }
 
