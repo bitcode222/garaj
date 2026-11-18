@@ -39,17 +39,17 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
-                    // The page's title (owner: "Home", larger, light, the system font at its normal width), and under it what's due on the left and
-                    // the month's takings on the right, in the hero colour's inverse; it scrolls with the page.
-                    Section { heroHeader }
+                    // The top block, scrolling with the page (owner: not pinned): the shop's badge and name, "Home",
+                    // what's due and the month's takings, the search field, then (when not searching) the shortcuts.
+                    // One section, so the gaps between them are set here rather than by the list's section spacing.
+                    Section {
+                        heroHeader
+                        searchField.padding(.top, 22)
+                        if query.trimmingCharacters(in: .whitespaces).isEmpty { shortcuts.padding(.top, 12) }
+                    }
                     .bareRow()
                     .listSectionMargins(.horizontal, 0)
-                    // The search bar scrolls with the page too (owner: not pinned).
-                    Section { searchField }
-                        .bareRow()
-                        .listSectionMargins(.horizontal, 0)
                     if query.trimmingCharacters(in: .whitespaces).isEmpty {
-                        shortcuts
                         let hidden = HomeLayout.hidden(hiddenRaw)
                         ForEach(HomeLayout.order(orderRaw).filter { !hidden.contains($0) }, id: \.self) { key in
                             section(key, proxy: proxy)
@@ -59,8 +59,8 @@ struct HomeView: View {
                     }
                 }
                 .hero(height: 470, mood: mood.mood)
-                // The shortcuts end ~200 pt down the page: past that, "+" shows in the bar.
-                .onScrollGeometryChange(for: Bool.self) { $0.contentOffset.y + $0.contentInsets.top < 190 } action: { _, visible in shortcutsVisible = visible }
+                // The shortcuts end ~350 pt down the page (under the badge, Home and the search): past that, "+" shows in the bar.
+                .onScrollGeometryChange(for: Bool.self) { $0.contentOffset.y + $0.contentInsets.top < 340 } action: { _, visible in shortcutsVisible = visible }
                 .listStyle(.insetGrouped)
                 .listSectionSpacing(32) // owner: room between the sections
                 .listSectionMargins(.horizontal, HomeView.inset)
@@ -159,12 +159,21 @@ struct HomeView: View {
     /// "Home", then what's due (left) and the month's net takings so far (right), like Rapoarte counts them.
     private var heroHeader: some View {
         let state = mood
-        let ink = state.mood.ink(scheme)
+        let ink: Color = scheme == .dark ? .white : .black // owner: white in dark, black in light
         let today = Dates.today()
         let monthStart = "\(Dates.monthKey(today))-01"
         let earned = Reports.summarize(store.all(Invoice.self), from: monthStart, to: today).net
         let month = (Dates.parseDate(monthStart)?.formatted(.dateTime.month(.wide).locale(Locale(identifier: "ro_RO"))) ?? "").capitalizedFirst
         return VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 12) {
+                ShopBadge(name: store.shop.shopName, tint: state.mood.color)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(store.shop.shopName).font(.headline).lineLimit(1)
+                    Text(dayLine).font(.caption).opacity(0.7).lineLimit(1)
+                }
+            }
+            .padding(.bottom, 8)
+            .accessibilityElement(children: .combine)
             Text("Home")
                 .font(.system(size: 50, weight: .light))
                 .accessibilityAddTraits(.isHeader)
@@ -207,7 +216,6 @@ struct HomeView: View {
     /// The four ways to start something, as the "+" menu reads (owner's reference): each its own dark liquid glass
     /// capsule, the white symbol before the name, in one row that scrolls sideways when they don't all fit.
     private var shortcuts: some View {
-        Section {
             ScrollView(.horizontal) {
                 GlassEffectContainer(spacing: GlassLook.current.merge ? 22 : 0) {
                 HStack(spacing: GlassLook.current.merge ? 6 : 10) {
@@ -220,9 +228,6 @@ struct HomeView: View {
             }
             .contentMargins(.horizontal, HomeView.inset, for: .scrollContent)
             .scrollIndicators(.hidden)
-        }
-        .bareRow()
-        .listSectionMargins(.horizontal, 0)
     }
 
     private func shortcut(_ title: String, symbol: String, action: @escaping () -> Void) -> some View {
@@ -232,8 +237,8 @@ struct HomeView: View {
                 Text(title).font(.body).lineLimit(1).fixedSize()
             }
             .foregroundStyle(.primary)
-            .padding(.vertical, 14)
-            .padding(.horizontal, 18)
+            .padding(.vertical, 11)
+            .padding(.horizontal, 16)
             .contentShape(.capsule)
         }
         .buttonStyle(.plain)
@@ -243,23 +248,23 @@ struct HomeView: View {
     /// A large search field on liquid glass (owner: larger than the system's, and glass), the page's first row.
     private var searchField: some View {
         HStack(spacing: 12) {
-            Image(systemName: "magnifyingglass").font(.system(size: 20, weight: .medium)).foregroundStyle(Color.primary.opacity(0.6))
+            Image(systemName: "magnifyingglass").font(.system(size: 17, weight: .medium)).foregroundStyle(Color.primary.opacity(0.6))
             TextField("", text: $query, prompt: Text("Mașină, client, lucrare, factură").foregroundStyle(Color.primary.opacity(0.5)))
-                .font(.system(size: 19))
+                .font(.system(size: 17))
                 .focused($searchFocused)
                 .submitLabel(.search)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
             if !query.isEmpty {
                 Button { query = "" } label: {
-                    Image(systemName: "xmark.circle.fill").font(.system(size: 20)).foregroundStyle(.secondary)
+                    Image(systemName: "xmark.circle.fill").font(.system(size: 18)).foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Șterge căutarea")
             }
         }
         .padding(.horizontal, HomeView.inset)
-        .frame(height: 58)
+        .frame(height: 48)
         .contentShape(.capsule)
         .onTapGesture { searchFocused = true }
         .glassEffect(GlassLook.current.glass, in: .capsule)
@@ -958,4 +963,32 @@ enum GlassLook: String {
         case .tinted: .clear.tint(.white.opacity(0.12)).interactive()
         }
     }
+}
+
+/// The shop's badge at the top of Home (owner): its initials in a ring of the hero's colour, on glass.
+private struct ShopBadge: View {
+    let name: String
+    let tint: Color
+
+    private var initials: String {
+        let words = name.split(whereSeparator: { $0 == " " || $0 == "-" }).filter { $0.first?.isLetter == true }
+        let letters = (words.count > 1 ? words.prefix(2).compactMap(\.first) : Array(words.first?.prefix(2) ?? ""))
+        return String(letters).uppercased().ifEmpty("G")
+    }
+
+    var body: some View {
+        Text(initials)
+            .font(.system(size: 16, weight: .bold, design: .rounded))
+            .foregroundStyle(.white)
+            .frame(width: 44, height: 44)
+            .background(LinearGradient(colors: [tint.mix(with: .white, by: 0.15), tint.mix(with: .black, by: 0.3)],
+                                       startPoint: .topLeading, endPoint: .bottomTrailing), in: .circle)
+            .overlay(Circle().strokeBorder(.white.opacity(0.7), lineWidth: 2))
+            .shadow(color: tint.opacity(0.45), radius: 8, y: 3)
+            .accessibilityHidden(true)
+    }
+}
+
+private extension String {
+    func ifEmpty(_ fallback: String) -> String { isEmpty ? fallback : self }
 }
