@@ -23,22 +23,24 @@ struct RootView: View {
         case .ready:
             TabView(selection: $tab) {
                 Tab("Azi", systemImage: "house", value: "azi") {
-                    HomeView(selectedTab: $tab)
+                    HomeView(selectedTab: $tab).tint(Color("AccentColor"))
                 }
                 Tab("Atelier", systemImage: "wrench.and.screwdriver", value: "atelier") {
-                    WorkOrdersView()
+                    WorkOrdersView().tint(Color("AccentColor"))
                 }
                 Tab("Agendă", systemImage: "calendar", value: "agenda") {
-                    AppointmentsView()
+                    AppointmentsView().tint(Color("AccentColor"))
                 }
                 Tab("Registru", systemImage: "square.grid.2x2", value: "registru") {
-                    RegistryView()
+                    RegistryView().tint(Color("AccentColor"))
                 }
                 .badge(store.reminders().count)
                 Tab(value: "cauta", role: .search) {
-                    SearchView()
+                    SearchView().tint(Color("AccentColor"))
                 }
             }
+            // The selected tab in the bar reads white, in light and dark (owner); each screen keeps the orange accent.
+            .tint(.white)
             .modifier(RunningJobAccessory())
             .safeAreaInset(edge: .bottom) {
                 UndoToastView().padding(.bottom, 64) // above the tab bar

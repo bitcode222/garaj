@@ -15,6 +15,12 @@ struct HomeView: View {
     @State private var jobStatus = "estimate"
     @State private var query = ""
     @FocusState private var searchFocused: Bool
+    /// The quick-create row is on screen: the "+" in the bar stays hidden until it scrolls away.
+    @State private var shortcutsVisible = true
+    @State private var editingLayout = false
+    /// Azi's sections, in the owner's order; the hidden ones (Editează).
+    @AppStorage(HomeLayout.orderKey) private var orderRaw = HomeLayout.defaultOrder
+    @AppStorage(HomeLayout.hiddenKey) private var hiddenRaw = ""
     @State private var booking: BookingForm.Target?
     @State private var paying: Invoice?
     @State private var period = "7d"
@@ -29,18 +35,23 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
+                    // The search bar is the page's first row: it scrolls with the page (owner: not pinned).
+                    Section { searchField }
+                        .bareRow()
+                        .listSectionMargins(.horizontal, 0)
                     if query.trimmingCharacters(in: .whitespaces).isEmpty {
                         shortcuts
-                        toConfirm.id("confirm")
-                        inShop.id("shop")
-                        toCollect.id("collect")
-                        numbers(proxy)
-                        analytics.id("analytics")
+                        let hidden = HomeLayout.hidden(hiddenRaw)
+                        ForEach(HomeLayout.order(orderRaw).filter { !hidden.contains($0) }, id: \.self) { key in
+                            section(key, proxy: proxy)
+                        }
                     } else {
                         Section { SearchResults(query: query) { path.append($0) } }.bareRow()
                     }
                 }
-                .groupedBackground()
+                .hero(height: 380)
+                // The shortcuts end ~200 pt down the page: past that, "+" shows in the bar.
+                .onScrollGeometryChange(for: Bool.self) { $0.contentOffset.y + $0.contentInsets.top < 190 } action: { _, visible in shortcutsVisible = visible }
                 .listStyle(.insetGrouped)
                 .listSectionSpacing(20)
                 .scrollDismissesKeyboard(.interactively)
@@ -56,27 +67,33 @@ struct HomeView: View {
                 }
                 #endif
             }
-            .navigationTitle(greeting)
-            .navigationSubtitle(dayLine)
-            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Mașină, client, lucrare, factură")
-            .searchFocused($searchFocused)
-            .searchPresentationToolbarBehavior(.avoidHidingContent) // the bar and the title stay put while searching
+            // No header (owner): no title at all, only Editează and, once the shortcuts are gone, "+".
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Editează") { editingLayout = true }
+                        .tint(.primary) // white on the gradient (the bar is dark there), ink once scrolled
+                }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button { searchFocused = false } label: { Label("Ascunde", systemImage: "keyboard.chevron.compact.down") }
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Button { booking = .new } label: { Label("Programare nouă", systemImage: "calendar.badge.plus") }
-                        Button { openJob("estimate") } label: { Label("Deviz nou", systemImage: "doc.text.magnifyingglass") }
-                        Button { openJob("in_progress") } label: { Label("Lucrare nouă", systemImage: "car.badge.gearshape") }
-                        Button { path.append(.invoice(store.createInvoiceDraft().id)) } label: { Label("Factură nouă", systemImage: "doc.badge.plus") }
-                    } label: {
-                        Label("Adaugă", systemImage: "plus")
+                if !shortcutsVisible {
+                    ToolbarItem(placement: .primaryAction) {
+                        Menu {
+                            Button { booking = .new } label: { Label("Programare nouă", systemImage: "calendar.badge.plus") }
+                            Button { openJob("estimate") } label: { Label("Deviz nou", systemImage: "doc.text.magnifyingglass") }
+                            Button { openJob("in_progress") } label: { Label("Lucrare nouă", systemImage: "car.badge.gearshape") }
+                            Button { path.append(.invoice(store.createInvoiceDraft().id)) } label: { Label("Factură nouă", systemImage: "doc.badge.plus") }
+                        } label: {
+                            Label("Adaugă", systemImage: "plus")
+                        }
                     }
                 }
             }
+            .animation(.snappy, value: shortcutsVisible)
+            .sheet(isPresented: $editingLayout) { HomeLayoutSheet() }
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .job(let id): WorkOrderDetailView(id: id)
@@ -109,36 +126,65 @@ struct HomeView: View {
         return "\(day) · \(openDays.contains(weekday - 1) ? "deschis \(shop.hoursOpen)–\(shop.hoursClose)" : "închis azi")"
     }
 
-    /// The four ways to start something: liquid glass buttons, two by two, the symbol before the name.
+    /// The four ways to start something, as the "+" menu reads (owner's reference): each its own dark liquid glass
+    /// capsule, the white symbol before the name, in one row that scrolls sideways when they don't all fit.
     private var shortcuts: some View {
         Section {
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                shortcut("Programare", symbol: "calendar.badge.plus") { booking = .new }
-                shortcut("Lucrare", symbol: "wrench.and.screwdriver.fill") { openJob("in_progress") }
-                shortcut("Deviz", symbol: "list.bullet.clipboard.fill") { openJob("estimate") }
-                shortcut("Factură", symbol: "doc.text.fill") { path.append(.invoice(store.createInvoiceDraft().id)) }
+            ScrollView(.horizontal) {
+                HStack(spacing: 10) {
+                    shortcut("Programare nouă", symbol: "calendar.badge.plus") { booking = .new }
+                    shortcut("Deviz nou", symbol: "doc.text.magnifyingglass") { openJob("estimate") }
+                    shortcut("Lucrare nouă", symbol: "car.badge.gearshape") { openJob("in_progress") }
+                    shortcut("Factură nouă", symbol: "doc.badge.plus") { path.append(.invoice(store.createInvoiceDraft().id)) }
+                }
             }
+            .contentMargins(.horizontal, 20, for: .scrollContent)
+            .scrollIndicators(.hidden)
+            .environment(\.colorScheme, .dark) // on the hero gradient: dark glass, white names
         }
         .bareRow()
+        .listSectionMargins(.horizontal, 0)
     }
 
     private func shortcut(_ title: String, symbol: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 10) {
-                Image(systemName: symbol)
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(Color.accentColor)
-                    .frame(width: 24)
-                Text(title).font(.body.weight(.semibold)).foregroundStyle(.primary).lineLimit(1).minimumScaleFactor(0.85)
-                Spacer(minLength: 0)
+                Image(systemName: symbol).font(.system(size: 18)).frame(width: 24)
+                Text(title).font(.body).lineLimit(1).fixedSize()
             }
-            .padding(.vertical, 8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(.rect)
+            .foregroundStyle(.white)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 4)
         }
         .buttonStyle(.glass)
         .controlSize(.large)
-        .accessibilityLabel(title == "Factură" || title == "Programare" ? "\(title) nouă" : "\(title) nou")
+    }
+
+    /// A large search field on liquid glass (owner: larger than the system's, and glass), the page's first row.
+    private var searchField: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "magnifyingglass").font(.system(size: 20, weight: .medium)).foregroundStyle(Color.primary.opacity(0.6))
+            TextField("", text: $query, prompt: Text("Mașină, client, lucrare, factură").foregroundStyle(Color.primary.opacity(0.5)))
+                .font(.system(size: 19))
+                .focused($searchFocused)
+                .submitLabel(.search)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+            if !query.isEmpty {
+                Button { query = "" } label: {
+                    Image(systemName: "xmark.circle.fill").font(.system(size: 20)).foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Șterge căutarea")
+            }
+        }
+        .padding(.horizontal, 20)
+        .frame(height: 58)
+        .contentShape(.capsule)
+        .onTapGesture { searchFocused = true }
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .environment(\.colorScheme, .dark) // on the hero gradient: dark glass, white text
+        .padding(.horizontal, 20)
     }
 
     private func openJob(_ status: String) {
@@ -192,27 +238,25 @@ struct HomeView: View {
         let vehicles = byId(Vehicle.self), customers = byId(Customer.self), staff = byId(Staff.self)
         let index = shown.firstIndex { $0.id == cover } ?? 0
         return Section {
-            HStack(alignment: .firstTextBaseline) {
-                homeHeader("În atelier", subtitle: total == 0 ? nil : "\(total) \(total == 1 ? "mașină" : "mașini") · \(ready > 0 ? "\(ready) gata de predare" : "niciuna gata încă")") {
-                    selectedTab.wrappedValue = "atelier"
-                }
-                Spacer()
-                if total > 0 {
-                    Menu {
-                        Picker("Etapa", selection: $stage) {
-                            Text("Toate · \(total)").tag(String?.none)
-                            ForEach(groups) { g in Text("\(Labels.workOrder(g.key).label) · \(g.items.count)").tag(Optional(g.key)) }
-                        }
-                    } label: {
-                        Label(stage.map { Labels.workOrder($0).label } ?? "Toate", systemImage: "line.3.horizontal.decrease")
-                            .font(.footnote.weight(.semibold))
-                            .textCase(nil)
-                    }
-                    .tint(.primary)
-                }
+            homeHeader("Lucrări", subtitle: total == 0 ? nil : "\(total) \(total == 1 ? "mașină" : "mașini") în service · \(ready > 0 ? "\(ready) gata de predare" : "niciuna gata încă")") {
+                selectedTab.wrappedValue = "atelier"
             }
             .padding(.horizontal, 20)
             .bareRow()
+            if total > 0 {
+                // The stages as pills (owner: instead of the "Toate" menu).
+                ChipRow {
+                    CountChip(title: "Toate", count: total, on: stage == nil) { stage = nil; cover = nil }
+                    ForEach(groups) { g in
+                        CountChip(title: Labels.workOrder(g.key).label, count: g.items.count, on: stage == g.key) {
+                            stage = stage == g.key ? nil : g.key
+                            cover = nil
+                        }
+                    }
+                }
+                .sensoryFeedback(.selection, trigger: stage)
+                .bareRow()
+            }
             if total == 0 {
                 Text("Nicio mașină în service acum.").foregroundStyle(.secondary).padding(.horizontal, 20).bareRow()
             } else {
@@ -387,6 +431,38 @@ struct HomeView: View {
         .foregroundStyle(.primary)
         .padding(.bottom, 4)
         .accessibilityAddTraits(.isHeader)
+    }
+
+    /// Nothing to confirm: the section shrinks to one line with a check (owner).
+    private var allConfirmed: some View {
+        Section {
+            Label {
+                Text("Toate programările sunt confirmate")
+            } icon: {
+                Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+            }
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 20)
+            .bareRow()
+        }
+        .listSectionMargins(.horizontal, 0)
+    }
+
+    @ViewBuilder private func section(_ key: String, proxy: ScrollViewProxy) -> some View {
+        switch key {
+        case "confirm":
+            if Agenda.bookingsToConfirm(store.all(Appointment.self), now: Dates.instant()).total == 0 {
+                allConfirmed.id("confirm")
+            } else {
+                toConfirm.id("confirm")
+            }
+        case "shop": inShop.id("shop")
+        case "collect": toCollect.id("collect")
+        case "numbers": numbers(proxy).id("numbers")
+        case "analytics": analytics.id("analytics")
+        default: EmptyView()
+        }
     }
 
     private func groupLabel(_ g: Agenda.BookingGroup) -> String {
@@ -714,5 +790,79 @@ struct SearchView: View {
                 }
             }
         }
+    }
+}
+
+/// Azi's sections under the search bar and the shortcuts: which ones and in which order (Editează), kept on the phone.
+enum HomeLayout {
+    static let orderKey = "home.sections"
+    static let hiddenKey = "home.hidden"
+    static let defaultOrder = "confirm,shop,collect,numbers,analytics"
+    static let all: [(key: String, label: String, symbol: String)] = [
+        ("confirm", "De confirmat", "checkmark.circle"),
+        ("shop", "Lucrări", "wrench.and.screwdriver"),
+        ("collect", "De încasat", "banknote"),
+        ("numbers", "Cifrele zilei", "square.grid.2x2"),
+        ("analytics", "Analiză", "chart.xyaxis.line"),
+    ]
+
+    /// The stored order, without unknown keys, with any new section appended.
+    static func order(_ raw: String) -> [String] {
+        let known = Set(all.map(\.key))
+        var keys = raw.split(separator: ",").map(String.init).filter { known.contains($0) }
+        for k in all.map(\.key) where !keys.contains(k) { keys.append(k) }
+        return keys
+    }
+
+    static func hidden(_ raw: String) -> Set<String> { Set(raw.split(separator: ",").map(String.init)) }
+}
+
+/// Editează Azi: drag to reorder the sections, switch each one on or off.
+private struct HomeLayoutSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @AppStorage(HomeLayout.orderKey) private var orderRaw = HomeLayout.defaultOrder
+    @AppStorage(HomeLayout.hiddenKey) private var hiddenRaw = ""
+
+    var body: some View {
+        let order = HomeLayout.order(orderRaw)
+        let hidden = HomeLayout.hidden(hiddenRaw)
+        NavigationStack {
+            List {
+                Section {
+                    ForEach(order, id: \.self) { key in
+                        let item = HomeLayout.all.first { $0.key == key }
+                        Toggle(isOn: Binding(get: { !hidden.contains(key) }, set: { on in
+                            var next = hidden
+                            if on { next.remove(key) } else { next.insert(key) }
+                            hiddenRaw = order.filter(next.contains).joined(separator: ",")
+                        })) {
+                            Label(item?.label ?? key, systemImage: item?.symbol ?? "square")
+                        }
+                    }
+                    .onMove { from, to in
+                        var next = order
+                        next.move(fromOffsets: from, toOffset: to)
+                        orderRaw = next.joined(separator: ",")
+                    }
+                } footer: {
+                    Text("Căutarea și butoanele de creare rămân sus. Trage de ≡ ca să schimbi ordinea.")
+                }
+                Section {
+                    Button("Revino la ordinea inițială") {
+                        orderRaw = HomeLayout.defaultOrder
+                        hiddenRaw = ""
+                    }
+                }
+            }
+            .groupedBackground()
+            .environment(\.editMode, .constant(.active))
+            .navigationTitle("Editează Azi")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) { Button("Gata") { dismiss() } }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .sensoryFeedback(.selection, trigger: orderRaw)
     }
 }
