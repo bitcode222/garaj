@@ -81,13 +81,13 @@ struct InvoiceDetailView: View {
                     VStack(spacing: 10) {
                         if ["issued", "partial", "overdue"].contains(state) {
                             Button { paying = invoice } label: {
-                                Text("Încasează \(Money.format(balance, currency: currency))")
+                                Label("Încasează \(Money.format(balance, currency: currency))", systemImage: "banknote")
                             }
                             .buttonStyle(.primary)
                         }
                         if let phone = customer?.phone, !phone.isEmpty, invoice.stornoOf == nil,
                            let url = People.whatsappURL(phone, text: InvoiceRules.message(invoice, balance: balance, settings: store.settings)) {
-                            Link("Trimite pe WhatsApp", destination: url)
+                            Link(destination: url) { Label("Trimite pe WhatsApp", systemImage: "text.bubble") }
                                 .buttonStyle(.secondary)
                         }
                     }
