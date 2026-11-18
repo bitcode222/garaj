@@ -39,9 +39,8 @@ struct RootView: View {
                     SearchView().tint(Color("AccentColor"))
                 }
             }
-            // The selected tab in the bar reads white (black in light mode, where white would vanish on the glass);
-            // each screen keeps the orange accent.
-            .tint(.primary)
+            // The selected tab in the bar reads white, in light and dark (owner); each screen keeps the orange accent.
+            .tint(.white)
             .modifier(RunningJobAccessory())
             .safeAreaInset(edge: .bottom) {
                 UndoToastView().padding(.bottom, 64) // above the tab bar
