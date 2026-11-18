@@ -279,15 +279,6 @@ enum HeroMood: Equatable {
     }
 
     var color: Color { Color(red: rgb.r, green: rgb.g, blue: rgb.b) }
-
-    /// The text colour on the hero (owner: inverted against the background): the inverse of the colour that sits
-    /// under the title (light mode: the vivid colour; dark mode: its glow on near-black), made darker or lighter to read.
-    func ink(_ scheme: ColorScheme) -> Color {
-        // A mid-tone inverts to a mid-tone, so keep the inverse hue and push it away from the background's lightness.
-        let k = scheme == .dark ? 0.6 : 1.0, base = scheme == .dark ? 0.05 : 0.0
-        let inverse = Color(red: 1 - (rgb.r * k + base), green: 1 - (rgb.g * k + base), blue: 1 - (rgb.b * k + base))
-        return scheme == .dark ? inverse.mix(with: .white, by: 0.4) : inverse.mix(with: .black, by: 0.5)
-    }
 }
 
 struct HeroBackground: ViewModifier {
