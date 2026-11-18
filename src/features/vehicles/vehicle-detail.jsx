@@ -21,7 +21,9 @@ import { computeTotals } from "@/domain/lines";
 import { reminderMessage } from "@/domain/reminders";
 import { deadline, estimateKm, kmPerDay, lastReading, serviceDue, vehicleName } from "@/domain/vehicle";
 import { fmtDate, fmtKm, fmtRelativeTo, fmtWorkOrder } from "@/lib/format";
-import { useQueryId } from "@/lib/hooks";
+import { useMediaQuery, useQueryId } from "@/lib/hooks";
+import { PHONE } from "@/components/ds/nav-bar";
+import { PhoneCar } from "@/features/phone/record-pages";
 import { DEADLINE_STATUS, FUELS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { closeSheet, openSheet } from "@/lib/sheets";
 import { tone } from "@/lib/tones";
@@ -36,7 +38,10 @@ export function VehicleDetail() {
 	const id = useQueryId();
 	const ready = useIsReady();
 	const vehicle = useEntity("vehicles", id);
+	const phone = useMediaQuery(PHONE);
 	if (!ready) return <DetailPageSkeleton />;
+	// A phone is the iPhone's car page, strictly (docs/DESIGN.md "Telefon ca iPhone").
+	if (vehicle && phone) return <PhoneCar key={vehicle.id} vehicle={vehicle} />;
 	if (!vehicle) {
 		return (
 			<Page>
