@@ -95,7 +95,8 @@ struct CoverCard<Actions: View>: View {
     var person: String? = nil
     /// Small counts under the text, each an icon and a number (a job's operations and parts).
     var counts: [(symbol: String, text: String)] = []
-    /// At the end of the counts row, in bold (a job's total).
+    /// Just above the button: who works on it (left) and the total in bold (right).
+    var worker: String? = nil
     var total: String? = nil
     var next: (label: String, symbol: String, run: () -> Void)?
     let open: () -> Void
@@ -138,8 +139,6 @@ struct CoverCard<Actions: View>: View {
                                     .background(ink.opacity(0.14), in: .capsule)
                                     .accessibilityElement(children: .combine)
                             }
-                            Spacer(minLength: 4)
-                            if let total { Text(total).font(.headline).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7) }
                         }
                         .padding(.top, 6)
                     }
@@ -149,6 +148,16 @@ struct CoverCard<Actions: View>: View {
             }
             .buttonStyle(.plain)
             Spacer(minLength: 10)
+            if worker != nil || total != nil {
+                HStack(spacing: 8) {
+                    if let worker {
+                        Label(worker, systemImage: "wrench.adjustable").font(.subheadline.weight(.medium)).lineLimit(1).opacity(0.85)
+                    }
+                    Spacer(minLength: 4)
+                    if let total { Text(total).font(.headline).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7) }
+                }
+                .padding(.bottom, 8)
+            }
             HStack(spacing: 10) {
                 if let next {
                     Button(action: next.run) { Label(next.label, systemImage: next.symbol) }
