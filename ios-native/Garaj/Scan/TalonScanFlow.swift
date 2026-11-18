@@ -1,10 +1,13 @@
 @preconcurrency import AVFoundation
+import PDFKit
 import PhotosUI
 import SwiftUI
+import UniformTypeIdentifiers
 
 // Scanning a talon (owner, 18 Nov 2026, after their reference): the camera with a frame that follows the page's
 // corners and "Ține nemișcat" once they hold still; then "Arată bine?" with Decupează / Rotește, Confirmă or Refă;
-// then what was read, to check, and the car saved with its talon. Dark throughout, like a camera.
+// then what was read, to check, with the client to pick; then what comes next (only the car, a deviz, a job or a
+// booking). The picture comes from the camera, the photo library or Files (a picture or a PDF).
 
 struct TalonScanFlow: View {
     @Environment(\.dismiss) private var dismiss
@@ -13,6 +16,9 @@ struct TalonScanFlow: View {
 
     private enum Step { case camera, review, reading, details, saved }
     @State private var step: Step
+    /// A PDF's other pages, tried in turn when the first one doesn't read as a talon.
+    @State private var extraPages: [UIImage] = []
+    @State private var next: TalonNext = .car
     @State private var original: UIImage?
     @State private var quad: Quad?
     @State private var turns = 0
@@ -30,7 +36,7 @@ struct TalonScanFlow: View {
         ZStack {
             switch step {
             case .camera:
-                TalonCameraScreen(close: { dismiss() }, took: { take($0) })
+                TalonCameraScreen(close: { dismiss() }, took: { take($0, more: $1) })
                     .transition(.opacity)
             case .review, .reading:
                 TalonReviewScreen(page: page, reading: step == .reading,
@@ -38,20 +44,15 @@ struct TalonScanFlow: View {
                                   confirm: { Task { await read() } }, retake: { retake() })
                     .transition(.opacity)
             case .details:
-                TalonDetailsScreen(data: $data, page: page, back: { step = .review }) { id in
+                TalonDetailsScreen(data: $data, page: page, retake: { retake() }, cancel: { dismiss() }) { id, then in
                     if let page { TalonFiles.save(page, vehicleId: id) }
                     savedId = id
+                    next = then
                     withAnimation { step = .saved }
                 }
                 .transition(.move(edge: .trailing))
             case .saved:
-                NavigationStack {
-                    if let savedId {
-                        VehicleDetailView(id: savedId)
-                            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Gata") { dismiss() } } }
-                    }
-                }
-                .transition(.move(edge: .trailing))
+                if let savedId { TalonDoneScreen(vehicleId: savedId, next: next, close: { dismiss() }).transition(.move(edge: .trailing)) }
             }
         }
         .animation(.smooth(duration: 0.3), value: step)
@@ -65,7 +66,7 @@ struct TalonScanFlow: View {
         }
         .task {
             guard let startImage else { return }
-            take(startImage)
+            take(startImage, more: [])
             #if DEBUG
             // Screenshots: `-GarajScanRead 1` confirms the picture straight away.
             if UserDefaults.standard.string(forKey: "GarajScanRead") != nil {
@@ -76,7 +77,8 @@ struct TalonScanFlow: View {
         }
     }
 
-    private func take(_ image: UIImage) {
+    private func take(_ image: UIImage, more: [UIImage]) {
+        extraPages = more
         Task {
             let up = DocumentProcessor.upright(image)
             original = up
@@ -103,7 +105,7 @@ struct TalonScanFlow: View {
     }
 
     private func retake() {
-        original = nil; quad = nil; page = nil; turns = 0
+        original = nil; quad = nil; page = nil; turns = 0; extraPages = []
         step = startImage == nil ? .camera : .review
         if startImage != nil { dismiss() }
     }
@@ -123,6 +125,11 @@ struct TalonScanFlow: View {
                 if score(t) > score(best) { best = t; bestPage = turned }
             }
         }
+        // A PDF: its next pages when the first didn't read (the talon is often page 2 of a scan).
+        for extra in extraPages where score(best) < 2 {
+            let t = TalonParser.parse(await DocumentProcessor.readText(extra))
+            if score(t) > score(best) { best = t; bestPage = extra }
+        }
         self.page = bestPage
         data = best
         withAnimation { step = .details }
@@ -137,7 +144,8 @@ struct TalonScanFlow: View {
 
 private struct TalonCameraScreen: View {
     let close: () -> Void
-    let took: (UIImage) -> Void
+    /// The picture, and a PDF's other pages.
+    let took: (UIImage, [UIImage]) -> Void
 
     @State private var engine = CameraEngine()
     @State private var available: Bool?
@@ -146,6 +154,10 @@ private struct TalonCameraScreen: View {
     @State private var flash: AVCaptureDevice.FlashMode = .auto
     @State private var capturing = false
     @State private var picked: PhotosPickerItem?
+    @State private var choosing = false
+    @State private var pickingPhoto = false
+    @State private var pickingFile = false
+    @State private var problem: String?
 
     /// Corners found in each of the last four searches (about half a second), all within 2% of each other.
     private var steady: Bool {
@@ -164,7 +176,10 @@ private struct TalonCameraScreen: View {
                     ContentUnavailableView {
                         Label("Camera nu e disponibilă", systemImage: "camera.fill")
                     } description: {
-                        Text("Dă voie aplicației la cameră din Setări, sau alege o poză a talonului.")
+                        Text("Dă voie aplicației la cameră din Setări, sau alege o poză ori un PDF al talonului.")
+                    } actions: {
+                        Button("Alege din galerie", systemImage: "photo.on.rectangle") { pickingPhoto = true }
+                        Button("Alege din fișiere", systemImage: "folder") { pickingFile = true }
                     }
                     .frame(maxHeight: .infinity)
                 }
@@ -210,13 +225,31 @@ private struct TalonCameraScreen: View {
             available = await engine.start()
         }
         .onDisappear { engine.stop() }
+        .confirmationDialog("Scanează din", isPresented: $choosing, titleVisibility: .visible) {
+            Button("Galerie foto") { pickingPhoto = true }
+            Button("Fișiere (poză sau PDF)") { pickingFile = true }
+        }
+        .photosPicker(isPresented: $pickingPhoto, selection: $picked, matching: .images)
+        .fileImporter(isPresented: $pickingFile, allowedContentTypes: [.image, .pdf]) { result in
+            switch result {
+            case .success(let url): open(url)
+            case .failure: problem = "Fișierul nu s-a putut deschide."
+            }
+        }
         .onChange(of: picked) { _, item in
             guard let item else { return }
             Task {
-                if let data = try? await item.loadTransferable(type: Data.self), let image = UIImage(data: data) { took(image) }
+                if let data = try? await item.loadTransferable(type: Data.self), let image = UIImage(data: data) {
+                    took(image, [])
+                } else {
+                    problem = "Poza nu s-a putut încărca. Dacă e în iCloud, așteaptă să se descarce și încearcă din nou."
+                }
                 picked = nil
             }
         }
+        .alert("Nu se poate", isPresented: Binding(get: { problem != nil }, set: { if !$0 { problem = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: { Text(problem ?? "") }
     }
 
     private var controls: some View {
@@ -244,10 +277,10 @@ private struct TalonCameraScreen: View {
             .disabled(available != true || capturing)
             .opacity(available == true ? 1 : 0.4)
             Spacer()
-            PhotosPicker(selection: $picked, matching: .images) {
+            Button { choosing = true } label: {
                 Image(systemName: "photo.on.rectangle").font(.title2).frame(width: 72, height: 44, alignment: .trailing)
             }
-            .accessibilityLabel("Alege o poză")
+            .accessibilityLabel("Alege din galerie sau din fișiere")
         }
     }
 
@@ -257,8 +290,25 @@ private struct TalonCameraScreen: View {
             let image = data.flatMap(UIImage.init(data:))
             Task { @MainActor in
                 capturing = false
-                if let image { took(image) }
+                if let image { took(image, []) } else { problem = "Poza nu s-a putut face. Încearcă din nou." }
             }
+        }
+    }
+
+    /// A picture or a PDF from Files. A PDF gives its first pages (the talon may be any of them).
+    private func open(_ url: URL) {
+        let scoped = url.startAccessingSecurityScopedResource()
+        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+        if UTType(filenameExtension: url.pathExtension)?.conforms(to: .pdf) == true {
+            guard let pdf = PDFDocument(url: url) else { problem = "PDF-ul nu s-a putut deschide."; return }
+            if pdf.isLocked { problem = "PDF-ul e protejat cu parolă. Deschide-l, salvează-l fără parolă și încearcă din nou."; return }
+            let pages = DocumentProcessor.images(of: pdf, limit: 4)
+            guard let first = pages.first else { problem = "PDF-ul nu are nicio pagină."; return }
+            took(first, Array(pages.dropFirst()))
+        } else if let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
+            took(image, [])
+        } else {
+            problem = "Fișierul nu e o poză sau un PDF."
         }
     }
 
@@ -508,102 +558,3 @@ private struct TalonCropScreen: View {
     }
 }
 
-// MARK: - What was read
-
-private struct TalonDetailsScreen: View {
-    @Environment(AppStore.self) private var store
-    @Binding var data: TalonData
-    let page: UIImage?
-    let back: () -> Void
-    let saved: (String) -> Void
-    @State private var error: String?
-
-    var body: some View {
-        let match = store.vehicleMatching(data)
-        let owner = store.customerMatching(name: data.owner)
-        NavigationStack {
-            Form {
-                if let page {
-                    Section {
-                        Image(uiImage: page).resizable().scaledToFit().frame(maxHeight: 180).frame(maxWidth: .infinity)
-                            .clipShape(.rect(cornerRadius: 8))
-                    }
-                    .listRowBackground(Color.clear)
-                }
-                Section {
-                    field("Nr. înmatriculare", text: $data.plate, caps: true)
-                    field("VIN", text: $data.vin, caps: true)
-                    field("Marcă", text: $data.make)
-                    field("Model", text: $data.model)
-                    LabeledContent("An") {
-                        TextField("An", value: $data.year, format: .number.grouping(.never))
-                            .keyboardType(.numberPad).multilineTextAlignment(.trailing)
-                    }
-                    field("Motor", text: $data.engine)
-                    Picker("Combustibil", selection: $data.fuel) {
-                        Text("—").tag("")
-                        ForEach(Inventory.fuels, id: \.key) { Text($0.label).tag($0.key) }
-                    }
-                    field("Culoare", text: $data.color)
-                } header: {
-                    Text("Mașina")
-                } footer: {
-                    Text(match.map { "Există deja \(People.formatPlate($0.plate))\($0.title.isEmpty ? "" : " (\($0.title))"). Se completează cu ce s-a citit." }
-                         ?? "Mașină nouă.")
-                }
-                Section {
-                    field("Nume", text: $data.owner)
-                    field("Adresă", text: $data.address)
-                } header: {
-                    Text("Proprietar")
-                } footer: {
-                    Text(data.owner.isEmpty ? (match != nil ? "Rămâne proprietarul de acum." : "Completează proprietarul.")
-                         : owner.map { "Client existent: \($0.name)." } ?? "Client nou.")
-                }
-            }
-            .navigationTitle("Ce am citit")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Înapoi", systemImage: "chevron.left", action: back) }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(match == nil ? "Adaugă" : "Actualizează") { save() }.fontWeight(.semibold)
-                }
-            }
-            .alert("Nu se poate salva", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
-                Button("OK", role: .cancel) {}
-            } message: { Text(error ?? "") }
-        }
-    }
-
-    private func field(_ label: String, text: Binding<String>, caps: Bool = false) -> some View {
-        LabeledContent(label) {
-            TextField(label, text: text)
-                .multilineTextAlignment(.trailing)
-                .textInputAutocapitalization(caps ? .characters : .words)
-                .autocorrectionDisabled()
-        }
-    }
-
-    private func save() {
-        do { saved(try store.saveTalon(data).id) } catch { self.error = error.localizedDescription }
-    }
-}
-
-// MARK: - The button
-
-/// The round white camera button beside the running job (or alone, with its label) above the tab bar.
-struct ScanTalonButton: View {
-    let open: () -> Void
-    var body: some View {
-        Button(action: open) {
-            Image(systemName: "camera.viewfinder")
-                .font(.system(size: 17, weight: .semibold))
-                .foregroundStyle(.black)
-                .frame(width: 38, height: 38)
-                .background(.white, in: .circle)
-                .shadow(color: .black.opacity(0.15), radius: 3, y: 1)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Scanează talonul")
-    }
-}

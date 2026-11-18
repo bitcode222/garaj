@@ -17,6 +17,14 @@ struct NewWorkOrderSheet: View {
     @State private var serviceIds: [String] = []
     @State private var error: String?
 
+    /// `customerId` and `vehicleId` start the form with them chosen (a scanned talon's car).
+    init(status: String = "estimate", customerId: String? = nil, vehicleId: String? = nil, onCreated: @escaping (String) -> Void) {
+        self.status = status
+        self.onCreated = onCreated
+        _customerId = State(initialValue: customerId)
+        _vehicleId = State(initialValue: vehicleId)
+    }
+
     var body: some View {
         let customers = store.all(Customer.self).sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
         let vehicles = store.all(Vehicle.self)

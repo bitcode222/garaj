@@ -42,6 +42,14 @@ struct TalonTests {
         #expect(TalonParser.parse(["А. В 123 АВС"]).plate == "B 123 ABC")
     }
 
+    @Test func leasingOwnerGoesAside() {
+        let t = TalonParser.parse(["C.1.1 IONESCU", "C.1.2 MARIA", "C.2.1 BCR LEASING IFN SA"])
+        #expect(t.owner == "Ionescu Maria")
+        #expect(t.otherName == "BCR Leasing IFN SA")
+        let same = TalonParser.parse(["C.1.1 POPESCU", "C.1.2 ION", "C.2.1 POPESCU", "C.2.2 ION"])
+        #expect(same.owner == "Popescu Ion" && same.otherName.isEmpty)
+    }
+
     @Test func wordsAreNotCodes() {
         let t = TalonParser.parse(["AUDI", "BENZINA", "E-MAIL"])
         #expect(t.isEmpty)

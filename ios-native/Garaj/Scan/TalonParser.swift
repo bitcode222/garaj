@@ -13,6 +13,8 @@ struct TalonData: Equatable, Sendable {
     var color = ""
     var owner = ""
     var address = ""
+    /// The other name on the talon when holder (C.1) and owner (C.2) differ, e.g. the leasing company.
+    var otherName = ""
 
     var isEmpty: Bool { plate.isEmpty && vin.isEmpty && make.isEmpty && model.isEmpty && owner.isEmpty }
 }
@@ -43,10 +45,14 @@ enum TalonParser {
         if let cc = field("P.1").flatMap({ Int($0.filter(\.isNumber).prefix(5)) }), cc >= 50, cc <= 20_000 { out.engine = "\(cc) cm³" }
         out.fuel = field("P.3").map(fuelKey) ?? ""
         out.color = field("R").map(title) ?? ""
-        // C.2 is the owner, C.1 the holder; either is the client who brings the car.
-        let surname = field("C.2.1") ?? field("C.1.1")
-        let given = field("C.2.1") != nil ? field("C.2.2") : field("C.1.2")
-        out.owner = [surname, given].compactMap { $0 }.map(title).joined(separator: " ")
+        // C.2 is the owner, C.1 the holder. For a leased or company car they differ: the client who brings the car
+        // is the one that isn't a leasing company, so that one comes first and the other is kept aside.
+        let name = { (a: String, b: String) in [field(a), field(b)].compactMap { $0 }.map(title).joined(separator: " ") }
+        let owner = name("C.2.1", "C.2.2"), holder = name("C.1.1", "C.1.2")
+        let names = [owner, holder].filter { !$0.isEmpty }.reduce(into: [String]()) { if !$0.contains($1) { $0.append($1) } }
+        let ordered = names.sorted { !isLeasing($0) && isLeasing($1) }
+        out.owner = ordered.first ?? ""
+        out.otherName = ordered.dropFirst().first ?? ""
         out.address = (field("C.2.3") ?? field("C.1.3")).map(title) ?? ""
         return out
     }
@@ -132,6 +138,12 @@ enum TalonParser {
         return y
     }
 
+    /// A leasing or rental company: the car's owner on paper, not the client.
+    static func isLeasing(_ name: String) -> Bool {
+        let t = name.uppercased()
+        return ["LEASING", "LEASE", "IFN", "RENT", "FINANCIAR"].contains { t.contains($0) }
+    }
+
     private static func fuelKey(_ text: String) -> String {
         let t = text.uppercased()
         if t.contains("HIBRID") || t.contains("HYBRID") { return "hybrid" }
@@ -157,9 +169,12 @@ enum TalonParser {
 
     /// "POPESCU ION" → "Popescu Ion"; keeps company forms (SRL), engine badges (TDI) and tokens with digits (A4).
     static func title(_ text: String) -> String {
-        text.split(separator: " ").map { word -> String in
-            let w = String(word)
-            if w.contains(where: \.isNumber) || acronyms.contains(w.uppercased().trimmingCharacters(in: .punctuationCharacters)) {
+        let words = text.split(separator: " ").map(String.init)
+        // In a company's name short words are initials (BCR, ING): they stay in capitals.
+        let company = words.contains { ["SRL", "SA", "IFN", "PFA", "SNC", "SCS"].contains($0.uppercased().trimmingCharacters(in: .punctuationCharacters)) }
+        return words.map { w -> String in
+            let bare = w.uppercased().trimmingCharacters(in: .punctuationCharacters)
+            if w.contains(where: \.isNumber) || acronyms.contains(bare) || (company && bare.count <= 3 && bare.allSatisfy(\.isLetter)) {
                 return w.uppercased()
             }
             return w.lowercased().split(separator: "-").map { $0.prefix(1).uppercased() + $0.dropFirst() }.joined(separator: "-")

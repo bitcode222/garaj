@@ -117,12 +117,33 @@ Tabs: **Azi · Atelier · Agendă · Registru**, and search as its own tab (`Tab
 
 ## 10. Talon scanner (18 Nov 2026, iPhone only)
 
-The owner asked for document scanning as a real feature, after a reference with a camera frame and a "Looking good?" review; they picked **Talon → car** and **a round button beside the job bar**.
+The owner asked for document scanning as a real feature, after a reference with a camera frame and a "Looking good?" review. They picked **Talon → car**. Round 2 put the button in the tab bar, added photos and Files as sources, and asks what comes next.
 
-- **Button:** the bar above the tab bar is always shown now. It holds the running job, or "Scanează talonul" when none runs, and a white round camera button on the right.
-- **Camera** (`Scan/DocumentScanner.swift`, `Scan/TalonScanFlow.swift`): the back camera with a live search for the page's edges (Vision, about 8 a second). White corner marks follow the page and say "Ține nemișcat" once it holds still. Flash Auto / Pornit / Oprit, "Fă poza", or pick a photo.
-- **Review:** "Arată bine?" with the page cut along its corners and straightened. Decupează (drag the four corners), Rotește, Confirmă talonul, Refă.
-- **Reading:** text recognition, then `TalonParser` reads the EU codes: A plate, B first registration (year), C.2/C.1 owner and address, D.1 make, D.3 model, E VIN, P.1 cc, P.3 fuel, R colour. The plate and VIN are also found by their shape, Cyrillic look-alikes and O/0, I/1 in the VIN are fixed, and a sideways photo is tried all four ways.
-- **Saving:** "Ce am citit" shows every field to check. It matches an existing car by plate or VIN and the owner by name, then adds or updates (`AppStore.saveTalon`). The picture is kept in the app's documents (`Scans/<car id>-talon.jpg`) and shown under Documente on the car.
+- **Button:** "Scanează" is the round button beside the four tabs. The tab bar holds four tabs plus one round button, so the scanner took search's place; search stays at the top of Azi, with the same results. Choosing the button opens the scanner over the current tab.
+- **Sources:**
+  - **Camera:** live edge search (Vision, about 8 a second), with white corner marks that follow the page. "Ține nemișcat" shows once it holds still. Flash Auto / Pornit / Oprit and "Fă poza".
+  - **Photo library or Files:** a picture, or a PDF whose first four pages are tried in turn.
+  - **Without the camera** (no permission, or the simulator): the gallery and Files buttons sit in the middle of the screen.
+  - **Large pictures:** scaled to 3000 px to save memory.
+- **Review:** "Arată bine?" with the page cut and straightened. Decupează (drag the four corners), Rotește, Confirmă talonul, Refă.
+- **Reading:** `TalonParser` reads the EU codes: A plate, B year, C.1 holder, C.2 owner, C.x.3 address, D.1 make, D.3 model, E VIN, P.1 cc, P.3 fuel, R colour.
+  - Plate and VIN are also found by their shape.
+  - Cyrillic look-alikes and O/0, I/1 in the VIN are fixed.
+  - A sideways picture is tried all four ways.
+  - When holder and owner differ, the leasing company goes aside and the other name is the client.
+- **"Ce am citit":** nothing is saved yet.
+  - **Status:** new car, or already in the register (matched by VIN first, then plate) with the fields that would change.
+  - **Warnings:** the plate is on another car; matched by plate but the VIN differs (maybe a moved plate); an open job; an upcoming booking.
+  - **Car fields:** all editable.
+  - **Client:** the owner on file, namesakes with phone and number of cars, any client from the register, or a new client from the talon. Two or more namesakes pick nobody. A different name than the owner on file explains that a sold car moves to the new client, while old jobs and invoices stay with the former owner.
+- **"Ce urmează":** Adaugă / Actualizează / Deschide mașina, Deviz nou, Lucrare nouă, Programare nouă. Each saves the client and car, then opens it.
+  - An open job asks "Deschide lucrarea #N" or a new one.
+  - An upcoming booking asks to open it or make another.
+  - "Renunță" saves nothing.
+- **Saving:** `AppStore.talonReview` and `AppStore.saveTalon(_:client:)` check the plate before writing anything. The picture is kept on the phone (`Scans/<car id>-talon.jpg`) and shown under Documente on the car. It is deleted with the car or its client, since it holds personal data.
 - **Not on the web:** the web app has no scanner, and the talon picture stays on the phone.
-- **Debug:** `-GarajScan 1` opens the camera. `-GarajScanImage <path>` starts from a picture, and `-GarajScanRead 1` also confirms it.
+- **Debug:**
+  - `-GarajScan 1` opens the scanner.
+  - `-GarajScanImage <path>` starts from a picture, and `-GarajScanRead 1` confirms it.
+  - `-GarajScanBottom 1` scrolls to "Ce urmează".
+  - `-GarajScanNext car|estimate|job|booking` picks the next step.
