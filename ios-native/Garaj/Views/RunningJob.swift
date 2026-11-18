@@ -83,22 +83,16 @@ struct RunningJobBar: View {
     }
 }
 
-/// Puts the running job above the tab bar while a job's clock runs (iOS 26.1 hides it otherwise).
+/// Above the tab bar on every tab: the running job, when a job's clock runs, and the talon scanner's button.
 struct RunningJobAccessory: ViewModifier {
     @Environment(AppStore.self) private var store
     @State private var opened: String?
+    @State private var scanning = false
 
+    // Always shown now: the running job (when there is one) with the talon scanner's round button beside it.
     func body(content: Content) -> some View {
         let running = WorkClock.runningJobs(store.all(WorkOrder.self)).first
-        Group {
-            if #available(iOS 26.1, *) {
-                content.tabViewBottomAccessory(isEnabled: running != nil) { bar(running) }
-            } else if running != nil {
-                content.tabViewBottomAccessory { bar(running) }
-            } else {
-                content
-            }
-        }
+        content.tabViewBottomAccessory { bar(running) }
         #if DEBUG
         // Screenshots: `-GarajStartWork <number>` starts the clock on that job.
         .task {
@@ -107,6 +101,15 @@ struct RunningJobAccessory: ViewModifier {
             }
         }
         #endif
+        #if DEBUG
+        // Screenshots: `-GarajScan 1` opens the scanner; `-GarajScanImage <path>` starts it from that picture.
+        .task {
+            if UserDefaults.standard.string(forKey: "GarajScan") != nil || UserDefaults.standard.string(forKey: "GarajScanImage") != nil { scanning = true }
+        }
+        #endif
+        .fullScreenCover(isPresented: $scanning) {
+            TalonScanFlow(startImage: debugImage)
+        }
         .sheet(item: Binding(get: { opened.map(Opened.init) }, set: { opened = $0?.id })) { o in
             NavigationStack {
                 WorkOrderDetailView(id: o.id)
@@ -116,7 +119,35 @@ struct RunningJobAccessory: ViewModifier {
     }
 
     @ViewBuilder private func bar(_ running: WorkOrder?) -> some View {
-        if let running { RunningJobBar(order: running) { opened = running.id } }
+        HStack(spacing: 0) {
+            if let running {
+                RunningJobBar(order: running) { opened = running.id }
+            } else {
+                Button { scanning = true } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "doc.viewfinder").font(.title3).frame(width: 32)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Scanează talonul").font(.subheadline.weight(.semibold))
+                            Text("Adaugă sau completează o mașină").font(.caption).foregroundStyle(.secondary)
+                        }
+                        Spacer(minLength: 0)
+                    }
+                    .padding(.leading, 12)
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .accessibilityHidden(true) // the round button says the same
+            }
+            ScanTalonButton { scanning = true }.padding(.trailing, 8)
+        }
+    }
+
+    private var debugImage: UIImage? {
+        #if DEBUG
+        UserDefaults.standard.string(forKey: "GarajScanImage").flatMap { UIImage(contentsOfFile: $0) }
+        #else
+        nil
+        #endif
     }
 
     private struct Opened: Identifiable { let id: String }
