@@ -349,12 +349,21 @@ struct HomeView: View {
                         ForEach(shown) { order in
                             let vehicle = vehicles[order.vehicleId ?? ""]
                             let customer = customers[order.customerId ?? ""]
+                            // Owner first (with an icon), then the job, then car · mechanic, then how many operations and
+                            // parts with the total; the job's number top left of the cover, the plate bottom right.
+                            let lines = order.lines.filter { !$0.refused }
+                            let ops = lines.filter { $0.kind == "labor" }.count
+                            let parts = lines.filter { $0.kind == "part" }.count
                             CoverCard(make: vehicle?.make ?? "", plate: vehicle?.plate,
-                                      eyebrow: [vehicle?.title.nonEmpty, customer?.name.nonEmpty].compactMap { $0 }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
+                                      eyebrow: vehicle?.title.nonEmpty ?? "Fără mașină",
                                       title: JobText.headline(order),
-                                      detail: ["#\(order.number)", staff[order.staffId ?? ""]?.name, amount(Lines.totals(order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross)]
-                                        .compactMap { $0 }.joined(separator: " · "),
+                                      detail: [vehicle?.title.nonEmpty, staff[order.staffId ?? ""]?.name].compactMap { $0 }.joined(separator: " · "),
                                       status: Labels.workOrder(order.status),
+                                      corner: "#\(order.number)",
+                                      person: customer?.name.nonEmpty,
+                                      counts: [("wrench.and.screwdriver", ops == 1 ? "1 operație" : "\(ops) operații"),
+                                               ("shippingbox", parts == 1 ? "1 piesă" : "\(parts) piese")],
+                                      total: amount(Lines.totals(lines, vatPayer: store.shop.vatPayer).gross),
                                       next: JobAction.primary(order, store: store, move: { moveJob(order, to: $0) }, failed: { error = $0 }),
                                       open: { path.append(.job(order.id)) }) {
                                 jobMenu(order, customer: customer)
