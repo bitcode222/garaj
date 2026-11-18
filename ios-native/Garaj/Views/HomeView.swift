@@ -12,6 +12,7 @@ struct HomeView: View {
 
     @Environment(AppStore.self) private var store
     @Environment(UndoCenter.self) private var undo
+    @Environment(\.colorScheme) private var scheme
     @State private var path: [Route] = []
     @State private var creatingJob = false
     /// "estimate" (Deviz) or "in_progress" (Lucrare): what the new work order opens as.
@@ -38,19 +39,9 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
-                    // The page's title, over the search bar (owner); it scrolls with the page.
-                    // Under it, in words, why the hero has its colour (colour alone doesn't say it).
-                    Section {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Dashboard")
-                                .font(.largeTitle.weight(.bold))
-                                .accessibilityAddTraits(.isHeader)
-                            Label(mood.text, systemImage: mood.symbol) // on the mood's colour, so in the text's colour
-                                .foregroundStyle(Color.primary.opacity(0.8))
-                            .font(.subheadline.weight(.medium))
-                        }
-                        .padding(.horizontal, HomeView.inset)
-                    }
+                    // The page's title (owner: "Home", larger, light), and under it what's due on the left and
+                    // the month's takings on the right, in the hero colour's inverse; it scrolls with the page.
+                    Section { heroHeader }
                     .bareRow()
                     .listSectionMargins(.horizontal, 0)
                     // The search bar scrolls with the page too (owner: not pinned).
@@ -149,20 +140,57 @@ struct HomeView: View {
         func n(_ k: Int, _ one: String, _ many: String) -> String { k == 1 ? "1 \(one)" : "\(k) \(many)" }
         switch UserDefaults.standard.string(forKey: "GarajMood") { // screenshots: `-GarajMood good|attention`
         case "good": return (.good, "Totul e în regulă", "checkmark.circle.fill")
-        case "attention": return (.attention, "3 programări de confirmat", "clock.fill")
+        case "attention": return (.attention, "3 programări de confirmat\n1 factură scadentă curând", "clock.fill")
         default: break
         }
         if lateBookings + overdue > 0 {
             let parts = [lateBookings > 0 ? n(lateBookings, "programare întârziată", "programări întârziate") : nil,
                          overdue > 0 ? n(overdue, "factură restantă", "facturi restante") : nil].compactMap { $0 }
-            return (.late, parts.joined(separator: " · "), "exclamationmark.triangle.fill")
+            return (.late, parts.joined(separator: "\n"), "exclamationmark.triangle.fill")
         }
         if waiting + dueSoon > 0 {
             let parts = [waiting > 0 ? n(waiting, "programare de confirmat", "programări de confirmat") : nil,
                          dueSoon > 0 ? n(dueSoon, "factură scadentă curând", "facturi scadente curând") : nil].compactMap { $0 }
-            return (.attention, parts.joined(separator: " · "), "clock.fill")
+            return (.attention, parts.joined(separator: "\n"), "clock.fill")
         }
         return (.good, "Totul e în regulă", "checkmark.circle.fill")
+    }
+
+    /// "Home", then what's due (left) and the month's net takings so far (right), like Rapoarte counts them.
+    private var heroHeader: some View {
+        let state = mood
+        let ink = state.mood.ink(scheme)
+        let today = Dates.today()
+        let monthStart = "\(Dates.monthKey(today))-01"
+        let earned = Reports.summarize(store.all(Invoice.self), from: monthStart, to: today).net
+        let month = (Dates.parseDate(monthStart)?.formatted(.dateTime.month(.wide).locale(Locale(identifier: "ro_RO"))) ?? "").capitalizedFirst
+        return VStack(alignment: .leading, spacing: 14) {
+            Text("Home")
+                .font(.system(size: 50, weight: .light))
+                .fontWidth(.expanded)
+                .accessibilityAddTraits(.isHeader)
+            HStack(alignment: .bottom, spacing: 12) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Image(systemName: state.symbol)
+                    Text(state.text).fixedSize(horizontal: false, vertical: true)
+                }
+                .font(.subheadline.weight(.medium))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(month) până acum").font(.caption.weight(.medium)).opacity(0.85)
+                    Text(Money.format(earned, currency: store.currency, decimals: 0))
+                        .font(.system(size: 26, weight: .light))
+                        .fontWidth(.expanded)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                }
+                .accessibilityElement(children: .combine)
+            }
+        }
+        .foregroundStyle(ink)
+        .padding(.horizontal, HomeView.inset)
+        .animation(.easeInOut(duration: 0.6), value: state.mood)
     }
 
     private var greeting: String {
