@@ -11,6 +11,10 @@ struct HomeView: View {
     @Environment(UndoCenter.self) private var undo
     @State private var path: [Route] = []
     @State private var creatingJob = false
+    /// "estimate" (Deviz) or "in_progress" (Lucrare): what the new work order opens as.
+    @State private var jobStatus = "estimate"
+    @State private var query = ""
+    @FocusState private var searchFocused: Bool
     @State private var booking: BookingForm.Target?
     @State private var paying: Invoice?
     @State private var period = "7d"
@@ -25,16 +29,23 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
                 List {
-                    inShop.id("shop")
-                    shortcuts
-                    numbers(proxy)
-                    toConfirm.id("confirm")
-                    toCollect.id("collect")
-                    analytics.id("analytics")
+                    if query.trimmingCharacters(in: .whitespaces).isEmpty {
+                        shortcuts
+                        numbers(proxy)
+                        toConfirm.id("confirm")
+                        inShop.id("shop")
+                        toCollect.id("collect")
+                        analytics.id("analytics")
+                    } else {
+                        Section { SearchResults(query: query) { path.append($0) } }.bareRow()
+                    }
                 }
                 .groupedBackground()
                 .listStyle(.insetGrouped)
                 .listSectionSpacing(20)
+                .scrollDismissesKeyboard(.interactively)
+                // Tapping anywhere outside the field hides the keyboard.
+                .simultaneousGesture(TapGesture().onEnded { searchFocused = false })
                 #if DEBUG
                 // Screenshots: `-GarajHomeSection collect` scrolls there.
                 .task {
@@ -47,13 +58,22 @@ struct HomeView: View {
             }
             .navigationTitle(greeting)
             .navigationSubtitle(dayLine)
+            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Mașină, client, lucrare, factură")
+            .searchFocused($searchFocused)
             .toolbar {
-                Menu {
-                    Button { booking = .new } label: { Label("Programare nouă", systemImage: "calendar.badge.plus") }
-                    Button { creatingJob = true } label: { Label("Primire mașină", systemImage: "car.badge.gearshape") }
-                    Button { path.append(.invoice(store.createInvoiceDraft().id)) } label: { Label("Factură nouă", systemImage: "doc.badge.plus") }
-                } label: {
-                    Label("Adaugă", systemImage: "plus")
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button { searchFocused = false } label: { Label("Ascunde", systemImage: "keyboard.chevron.compact.down") }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Menu {
+                        Button { booking = .new } label: { Label("Programare nouă", systemImage: "calendar.badge.plus") }
+                        Button { openJob("estimate") } label: { Label("Deviz nou", systemImage: "doc.text.magnifyingglass") }
+                        Button { openJob("in_progress") } label: { Label("Lucrare nouă", systemImage: "car.badge.gearshape") }
+                        Button { path.append(.invoice(store.createInvoiceDraft().id)) } label: { Label("Factură nouă", systemImage: "doc.badge.plus") }
+                    } label: {
+                        Label("Adaugă", systemImage: "plus")
+                    }
                 }
             }
             .navigationDestination(for: Route.self) { route in
@@ -63,7 +83,7 @@ struct HomeView: View {
                 case .appointment(let id): AppointmentDetailView(id: id)
                 }
             }
-            .sheet(isPresented: $creatingJob) { NewWorkOrderSheet { path.append(.job($0)) } }
+            .sheet(isPresented: $creatingJob) { NewWorkOrderSheet(status: jobStatus) { path.append(.job($0)) } }
             .sheet(item: $booking) { BookingForm(target: $0) }
             .sheet(item: $paying) { PaymentSheet(invoice: $0) }
             .sensoryFeedback(.success, trigger: done)
@@ -88,15 +108,22 @@ struct HomeView: View {
         return "\(day) · \(openDays.contains(weekday - 1) ? "deschis \(shop.hoursOpen)–\(shop.hoursClose)" : "închis azi")"
     }
 
+    /// The four ways to start something, as the iPhone's shortcuts.
     private var shortcuts: some View {
         Section {
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 QuickAction(title: "Programare", symbol: "calendar.badge.plus") { booking = .new }
-                QuickAction(title: "Lucrare", symbol: "wrench.and.screwdriver") { creatingJob = true }
+                QuickAction(title: "Lucrare", symbol: "wrench.and.screwdriver") { openJob("in_progress") }
+                QuickAction(title: "Deviz", symbol: "doc.text.magnifyingglass") { openJob("estimate") }
                 QuickAction(title: "Factură", symbol: "doc.badge.plus") { path.append(.invoice(store.createInvoiceDraft().id)) }
             }
         }
         .bareRow()
+    }
+
+    private func openJob(_ status: String) {
+        jobStatus = status
+        creatingJob = true
     }
 
     private func numbers(_ proxy: ScrollViewProxy) -> some View {
@@ -145,54 +172,8 @@ struct HomeView: View {
         let vehicles = byId(Vehicle.self), customers = byId(Customer.self), staff = byId(Staff.self)
         let index = shown.firstIndex { $0.id == cover } ?? 0
         return Section {
-            if total == 0 {
-                Text("Nicio mașină în service acum.").foregroundStyle(.secondary)
-            } else {
-                VStack(spacing: 14) {
-                    ScrollView(.horizontal) {
-                        LazyHStack(spacing: 14) {
-                            ForEach(shown) { order in
-                                let vehicle = vehicles[order.vehicleId ?? ""]
-                                let customer = customers[order.customerId ?? ""]
-                                CoverCard(make: vehicle?.make ?? "", plate: vehicle?.plate,
-                                          eyebrow: [vehicle?.title.nonEmpty, customer?.name.nonEmpty].compactMap { $0 }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
-                                          title: JobText.headline(order),
-                                          detail: ["#\(order.number)", staff[order.staffId ?? ""]?.name, amount(Lines.totals(order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross)]
-                                            .compactMap { $0 }.joined(separator: " · "),
-                                          status: Labels.workOrder(order.status),
-                                          next: JobAction.primary(order, store: store, move: { moveJob(order, to: $0) }, failed: { error = $0 }),
-                                          open: { path.append(.job(order.id)) }) {
-                                    jobMenu(order, customer: customer)
-                                }
-                                .id(order.id)
-                            }
-                        }
-                        .scrollTargetLayout()
-                    }
-                    .scrollTargetBehavior(.viewAligned)
-                    .scrollPosition(id: $cover)
-                    .contentMargins(.horizontal, 20, for: .scrollContent)
-                    .scrollIndicators(.hidden)
-                    .scrollClipDisabled()
-                    if shown.count > 1 {
-                        HStack(spacing: 10) {
-                            Capsule().fill(Color(.tertiarySystemFill)).frame(width: 110, height: 4)
-                                .overlay(alignment: .leading) {
-                                    Capsule().fill(Color.primary).frame(width: max(14, 110 / CGFloat(shown.count)), height: 4)
-                                        .offset(x: (110 - max(14, 110 / CGFloat(shown.count))) * CGFloat(index) / CGFloat(max(1, shown.count - 1)))
-                                }
-                            Text("\(index + 1) / \(shown.count)").font(.footnote).monospacedDigit().foregroundStyle(.secondary)
-                        }
-                        .animation(.snappy, value: index)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("Mașina \(index + 1) din \(shown.count)")
-                    }
-                }
-                .bareRow()
-            }
-        } header: {
             HStack(alignment: .firstTextBaseline) {
-                SectionHeader("În atelier", subtitle: total == 0 ? nil : "\(total) \(total == 1 ? "mașină" : "mașini") · \(ready > 0 ? "\(ready) gata de predare" : "niciuna gata încă")") {
+                homeHeader("În atelier", subtitle: total == 0 ? nil : "\(total) \(total == 1 ? "mașină" : "mașini") · \(ready > 0 ? "\(ready) gata de predare" : "niciuna gata încă")") {
                     selectedTab.wrappedValue = "atelier"
                 }
                 Spacer()
@@ -210,7 +191,52 @@ struct HomeView: View {
                     .tint(.primary)
                 }
             }
+            .bareRow()
+            if total == 0 {
+                Text("Nicio mașină în service acum.").foregroundStyle(.secondary).bareRow()
+            } else {
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 14) {
+                        ForEach(shown) { order in
+                            let vehicle = vehicles[order.vehicleId ?? ""]
+                            let customer = customers[order.customerId ?? ""]
+                            CoverCard(make: vehicle?.make ?? "", plate: vehicle?.plate,
+                                      eyebrow: [vehicle?.title.nonEmpty, customer?.name.nonEmpty].compactMap { $0 }.joined(separator: " · ").nonEmpty ?? "Fără mașină",
+                                      title: JobText.headline(order),
+                                      detail: ["#\(order.number)", staff[order.staffId ?? ""]?.name, amount(Lines.totals(order.lines.filter { !$0.refused }, vatPayer: store.shop.vatPayer).gross)]
+                                        .compactMap { $0 }.joined(separator: " · "),
+                                      status: Labels.workOrder(order.status),
+                                      next: JobAction.primary(order, store: store, move: { moveJob(order, to: $0) }, failed: { error = $0 }),
+                                      open: { path.append(.job(order.id)) }) {
+                                jobMenu(order, customer: customer)
+                            }
+                            .frame(width: 300)
+                            .id(order.id)
+                        }
+                    }
+                    .scrollTargetLayout()
+                }
+                .scrollTargetBehavior(.viewAligned)
+                .scrollPosition(id: $cover)
+                .scrollIndicators(.hidden)
+                .bareRow()
+                if shown.count > 1 {
+                    HStack(spacing: 10) {
+                        Capsule().fill(Color(.tertiarySystemFill)).frame(width: 110, height: 4)
+                            .overlay(alignment: .leading) {
+                                Capsule().fill(Color.primary).frame(width: max(14, 110 / CGFloat(shown.count)), height: 4)
+                                    .offset(x: (110 - max(14, 110 / CGFloat(shown.count))) * CGFloat(index) / CGFloat(max(1, shown.count - 1)))
+                            }
+                        Text("\(index + 1) / \(shown.count)").font(.footnote).monospacedDigit().foregroundStyle(.secondary)
+                    }
+                    .animation(.snappy, value: index)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Mașina \(index + 1) din \(shown.count)")
+                    .bareRow()
+                }
+            }
         }
+        .bareRow()
     }
 
     /// The "…" and long-press menu of a job, grouped: its states, the client, the job.
@@ -235,56 +261,136 @@ struct HomeView: View {
 
     // MARK: De confirmat
 
+    /// De confirmat: the bookings to accept, as cards to swipe through (before În atelier).
     private var toConfirm: some View {
         let bookings = Agenda.bookingsToConfirm(store.all(Appointment.self), now: Dates.instant())
         let week = bookings.week
         let booked = week.values.reduce(0, +) - (week["no_show"] ?? 0)
-        let vehicles = byId(Vehicle.self), customers = byId(Customer.self)
+        let vehicles = byId(Vehicle.self), customers = byId(Customer.self), staff = byId(Staff.self), bays = byId(Bay.self)
+        let items = bookings.groups.flatMap { g in g.items.map { (group: g, appointment: $0) } }
         return Section {
-            if bookings.total == 0 {
-                Text("Toate programările sunt confirmate.").foregroundStyle(.secondary)
-            }
-            ForEach(bookings.groups) { g in
-                ForEach(g.items) { a in
-                    let late = g.key == "past"
-                    let customer = customers[a.customerId ?? ""]
-                    let vehicle = vehicles[a.vehicleId ?? ""]
-                    HStack(spacing: 12) {
-                        Button { path.append(.appointment(a.id)) } label: {
-                            HStack(spacing: 12) {
-                                TimeColumn(time: Dates.timeOfInstant(a.start), detail: late ? "a trecut" : groupLabel(g).lowercased())
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text(customer?.name ?? "Client necunoscut").lineLimit(1)
-                                    Text([a.title, vehicle.map { People.formatPlate($0.plate) }].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
-                                        .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
-                                }
-                                Spacer(minLength: 4)
-                            }
-                            .contentShape(.rect)
-                        }
-                        .buttonStyle(.plain)
-                        if late {
-                            Button("A sosit") { checkIn(a) }.fontWeight(.semibold).buttonStyle(.borderless)
-                        } else {
-                            Button("Confirmă") { act("Confirmată") { try store.setAppointmentStatus(a.id, to: "confirmed") } }
-                                .fontWeight(.semibold).buttonStyle(.borderless)
+            homeHeader("De confirmat", subtitle: bookings.total == 0 ? nil : "\(bookings.total) \(bookings.total == 1 ? "programare" : "programări") de confirmat")
+                .bareRow()
+            if items.isEmpty {
+                Text("Toate programările sunt confirmate.").foregroundStyle(.secondary).bareRow()
+            } else {
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 14) {
+                        ForEach(items, id: \.appointment.id) { item in
+                            let a = item.appointment
+                            bookingCard(item.group, a,
+                                        customer: customers[a.customerId ?? ""],
+                                        vehicle: vehicles[a.vehicleId ?? ""],
+                                        staff: staff[a.staffId ?? ""],
+                                        bay: bays[a.bayId ?? ""])
+                                .frame(width: 300)
                         }
                     }
-                    .swipeActions(edge: .trailing) {
-                        if late {
-                            Button(role: .destructive) { act("Neprezentat") { try store.markNoShow(a.id) } } label: { Label("Neprezentat", systemImage: "person.slash") }
-                        }
-                        if let phone = customer?.phone, !phone.isEmpty, let url = People.telURL(phone) {
-                            Link(destination: url) { Label("Sună", systemImage: "phone.fill") }.tint(.green)
-                        }
-                    }
+                    .scrollTargetLayout()
                 }
+                .scrollTargetBehavior(.viewAligned)
+                .scrollIndicators(.hidden)
+                .bareRow()
             }
-        } header: {
-            CapsHeader("De confirmat")
         } footer: {
             if booked > 0 { Text("\(booked - (week["scheduled"] ?? 0)) din \(booked) confirmate în următoarele 7 zile.") }
         }
+        .bareRow()
+    }
+
+    /// A section's name and one line under it, flush with the row's edge (the cards' edge). Its own helper, since
+    /// `SectionHeader` is set 4 pt out for the other pages.
+    private func homeHeader(_ title: String, subtitle: String?, action: (() -> Void)? = nil) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            if let action {
+                Button(action: action) {
+                    HStack(spacing: 4) {
+                        Text(title)
+                        Image(systemName: "chevron.right").font(.body.weight(.bold)).foregroundStyle(.secondary)
+                            .padding(.trailing, 4)
+                    }
+                    .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .padding(.leading, 2)
+                .accessibilityHint("Arată tot")
+            } else {
+                Text(title).padding(.leading, 2)
+            }
+            if let subtitle {
+                Text(subtitle).font(.subheadline).fontWeight(.regular).foregroundStyle(.secondary)
+            }
+        }
+        .font(.title3.weight(.bold))
+        .foregroundStyle(.primary)
+        .padding(.bottom, 4)
+        .accessibilityAddTraits(.isHeader)
+    }
+
+    /// One booking as a card: when, who and which car, what for, who and where, the phone, the next step.
+    private func bookingCard(_ g: Agenda.BookingGroup, _ a: Appointment, customer: Customer?, vehicle: Vehicle?, staff: Staff?, bay: Bay?) -> some View {
+        let late = g.key == "past"
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(Dates.timeOfInstant(a.start)).font(.title.weight(.bold)).monospacedDigit()
+                    Text(late ? "a trecut" : groupLabel(g)).font(.subheadline.weight(late ? .semibold : .regular)).foregroundStyle(late ? Color.red : .secondary)
+                }
+                Spacer(minLength: 8)
+                if let number = a.number {
+                    Text("#\(number)").font(.footnote.weight(.semibold)).foregroundStyle(.secondary).monospacedDigit()
+                }
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(customer?.name ?? "Client necunoscut").font(.headline).lineLimit(1)
+                if let vehicle {
+                    Text("\(vehicle.title) · \(People.formatPlate(vehicle.plate))").font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                }
+                if !a.title.isEmpty {
+                    Text(a.title).font(.subheadline).lineLimit(2)
+                }
+            }
+            if staff != nil || bay != nil {
+                HStack(spacing: 14) {
+                    if let staff { Label(staff.name, systemImage: "person") }
+                    if let bay { Label(bay.name, systemImage: "wrench") }
+                }
+                .font(.footnote).foregroundStyle(.secondary).lineLimit(1)
+            }
+            if !a.notes.isEmpty {
+                Text(a.notes).font(.footnote).foregroundStyle(.secondary).lineLimit(2)
+            }
+            Spacer(minLength: 0)
+            HStack(spacing: 10) {
+                if late {
+                    Button { checkIn(a) } label: { Text("A sosit").frame(maxWidth: .infinity) }
+                        .buttonStyle(.borderedProminent)
+                } else {
+                    Button { act("Confirmată") { try store.setAppointmentStatus(a.id, to: "confirmed") } } label: { Text("Confirmă").frame(maxWidth: .infinity) }
+                        .buttonStyle(.borderedProminent)
+                }
+                if let phone = customer?.phone, !phone.isEmpty, let url = People.telURL(phone) {
+                    Link(destination: url) { Image(systemName: "phone.fill").frame(width: 22) }
+                        .buttonStyle(.bordered)
+                        .accessibilityLabel("Sună pe \(customer?.name ?? "client")")
+                }
+                Menu {
+                    Button { path.append(.appointment(a.id)) } label: { Label("Deschide programarea", systemImage: "arrow.up.right") }
+                    if late {
+                        Button(role: .destructive) { act("Neprezentat") { try store.markNoShow(a.id) } } label: { Label("Neprezentat", systemImage: "person.slash") }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis").frame(width: 22)
+                }
+                .buttonStyle(.bordered)
+            }
+            .controlSize(.large)
+        }
+        .padding(16)
+        .frame(height: 300, alignment: .topLeading)
+        .background(Color(.secondarySystemGroupedBackground), in: .rect(cornerRadius: 20))
+        .contentShape(.rect(cornerRadius: 20))
+        .onTapGesture { path.append(.appointment(a.id)) }
     }
 
     private func groupLabel(_ g: Agenda.BookingGroup) -> String {
