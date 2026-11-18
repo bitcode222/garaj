@@ -51,7 +51,9 @@ import { draftBehindOrder } from "@/domain/work-order";
 import { InvoiceState } from "./invoice-state";
 import { computeTotals } from "@/domain/lines";
 import { fmtDate, fmtDays, fmtWorkOrder } from "@/lib/format";
-import { printPage, shareText, useDraft, useLocalPreference, useQueryId } from "@/lib/hooks";
+import { printPage, shareText, useDraft, useLocalPreference, useMediaQuery, useQueryId } from "@/lib/hooks";
+import { PHONE } from "@/components/ds/nav-bar";
+import { PhoneInvoice } from "@/features/phone/phone-invoice";
 import { CarHeader } from "@/components/ds/car";
 import { formatMoney } from "@/domain/money";
 import { vehicleName } from "@/domain/vehicle";
@@ -81,7 +83,10 @@ export function InvoiceDetail() {
 	const id = useQueryId();
 	const ready = useIsReady();
 	const invoice = useEntity("invoices", id);
+	const phone = useMediaQuery(PHONE);
 	if (!ready) return <DetailPageSkeleton />;
+	// A phone is the iPhone's invoice page, strictly (docs/DESIGN.md "Telefon ca iPhone").
+	if (invoice && phone) return <PhoneInvoice invoice={invoice} />;
 	if (!invoice) {
 		return (
 			<Page>

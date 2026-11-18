@@ -424,6 +424,12 @@
 	[data-print="document"] * {
 		visibility: visible;
 	}
+	[data-print-frame] {
+		position: absolute;
+		inset: 0 auto auto 0;
+		width: 100%;
+		transform: none !important;
+	}
 	[data-print="document"] {
 		position: absolute;
 		inset: 0 auto auto 0;
