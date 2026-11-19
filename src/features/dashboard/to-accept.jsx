@@ -2,7 +2,7 @@
 
 import { Fragment, useState } from "react";
 import { Check, ExternalLink, MoreHorizontal, Phone } from "lucide-react";
-import { CarCover, CoverButton, CoverIconButton, coverIconClass } from "@/components/ds/car";
+import { COVER_HEIGHT, CarCover, CoverButton, CoverIconButton, coverIconClass } from "@/components/ds/car";
 import { SectionHeader } from "@/components/ds/blocks";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { fmtDate, fmtTime, plural } from "@/lib/format";
@@ -70,6 +70,7 @@ function BookingCover({ appointment: a, vehicle, customer, staff, bay, today }) 
 			title={[subject, a.title].filter(Boolean).join(" · ")}
 			detail={[customer?.name, staff?.name?.split(" ")[0], bay?.name].filter(Boolean).join(" · ")}
 			outline
+			height={COVER_HEIGHT}
 			onOpen={open}
 			className="snap-start"
 			action={

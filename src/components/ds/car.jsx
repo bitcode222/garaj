@@ -42,6 +42,9 @@ export function MakeArt({ make, size = 120, className }) {
  * next step (white on the colour). `menu` is the round "…" beside it.
  */
 /** `statusColor` paints the status label in a state's colour (a booking still to accept: STATE.wait); grey glass otherwise. */
+/** The dashboard carousels' covers: 4:3, a third taller than wide (the default width, 238). */
+export const COVER_HEIGHT = Math.round((238 * 4) / 3);
+
 export function CarCover({ make, plate, status, statusColor, eyebrow, title, detail, action, menu, onOpen, outline = false, width = 238, height = 280, className }) {
 	const ink = makeInk(make);
 	const art = Math.round(height * 0.42);
