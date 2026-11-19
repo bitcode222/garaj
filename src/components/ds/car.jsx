@@ -54,7 +54,7 @@ export function CarCover({ make, car, plate, code, status, statusColor, eyebrow,
 	return (
 		<article
 			data-card
-			className={cn("relative flex shrink-0 flex-col gap-0.5 rounded-[14px] p-3", outline && "border-[1.5px] border-dashed border-foreground/25 text-foreground", className)}
+			className={cn("relative flex shrink-0 flex-col gap-0.5 rounded-[14px] p-3", outline && "text-foreground [outline:1.5px_dashed_color-mix(in_srgb,var(--foreground)_25%,transparent)] [outline-offset:-1.5px]", className)}
 			style={outline ? { width, height } : { width, height, background: makeCover(make), color: ink }}
 		>
 			<button type="button" onClick={onOpen} className={cn("flex min-h-0 flex-1 flex-col gap-0.5 text-left outline-none focus-visible:ring-2 rounded-[10px]", outline ? "focus-visible:ring-ring" : "focus-visible:ring-white/70")}>
