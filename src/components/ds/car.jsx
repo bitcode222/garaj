@@ -42,17 +42,17 @@ export function MakeArt({ make, size = 120, className }) {
  * next step (white on the colour). `menu` is the round "…" beside it.
  */
 /** `statusColor` paints the status label in a state's colour (a booking still to accept: STATE.wait); grey glass otherwise. */
-export function CarCover({ make, plate, status, statusColor, eyebrow, title, detail, action, menu, onOpen, width = 238, height = 280, className }) {
+export function CarCover({ make, plate, status, statusColor, eyebrow, title, detail, action, menu, onOpen, outline = false, width = 238, height = 280, className }) {
 	const ink = makeInk(make);
 	const art = Math.round(height * 0.42);
 	return (
 		<article
 			data-card
-			className={cn("relative flex shrink-0 flex-col gap-0.5 rounded-[14px] p-3", className)}
-			style={{ width, height, background: makeCover(make), color: ink }}
+			className={cn("relative flex shrink-0 flex-col gap-0.5 rounded-[14px] p-3", outline && "border-[1.5px] border-dashed border-foreground/25 text-foreground", className)}
+			style={outline ? { width, height } : { width, height, background: makeCover(make), color: ink }}
 		>
-			<button type="button" onClick={onOpen} className="flex min-h-0 flex-1 flex-col gap-0.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-[10px]">
-				<span className="relative mb-2 flex shrink-0 items-center justify-center rounded-[9px]" style={{ height: art, background: makeArt(make) }}>
+			<button type="button" onClick={onOpen} className={cn("flex min-h-0 flex-1 flex-col gap-0.5 text-left outline-none focus-visible:ring-2 rounded-[10px]", outline ? "focus-visible:ring-ring" : "focus-visible:ring-white/70")}>
+				<span className="relative mb-2 flex shrink-0 items-center justify-center rounded-[9px]" style={{ height: art, background: makeArt(make), color: ink }}>
 					<MakeLogo make={make} className="-translate-y-2 text-current" style={{ width: art * 0.46, height: art * 0.46 }} />
 					{status && (
 						<span className={cn("absolute top-2.5 right-2.5 rounded-[5px] px-2 py-0.5 text-[11px] font-medium text-white", !statusColor && "bg-black/30")} style={statusColor ? { background: statusColor } : undefined}>
@@ -75,19 +75,19 @@ export function CarCover({ make, plate, status, statusColor, eyebrow, title, det
 	);
 }
 
-/** The one button on a cover: white on the car's colour. */
-export function CoverButton({ icon: Icon, large, children, ...props }) {
+/** The one button on a cover: white on the car's colour; on an outlined cover, the page's ink. */
+export function CoverButton({ icon: Icon, large, outline = false, children, ...props }) {
 	return (
-		<button type="button" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-[7px] bg-white font-medium text-zinc-900 transition-transform active:scale-[0.98]", large ? "h-8 px-3 text-[13px] pointer-coarse:h-10" : "h-7 px-2.5 text-xs pointer-coarse:h-9")} {...props}>
+		<button type="button" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-[7px] font-medium transition-transform active:scale-[0.98]", outline ? "bg-foreground text-background" : "bg-white text-zinc-900", large ? "h-8 px-3 text-[13px] pointer-coarse:h-10" : "h-7 px-2.5 text-xs pointer-coarse:h-9")} {...props}>
 			{Icon && <Icon className="size-3.5" aria-hidden />}
 			{children}
 		</button>
 	);
 }
 
-/** The classes of a round button on a car's colour, for a link that looks like one. */
+/** The classes of a round button on a car's colour, for a link that looks like one. `light`: "outline" on an outlined cover. */
 export const coverIconClass = (light, large = false) =>
-	cn("inline-flex shrink-0 items-center justify-center rounded-[7px]", large ? "size-8 pointer-coarse:size-10" : "size-7 pointer-coarse:size-9", light ? "bg-black/10" : "bg-white/15 ring-1 ring-white/20 ring-inset");
+	cn("inline-flex shrink-0 items-center justify-center rounded-[7px]", large ? "size-8 pointer-coarse:size-10" : "size-7 pointer-coarse:size-9", light === "outline" ? "bg-foreground/[0.07] ring-1 ring-foreground/10 ring-inset" : light ? "bg-black/10" : "bg-white/15 ring-1 ring-white/20 ring-inset");
 
 /** A round button on a car's colour (call, "…"). */
 export function CoverIconButton({ icon: Icon, label, light, large, ...props }) {
