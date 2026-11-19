@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { Check, ExternalLink, MoreHorizontal, Phone } from "lucide-react";
 import { COVER_HEIGHT, COVER_WIDTH, CarCover, CoverButton, CoverIconButton } from "@/components/ds/car";
 import { GlassPill } from "@/components/ds/glass";
@@ -14,8 +14,8 @@ import { restoreAppointment, setAppointmentStatus } from "@/lib/store/actions";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 
-// Azi A, first section (docs/DESIGN.md §4): the bookings still to accept, as covers in the car's colour, grouped by
-// day, the soonest first. Confirming is one tap, with "Anulează" in the toast. Nothing to accept: no section.
+// Azi A, first section (docs/DESIGN.md §4): the bookings still to accept, as outlined covers in day order, the soonest
+// first, each naming its day. Confirming is one tap, with "Anulează" in the toast. Nothing to accept: no section.
 
 const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).join(" ") || "Mașină";
 const capital = (text) => text.charAt(0).toUpperCase() + text.slice(1);
@@ -132,14 +132,10 @@ export function ToAccept({ groups, today, vehicles, customers, staff, bays }) {
 					})}
 				</div>
 			</SectionHeader>
-			<div className="no-scrollbar -mx-4 flex snap-x items-start gap-3.5 overflow-x-auto scroll-px-4 px-4 pb-1 md:mx-0 md:scroll-px-0 md:px-0">
-				{shown.map((group) => (
-					<Fragment key={group.day}>
-						<span className="w-11 shrink-0 pt-1 text-[11px] font-semibold tracking-[0.06em] text-muted-foreground uppercase">{dayLabel(group.day, today)}</span>
-						{group.items.map((a) => (
-							<BookingCover key={a.id} appointment={a} vehicle={vehicles[a.vehicleId]} customer={customers[a.customerId]} staff={staff[a.staffId]} bay={bays[a.bayId]} today={today} />
-						))}
-					</Fragment>
+			<div className="no-scrollbar -mx-4 flex snap-x gap-3.5 overflow-x-auto scroll-px-4 px-4 pb-1 md:mx-0 md:scroll-px-0 md:px-0">
+				{/* No day labels in the row: they would push the covers off the În atelier grid. Each cover names its day. */}
+				{shown.flatMap((group) => group.items).map((a) => (
+					<BookingCover key={a.id} appointment={a} vehicle={vehicles[a.vehicleId]} customer={customers[a.customerId]} staff={staff[a.staffId]} bay={bays[a.bayId]} today={today} />
 				))}
 			</div>
 		</section>
