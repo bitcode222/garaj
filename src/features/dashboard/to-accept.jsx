@@ -7,7 +7,7 @@ import { SectionHeader } from "@/components/ds/blocks";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { fmtDate, fmtTime, plural } from "@/lib/format";
 import { addDaysISO, dayOfInstant } from "@/domain/dates";
-import { STATE, makeInk } from "@/lib/colors";
+import { STATE } from "@/lib/colors";
 import { openSheet } from "@/lib/sheets";
 import { restoreAppointment, setAppointmentStatus } from "@/lib/store/actions";
 import { toast } from "@/lib/toast";
@@ -37,7 +37,8 @@ function BookingCover({ appointment: a, vehicle, customer, staff, bay, today }) 
 	const day = dayOfInstant(a.start);
 	const when = `${dayLabel(day, today).toLowerCase()} ${fmtTime(a.start)}`;
 	const subject = carName(vehicle);
-	const light = makeInk(vehicle?.make) !== "#ffffff";
+	// Outlined (dashed, no fill): not yet in the shop, unlike the jobs' covers below. The art tile keeps the car's colour.
+	const light = "outline";
 	const open = () => openSheet("appointment-view", { id: a.id });
 	const confirm = () => {
 		try {
@@ -69,10 +70,11 @@ function BookingCover({ appointment: a, vehicle, customer, staff, bay, today }) 
 			title={[subject, a.title].filter(Boolean).join(" · ")}
 			detail={[customer?.name, staff?.name?.split(" ")[0], bay?.name].filter(Boolean).join(" · ")}
 			height={262}
+			outline
 			onOpen={open}
 			className="snap-start"
 			action={
-				<CoverButton icon={Check} onClick={confirm}>
+				<CoverButton icon={Check} outline onClick={confirm}>
 					Confirmă
 				</CoverButton>
 			}
