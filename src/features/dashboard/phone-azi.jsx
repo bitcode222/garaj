@@ -122,7 +122,7 @@ export function PhoneAzi({ today, now }) {
 									customer={customer}
 									eyebrow={[vehicleName(vehicle), customer?.name].filter(Boolean).join(" · ") || "Fără mașină"}
 									detail={[`#${order.number}`, staff[order.staffId]?.name, amount ? money(amount) : null].filter(Boolean).join(" · ")}
-									onOpen={() => router.push(`/work-orders/detail/?id=${order.id}`)}
+									onOpen={() => openSheet("work-order-view", { id: order.id })}
 								/>
 							);
 						}}
