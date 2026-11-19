@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { CalendarClock, ExternalLink, GalleryHorizontal, MoreHorizontal, Phone } from "lucide-react";
-import { COVER_HEIGHT, CarCover, CoverButton, CoverIconButton, MakeTile } from "@/components/ds/car";
+import { COVER_HEIGHT, COVER_WIDTH, CarCover, CoverButton, CoverIconButton, MakeTile } from "@/components/ds/car";
 import { PageTitle, SectionHeader, StatCard, StatusDot, useViewSwitch } from "@/components/ds/blocks";
 import { Page } from "@/components/ds/page";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -99,6 +99,7 @@ function JobCover({ order, vehicle, customer, staffId }) {
 			status={WORK_ORDER_STATUS[order.status]?.label}
 			title={jobHeadline(order)}
 			detail={jobSummary(order)}
+			width={COVER_WIDTH}
 			height={COVER_HEIGHT}
 			onOpen={open}
 			className="snap-start"
