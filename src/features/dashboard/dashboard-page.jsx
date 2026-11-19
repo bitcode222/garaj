@@ -93,9 +93,10 @@ function JobCover({ order, vehicle, customer, staffId }) {
 	return (
 		<CarCover
 			make={vehicle?.make}
+			car={carName(vehicle)}
 			plate={vehicle?.plate}
 			status={WORK_ORDER_STATUS[order.status]?.label}
-			eyebrow={`Lucrarea #${order.number} · ${carName(vehicle)}`}
+			eyebrow={`Lucrarea #${order.number}`}
 			title={jobHeadline(order)}
 			detail={jobSummary(order)}
 			height={COVER_HEIGHT}

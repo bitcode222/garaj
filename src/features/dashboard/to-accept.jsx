@@ -63,11 +63,12 @@ function BookingCover({ appointment: a, vehicle, customer, staff, bay, today }) 
 	return (
 		<CarCover
 			make={vehicle?.make}
+			car={subject}
 			plate={vehicle?.plate}
 			status="De confirmat"
 			statusColor={STATE.wait}
 			eyebrow={[a.number ? `Programarea #${a.number}` : "Programare", when].join(" · ")}
-			title={[subject, a.title].filter(Boolean).join(" · ")}
+			title={a.title || "Programare"}
 			detail={[customer?.name, staff?.name?.split(" ")[0], bay?.name].filter(Boolean).join(" · ")}
 			outline
 			height={COVER_HEIGHT}

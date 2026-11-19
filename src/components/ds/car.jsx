@@ -1,5 +1,6 @@
 import { MakeLogo } from "@/components/ds/make-logo";
 import { Plate } from "@/components/ds/plate";
+import { formatPlate } from "@/domain/vehicle";
 import { makeColor, makeCover, makeInk } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 
@@ -45,7 +46,7 @@ export function MakeArt({ make, size = 120, className }) {
 /** The dashboard carousels' covers: 4:3, a third taller than wide (the default width, 238). */
 export const COVER_HEIGHT = Math.round((238 * 4) / 3);
 
-export function CarCover({ make, plate, status, statusColor, eyebrow, title, detail, action, menu, onOpen, outline = false, width = 238, height = 280, className }) {
+export function CarCover({ make, car, plate, status, statusColor, eyebrow, title, detail, action, menu, onOpen, outline = false, width = 238, height = 280, className }) {
 	const ink = makeInk(make);
 	const art = Math.round(height * 0.42);
 	return (
@@ -62,7 +63,7 @@ export function CarCover({ make, plate, status, statusColor, eyebrow, title, det
 							{status}
 						</span>
 					)}
-					{plate && <Plate value={plate} size="sm" className="absolute bottom-2.5 left-2.5" />}
+					<CarLine car={car} plate={plate} className="absolute right-2.5 bottom-2.5 left-2.5 text-[12.5px]" />
 				</span>
 				{eyebrow && <span className="truncate text-[11px] font-semibold tracking-[0.05em] uppercase opacity-70">{eyebrow}</span>}
 				<span className="line-clamp-2 text-[15px] leading-tight font-semibold">{title}</span>
@@ -75,6 +76,22 @@ export function CarCover({ make, plate, status, statusColor, eyebrow, title, det
 				</div>
 			)}
 		</article>
+	);
+}
+
+/** On a cover's art: "Dacia Logan • B 385 RAK" as plain text, a small dot between the car and its plate. */
+export function CarLine({ car, plate, className }) {
+	if (!car && !plate) return null;
+	return (
+		<span className={cn("flex min-w-0 items-center gap-1.5 font-semibold", className)}>
+			{car && <span className="truncate">{car}</span>}
+			{car && plate && <span className="size-1 shrink-0 rounded-full bg-current opacity-70" aria-hidden />}
+			{plate && (
+				<span translate="no" className="shrink-0 whitespace-nowrap uppercase">
+					{formatPlate(plate)}
+				</span>
+			)}
+		</span>
 	);
 }
 

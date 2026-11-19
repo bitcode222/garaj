@@ -1,11 +1,11 @@
 "use client";
 
+import { CarLine } from "@/components/ds/car";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, CalendarPlus, ChevronRight, FilePlus2, ListFilter, Minus, MoreHorizontal, Wrench } from "lucide-react";
 import { MakeLogo } from "@/components/ds/make-logo";
-import { Plate } from "@/components/ds/plate";
 import { PageTitle } from "@/components/ds/blocks";
 import { IosCaps, IosPill, IosSegmented, IosStat } from "@/components/ds/ios";
 import { Page } from "@/components/ds/page";
@@ -120,7 +120,7 @@ export function PhoneAzi({ today, now }) {
 									order={order}
 									vehicle={vehicle}
 									customer={customer}
-									eyebrow={[vehicleName(vehicle), customer?.name].filter(Boolean).join(" · ") || "Fără mașină"}
+									eyebrow={customer?.name || (vehicle ? "Fără client" : "Fără mașină")}
 									detail={[`#${order.number}`, staff[order.staffId]?.name, amount ? money(amount) : null].filter(Boolean).join(" · ")}
 									onOpen={() => openSheet("work-order-view", { id: order.id })}
 								/>
@@ -198,7 +198,7 @@ function CoverCard({ order, vehicle, customer, eyebrow, detail, onOpen }) {
 				<span className="relative mb-2.5 flex h-[150px] items-center justify-center rounded-[24px]" style={{ background: `radial-gradient(circle at 100% 0, ${makeColor(make)} 4%, color-mix(in srgb, ${makeCover(make)} 75%, #000) 100%)` }}>
 					<MakeLogo make={make} className="-translate-y-3.5 text-current" style={{ width: 76, height: 76 }} />
 					<span className="absolute top-3 right-3 rounded-full bg-black/30 px-[9px] py-1 text-[12px] font-semibold text-white">{status.label}</span>
-					{vehicle?.plate && <Plate value={vehicle.plate} className="absolute bottom-3 left-3" />}
+					<CarLine car={vehicleName(vehicle)} plate={vehicle?.plate} className="absolute right-3 bottom-3 left-3 text-[15px]" />
 				</span>
 				<span className="truncate text-[13px] font-medium tracking-[0.03em] uppercase opacity-70">{eyebrow}</span>
 				<span className="line-clamp-2 text-[20px] leading-[25px] font-semibold">{jobHeadline(order)}</span>

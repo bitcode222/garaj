@@ -149,13 +149,14 @@ export function DesignPage() {
 			<Block title="Coperți" subtitle="O lucrare în culoarea mașinii ei">
 				<div className="no-scrollbar -mx-4 flex gap-3.5 overflow-x-auto px-4 md:mx-0 md:px-0">
 					{[
-						["Volkswagen", "B123GRJ", "În lucru", "Lucrarea #214 · Volkswagen Golf 7", "Zgomot la frânare, față", "Discuri și plăcuțe uzate", "Pauză", Pause],
-						["BMW", "IF07BMW", "Aprobat", "Lucrarea #215 · BMW 320d", "Revizie 120.000 km", "4 operații · 6 piese", "Pornește", Play],
-						["Renault", "B88CLI", "Gata de predat", "Lucrarea #209 · Renault Clio 4", "Clima nu răcește", "Încărcat freon, testat", "Predă", Play],
-					].map(([make, plate, status, eyebrow, title, detail, label, Icon]) => (
+						["Volkswagen", "B123GRJ", "În lucru", "Lucrarea #214", "Volkswagen Golf 7", "Zgomot la frânare, față", "Discuri și plăcuțe uzate", "Pauză", Pause],
+						["BMW", "IF07BMW", "Aprobat", "Lucrarea #215", "BMW 320d", "Revizie 120.000 km", "4 operații · 6 piese", "Pornește", Play],
+						["Renault", "B88CLI", "Gata de predat", "Lucrarea #209", "Renault Clio 4", "Clima nu răcește", "Încărcat freon, testat", "Predă", Play],
+					].map(([make, plate, status, eyebrow, car, title, detail, label, Icon]) => (
 						<CarCover
 							key={make}
 							make={make}
+							car={car}
 							plate={plate}
 							status={status}
 							eyebrow={eyebrow}
