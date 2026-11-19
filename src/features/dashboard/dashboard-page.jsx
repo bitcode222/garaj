@@ -86,7 +86,9 @@ function Numbers({ collect, jobs, bookings, hours, staff, currency }) {
 function JobCover({ order, vehicle, customer, staffId }) {
 	const router = useRouter();
 	const action = primaryAction(order, { staffId });
-	const open = () => router.push(`/work-orders/detail/?id=${order.id}`);
+	// A tap opens the job's sheet over Azi; the full page stays one step away in "…".
+	const open = () => openSheet("work-order-view", { id: order.id });
+	const openPage = () => router.push(`/work-orders/detail/?id=${order.id}`);
 	const light = makeInk(vehicle?.make) !== "#ffffff";
 	return (
 		<CarCover
@@ -112,7 +114,7 @@ function JobCover({ order, vehicle, customer, staffId }) {
 						<CoverIconButton icon={MoreHorizontal} label="Mai multe" light={light} />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="start" data-sheet-menu>
-						<DropdownMenuItem onSelect={open}>
+						<DropdownMenuItem onSelect={openPage}>
 							<ExternalLink /> Deschide lucrarea
 						</DropdownMenuItem>
 						{customer?.phone && (
@@ -275,7 +277,7 @@ function DayLanes({ lanes, vehicles, settings, minute }) {
 								const left = at(block.start);
 								const width = Math.max(4, at(block.end) - left);
 								const title = block.appointment ? [carName(vehicle), block.appointment.title].filter(Boolean).join(" · ") : jobHeadline(block.order);
-								const open = () => (block.order ? router.push(`/work-orders/detail/?id=${block.order.id}`) : openSheet("appointment-view", { id: block.appointment.id }));
+								const open = () => (block.order ? openSheet("work-order-view", { id: block.order.id }) : openSheet("appointment-view", { id: block.appointment.id }));
 								return (
 									<button
 										key={block.key}
