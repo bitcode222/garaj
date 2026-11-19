@@ -121,11 +121,12 @@ export function VehiclesPage() {
 								<CarCover
 									key={r.vehicle.id}
 									make={r.vehicle.make}
+									car={vehicleName(r.vehicle) || "Mașină"}
 									plate={r.vehicle.plate}
 									status={r.inShop ? "În atelier" : late ? "Acte expirate" : soon ? "Acte expiră curând" : null}
 									eyebrow={[r.vehicle.year, FUELS[r.vehicle.fuel]].filter(Boolean).join(" · ") || "Mașină"}
-									title={vehicleName(r.vehicle) || "Mașină"}
-									detail={[r.owner?.name, r.km != null ? fmtKm(r.km) : null].filter(Boolean).join(" · ")}
+									title={r.owner?.name || "Fără proprietar"}
+									detail={r.km != null ? fmtKm(r.km) : null}
 									onOpen={() => openDetail("vehicle", r.vehicle.id)}
 									width="auto"
 									height={256}
