@@ -47,8 +47,11 @@ unless each changing element is registered, and has no low-power or reduced-moti
 | `bar` | the phone's top bar, tab bar, action bar (`StickyBar`) | 72 % card over 12 px frost, a gentle rim |
 | `float` | the running job's capsule | the ink colour at 72 %: dark glass, light in dark mode |
 | `menu` | menus, submenus, popovers, selects, the ⌘K window, the calendar's mini month | 78 % popover over 18 px frost |
+| `clear` | the dashboard's buttons on a car's colour (cover buttons, the phone cards' Continuă and "…") | the owner's pick C: clear, a 20 % white tint, 2 px frost; the text keeps the car's ink |
+| `pill` | the dashboard's buttons on the page (filters, view switch, quick actions, Perioada, an outlined card's call and "…") | a 7 % ink tint over 6 px frost |
+| `ink` | the chosen filter and the main button on the page (Confirmă on a booking, Primește o mașină) | the ink colour at 82 %: dark glass, light in dark mode |
 
-The rim, edge, sheen and shadow per theme are `--lg-*` in `globals.css`. Cards, sheets and pages stay solid.
+The rim, edge, sheen and shadow per theme are `--lg-*` in `globals.css`. Cards, sheets and pages stay solid; the dashboard's buttons are glass at the owner's request (19 Nov 2026), through `GlassPill`, `CoverButton` and `CoverIconButton`.
 
 Ways back, from the lightest:
 1. Setări › Aspect › **Sticlă lichidă** off: this device gets the plain surfaces (`garaj.glass` = `off`).
