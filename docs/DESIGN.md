@@ -63,6 +63,17 @@ the search and the settings under it). Blocks are a tint of the car's colour wit
 every view, a state is a plain dot, mechanics' avatars are neutral, their columns are no longer tinted, today is an ink
 circle and now is a red line, as on Azi.
 
+### Sheets "A" with the card's head (owner's picks 19–20 Nov 2026, board https://claude.ai/artifact/GBUact6KBar7C7Qsbxo3Uc: S, S2, T5)
+
+Replaces the "car's colour all over" look below. Only the head of a car's sheet is in the car's colour (`.car-sheet-*`
+tokens on the head alone): the logo box at the left as on the cards (`cover.code` at its top left, the plate at its
+bottom), beside it the state pill, the title and a few lines (`cover.car` • plate, `cover.lines`), then the main glass
+button (`CoverButton`, stretched) and the round glass ones (`CoverIconButton`), then the visit bar. The body is white
+(`.sheet-a`, dark #1c1c1e), its sections grey rounded groups under big 20 px bold titles (`.sheet-a-body`, groups
+#f2f2f7 / #2c2c2e). The job's sheet orders them as the desk asks: alert, Ce reclamă clientul, Recepția (km, fuel,
+inspection), De făcut la mașină, Deviz, Factură, Note interne (yellow tint), Mai multe (mechanic, bay, stages, history).
+Next on the board: the reception flow when the car arrives (R1–R3), then the fields it adds.
+
 ### Sheets (owner's pick, 16 Nov 2026, board https://claude.ai/artifact/1yjxRSfQoMKsYEa6BPdeqJ: A)
 
 A sheet about one car is in that car's colour all over, as the iPhone's `carSheet`: the cover colour behind, the logo on

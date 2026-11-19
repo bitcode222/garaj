@@ -19,7 +19,7 @@ import { dayOfInstant, diffDaysISO, minutesBetween, relativeTo } from "@/domain/
 import { appointmentFlow, bookingNow, NOW_KINDS } from "@/domain/flow";
 import { formatInvoiceNumber } from "@/domain/invoice";
 import { operationFigures, operationFromService, operationsEstimate, operationVatRate } from "@/domain/lines";
-import { deadline, lastJob, lastReading } from "@/domain/vehicle";
+import { deadline, lastJob, lastReading, vehicleName } from "@/domain/vehicle";
 import { orderTotals } from "@/domain/work-order";
 import { fmtDate, fmtDays, fmtKm, fmtTime, fmtWorkOrder, formatPhone, plural } from "@/lib/format";
 import { useMediaQuery, useNowMinute } from "@/lib/hooks";
@@ -34,7 +34,7 @@ import { toast } from "@/lib/toast";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 import { fmtLength } from "@/features/dashboard/visit-ui";
-import { VisitBarFor, visitTitle } from "@/features/flow/visit-bar";
+import { VisitBarFor } from "@/features/flow/visit-bar";
 import { CustomerNote } from "@/features/reviews/customer-note";
 import { AppointmentHistory, CallOffPanel, DelayPanel, ReschedulePanel, undoTo } from "./appointment-state";
 import { FixButton, useBookingWarnings, WarningItems } from "./booking-warnings";
@@ -120,12 +120,12 @@ function BookingSheet({ open, onOpenChange, id, panel: openOn = null }) {
 			entity={a}
 			missing="Programarea a fost ștearsă."
 			// The visit bar opens it; the title is the car and the booking's number (docs/VISIT-BAR.md).
-			title={visitTitle({ vehicle }, a?.number != null ? `#${a.number}` : null, customer?.name ?? "Programare")}
+			title={a ? <InlineText value={a.title} placeholder={autoTitle(a)} label="Descrierea programării" onSave={rename} /> : "Programare"}
+			cover={a ? { code: a.number != null ? `PRG #${a.number}` : null, car: vehicleName(vehicle), plate: vehicle?.plate, lines: [customer?.name] } : null}
 			kind="appointment"
 			state={a ? bookingLook(a, now) : undefined}
 			bar={a ? <VisitBarFor from="appointment" record={a} /> : null}
 			make={vehicle?.make}
-			description={a ? <InlineText value={a.title} placeholder={autoTitle(a)} label="Descrierea programării" onSave={rename} /> : undefined}
 			onEdit={() => openSheet("appointment", { id: a.id })}
 			// The phone's thumb reach: the next step, the same button as in the Acum card (hidden there on a phone).
 			footer={primary ? <FixButton fix={primary} variant="default" size="default" className="h-11" /> : null}
