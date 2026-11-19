@@ -528,42 +528,65 @@
 	color: #111111;
 }
 
-/* A car's sheet as the iPhone's (owner's pick "A · Capsule sub titlu", 16 Nov 2026): each section is a rounded group
-   of rows, its title over it; a field is one row, its label on the left and its value on the right, still editable. */
-:is(.car-sheet-dark, .car-sheet-light) section[aria-label] {
+/* A car's sheet (sheet "A", owner's picks 16–20 Nov 2026): the head in the car's colour, the body white ("S2 Alb") with
+   each section a grey rounded group of rows under a big title ("T5 Titluri mari"); a field is one row, its label on the
+   left and its value on the right, still editable. */
+.sheet-a {
+	--card: #ffffff;
+	background: #ffffff;
+}
+.sheet-a-body {
+	--card: #f2f2f7;
+}
+.dark .sheet-a {
+	--card: #1c1c1e;
+	background: #1c1c1e;
+}
+.dark .sheet-a-body {
+	--card: #2c2c2e;
+}
+.sheet-a-body section[aria-label] > :first-child:is(h2, h3, p) {
+	font-size: 1.25rem;
+	line-height: 1.25;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	text-transform: none;
+	color: var(--foreground);
+}
+.sheet-a-body section[aria-label]:not([data-group]) {
 	border-top: 0;
 	padding-top: 0;
 }
-:is(.car-sheet-dark, .car-sheet-light) section[aria-label] > :not(:first-child):not(:has([data-field])) {
+.sheet-a-body section[aria-label]:not([data-group]) > :not(:first-child):not(:has([data-field])) {
 	background: var(--card);
 	border-radius: 0.75rem;
 	padding: 0.75rem 0.875rem;
 }
-:is(.car-sheet-dark, .car-sheet-light) fieldset {
+.sheet-a-body fieldset {
 	border-top: 0;
 	padding-top: 0;
 }
-:is(.car-sheet-dark, .car-sheet-light) form :is(fieldset, div):has(> [data-field]) {
+.sheet-a-body form :is(fieldset, div):has(> [data-field]) {
 	display: flex !important;
 	flex-direction: column;
 	gap: 0 !important;
 }
-:is(.car-sheet-dark, .car-sheet-light) form fieldset:has(> [data-field]) > :not([data-field]) {
+.sheet-a-body form fieldset:has(> [data-field]) > :not([data-field]) {
 	margin-bottom: 0.4rem;
 }
 /* Each field is a row on the group's veil; a run of fields reads as one rounded group, its title above it. */
-:is(.car-sheet-dark, .car-sheet-light) form [data-field] {
+.sheet-a-body form [data-field] {
 	background: var(--card);
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field]:not([data-field] + [data-field]) {
+.sheet-a-body form [data-field]:not([data-field] + [data-field]) {
 	border-top-left-radius: 0.75rem;
 	border-top-right-radius: 0.75rem;
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field]:not(:has(+ [data-field])) {
+.sheet-a-body form [data-field]:not(:has(+ [data-field])) {
 	border-bottom-left-radius: 0.75rem;
 	border-bottom-right-radius: 0.75rem;
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field] {
+.sheet-a-body form [data-field] {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
@@ -571,30 +594,30 @@
 	padding: 0.4rem 0.75rem;
 	min-height: 2.75rem;
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field] + [data-field] {
+.sheet-a-body form [data-field] + [data-field] {
 	border-top: 0.5px solid var(--border);
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field] > label {
+.sheet-a-body form [data-field] > label {
 	flex: 0 0 7rem;
 	color: var(--muted-foreground);
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field] > :not(label):not(p) {
+.sheet-a-body form [data-field] > :not(label):not(p) {
 	flex: 1 1 12rem;
 	min-width: 0;
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field] > p {
+.sheet-a-body form [data-field] > p {
 	flex-basis: 100%;
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field] :is(input, textarea, button[role="combobox"], button[aria-haspopup], [data-slot="select-trigger"], > div > button:first-child) {
+.sheet-a-body form [data-field] :is(input, textarea, button[role="combobox"], button[aria-haspopup], [data-slot="select-trigger"], > div > button:first-child) {
 	border-color: transparent;
 	background: transparent;
 	box-shadow: none;
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field] :is(input, textarea, button[role="combobox"], button[aria-haspopup], [data-slot="select-trigger"]):focus-visible {
+.sheet-a-body form [data-field] :is(input, textarea, button[role="combobox"], button[aria-haspopup], [data-slot="select-trigger"]):focus-visible {
 	background: var(--background);
 	box-shadow: 0 0 0 2px #3b82f6;
 }
-:is(.car-sheet-dark, .car-sheet-light) form [data-field] input:not([type="checkbox"]):not([type="radio"]) {
+.sheet-a-body form [data-field] input:not([type="checkbox"]):not([type="radio"]) {
 	text-align: right;
 }
 

@@ -3,8 +3,10 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ArrowLeftIcon, ChevronLeftIcon, XIcon } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { MakeArt, MakeTile } from "@/components/ds/car";
+import { CarLine, MakeTile, makeArt } from "@/components/ds/car";
+import { MakeLogo } from "@/components/ds/make-logo";
 import { TONE_COLOR, makeCover, makeInk } from "@/lib/colors";
+import { formatPlate } from "@/domain/vehicle";
 import { KindMark, StateTag, kindText } from "@/components/ds/tone";
 import { haptics } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
@@ -143,11 +145,12 @@ function bounceThroughScrollLock(el) {
  * in the text colour, and the state is a pill at the right (the sheet look the owner picked, 7 Nov 2026). Without a
  * bar, `kind` and `state` colour and mark the title as before.
  */
-export function Sheet({ open, onOpenChange, title, description, headerActions, kind, state, bar, make, tint, centered = false, footer, footerClassName, className, children }) {
+export function Sheet({ open, onOpenChange, title, description, headerActions, kind, state, bar, make, tint, cover, centered = false, footer, footerClassName, className, children }) {
 	// A sheet about one car takes its colour (docs/DESIGN.md §1): its head is washed with the car's cover colour, fading
 	// into the sheet, and its logo sits on a tile of that colour. `tint` names the car for sheets without a visit bar.
 	const car = tint ?? (bar ? make : null);
-	// Sheets "A" (the owner's pick, 16 Nov 2026): a car's sheet is in its colour all over, as on the iPhone.
+	// Sheets "A" (the owner's picks, 16–20 Nov 2026): the head is in the car's colour, as its card; the body is white with
+	// grey groups under big titles (rounds 5 and 6, "S2 Alb" and "T5 Titluri mari").
 	const carClass = car ? (makeInk(car) === "#ffffff" ? "car-sheet-dark" : "car-sheet-light") : null;
 	const contentRef = useRef(null);
 	const depth = useContext(SheetDepth);
@@ -163,7 +166,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 				<DialogPrimitive.Content
 					ref={contentRef}
 					tabIndex={-1}
-					style={car ? { ...swipe.style, background: makeCover(car) } : swipe.style}
+					style={swipe.style}
 					onTransitionEnd={swipe.onTransitionEnd}
 					onOpenAutoFocus={(event) => {
 						event.preventDefault();
@@ -175,7 +178,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 					onPointerDownOutside={(event) => event.target?.closest?.("[data-sonner-toaster]") && event.preventDefault()}
 					onInteractOutside={(event) => event.target?.closest?.("[data-sonner-toaster]") && event.preventDefault()}
 					className={cn(
-						carClass,
+						car && "sheet-a",
 						"fixed z-50 flex flex-col bg-card text-card-foreground shadow-[0_0_96px_0_oklch(0_0_0/0.12),0_0_32px_0_oklch(0_0_0/0.06)] outline-none dark:shadow-[0_0_96px_0_rgb(0_0_0),0_0_32px_0_rgb(0_0_0)]",
 						// Phone: a full-height screen that pushes in from the right, lifted above the keyboard.
 						"inset-x-0 bottom-(--kb) h-(--vvh) max-h-dvh duration-300",
@@ -194,7 +197,8 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 					)}
 				>
 					<div
-						className={cn("shrink-0 touch-pan-y px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
+						className={cn("shrink-0 touch-pan-y", car ? cn(carClass, "px-5 pt-[calc(0.75rem+var(--safe-top))] pb-5 md:px-6 md:pt-4") : "px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
+						style={car ? { background: makeCover(car), color: makeInk(car) } : undefined}
 						{...swipe.handlers}
 					>
 						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. */}
@@ -221,21 +225,12 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 								<XIcon className="size-4" />
 							</DialogPrimitive.Close>
 						</div>
+						{car ? (
+							<CarHead car={car} cover={cover} title={title} description={description} state={state} footer={footer} bar={bar} />
+						) : (
 						<div className="mt-1 min-w-0">
 							{bar && <div className="-mx-1 mt-2 mb-4">{bar}</div>}
-							{car ? (
-								// The car's head, as the iPhone's: its logo on its art, the title and what it is, the state as a quiet pill.
-								<div className="flex min-w-0 flex-col items-center gap-2 pt-1 text-center">
-									<MakeArt make={car} size={76} />
-									<DialogPrimitive.Title className="max-w-full text-[1.375rem] leading-tight font-semibold tracking-tight break-words">{title}</DialogPrimitive.Title>
-									{state && (
-										<span className="inline-flex items-center gap-1.5 rounded-[6px] bg-black/25 px-2 py-0.5 text-xs font-medium text-white">
-											<span className="size-1.5 rounded-full" style={{ background: TONE_COLOR[state.tone] ?? TONE_COLOR.neutral }} aria-hidden />
-											{state.text}
-										</span>
-									)}
-								</div>
-							) : bar ? (
+							{bar ? (
 								<div className="flex min-w-0 items-start gap-2.5">
 									<MakeTile make={make} size={28} className="mt-px" />
 									<DialogPrimitive.Title className="min-w-0 flex-1 text-heading break-words text-foreground">{title}</DialogPrimitive.Title>
@@ -252,26 +247,63 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 									{state && <StateTag state={state} size="md" />}
 								</div>
 							)}
-							<DialogPrimitive.Description className={description ? cn("mt-0.5 text-sm text-muted-foreground", car && "text-center") : "sr-only"}>
+							<DialogPrimitive.Description className={description ? "mt-0.5 text-sm text-muted-foreground" : "sr-only"}>
 								{description ?? title}
 							</DialogPrimitive.Description>
-							{/* On a car's sheet the main buttons sit under the title, as on the iPhone (the owner's pick, 16 Nov 2026). */}
-							{car && footer && <div data-sheet-actions className="mt-4 flex flex-wrap items-center justify-center gap-2 [&_button]:h-9 [&_p]:basis-full [&_p]:text-center [&_p]:text-xs">{footer}</div>}
 						</div>
+						)}
 					</div>
 					<div ref={bounceThroughScrollLock} className="min-h-0 flex-1 overflow-y-scroll overscroll-contain">
 						{/* 1px taller than the viewport: short content still scrolls, so WebKit rubber-bands it. */}
-						<div className="min-h-[calc(100%+1px)] px-10 pb-10">
+						<div className={cn("min-h-[calc(100%+1px)]", car ? "sheet-a-body px-4 pt-2 pb-10 md:px-6" : "px-10 pb-10")}>
 							<SheetDepth.Provider value={depth + 1}>{children}</SheetDepth.Provider>
 						</div>
 					</div>
 					{footer && !car && (
-						<div className={cn("flex shrink-0 flex-wrap justify-end gap-2 border-t px-4", car ? "bg-black/10" : "bg-card", " pt-3 pb-[calc(0.75rem+var(--safe-bottom))] md:px-6 md:pb-5 [&>*]:max-md:flex-1", footerClassName)}>
+						<div className={cn("flex shrink-0 flex-wrap justify-end gap-2 border-t bg-card px-4 pt-3 pb-[calc(0.75rem+var(--safe-bottom))] md:px-6 md:pb-5 [&>*]:max-md:flex-1", footerClassName)}>
 							{footer}
 						</div>
 					)}
 				</DialogPrimitive.Content>
 			</DialogPrimitive.Portal>
 		</DialogPrimitive.Root>
+	);
+}
+
+/**
+ * The head of a car's sheet (sheet "A", the owner's pick, 19 Nov 2026), as its card: on the car's colour, the logo box
+ * at the left (its number at the top, "car • plate" at the bottom), beside it the state, the title and a few lines;
+ * under them the main button and the round ones (`footer`), then the visit bar.
+ */
+function CarHead({ car, cover, title, description, state, footer, bar }) {
+	const lines = (cover?.lines ?? []).filter(Boolean);
+	return (
+		<div className="mt-2 min-w-0">
+			<div className="flex min-w-0 items-start gap-4">
+				<span aria-hidden className="relative flex size-28 shrink-0 items-center justify-center rounded-[12px] md:size-32" style={{ background: makeArt(car) }}>
+					<MakeLogo make={car} className="size-12 -translate-y-1.5 text-current md:size-14" />
+					{cover?.code && <span translate="no" className="absolute top-2 left-2 rounded-[5px] bg-black/30 px-1.5 py-0.5 text-[10.5px] font-semibold tracking-[0.04em] whitespace-nowrap text-white tabular-nums">{cover.code}</span>}
+					<CarLine car={null} plate={cover?.plate} className="absolute right-2 bottom-2 left-2 text-[12px]" />
+				</span>
+				<div className="flex min-w-0 flex-1 flex-col gap-1">
+					{state && (
+						<span className="inline-flex items-center gap-1.5 self-start rounded-[6px] bg-black/25 px-2 py-0.5 text-xs font-medium text-white">
+							<span className="size-1.5 rounded-full" style={{ background: TONE_COLOR[state.tone] ?? TONE_COLOR.neutral }} aria-hidden />
+							{state.text}
+						</span>
+					)}
+					<DialogPrimitive.Title className="text-[1.375rem] leading-tight font-bold tracking-tight break-words">{title}</DialogPrimitive.Title>
+					{cover?.car && <p className="truncate text-[13.5px] opacity-80">{[cover.car, cover.plate && formatPlate(cover.plate)].filter(Boolean).join(" • ")}</p>}
+					{lines.map((line, i) => (
+						<p key={i} className="truncate text-[13.5px] opacity-80">
+							{line}
+						</p>
+					))}
+					<DialogPrimitive.Description className={description ? "text-[13.5px] opacity-80" : "sr-only"}>{description ?? title}</DialogPrimitive.Description>
+				</div>
+			</div>
+			{footer && <div data-sheet-actions className="mt-4 flex flex-wrap items-center gap-2 [&>:first-child]:flex-1 [&>:first-child]:justify-center [&_p]:basis-full [&_p]:text-xs">{footer}</div>}
+			{bar && <div className="-mx-1 mt-4">{bar}</div>}
+		</div>
 	);
 }

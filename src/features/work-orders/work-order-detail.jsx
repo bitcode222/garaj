@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
+	ChevronRight,
+	FilePlus2,
 	ChevronLeft,
 	ClipboardCheck,
 	EllipsisVertical,
@@ -45,7 +47,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { smsHref, whatsappHref } from "@/domain/customer";
 import { todayISO } from "@/domain/dates";
-import { buildSnapshot } from "@/domain/invoice";
+import { buildSnapshot, formatInvoiceNumber } from "@/domain/invoice";
 import { computeTotals } from "@/domain/lines";
 import { vehicleName } from "@/domain/vehicle";
 import { estimateMessage, inspectionSummary, isOpen, readyMessage } from "@/domain/work-order";
@@ -54,12 +56,14 @@ import { printPage, shareText, useDraft, useMediaQuery, useQueryId } from "@/lib
 import { PHONE } from "@/components/ds/nav-bar";
 import { PhoneJob } from "./phone-job";
 import { FUEL_LEVELS, WORK_ORDER_STATUS } from "@/lib/labels";
-import { deleteWorkOrder, updateWorkOrder } from "@/lib/store/actions";
+import { deleteWorkOrder, invoiceForWorkOrder, setLineDone, updateWorkOrder } from "@/lib/store/actions";
 import { useCollection, useEntity, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { selectActive } from "@/lib/store/selectors";
 import { InvoiceDocument } from "@/features/invoices/invoice-document";
 import { LinesEditor } from "@/features/lines/lines-editor";
 import { TotalsBlock } from "@/features/lines/totals-block";
+import { IosLines } from "@/features/lines/ios-lines";
+import { cn } from "@/lib/utils";
 import { InspectionChecklist } from "./inspection";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { closeSheet } from "@/lib/sheets";
@@ -76,6 +80,57 @@ import { ClockLine, JobSteps } from "./job-progress";
 import { useWalk } from "@/features/flow/visit-links";
 
 const ACTIVITY_LABEL = { created: "Lucrare deschisă" };
+
+const sheetField = "block w-full resize-none bg-transparent px-4 py-3 outline-none [field-sizing:content] placeholder:text-muted-foreground/70";
+const sheetLink = "flex min-h-12 w-full items-center gap-2.5 border-t px-4 text-left text-[16px] font-medium text-brand hover:bg-foreground/[0.04]";
+
+/** A section of a car's sheet: a big title (and a quiet note at its right), then its grey group. */
+function SheetGroup({ title, aside, children }) {
+	return (
+		<section data-group aria-label={title}>
+			<div className="flex items-baseline justify-between gap-3 px-1 pb-2">
+				<h2 className="text-[20px] leading-tight font-bold tracking-[-0.01em]">{title}</h2>
+				{aside && <span className="text-[13px] text-muted-foreground tabular-nums">{aside}</span>}
+			</div>
+			{children}
+		</section>
+	);
+}
+
+/** A row of a group: its coloured icon square, the label, the value at the right. */
+function SheetRow({ icon: Icon, color, label, value }) {
+	return (
+		<div className="flex min-h-12 items-center gap-3 px-4 [&+&]:border-t">
+			<span className="flex size-7 shrink-0 items-center justify-center rounded-[7px] text-white" style={{ background: color }}>
+				<Icon className="size-4" aria-hidden />
+			</span>
+			<span className="flex-1 text-[16px]">{label}</span>
+			<span className="text-[16px] text-muted-foreground tabular-nums">{value}</span>
+		</div>
+	);
+}
+
+/** A choice in a group (mechanic, bay): the label at the left, a quiet select at the right. */
+function SheetSelect({ label, value, options, disabled, onChange }) {
+	return (
+		<div className="flex min-h-12 items-center gap-3 px-4 [&+&]:border-t">
+			<span className="flex-1 text-[16px]">{label}</span>
+			<Select value={value ?? "none"} disabled={disabled} onValueChange={(v) => onChange(v === "none" ? null : v)}>
+				<SelectTrigger size="sm" aria-label={label} className="w-auto min-w-36 justify-end border-0 bg-transparent text-[15px] text-muted-foreground shadow-none dark:bg-transparent">
+					<SelectValue />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectItem value="none">Nealocat</SelectItem>
+					{options.map((o) => (
+						<SelectItem key={o.id} value={o.id}>
+							{o.name}
+						</SelectItem>
+					))}
+				</SelectContent>
+			</Select>
+		</div>
+	);
+}
 
 export function WorkOrderDetail() {
 	const id = useQueryId();
@@ -201,6 +256,149 @@ function WorkOrder({ order, embedded = false }) {
 				meta: fmtDate(at, "d MMM, HH:mm"),
 			})),
 	];
+
+	// In a sheet: sheet "S" (the owner's pick, 19 Nov 2026). The head (Sheet) carries the car, the title and the
+	// buttons; below it, on white, grey groups under big titles in the order the desk asks: what the client says, how
+	// the car came in, what is to do, the estimate, the invoice, the shop's own notes, then the rest.
+	if (embedded) {
+		const todo = draft.lines.filter((l) => !l.refused && !l.done).length;
+		const work = draft.lines.filter((l) => !l.refused).length;
+		const mechanic = staff.find((m) => m.id === draft.staffId);
+		const bay = bays.find((b) => b.id === draft.bayId);
+		const toggleDone = (line) => {
+			try {
+				setLineDone(order.id, line.id, !line.done);
+			} catch (error) {
+				toast.error(error.message);
+			}
+		};
+		const makeInvoice = () => {
+			try {
+				flush();
+				walk({ kind: "invoice", id: invoiceForWorkOrder(order.id).id, direction: "forward" });
+			} catch (error) {
+				toast.error(error.message);
+			}
+		};
+		return (
+			<div className="space-y-7 pt-3">
+				<JobWarnings order={order} />
+
+				<SheetGroup title="Ce reclamă clientul">
+					<div className="overflow-hidden rounded-[14px] bg-card">
+						<textarea value={draft.complaint ?? ""} readOnly={locked} onChange={(e) => update({ complaint: e.target.value })} placeholder="Ce spune clientul, cu vorbele lui" aria-label="Ce reclamă clientul" className={cn(sheetField, "text-[16px]")} rows={1} />
+						<div className="ml-4 h-px bg-border" />
+						<textarea value={draft.diagnosis ?? ""} readOnly={locked} onChange={(e) => update({ diagnosis: e.target.value })} placeholder="Diagnostic: ce a găsit mecanicul" aria-label="Diagnostic" className={cn(sheetField, "text-[15px] text-muted-foreground")} rows={1} />
+					</div>
+				</SheetGroup>
+
+				<SheetGroup title="Recepția" aside={summary.urgent + summary.attention > 0 ? [summary.urgent && `${summary.urgent} urgent`, summary.attention && `${summary.attention} atenție`].filter(Boolean).join(" · ") : null}>
+					<div className="overflow-hidden rounded-[14px] bg-card">
+						<SheetRow icon={Gauge} color="#0a84ff" label="Kilometraj la primire" value={order.mileage != null ? fmtKm(order.mileage) : "—"} />
+						<SheetRow icon={Fuel} color="#30b0c7" label="Combustibil" value={order.fuelLevel != null ? FUEL_LEVELS[order.fuelLevel] : "—"} />
+						<div className="border-t px-4 py-3">
+							<p className="mb-2 flex items-center gap-2 text-[15px] font-medium">
+								<ClipboardCheck className="size-4 text-muted-foreground" aria-hidden /> Inspecție
+								<span className="text-[13px] font-normal text-muted-foreground">recomandările ajung în mesajul către client</span>
+							</p>
+							<InspectionChecklist items={draft.inspection} onChange={(inspection) => update({ inspection })} readOnly={locked} />
+						</div>
+					</div>
+				</SheetGroup>
+
+				<SheetGroup title="De făcut la mașină" aside={work ? (todo ? `${todo} din ${work} rămase` : "toate gata") : null}>
+					<ul id={`job-lines-${order.id}`} className="scroll-mt-24 overflow-hidden rounded-[14px] bg-card [&>li+li]:border-t">
+						<IosLines lines={draft.lines} onChange={(lines) => update({ lines })} staff={staff} vatPayer={vatPayer} readOnly={locked || Boolean(invoice && invoice.status !== "draft" && invoice.status !== "cancelled")} defaultStaffId={draft.staffId ?? member?.id ?? null} currency={settings.currency} onToggleDone={toggleDone} hideTotal />
+					</ul>
+				</SheetGroup>
+
+				<SheetGroup title="Deviz" aside={draft.lines.length ? <Money value={totals.gross} /> : null}>
+					<div className="overflow-hidden rounded-[14px] bg-card">
+						{draft.lines.length > 0 && (
+							<div className="px-4 py-3">
+								<TotalsBlock totals={totals} vatPayer={vatPayer} currency={settings.currency} />
+							</div>
+						)}
+						{customer?.phone && (
+							<a href={whatsappHref(customer.phone, message)} target="_blank" rel="noreferrer" className={sheetLink}>
+								<MessageCircle className="size-[18px]" aria-hidden /> Trimite devizul pe WhatsApp
+							</a>
+						)}
+						{customer?.phone && (
+							<a href={smsHref(customer.phone, message)} className={sheetLink}>
+								<MessageSquareText className="size-[18px]" aria-hidden /> Trimite prin SMS
+							</a>
+						)}
+						<button type="button" onClick={() => setEstimateOpen(true)} className={sheetLink}>
+							<Printer className="size-[18px]" aria-hidden /> Vezi devizul (PDF)
+						</button>
+					</div>
+				</SheetGroup>
+
+				<SheetGroup title="Factură">
+					<div className="overflow-hidden rounded-[14px] bg-card">
+						{invoice ? (
+							<button type="button" onClick={() => walk({ kind: "invoice", id: invoice.id, direction: "forward" })} className="flex min-h-12 w-full items-center gap-3 px-4 text-left hover:bg-foreground/[0.04]">
+								<FileText className="size-[18px] text-muted-foreground" aria-hidden />
+								<span className="flex-1 text-[16px]">{invoice.number == null ? "Ciornă" : formatInvoiceNumber(invoice.series, invoice.number)}</span>
+								<Money value={invoice.totals?.gross ?? totals.gross} className="text-muted-foreground" />
+								<ChevronRight className="size-4 text-muted-foreground/60" aria-hidden />
+							</button>
+						) : (
+							<>
+								<p className="px-4 pt-3 text-[15px] text-muted-foreground">Nu e făcută încă. Se face când lucrarea e gata, înainte de predare.</p>
+								<button type="button" disabled={!draft.lines.length} onClick={makeInvoice} className={cn(sheetLink, "border-t-0 disabled:text-muted-foreground")}>
+									<FilePlus2 className="size-[18px]" aria-hidden /> Fă factura din deviz
+								</button>
+							</>
+						)}
+					</div>
+				</SheetGroup>
+
+				<SheetGroup title="Note interne" aside="doar pentru atelier">
+					<div className="overflow-hidden rounded-[14px] bg-[color-mix(in_srgb,#ffd60a_16%,var(--card))]">
+						<textarea value={draft.notes ?? ""} onChange={(e) => update({ notes: e.target.value })} placeholder="ex. clientul așteaptă în service, a cerut piesele vechi" aria-label="Note interne" className={cn(sheetField, "text-[16px]")} rows={2} />
+					</div>
+				</SheetGroup>
+
+				<SheetGroup title="Mai multe">
+					<div className="overflow-hidden rounded-[14px] bg-card">
+						<SheetSelect label="Mecanic" value={draft.staffId} options={staff} disabled={locked} onChange={(staffId) => update({ staffId })} />
+						<SheetSelect label="Post" value={draft.bayId} options={bays} disabled={locked} onChange={(bayId) => update({ bayId })} />
+						<div className="border-t px-4 py-3">
+							<JobState order={order} moves={moves} onReview={askReview} />
+						</div>
+						<div className="border-t px-4 py-3">
+							<Timeline items={timeline.length ? timeline : [{ id: "c", title: ACTIVITY_LABEL.created, meta: fmtDate(order.createdAt) }]} />
+						</div>
+					</div>
+					<p className="px-1 pt-1.5 text-xs text-muted-foreground">
+						Deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}
+						{mechanic ? ` · ${mechanic.name}` : ""}
+						{bay ? ` · ${bay.name}` : ""}
+					</p>
+					{order.status === "estimate" && !order.invoiceId && (
+						<button type="button" onClick={remove} className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-[14px] bg-card text-[16px] text-destructive">
+							<Trash2 className="size-[18px]" aria-hidden /> Șterge devizul
+						</button>
+					)}
+				</SheetGroup>
+
+				<Sheet
+					open={estimateOpen}
+					onOpenChange={setEstimateOpen}
+					title={`Deviz #${order.number}`}
+					footer={
+						<Button onClick={() => printPage(`Deviz ${order.number}`)} className="max-md:h-11">
+							<Printer /> Tipărește / PDF
+						</Button>
+					}
+				>
+					<InvoiceDocument invoice={estimateDoc} snapshot={snapshot} totals={totals} currency={settings.currency} heading="Deviz estimativ" numberLabel={`Lucrarea ${fmtWorkOrder(order.number)}`} legal={false} />
+				</Sheet>
+			</div>
+		);
+	}
 
 	return (
 		<Page width="wide" embedded={embedded}>
