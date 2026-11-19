@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ChevronRight } from "lucide-react";
+import { Glass } from "@/components/ds/glass";
 import { PHONE, PhoneNavBar } from "@/components/ds/nav-bar";
 import { useLocalPreference, useMediaQuery } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
@@ -110,7 +111,7 @@ export function useViewSwitch(storageKey, options) {
 	const values = options.map((option) => option.value);
 	const [value, setValue] = useLocalPreference(storageKey, values[0], values);
 	const element = (
-		<div role="radiogroup" aria-label="Cum arată pagina" className="inline-flex h-[30px] items-center gap-0.5 rounded-[8px] bg-muted p-0.5 pointer-coarse:h-10">
+		<Glass preset="pill" role="radiogroup" aria-label="Cum arată pagina" className="inline-flex h-[30px] items-center gap-0.5 rounded-[8px] bg-muted p-0.5 pointer-coarse:h-10">
 			{options.map((option) => {
 				const on = option.value === value;
 				return (
@@ -130,7 +131,7 @@ export function useViewSwitch(storageKey, options) {
 					</button>
 				);
 			})}
-		</div>
+		</Glass>
 	);
 	return [value, element];
 }

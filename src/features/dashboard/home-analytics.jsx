@@ -1,5 +1,6 @@
 "use client";
 
+import { useGlass } from "@/components/ds/glass";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowDownRight, ArrowRight, ArrowUpRight, CalendarDays, ChartArea, Ellipsis, Minus, Table2 } from "lucide-react";
@@ -133,6 +134,7 @@ export function HomeAnalytics({ today }) {
 		}
 	};
 	const common = { keys, formatKey };
+	const periodGlass = useGlass("pill");
 
 	return (
 		<section aria-label="Analiză" className="space-y-3">
@@ -141,7 +143,7 @@ export function HomeAnalytics({ today }) {
 				<div className="flex items-center gap-1">
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button variant="outline" className="max-md:h-11" aria-label={`Perioada: ${PERIOD_LABEL[period]}`}>
+							<Button ref={periodGlass} variant="outline" className="max-md:h-11 [&.lg-pane]:border-transparent" aria-label={`Perioada: ${PERIOD_LABEL[period]}`}>
 								<CalendarDays /> {PERIOD_LABEL[period]}
 							</Button>
 						</DropdownMenuTrigger>

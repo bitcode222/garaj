@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { CalendarClock, ExternalLink, GalleryHorizontal, MoreHorizontal, Phone } from "lucide-react";
+import { GlassPill } from "@/components/ds/glass";
 import { COVER_HEIGHT, COVER_WIDTH, CarCover, CoverButton, CoverIconButton, MakeTile } from "@/components/ds/car";
 import { PageTitle, SectionHeader, StatCard, StatusDot, useViewSwitch } from "@/components/ds/blocks";
 import { Page } from "@/components/ds/page";
@@ -147,16 +148,10 @@ function InShop({ jobs, vehicles, customers, staffId, filter, setFilter, section
 						const count = jobs.filter(f.keep).length;
 						if (f.value !== "all" && !count) return null;
 						return (
-							<button
-								key={f.value}
-								type="button"
-								aria-pressed={filter === f.value}
-								onClick={() => setFilter(f.value)}
-								className={cn("inline-flex h-7 items-center gap-1 rounded-[7px] border px-2.5 text-xs font-medium", filter === f.value ? "border-transparent bg-primary text-primary-foreground" : "bg-card")}
-							>
+							<GlassPill key={f.value} active={filter === f.value} aria-pressed={filter === f.value} onClick={() => setFilter(f.value)}>
 								{f.label}
 								{f.value !== "all" && <span className="tabular-nums opacity-60">{count}</span>}
-							</button>
+							</GlassPill>
 						);
 					})}
 				</div>
@@ -171,9 +166,9 @@ function InShop({ jobs, vehicles, customers, staffId, filter, setFilter, section
 				<div className="flex flex-col items-center gap-2 rounded-xl border border-dashed bg-card px-6 py-10 text-center">
 					<p className="text-[15px] font-semibold">Nicio mașină aici</p>
 					<p className="text-sm text-muted-foreground">Când primești o mașină, apare aici în culoarea ei.</p>
-					<button type="button" onClick={() => openSheet("checkin")} className="mt-1 inline-flex h-8 items-center rounded-[8px] bg-primary px-3 text-[13px] font-medium text-primary-foreground">
+					<GlassPill active onClick={() => openSheet("checkin")} className="mt-1 h-8 rounded-[8px] px-3 text-[13px]">
 						Primește o mașină
-					</button>
+					</GlassPill>
 				</div>
 			)}
 		</section>

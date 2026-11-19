@@ -1,3 +1,4 @@
+import { useGlass } from "@/components/ds/glass";
 import { MakeLogo } from "@/components/ds/make-logo";
 import { Plate } from "@/components/ds/plate";
 import { formatPlate } from "@/domain/vehicle";
@@ -102,9 +103,11 @@ export function CarLine({ car, plate, className }) {
 }
 
 /** The one button on a cover: white on the car's colour; on an outlined cover, the page's ink. */
-export function CoverButton({ icon: Icon, large, outline = false, children, ...props }) {
+export function CoverButton({ icon: Icon, large, outline = false, ref, children, ...props }) {
+	// Liquid glass: clear with a white tint on the car's colour (its text takes the ink), dark glass on an outlined cover.
+	const glass = useGlass(outline ? "ink" : "clear", { outer: ref });
 	return (
-		<button type="button" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-[7px] font-medium transition-transform active:scale-[0.98]", outline ? "bg-foreground text-background" : "bg-white text-zinc-900", large ? "h-8 px-3 text-[13px] pointer-coarse:h-10" : "h-7 px-2.5 text-xs pointer-coarse:h-9")} {...props}>
+		<button ref={glass} type="button" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-[7px] font-medium transition-transform active:scale-[0.98]", outline ? "bg-foreground text-background" : "bg-white text-zinc-900 [&.lg-pane]:text-[inherit]", large ? "h-8 px-3 text-[13px] pointer-coarse:h-10" : "h-7 px-2.5 text-xs pointer-coarse:h-9")} {...props}>
 			{Icon && <Icon className="size-3.5" aria-hidden />}
 			{children}
 		</button>
@@ -115,12 +118,14 @@ export function CoverButton({ icon: Icon, large, outline = false, children, ...p
 export const coverIconClass = (light, large = false) =>
 	cn("inline-flex shrink-0 items-center justify-center rounded-[7px]", large ? "size-8 pointer-coarse:size-10" : "size-7 pointer-coarse:size-9", light === "outline" ? "bg-foreground/[0.07] ring-1 ring-foreground/10 ring-inset" : light ? "bg-black/10" : "bg-white/15 ring-1 ring-white/20 ring-inset");
 
-/** A round button on a car's colour (call, "…"). */
-export function CoverIconButton({ icon: Icon, label, light, large, ...props }) {
+/** A round button on a car's colour (call, "…"), of liquid glass; `href` makes it a link (tel:). */
+export function CoverIconButton({ icon: Icon, label, light, large, href, ref, ...props }) {
+	const glass = useGlass(light === "outline" ? "pill" : "clear", { outer: ref });
+	const Tag = href ? "a" : "button";
 	return (
-		<button type="button" aria-label={label} className={coverIconClass(light, large)} {...props}>
+		<Tag ref={glass} {...(href ? { href } : { type: "button" })} aria-label={label} className={coverIconClass(light, large)} {...props}>
 			<Icon className="size-3.5" aria-hidden />
-		</button>
+		</Tag>
 	);
 }
 

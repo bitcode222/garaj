@@ -2,7 +2,8 @@
 
 import { Fragment, useState } from "react";
 import { Check, ExternalLink, MoreHorizontal, Phone } from "lucide-react";
-import { COVER_HEIGHT, COVER_WIDTH, CarCover, CoverButton, CoverIconButton, coverIconClass } from "@/components/ds/car";
+import { COVER_HEIGHT, COVER_WIDTH, CarCover, CoverButton, CoverIconButton } from "@/components/ds/car";
+import { GlassPill } from "@/components/ds/glass";
 import { SectionHeader } from "@/components/ds/blocks";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { fmtDate, fmtTime, plural } from "@/lib/format";
@@ -84,9 +85,7 @@ function BookingCover({ appointment: a, vehicle, customer, staff, bay, today }) 
 			menu={
 				<>
 					{customer?.phone && (
-						<a href={`tel:${customer.phone}`} aria-label={`Sună: ${customer.name}`} className={coverIconClass(light)}>
-							<Phone className="size-3.5" aria-hidden />
-						</a>
+						<CoverIconButton href={`tel:${customer.phone}`} icon={Phone} label={`Sună: ${customer.name}`} light={light} />
 					)}
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
@@ -125,16 +124,10 @@ export function ToAccept({ groups, today, vehicles, customers, staff, bays }) {
 					{FILTERS.map((f) => {
 						if (f.value !== "all" && !counts[f.value]) return null;
 						return (
-							<button
-								key={f.value}
-								type="button"
-								aria-pressed={active === f.value}
-								onClick={() => setFilter(f.value)}
-								className={cn("inline-flex h-7 items-center gap-1 rounded-[7px] border px-2.5 text-xs font-medium", active === f.value ? "border-transparent bg-primary text-primary-foreground" : "bg-card")}
-							>
+							<GlassPill key={f.value} active={active === f.value} aria-pressed={active === f.value} onClick={() => setFilter(f.value)}>
 								{f.label}
 								{f.value !== "all" && <span className="tabular-nums opacity-60">{counts[f.value]}</span>}
-							</button>
+							</GlassPill>
 						);
 					})}
 				</div>

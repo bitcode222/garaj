@@ -1,6 +1,7 @@
 "use client";
 
 import { CarLine } from "@/components/ds/car";
+import { useGlass } from "@/components/ds/glass";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -192,6 +193,7 @@ function CoverCard({ order, vehicle, customer, eyebrow, detail, onOpen }) {
 	const status = statusOf(order.status);
 	const action = primaryAction(order);
 	const light = ink !== "#ffffff"; // a yellow make: dark ink, so the "…" darkens instead
+	const mainGlass = useGlass("clear"); // liquid glass, clear with a white tint (the owner's pick C)
 	return (
 		<article className="flex h-[380px] w-[300px] shrink-0 snap-start flex-col rounded-[34px] p-4" style={{ background: makeCover(make), color: ink }}>
 			<button type="button" onClick={onOpen} className="flex flex-col gap-1 text-left outline-none">
@@ -207,24 +209,35 @@ function CoverCard({ order, vehicle, customer, eyebrow, detail, onOpen }) {
 			</button>
 			<span className="flex-1" />
 			<div className="flex items-center gap-2.5">
-				<button type="button" onClick={action ? action.run : onOpen} className="flex h-[50px] min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 text-[17px] font-semibold text-black active:opacity-80">
+				<button ref={mainGlass} type="button" onClick={action ? action.run : onOpen} className="flex h-[50px] min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 text-[17px] font-semibold text-black active:opacity-80 [&.lg-pane]:text-[inherit]">
 					{action ? <action.icon className="size-5 shrink-0" aria-hidden /> : <ArrowUpRight className="size-5 shrink-0" aria-hidden />}
 					<span className="truncate">{action ? action.label : "Deschide"}</span>
 				</button>
 				<JobMenu order={order} customer={customer} onOpen={onOpen}>
-					<button type="button" aria-label="Mai multe" className={cn("flex size-[50px] shrink-0 items-center justify-center rounded-full", light ? "bg-black/20" : "bg-white/20")}>
+					<GlassRound label="Mai multe" light={light}>
 						<MoreHorizontal className="size-5" aria-hidden />
-					</button>
+					</GlassRound>
 				</JobMenu>
 			</div>
 		</article>
 	);
 }
 
-/** QuickAction: the symbol on a light orange square, its name under it. */
-function QuickAction({ icon: Icon, title, onClick }) {
+/** The cover's round "…": liquid glass (a DropdownMenuTrigger hands it its ref). */
+function GlassRound({ label, light, ref, children, ...props }) {
+	const glass = useGlass("clear", { outer: ref });
 	return (
-		<button type="button" onClick={onClick} className="flex flex-col items-center gap-1.5 rounded-[12px] bg-card py-3 active:opacity-70">
+		<button ref={glass} type="button" aria-label={label} className={cn("flex size-[50px] shrink-0 items-center justify-center rounded-full", light ? "bg-black/20" : "bg-white/20")} {...props}>
+			{children}
+		</button>
+	);
+}
+
+/** QuickAction: the symbol on a light orange square, its name under it, on liquid glass. */
+function QuickAction({ icon: Icon, title, onClick }) {
+	const glass = useGlass("pill");
+	return (
+		<button ref={glass} type="button" onClick={onClick} className="flex flex-col items-center gap-1.5 rounded-[12px] bg-card py-3 active:opacity-70">
 			<span className="flex size-10 items-center justify-center rounded-[12px] bg-brand/12 text-brand">
 				<Icon className="size-[18px]" aria-hidden />
 			</span>
