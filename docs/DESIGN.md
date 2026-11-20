@@ -122,7 +122,7 @@ onto another row goes to that lift or mechanic, its time unchanged (a booking's 
 a new start or end on the quarter hour — a booking through the calendar's reschedule (confirm setting, overlap warning,
 undo), a job's logged work through `setEntrySpan` (`src/domain/work-clock.js`: no overlap with the job's other stretches,
 a running one keeps running). Jobs on a lift on the car's cover; bookings a grey dashed outline with the make tile. A
-tablet and the phone keep their own day.
+tablet and the phone keep their own day. Cards that overlap on one row stack in levels and the row grows (20 Nov 2026); a card half under the row names keeps its logo and text in view; a narrow card shows only the logo; "Toată ziua" never scrolls sideways unless an hour would be under 56 px.
 
 ### Telefon ca iPhone (owner, 17 Nov 2026, board https://claude.ai/artifact/XZjoSBj5YhRWmdHKBATf8d)
 

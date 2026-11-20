@@ -101,7 +101,29 @@ export function dayLanes({ by = "bay", rows, bays, appointments, workOrders, tod
 			laneOf(order[kind.field]).blocks.push({ key: entry.id ?? `${order.id}-${entry.start}`, kind: "work", order, entryId: entry.id ?? null, start, end, planned: false, running: runningEntry(order) === entry });
 		}
 	}
-	return loose.blocks.length ? [...lanes, loose] : lanes;
+	const all = loose.blocks.length ? [...lanes, loose] : lanes;
+	for (const lane of all) lane.levels = stackBlocks(lane.blocks);
+	return all;
+}
+
+const STACK_MIN = 15 * 60000; // a card is at least a quarter hour wide when deciding what overlaps
+
+/**
+ * Cards on one row that overlap in time go on separate levels (each block gets `level`, 0 first), so none hides
+ * another; returns how many levels the row needs (at least 1). Blocks are sorted by start.
+ */
+export function stackBlocks(blocks) {
+	const ends = [];
+	blocks.sort((a, b) => Date.parse(a.start) - Date.parse(b.start) || Date.parse(b.end) - Date.parse(a.end));
+	for (const block of blocks) {
+		const start = Date.parse(block.start);
+		const end = Math.max(Date.parse(block.end), start + STACK_MIN);
+		let level = ends.findIndex((until) => until <= start);
+		if (level < 0) level = ends.length;
+		ends[level] = end;
+		block.level = level;
+	}
+	return Math.max(1, ends.length);
 }
 
 /** The lane ids after dragging `from` onto `to`'s place (the rest keep their order). */
