@@ -35,6 +35,7 @@ const SPANS = [
 // Who gets a lane in "Mecanici": the people who work on cars, not the front desk.
 const ON_CARS = (person) => person.role !== "advisor";
 
+const clock = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
 const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).join(" ");
 
 /**
@@ -86,8 +87,29 @@ function DayLanes({ by, lanes, vehicles, settings, minute, span }) {
 		const track = el.scrollWidth - LABEL;
 		const left = Math.min(Math.max(now, 0), 100) / 100;
 		el.scrollLeft = Math.max(0, track * left - (el.clientWidth - LABEL) / 3);
+		showRange();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [span]);
+
+	// The hours in view, in the top-left corner (owner, 20 Nov 2026): follows the scroll and the window's width.
+	const [range, setRange] = useState(null);
+	function showRange() {
+		const el = scroller.current;
+		if (!el) return;
+		const track = el.scrollWidth - LABEL;
+		const start = from + (el.scrollLeft / track) * total;
+		const end = Math.min(to, start + ((el.clientWidth - LABEL) / track) * total);
+		const round = (m) => Math.round(m / 5) * 5;
+		setRange([round(start), round(end)]);
+	}
+	useLayoutEffect(() => {
+		const el = scroller.current;
+		if (!el) return undefined;
+		const observer = new ResizeObserver(showRange);
+		observer.observe(el);
+		return () => observer.disconnect();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [from, to]);
 
 	const save = by === "staff" ? saveStaff : saveBay;
 	const rename = (lane, name) => {
@@ -159,6 +181,7 @@ function DayLanes({ by, lanes, vehicles, settings, minute, span }) {
 			onPointerDown={onPointerDown}
 			onPointerMove={onPointerMove}
 			onPointerUp={endPan}
+			onScroll={showRange}
 			onPointerCancel={endPan}
 			className="overflow-x-auto overscroll-x-contain rounded-xl border bg-card select-none [scrollbar-width:thin]"
 		>
@@ -166,7 +189,9 @@ function DayLanes({ by, lanes, vehicles, settings, minute, span }) {
 				className={cn("grid grid-cols-[124px_minmax(0,1fr)]", span === "all" && "min-w-[720px]", "cursor-grab active:cursor-grabbing")}
 				style={{ width: `calc(${LABEL}px + (100% - ${LABEL}px) * ${total / visible})` }}
 			>
-				<div className="sticky left-0 z-20 bg-card" />
+				<div className="sticky left-0 z-20 flex items-center bg-card px-3.5 text-[11px] font-medium text-muted-foreground tabular-nums" aria-live="polite">
+					{range && `${clock(range[0])}–${clock(range[1])}`}
+				</div>
 				<div className="relative h-8 border-l">
 					{hours.map((m) => (
 						<span key={m} className="absolute top-2 -translate-x-1/2 text-[11px] text-muted-foreground tabular-nums first:translate-x-0" style={{ left: `${((m - from) / total) * 100}%` }}>
