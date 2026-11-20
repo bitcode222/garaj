@@ -98,7 +98,7 @@ export function dayLanes({ by = "bay", rows, bays, appointments, workOrders, tod
 			const end = entry.end ?? now;
 			if (dayOfInstant(end) !== today && dayOfInstant(entry.start) !== today) continue;
 			const start = dayOfInstant(entry.start) === today ? entry.start : new Date(dayStart).toISOString();
-			laneOf(order[kind.field]).blocks.push({ key: entry.id ?? `${order.id}-${entry.start}`, kind: "work", order, start, end, planned: false, running: runningEntry(order) === entry });
+			laneOf(order[kind.field]).blocks.push({ key: entry.id ?? `${order.id}-${entry.start}`, kind: "work", order, entryId: entry.id ?? null, start, end, planned: false, running: runningEntry(order) === entry });
 		}
 	}
 	return loose.blocks.length ? [...lanes, loose] : lanes;

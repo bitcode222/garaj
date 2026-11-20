@@ -24,7 +24,6 @@ import { atMinute } from "@/features/calendar/utils";
 import { primaryAction } from "@/features/work-orders/job-action";
 import { jobHeadline, jobSummary } from "@/features/work-orders/job-text";
 import { JOB_FILTERS, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data";
-import { DaySection } from "./day-lanes";
 import { MoneyRow } from "./money-row";
 import { PhoneAzi } from "./phone-azi";
 import { ToAccept } from "./to-accept";
@@ -268,7 +267,6 @@ export function DashboardPage() {
 	const collect = selectToCollect(invoices, payments, today);
 	const hours = hoursToday(workOrders, today, new Date().toISOString());
 	const numbers = <Numbers collect={collect} jobs={jobs} bookings={bookings} hours={hours} staff={staff} currency={currency} />;
-	const lanes = <DaySection bays={bays} staff={staff} appointments={appointments} workOrders={workOrders} vehicles={vehicles} settings={settings} today={today} minute={minute} />;
 	const money = (
 		<section className="space-y-3" aria-label="De încasat">
 			<SectionHeader title="De încasat" subtitle={`${formatMoney(collect.due, currency)} · ${plural(collect.groups.filter((g) => g.key !== "draft").reduce((n, g) => n + g.items.length, 0), "factură", "facturi")}`} href="/invoices/" />
@@ -294,12 +292,10 @@ export function DashboardPage() {
 							shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 						}}
 					/>
-					{lanes}
 				</>
 			) : (
 				<>
 					{numbers}
-					{lanes}
 					<div className="grid gap-7 lg:grid-cols-2">
 						<section className="space-y-3" aria-label="De confirmat">
 							{(() => {

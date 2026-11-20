@@ -31,7 +31,7 @@ import { CalendarSettings, MiniMonth } from "./calendar-panel";
 import { CalendarSearch, useCalendarSearch, useSearchIndex } from "./calendar-search";
 import { FloatingMonth } from "./floating-month";
 import { DayRows } from "./day-rows";
-import { DaySummary } from "./day-summary";
+import { DayBoard } from "./day-board";
 import { DayStrip } from "./day-strip";
 import { MonthPages } from "./month-pages";
 import { MonthStrip } from "./month-strip";
@@ -109,6 +109,7 @@ export function CalendarPage() {
 	const phone = useMediaQuery(PHONE);
 	const appointmentsMap = useCollection("appointments");
 	const staffMap = useCollection("staff");
+	const bays = useCollection("bays");
 	const customers = useCollection("customers");
 	const vehicles = useCollection("vehicles");
 	const services = useCollection("services");
@@ -516,7 +517,8 @@ export function CalendarPage() {
 	// Zi "Linie" moves through the days sideways, as in the mockup, whichever way the other views scroll.
 	const sideways = currentView === "day" && (dayMode === "line" || phone);
 	const onSheet = desktop && currentView === "week" && !albums;
-	const dayLine = desktop && currentView === "day" && dayMode === "line";
+	// Zi on a desktop is the day board (owner, 20 Nov 2026): the lifts or the mechanics as rows, cards moved and stretched.
+	const board = desktop && currentView === "day";
 	const nothingShown = !albums && byDay.size === 0 && allByDay.size > 0;
 	const stripProps = { ref: strip, alone: currentView === "day" && (dayMode === "line" || phone), bare: phone, today, settings, byDay, lookups, colorBy: prefs.colorBy, selectedId: selected, initialDay, onView, onOpen: open, onCreate: create };
 
@@ -540,7 +542,7 @@ export function CalendarPage() {
 								<div className="flex items-center gap-2">
 									<Segmented aria-label="Vizualizare" value={currentView} onValueChange={changeView} options={VIEWS.map((v) => ({ value: v.value, label: v.label }))} />
 									{currentView === "week" && weekSwitch}
-									{currentView === "day" && daySwitch}
+									{currentView === "day" && !board && daySwitch}
 									{albums ? (
 										<>
 											<span className="flex gap-1">
@@ -558,7 +560,7 @@ export function CalendarPage() {
 												{stepButton(1)}
 											</span>
 											{todayButton}
-											{!sideways && scrollButton}
+											{!sideways && !board && scrollButton}
 											{!miniOpen && miniButton}
 										</>
 									)}
@@ -650,12 +652,12 @@ export function CalendarPage() {
 				)}
 				{/* The week's hours grid and the day's line sit on a white sheet (the owner's picks A and C), the day with its
 				    summary beside it; Albume, Mecanici and the month fill the page. */}
-				<div className={cn("flex min-h-0 min-w-0 flex-1", dayLine && "gap-5 px-6 pb-4")}>
+				<div className="flex min-h-0 min-w-0 flex-1">
 					<div
 						ref={gridArea}
 						className={cn(
 							"relative flex min-h-0 min-w-0 flex-1 flex-col",
-							(onSheet || dayLine) && "overflow-hidden rounded-[18px] bg-card shadow-[0_0_0_1px_var(--border),0_24px_48px_-32px_rgb(0_0_0/0.25)]",
+							onSheet && "overflow-hidden rounded-[18px] bg-card shadow-[0_0_0_1px_var(--border),0_24px_48px_-32px_rgb(0_0_0/0.25)]",
 							onSheet && "mx-6 mb-4",
 						)}
 					>
@@ -666,7 +668,22 @@ export function CalendarPage() {
 							{monthNode(true)}
 						</FloatingMonth>
 					)}
-					{albums ? null : currentView === "month" ? (
+					{albums ? null : board ? (
+						<DayBoard
+							key={`board:${opening?.day ?? ""}`}
+							ref={strip}
+							initialDay={initialDay}
+							today={today}
+							bays={bays}
+							staff={staffMap}
+							appointments={appointmentsMap}
+							workOrders={workOrders}
+							vehicles={vehicles}
+							settings={settings}
+							onView={onView}
+							onReschedule={move}
+						/>
+					) : currentView === "month" ? (
 						direction === "vertical" ? (
 							<MonthStrip key={`month:v:${opening?.day ?? ""}`} {...stripProps} onPickDay={openDay} />
 						) : (
@@ -714,18 +731,6 @@ export function CalendarPage() {
 						</p>
 					)}
 					</div>
-					{dayLine && (
-						<DaySummary
-							day={seen?.day ?? initialDay}
-							today={today}
-							list={byDay.get(seen?.day ?? initialDay)}
-							staff={visibleStaff}
-							hours={settings.hours}
-							lookups={lookups}
-							onOpen={open}
-							onCreate={create}
-						/>
-					)}
 				</div>
 			</div>
 			{!desktop && (
