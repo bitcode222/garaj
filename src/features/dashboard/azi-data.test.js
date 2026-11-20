@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { dayLanes, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data.js";
+import { dayLanes, hoursText, hoursToday, moveLane, shopJobs, todaysBookings } from "./azi-data.js";
 
 const today = "2026-11-16";
 const at = (hhmm) => new Date(`${today}T${hhmm}:00`).toISOString();
@@ -55,4 +55,25 @@ test("the day's lanes: bookings on their lift, dashed until the car is in; logge
 	assert.equal(lanes[1].blocks.length, 1, "the job's clock is not drawn twice beside its booking");
 	assert.equal(lanes[1].blocks[0].running, true);
 	assert.equal(lanes[2].blocks[0].kind, "work");
+});
+
+test("the day by mechanic: a lane per mechanic, in their order; the job's mechanic places its work", () => {
+	const lanes = dayLanes({
+		by: "staff",
+		rows: { m: { id: "m", name: "Mihai", order: 1 }, v: { id: "v", name: "Vlad", order: 0 }, x: { id: "x", name: "Plecat", active: false } },
+		appointments: { p: { id: "p", staffId: "m", bayId: "l1", start: at("14:00"), end: at("15:00"), status: "scheduled" } },
+		workOrders: { j: { id: "j", staffId: "v", timeLog: [{ id: "t", start: at("09:00"), end: at("10:00") }] }, k: { id: "k", staffId: null, timeLog: [{ id: "u", start: at("08:00"), end: at("08:30") }] } },
+		today,
+		now: at("12:00"),
+	});
+	assert.deepEqual(lanes.map((l) => l.name), ["Vlad", "Mihai", "Fără mecanic"]);
+	assert.equal(lanes[0].blocks[0].order.id, "j");
+	assert.equal(lanes[1].blocks[0].appointment.id, "p");
+});
+
+test("moving a lane: down lands after the target, up lands before it", () => {
+	assert.deepEqual(moveLane(["a", "b", "c", "d"], "a", "c"), ["b", "c", "a", "d"]);
+	assert.deepEqual(moveLane(["a", "b", "c", "d"], "d", "b"), ["a", "d", "b", "c"]);
+	assert.deepEqual(moveLane(["a", "b"], "a", "a"), ["a", "b"]);
+	assert.deepEqual(moveLane(["a", "b"], "z", "a"), ["a", "b"]);
 });

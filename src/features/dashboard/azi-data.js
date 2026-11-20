@@ -55,24 +55,32 @@ export function hoursText(ms) {
 	return m ? `${h} h ${String(m).padStart(2, "0")}` : `${h} h`;
 }
 
+/** What the day's lanes can be: a lane per lift, or a lane per mechanic (owner, 20 Nov 2026). */
+export const LANE_KINDS = {
+	bay: { field: "bayId", collection: "bays", label: "Elevatoare", one: "elevator", loose: "Fără loc", newName: "Elevator nou" },
+	staff: { field: "staffId", collection: "staff", label: "Mecanici", one: "mecanic", loose: "Fără mecanic", newName: "Mecanic nou" },
+};
+
 /**
- * Azi B: the day as lanes, one per lift (bay). A booking is a block from its start to its end, dashed while the car is
- * not in yet; work logged on a job (a running clock included) is a block where the job sits, unless its booking is
- * already drawn. Bookings and jobs with no lift go in a lane of their own.
+ * Azi B: the day as lanes, one per lift (`by: "bay"`, the default) or per mechanic (`by: "staff"`). A booking is a
+ * block from its start to its end, dashed while the car is not in yet; work logged on a job (a running clock included)
+ * is a block where the job sits, unless its booking is already drawn. What has no lift (no mechanic) goes in a lane of
+ * its own, last. `rows` are the bays or the staff, ordered by `order`.
  */
-export function dayLanes({ bays, appointments, workOrders, today, now }) {
-	const lanes = Object.values(bays)
-		.filter((b) => b.active !== false)
-		.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-		.map((bay) => ({ id: bay.id, name: bay.name, blocks: [] }));
-	const loose = { id: null, name: "Fără loc", blocks: [] };
-	const laneOf = (bayId) => lanes.find((lane) => lane.id === bayId) ?? loose;
+export function dayLanes({ by = "bay", rows, bays, appointments, workOrders, today, now }) {
+	const kind = LANE_KINDS[by];
+	const lanes = Object.values(rows ?? bays ?? {})
+		.filter((r) => r.active !== false)
+		.sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || String(a.name).localeCompare(String(b.name)))
+		.map((row) => ({ id: row.id, name: row.name, blocks: [] }));
+	const loose = { id: null, name: kind.loose, blocks: [] };
+	const laneOf = (id) => lanes.find((lane) => lane.id === id) ?? loose;
 	const drawn = new Set();
 	for (const booking of todaysBookings(appointments, today)) {
 		if (booking.status === "no_show") continue;
 		const order = booking.workOrderId ? workOrders[booking.workOrderId] : null;
 		if (order) drawn.add(order.id);
-		laneOf(booking.bayId).blocks.push({
+		laneOf(booking[kind.field]).blocks.push({
 			key: booking.id,
 			kind: "booking",
 			appointment: booking,
@@ -90,8 +98,17 @@ export function dayLanes({ bays, appointments, workOrders, today, now }) {
 			const end = entry.end ?? now;
 			if (dayOfInstant(end) !== today && dayOfInstant(entry.start) !== today) continue;
 			const start = dayOfInstant(entry.start) === today ? entry.start : new Date(dayStart).toISOString();
-			laneOf(order.bayId).blocks.push({ key: entry.id ?? `${order.id}-${entry.start}`, kind: "work", order, start, end, planned: false, running: runningEntry(order) === entry });
+			laneOf(order[kind.field]).blocks.push({ key: entry.id ?? `${order.id}-${entry.start}`, kind: "work", order, start, end, planned: false, running: runningEntry(order) === entry });
 		}
 	}
 	return loose.blocks.length ? [...lanes, loose] : lanes;
+}
+
+/** The lane ids after dragging `from` onto `to`'s place (the rest keep their order). */
+export function moveLane(ids, from, to) {
+	const list = ids.filter((id) => id !== from);
+	const at = list.indexOf(to);
+	if (from === to || at < 0 || !ids.includes(from)) return ids;
+	list.splice(ids.indexOf(from) < ids.indexOf(to) ? at + 1 : at, 0, from);
+	return list;
 }
