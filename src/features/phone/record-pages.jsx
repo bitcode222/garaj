@@ -233,7 +233,7 @@ export function PhoneClient({ customer: c }) {
 					</section>
 				)}
 
-				<button type="button" onClick={remove} className="flex min-h-[52px] w-full items-center justify-center rounded-[20px] bg-card text-[17px]" style={{ color: STATE.late }}>
+				<button type="button" onClick={remove} className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-card text-[17px]" style={{ color: STATE.late }}>
 					Șterge clientul
 				</button>
 			</div>
@@ -397,7 +397,7 @@ export function PhoneCar({ vehicle: v }) {
 				)}
 
 				<div className="px-4">
-					<button type="button" onClick={remove} className="flex min-h-[52px] w-full items-center justify-center rounded-[20px] bg-card text-[17px]" style={{ color: STATE.late }}>
+					<button type="button" onClick={remove} className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-card text-[17px]" style={{ color: STATE.late }}>
 						Șterge mașina
 					</button>
 				</div>

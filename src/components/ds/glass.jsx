@@ -67,7 +67,7 @@ export function GlassPill({ active = false, className, ref, ...props }) {
 			ref={glass}
 			type="button"
 			className={cn(
-				"inline-flex h-7 items-center gap-1 rounded-[7px] px-2.5 text-xs font-medium [&.lg-pane]:border-transparent",
+				"inline-flex h-7 items-center gap-1 rounded-full px-2.5 text-xs font-medium [&.lg-pane]:border-transparent",
 				active ? "bg-primary text-primary-foreground [&.lg-pane]:text-background" : "border bg-card",
 				className,
 			)}
