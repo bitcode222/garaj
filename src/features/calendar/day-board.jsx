@@ -2,6 +2,7 @@
 
 import { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { GripVertical, Plus } from "lucide-react";
+import { SectionHeader } from "@/components/ds/blocks";
 import { MakeTile } from "@/components/ds/car";
 import { Segmented } from "@/components/ds/inputs";
 import { InlineText } from "@/components/ds/inline-text";
@@ -50,8 +51,9 @@ const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).joi
  * dragged onto another row to go to that lift or mechanic (its time stays), and stretched by either end to a new start
  * or end (a job: the stretch of work logged). The body pans with click and drag or a sideways scroll, and shows 2, 4 or
  * 8 hours at a time, or the whole day. `ref` takes the page's ‹ Azi › as the other views do (today, step, goTo).
+ * With `section`, it is Azi's "Ziua în atelier" (owner, 20 Nov 2026: back on the home page too): today, under a title.
  */
-export function DayBoard({ ref, initialDay, today, bays, staff, appointments, workOrders, vehicles, settings, onView, onReschedule }) {
+export function DayBoard({ ref, section = false, initialDay, today, bays, staff, appointments, workOrders, vehicles, settings, onView, onReschedule }) {
 	const [by, setBy] = useLocalPreference("garaj.azi.lanes", "bay", ["bay", "staff"]);
 	const [span, setSpan] = useLocalPreference("garaj.azi.span", "all", SPANS.map((s) => s.value));
 	const [day, setDay] = useState(initialDay);
@@ -66,14 +68,24 @@ export function DayBoard({ ref, initialDay, today, bays, staff, appointments, wo
 	}, [day]);
 	const rows = by === "staff" ? Object.fromEntries(Object.entries(staff).filter(([, p]) => ON_CARS(p))) : bays;
 	const lanes = dayLanes({ by, rows, appointments, workOrders, today: day, now: new Date().toISOString() });
+	const controls = (
+		<>
+			<Segmented value={span} onValueChange={setSpan} options={SPANS} aria-label="Cât se vede" />
+			<Segmented value={by} onValueChange={setBy} options={BY} aria-label="Rânduri" />
+		</>
+	);
+	const Wrap = section ? "section" : "div";
 	return (
-		<div className="flex min-h-0 flex-1 flex-col gap-3 px-6 pb-4">
-			<div className="flex items-center justify-end gap-2">
-				<Segmented value={span} onValueChange={setSpan} options={SPANS} aria-label="Cât se vede" />
-				<Segmented value={by} onValueChange={setBy} options={BY} aria-label="Rânduri" />
-			</div>
+		<Wrap className={section ? "space-y-3" : "flex min-h-0 flex-1 flex-col gap-3 px-6 pb-4"} aria-label={section ? "Ziua în atelier" : undefined}>
+			{section ? (
+				<SectionHeader title="Ziua în atelier" subtitle={`Ce e pe fiecare ${LANE_KINDS[by].one}; punctat, ce urmează din agendă`} href="/calendar/">
+					{controls}
+				</SectionHeader>
+			) : (
+				<div className="flex items-center justify-end gap-2">{controls}</div>
+			)}
 			<DayLanes by={by} day={day} today={today} lanes={lanes} vehicles={vehicles} settings={settings} minute={minute} span={span} onReschedule={onReschedule} />
-		</div>
+		</Wrap>
 	);
 }
 
