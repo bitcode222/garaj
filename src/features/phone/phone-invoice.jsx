@@ -283,12 +283,12 @@ function PhoneIssued({ invoice }) {
 					</ul>
 				)}
 				{invoice.status === "issued" && !invoice.stornoOf && (
-					<button type="button" onClick={storno} data-print="hide" className="flex min-h-[52px] w-full items-center justify-center rounded-[20px] bg-card text-[17px]" style={{ color: STATE.late }}>
+					<button type="button" onClick={storno} data-print="hide" className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-card text-[17px]" style={{ color: STATE.late }}>
 						Stornează factura
 					</button>
 				)}
 				{invoice.status === "cancelled" && (
-					<button type="button" onClick={redo} data-print="hide" className="flex min-h-[52px] w-full items-center justify-center rounded-[20px] bg-card text-[17px] text-brand">
+					<button type="button" onClick={redo} data-print="hide" className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-card text-[17px] text-brand">
 						Reface factura
 					</button>
 				)}
@@ -476,7 +476,7 @@ function PhoneDraft({ invoice }) {
 					</ul>
 				</section>
 
-				<button type="button" onClick={remove} className="flex min-h-[52px] w-full items-center justify-center rounded-[20px] bg-card text-[17px]" style={{ color: STATE.late }}>
+				<button type="button" onClick={remove} className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-card text-[17px]" style={{ color: STATE.late }}>
 					Șterge ciorna
 				</button>
 			</div>

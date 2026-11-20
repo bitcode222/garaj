@@ -107,7 +107,7 @@ export function CoverButton({ icon: Icon, large, outline = false, ref, children,
 	// Liquid glass: clear with a white tint on the car's colour (its text takes the ink), dark glass on an outlined cover.
 	const glass = useGlass(outline ? "ink" : "clear", { outer: ref });
 	return (
-		<button ref={glass} type="button" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-[7px] font-medium transition-transform active:scale-[0.98]", outline ? "bg-foreground text-background" : "bg-white text-zinc-900 [&.lg-pane]:text-[inherit]", large ? "h-8 px-3 text-[13px] pointer-coarse:h-10" : "h-9 rounded-[9px] px-3.5 text-[13.5px] pointer-coarse:h-11")} {...props}>
+		<button ref={glass} type="button" className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full font-medium transition-transform active:scale-[0.98]", outline ? "bg-foreground text-background" : "bg-white text-zinc-900 [&.lg-pane]:text-[inherit]", large ? "h-8 px-3 text-[13px] pointer-coarse:h-10" : "h-9 px-3.5 text-[13.5px] pointer-coarse:h-11")} {...props}>
 			{Icon && <Icon className={large ? "size-3.5" : "size-4"} aria-hidden />}
 			{children}
 		</button>
@@ -116,7 +116,7 @@ export function CoverButton({ icon: Icon, large, outline = false, ref, children,
 
 /** The classes of a round button on a car's colour, for a link that looks like one. `light`: "outline" on an outlined cover. */
 export const coverIconClass = (light, large = false) =>
-	cn("inline-flex shrink-0 items-center justify-center rounded-[7px]", large ? "size-8 pointer-coarse:size-10" : "size-9 rounded-[9px] pointer-coarse:size-11", light === "outline" ? "bg-foreground/[0.07] ring-1 ring-foreground/10 ring-inset" : light ? "bg-black/10" : "bg-white/15 ring-1 ring-white/20 ring-inset");
+	cn("inline-flex shrink-0 items-center justify-center rounded-full", large ? "size-8 pointer-coarse:size-10" : "size-9 pointer-coarse:size-11", light === "outline" ? "bg-foreground/[0.07] ring-1 ring-foreground/10 ring-inset" : light ? "bg-black/10" : "bg-white/15 ring-1 ring-white/20 ring-inset");
 
 /** A round button on a car's colour (call, "…"), of liquid glass; `href` makes it a link (tel:). */
 export function CoverIconButton({ icon: Icon, label, light, large, href, ref, ...props }) {
