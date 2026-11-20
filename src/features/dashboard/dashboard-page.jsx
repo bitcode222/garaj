@@ -280,12 +280,12 @@ function DayLanes({ lanes, vehicles, settings, minute }) {
 										key={block.key}
 										type="button"
 										onClick={open}
-										className={cn("absolute top-2 bottom-2 flex min-w-0 items-center gap-2 overflow-hidden rounded-[7px] px-2 text-left text-xs", block.planned && "border border-dashed")}
+										className={cn("absolute top-2 bottom-2 flex min-w-0 items-center gap-2 overflow-hidden rounded-[7px] px-2 text-left text-xs", block.planned && "border border-dashed border-foreground/25")}
 										style={{
 											left: `calc(${left}% + 2px)`,
 											width: `calc(${width}% - 4px)`,
-											// Planned: a dashed outline; on the lift: the car's cover, as the atelier's cards (owner, 20 Nov 2026).
-											...(block.planned ? { borderColor: `color-mix(in srgb, ${makeColor(vehicle?.make)} 60%, transparent)` } : { background: makeCover(vehicle?.make), color: makeInk(vehicle?.make) }),
+											// Planned: one grey dashed outline for every car; on the lift: the car's cover, as the atelier's cards (owner, 20 Nov 2026).
+											...(block.planned ? {} : { background: makeCover(vehicle?.make), color: makeInk(vehicle?.make) }),
 										}}
 									>
 										<MakeTile make={vehicle?.make} size={22} reverse={!block.planned} />
