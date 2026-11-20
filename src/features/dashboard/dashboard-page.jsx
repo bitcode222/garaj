@@ -280,7 +280,7 @@ function DayLanes({ lanes, vehicles, settings, minute }) {
 										key={block.key}
 										type="button"
 										onClick={open}
-										className={cn("absolute top-2 bottom-2 flex min-w-0 items-center gap-2 overflow-hidden rounded-[7px] px-2 text-left text-xs", block.planned && "border border-dashed bg-card")}
+										className={cn("absolute top-2 bottom-2 flex min-w-0 items-center gap-2 overflow-hidden rounded-[7px] px-2 text-left text-xs", block.planned && "border border-dashed")}
 										style={{
 											left: `calc(${left}% + 2px)`,
 											width: `calc(${width}% - 4px)`,
@@ -288,7 +288,7 @@ function DayLanes({ lanes, vehicles, settings, minute }) {
 											...(block.planned ? { borderColor: `color-mix(in srgb, ${makeColor(vehicle?.make)} 60%, transparent)` } : { background: makeCover(vehicle?.make), color: makeInk(vehicle?.make) }),
 										}}
 									>
-										{!block.planned && <MakeTile make={vehicle?.make} size={22} reverse />}
+										<MakeTile make={vehicle?.make} size={22} reverse={!block.planned} />
 										<span className="min-w-0">
 											<span className="block truncate font-semibold">{title}</span>
 											<span className={cn("block truncate", block.planned ? "text-muted-foreground" : "opacity-75")}>
