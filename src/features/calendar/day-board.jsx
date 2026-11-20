@@ -24,6 +24,12 @@ const BLOCK = "application/x-garaj-block";
 const LANE = "application/x-garaj-lane";
 const LABEL = 124; // px, the rows' names
 const SNAP = 15; // minutes: a stretched card's ends land on the quarter hour
+// A row's height: cards that overlap in time stack in levels (azi-data stackBlocks), so the row grows instead of hiding one.
+const CARD = 48;
+const PAD = 8;
+const GAP = 4;
+const rowHeight = (levels) => PAD * 2 + levels * CARD + (levels - 1) * GAP;
+const HOUR_MIN = 56; // px: "Toată ziua" never squeezes an hour narrower than this
 const minuteOf = (iso) => {
 	const d = new Date(iso);
 	return d.getHours() * 60 + d.getMinutes();
@@ -115,16 +121,17 @@ function DayLanes({ by, day, today, lanes, vehicles, settings, minute, span, onR
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [span, day]);
 
-	// The hours in view, in the top-left corner (owner, 20 Nov 2026): follows the scroll and the window's width.
-	const [range, setRange] = useState(null);
+	// The hours in view, in the top-left corner (owner, 20 Nov 2026): follows the scroll and the window's width. Written
+	// straight into the cell, so scrolling and panning don't redraw the board on every pixel.
+	const rangeEl = useRef(null);
 	function showRange() {
 		const el = scroller.current;
-		if (!el) return;
+		if (!el || !rangeEl.current) return;
 		const track = el.scrollWidth - LABEL;
 		const start = from + (el.scrollLeft / track) * total;
 		const end = Math.min(to, start + ((el.clientWidth - LABEL) / track) * total);
 		const round = (m) => Math.round(m / 5) * 5;
-		setRange([round(start), round(end)]);
+		rangeEl.current.textContent = `${clock(round(start))}–${clock(round(end))}`;
 	}
 	useLayoutEffect(() => {
 		const el = scroller.current;
@@ -236,15 +243,13 @@ function DayLanes({ by, day, today, lanes, vehicles, settings, minute, span, onR
 			className="overflow-x-auto overscroll-x-contain rounded-xl border bg-card select-none [scrollbar-width:thin]"
 		>
 			<div
-				className={cn("grid grid-cols-[124px_minmax(0,1fr)]", span === "all" && "min-w-[720px]", "cursor-grab active:cursor-grabbing")}
-				style={{ width: `calc(${LABEL}px + (100% - ${LABEL}px) * ${total / visible})` }}
+				className="grid cursor-grab grid-cols-[124px_minmax(0,1fr)] active:cursor-grabbing"
+				style={{ width: `calc(${LABEL}px + (100% - ${LABEL}px) * ${total / visible})`, minWidth: LABEL + (total / 60) * HOUR_MIN }}
 			>
-				<div className="sticky left-0 z-20 flex items-center bg-card px-3.5 text-[11px] font-medium text-muted-foreground tabular-nums" aria-live="polite">
-					{range && `${clock(range[0])}–${clock(range[1])}`}
-				</div>
+				<div ref={rangeEl} className="sticky left-0 z-20 flex items-center bg-card px-3.5 text-[11px] font-medium text-muted-foreground tabular-nums" aria-live="polite" />
 				<div className="relative h-8 border-l">
 					{hours.map((m) => (
-						<span key={m} className="absolute top-2 -translate-x-1/2 text-[11px] text-muted-foreground tabular-nums first:translate-x-0" style={{ left: `${((m - from) / total) * 100}%` }}>
+						<span key={m} className="absolute top-2 -translate-x-1/2 text-[11px] text-muted-foreground tabular-nums first:translate-x-0 last:-translate-x-full last:pr-1.5" style={{ left: `${((m - from) / total) * 100}%` }}>
 							{`${Math.floor(m / 60)}:00`}
 						</span>
 					))}
@@ -257,7 +262,7 @@ function DayLanes({ by, day, today, lanes, vehicles, settings, minute, span, onR
 								onDragOver={dragOver(lane)}
 								onDragLeave={() => setOver((current) => (current === key ? null : current))}
 								onDrop={dropOn(lane)}
-								className={cn("sticky left-0 z-20 flex h-16 cursor-default items-center gap-0.5 border-t bg-card pr-2 pl-1 text-[13px] font-medium", over === key && "bg-accent")}
+								className={cn("sticky left-0 z-20 flex min-h-16 cursor-default items-center gap-0.5 border-t bg-card pr-2 pl-1 text-[13px] font-medium", over === key && "bg-accent")}
 							>
 								{lane.id ? (
 									<>
@@ -284,8 +289,8 @@ function DayLanes({ by, day, today, lanes, vehicles, settings, minute, span, onR
 								onDragLeave={() => setOver((current) => (current === key ? null : current))}
 								onDrop={dropOn(lane)}
 								data-track
-								className={cn("relative h-16 border-t border-l transition-colors", over === key && "bg-accent/60")}
-								style={{ backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(60 / total) * 100}% - 1px), var(--border) calc(${(60 / total) * 100}% - 1px), var(--border) ${(60 / total) * 100}%)` }}
+								className={cn("relative border-t border-l transition-colors", over === key && "bg-accent/60")}
+								style={{ height: rowHeight(lane.levels ?? 1), backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(60 / total) * 100}% - 1px), var(--border) calc(${(60 / total) * 100}% - 1px), var(--border) ${(60 / total) * 100}%)` }}
 							>
 								{lane.blocks.map((block) => (
 									<Block key={block.key} block={block} lane={lane} vehicle={vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId]} from={from} to={to} total={total} onStretch={stretch} />
@@ -319,6 +324,8 @@ function Block({ block, lane, vehicle, from, to, total, onStretch }) {
 	const left = pct(startMin);
 	const width = Math.max(4, pct(endMin) - left);
 	const title = block.appointment ? [carName(vehicle), block.appointment.title].filter(Boolean).join(" · ") : jobHeadline(block.order);
+	const when = draft ? `${clock(draft.start)}–${clock(draft.end)}` : block.running ? "în lucru acum" : `${fmtTime(block.start)}–${fmtTime(block.end)}`;
+	const detail = [vehicle?.plate && formatPlate(vehicle.plate), when].filter(Boolean).join(" · ");
 	const open = () => {
 		if (quiet.current) return;
 		if (block.order) openSheet("work-order-view", { id: block.order.id });
@@ -372,9 +379,12 @@ function Block({ block, lane, vehicle, from, to, total, onStretch }) {
 				event.dataTransfer.effectAllowed = "move";
 			}}
 			onClick={open}
+			aria-label={`${title}, ${detail}`}
 			title={canStart ? "Trage pe alt rând ca să o muți; trage de capete ca să schimbi ora" : "Trage pe alt rând ca să o muți"}
-			className={cn("absolute top-2 bottom-2 flex min-w-0 cursor-pointer items-center gap-2 overflow-hidden rounded-[7px] px-2 text-left text-xs active:cursor-grabbing", block.planned && "border border-dashed border-foreground/25", draft && "z-20 ring-2 ring-ring")}
+			className={cn("@container absolute flex min-w-0 cursor-pointer items-center overflow-clip rounded-[7px] px-2 text-left text-xs active:cursor-grabbing", block.planned && "border border-dashed border-foreground/25", draft && "z-20 ring-2 ring-ring")}
 			style={{
+				top: PAD + (block.level ?? 0) * (CARD + GAP),
+				height: CARD,
 				left: `calc(${left}% + 2px)`,
 				width: `calc(${width}% - 4px)`,
 				// Planned: one grey dashed outline for every car; on the lift: the car's cover, as the atelier's cards.
@@ -382,11 +392,14 @@ function Block({ block, lane, vehicle, from, to, total, onStretch }) {
 			}}
 		>
 			{canStart && handle("start")}
-			<MakeTile make={vehicle?.make} size={22} reverse={!block.planned} />
-			<span className="min-w-0">
-				<span className="block truncate font-semibold">{title}</span>
-				<span className={cn("block truncate tabular-nums", block.planned ? "text-muted-foreground" : "opacity-75")}>
-					{[vehicle?.plate && formatPlate(vehicle.plate), draft ? `${clock(draft.start)}–${clock(draft.end)}` : block.running ? "în lucru acum" : `${fmtTime(block.start)}–${fmtTime(block.end)}`].filter(Boolean).join(" · ")}
+			{/* Sticky past the rows' names: a card half under them still shows its car. A narrow card shows the logo only. */}
+			<span className="sticky left-[132px] flex w-fit max-w-[min(100%,16rem)] min-w-0 items-center gap-2 @max-[76px]:mx-auto">
+				<MakeTile make={vehicle?.make} size={22} reverse={!block.planned} />
+				<span className="min-w-0 @max-[76px]:hidden">
+					<span className="block truncate font-semibold">{title}</span>
+					<span className={cn("block truncate tabular-nums", block.planned ? "text-muted-foreground" : "opacity-75")}>
+						{detail}
+					</span>
 				</span>
 			</span>
 			{canEnd && handle("end")}

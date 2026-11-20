@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { dayLanes, hoursText, hoursToday, moveLane, shopJobs, todaysBookings } from "./azi-data.js";
+import { dayLanes, hoursText, hoursToday, moveLane, shopJobs, stackBlocks, todaysBookings } from "./azi-data.js";
 
 const today = "2026-11-16";
 const at = (hhmm) => new Date(`${today}T${hhmm}:00`).toISOString();
@@ -76,4 +76,19 @@ test("moving a lane: down lands after the target, up lands before it", () => {
 	assert.deepEqual(moveLane(["a", "b", "c", "d"], "d", "b"), ["a", "d", "b", "c"]);
 	assert.deepEqual(moveLane(["a", "b"], "a", "a"), ["a", "b"]);
 	assert.deepEqual(moveLane(["a", "b"], "z", "a"), ["a", "b"]);
+});
+
+test("stackBlocks: overlapping cards on one row go on separate levels, the gaps are reused", () => {
+	const at = (h, m = 0) => new Date(2026, 10, 20, h, m).toISOString();
+	const blocks = [
+		{ key: "c", start: at(11), end: at(13) },
+		{ key: "a", start: at(9), end: at(11) },
+		{ key: "b", start: at(10), end: at(12) },
+		{ key: "d", start: at(12), end: at(12) }, // no length: still a quarter hour wide
+		{ key: "e", start: at(12, 10), end: at(14) },
+	];
+	assert.equal(stackBlocks(blocks), 3);
+	const level = Object.fromEntries(blocks.map((b) => [b.key, b.level]));
+	assert.deepEqual(level, { a: 0, b: 1, c: 0, d: 1, e: 2 });
+	assert.equal(stackBlocks([]), 1);
 });
