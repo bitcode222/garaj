@@ -19,6 +19,7 @@ import { buildStorno, issueInvoice, issueProblems, paymentProblem } from "@/doma
 import { laborLineFromOperation, operationFromService, operationVatRate } from "@/domain/lines";
 import { formatPlate, normalizePlate, addReading } from "@/domain/vehicle";
 import { defaultInspection, invoiceLinesFromOrder, toInvoiceDraft, transition } from "@/domain/work-order";
+import { saveReception } from "@/domain/reception";
 import { dropLastRequest, logRequest, markReceived, newReview, noteCustomer } from "@/domain/review";
 import { setLineDone as markLineDone, startWork as startClock, stopClock } from "@/domain/work-clock";
 import { mergeSettings } from "./defaults";
@@ -502,6 +503,15 @@ export function updateWorkOrder(id, patch) {
 		}
 	}
 	const next = { ...order, ...patch, updatedAt: now() };
+	commit({ workOrders: { put: [next] } });
+	return next;
+}
+
+/** Saves the walk-around done when the car arrives (src/domain/reception.js); a closed job no longer takes it. */
+export function saveWorkOrderReception(id, input) {
+	const order = mustGet("workOrders", id, "Lucrarea");
+	if (order.status === "delivered" || order.status === "cancelled") throw new DomainError("locked", "Lucrarea este închisă și nu mai poate fi modificată.");
+	const next = saveReception(order, input, now());
 	commit({ workOrders: { put: [next] } });
 	return next;
 }

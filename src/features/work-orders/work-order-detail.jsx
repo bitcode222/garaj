@@ -65,6 +65,9 @@ import { TotalsBlock } from "@/features/lines/totals-block";
 import { IosLines } from "@/features/lines/ios-lines";
 import { cn } from "@/lib/utils";
 import { InspectionChecklist } from "./inspection";
+import { ReceptionCard } from "./reception-card";
+import { ReceptionFlow } from "./reception-flow";
+import { receptionSummary } from "@/domain/reception";
 import { MakeLogo, PlateTag } from "@/components/ds/make-logo";
 import { closeSheet } from "@/lib/sheets";
 import { holdEdits } from "@/lib/pending-edits";
@@ -94,19 +97,6 @@ function SheetGroup({ title, aside, children }) {
 			</div>
 			{children}
 		</section>
-	);
-}
-
-/** A row of a group: its coloured icon square, the label, the value at the right. */
-function SheetRow({ icon: Icon, color, label, value }) {
-	return (
-		<div className="flex min-h-12 items-center gap-3 px-4 [&+&]:border-t">
-			<span className="flex size-7 shrink-0 items-center justify-center rounded-[7px] text-white" style={{ background: color }}>
-				<Icon className="size-4" aria-hidden />
-			</span>
-			<span className="flex-1 text-[16px]">{label}</span>
-			<span className="text-[16px] text-muted-foreground tabular-nums">{value}</span>
-		</div>
 	);
 }
 
@@ -170,6 +160,7 @@ function WorkOrder({ order, embedded = false }) {
 	const { member } = useAccount();
 	const bays = selectActive(useCollection("bays"));
 	const [estimateOpen, setEstimateOpen] = useState(false);
+	const [receptionOpen, setReceptionOpen] = useState(false);
 	const [draft, update, flush] = useDraft(order, (next) =>
 		updateWorkOrder(order.id, {
 			complaint: next.complaint,
@@ -261,6 +252,7 @@ function WorkOrder({ order, embedded = false }) {
 	// buttons; below it, on white, grey groups under big titles in the order the desk asks: what the client says, how
 	// the car came in, what is to do, the estimate, the invoice, the shop's own notes, then the rest.
 	if (embedded) {
+		const reception = receptionSummary(order);
 		const todo = draft.lines.filter((l) => !l.refused && !l.done).length;
 		const work = draft.lines.filter((l) => !l.refused).length;
 		const mechanic = staff.find((m) => m.id === draft.staffId);
@@ -292,24 +284,21 @@ function WorkOrder({ order, embedded = false }) {
 					</div>
 				</SheetGroup>
 
-				<SheetGroup title="Recepția" aside={summary.urgent + summary.attention > 0 ? [summary.urgent && `${summary.urgent} urgent`, summary.attention && `${summary.attention} atenție`].filter(Boolean).join(" · ") : null}>
-					<div className="overflow-hidden rounded-[14px] bg-card">
-						<SheetRow icon={Gauge} color="#0a84ff" label="Kilometraj la primire" value={order.mileage != null ? fmtKm(order.mileage) : "—"} />
-						<SheetRow icon={Fuel} color="#30b0c7" label="Combustibil" value={order.fuelLevel != null ? FUEL_LEVELS[order.fuelLevel] : "—"} />
-						<div className="border-t px-4 py-3">
-							<p className="mb-2 flex items-center gap-2 text-[15px] font-medium">
-								<ClipboardCheck className="size-4 text-muted-foreground" aria-hidden /> Inspecție
-								<span className="text-[13px] font-normal text-muted-foreground">recomandările ajung în mesajul către client</span>
-							</p>
-							<InspectionChecklist items={draft.inspection} onChange={(inspection) => update({ inspection })} readOnly={locked} />
-						</div>
-					</div>
+				<SheetGroup title="Recepția" aside={reception.done ? `${reception.filled} din ${reception.of} pași` : null}>
+					<ReceptionCard order={order} summary={reception} locked={locked} onOpen={() => setReceptionOpen(true)} />
 				</SheetGroup>
 
 				<SheetGroup title="De făcut la mașină" aside={work ? (todo ? `${todo} din ${work} rămase` : "toate gata") : null}>
 					<ul id={`job-lines-${order.id}`} className="scroll-mt-24 overflow-hidden rounded-[14px] bg-card [&>li+li]:border-t">
 						<IosLines lines={draft.lines} onChange={(lines) => update({ lines })} staff={staff} vatPayer={vatPayer} readOnly={locked || Boolean(invoice && invoice.status !== "draft" && invoice.status !== "cancelled")} defaultStaffId={draft.staffId ?? member?.id ?? null} currency={settings.currency} onToggleDone={toggleDone} hideTotal />
 					</ul>
+				</SheetGroup>
+
+				<SheetGroup title="Inspecție" aside={summary.urgent + summary.attention > 0 ? [summary.urgent && `${summary.urgent} urgent`, summary.attention && `${summary.attention} atenție`].filter(Boolean).join(" · ") : null}>
+					<div className="overflow-hidden rounded-[14px] bg-card px-4 py-3">
+						<p className="mb-2 text-[13px] text-muted-foreground">Ce a verificat mecanicul; recomandările ajung în mesajul către client.</p>
+						<InspectionChecklist items={draft.inspection} onChange={(inspection) => update({ inspection })} readOnly={locked} />
+					</div>
 				</SheetGroup>
 
 				<SheetGroup title="Deviz" aside={draft.lines.length ? <Money value={totals.gross} /> : null}>
@@ -379,6 +368,7 @@ function WorkOrder({ order, embedded = false }) {
 					</p>
 				</SheetGroup>
 
+				<ReceptionFlow open={receptionOpen} onOpenChange={setReceptionOpen} order={order} vehicle={vehicle} customer={customer} />
 				<Sheet
 					open={estimateOpen}
 					onOpenChange={setEstimateOpen}
