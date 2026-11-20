@@ -3,7 +3,7 @@
 import { PhoneBooking } from "./phone-booking";
 import { PHONE } from "@/components/ds/nav-bar";
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, ChevronRight, CircleX, Clock, Mail, Phone, Plus, Timer, UserX } from "lucide-react";
+import { CalendarClock, ChevronRight, CircleX, Clock, FileText, Mail, MoreHorizontal, Pencil, Phone, Plus, Timer, UserX, Wrench } from "lucide-react";
 import { Initials, Money } from "@/components/ds/data";
 import { DetailSheet } from "@/components/ds/detail-sheet";
 import { FlowSteps, usePanelEscape } from "@/components/ds/flow-steps";
@@ -34,7 +34,11 @@ import { toast } from "@/lib/toast";
 import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 import { fmtLength } from "@/features/dashboard/visit-ui";
-import { VisitBarFor } from "@/features/flow/visit-bar";
+import { VisitBarFor, useVisit } from "@/features/flow/visit-bar";
+import { useWalk } from "@/features/flow/visit-links";
+import { CoverIconButton } from "@/components/ds/car";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { makeInk } from "@/lib/colors";
 import { CustomerNote } from "@/features/reviews/customer-note";
 import { AppointmentHistory, CallOffPanel, DelayPanel, ReschedulePanel, undoTo } from "./appointment-state";
 import { FixButton, useBookingWarnings, WarningItems } from "./booking-warnings";
@@ -70,6 +74,40 @@ function Section({ title, sectionRef, plain = false, className, children }) {
 export default function AppointmentView(props) {
 	const phone = useMediaQuery(PHONE);
 	return phone ? <PhoneBooking open={props.open} onOpenChange={props.onOpenChange} id={props.id} /> : <BookingSheet {...props} />;
+}
+
+/** The booking's "…" (20 Nov 2026): its visit's other records, now that the sheet has no visit bar. */
+function BookingMenu({ appointment, light }) {
+	const visit = useVisit("appointment", appointment);
+	const walk = useWalk(true);
+	const { order, invoice } = visit ?? {};
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<CoverIconButton icon={MoreHorizontal} label="Mai multe" light={light} />
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="w-60" data-sheet-menu>
+				<DropdownMenuLabel>Vizita</DropdownMenuLabel>
+				{order ? (
+					<DropdownMenuItem onSelect={() => walk({ kind: "work-order", id: order.id, direction: "forward" })}>
+						<Wrench /> {order.status === "estimate" ? "Devizul" : "Lucrarea"} {fmtWorkOrder(order.number)}
+					</DropdownMenuItem>
+				) : (
+					<DropdownMenuItem disabled>
+						<Wrench /> Fără lucrare încă
+					</DropdownMenuItem>
+				)}
+				{invoice && (
+					<DropdownMenuItem onSelect={() => walk({ kind: "invoice", id: invoice.id, direction: "forward" })}>
+						<FileText /> {invoice.number == null ? "Ciorna facturii" : `Factura ${formatInvoiceNumber(invoice.series, invoice.number)}`}
+					</DropdownMenuItem>
+				)}
+				<DropdownMenuItem onSelect={() => openSheet("appointment", { id: appointment.id })}>
+					<Pencil /> Editează programarea
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
 }
 
 function BookingSheet({ open, onOpenChange, id, panel: openOn = null }) {
@@ -128,8 +166,14 @@ function BookingSheet({ open, onOpenChange, id, panel: openOn = null }) {
 			make={vehicle?.make}
 			onEdit={() => openSheet("appointment", { id: a.id })}
 			// The phone's thumb reach: the next step, the same button as in the Acum card (hidden there on a phone).
-			footer={primary ? <FixButton fix={primary} variant="default" size="default" className="h-11" /> : null}
-			footerClassName="md:hidden"
+			footer={
+				a ? (
+					<>
+						{primary && <FixButton fix={primary} variant="default" size="default" className="h-11" />}
+						<BookingMenu appointment={a} light={makeInk(vehicle?.make) !== "#ffffff"} />
+					</>
+				) : null
+			}
 		>
 			{a && (
 				<div className="space-y-5">

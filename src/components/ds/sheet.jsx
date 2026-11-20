@@ -157,6 +157,66 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 	const motion = useContext(SheetMotion);
 	const walked = Boolean(motion.enter || motion.leave);
 	const swipe = useSwipeDismiss(open, onOpenChange);
+	// The head: back, the sheet's controls and close, then the title (a car's: CarHead).
+	const head = (
+					<div
+						className={cn("shrink-0 touch-pan-y", car ? cn(carClass, "px-5 pt-[calc(0.75rem+var(--safe-top))] pb-5 md:px-6 md:pt-4") : "px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
+						style={car ? { background: makeCover(car), color: makeInk(car) } : undefined}
+						{...swipe.handlers}
+					>
+						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. */}
+						<div className="-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-9">
+							<button
+								type="button"
+								// Reached by walking a visit, Back walks back the way it came; otherwise it closes.
+								onClick={() => (motion.back ? motion.back() : onOpenChange(false))}
+								className={cn(
+									"flex h-11 items-center gap-0.5 rounded-md pr-3 pl-1.5 text-[15px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground active:bg-accent md:h-9 md:pl-2 md:text-sm md:gap-1",
+									depth === 0 && !motion.back && "md:hidden",
+								)}
+								aria-label="Înapoi"
+							>
+								<ChevronLeftIcon className="size-6 md:hidden" />
+								<ArrowLeftIcon className="size-4 max-md:hidden" />
+								<span>Înapoi</span>
+							</button>
+							{headerActions}
+							<DialogPrimitive.Close
+								className="ml-auto flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground max-md:hidden md:size-9"
+								aria-label="Închide"
+							>
+								<XIcon className="size-4" />
+							</DialogPrimitive.Close>
+						</div>
+						{car ? (
+							<CarHead car={car} cover={cover} title={title} description={description} state={state} footer={footer} />
+						) : (
+						<div className="mt-1 min-w-0">
+							{bar && <div className="-mx-1 mt-2 mb-4">{bar}</div>}
+							{bar ? (
+								<div className="flex min-w-0 items-start gap-2.5">
+									<MakeTile make={make} size={28} className="mt-px" />
+									<DialogPrimitive.Title className="min-w-0 flex-1 text-heading break-words text-foreground">{title}</DialogPrimitive.Title>
+									{state && (
+										<span className="mt-px flex shrink-0 items-center rounded-full border bg-card px-2.5 py-1">
+											<StateTag state={state} size="sm" />
+										</span>
+									)}
+								</div>
+							) : (
+								<div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1">
+									{tint ? <MakeTile make={tint} size={28} /> : kind && <KindMark kind={kind} size="sm" />}
+									<DialogPrimitive.Title className={cn("text-heading", kind && kindText(kind))}>{title}</DialogPrimitive.Title>
+									{state && <StateTag state={state} size="md" />}
+								</div>
+							)}
+							<DialogPrimitive.Description className={description ? "mt-0.5 text-sm text-muted-foreground" : "sr-only"}>
+								{description ?? title}
+							</DialogPrimitive.Description>
+						</div>
+						)}
+					</div>
+	);
 	return (
 		<DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
 			<DialogPrimitive.Portal>
@@ -188,7 +248,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 						// md and up: a side panel.
 						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:border-l",
 						// One width for every sheet on the web (md and up), so stacked sheets line up exactly (42 rem, 672 px).
-						"md:max-w-2xl",
+						car ? "md:max-w-[34rem]" : "md:max-w-2xl",
 						// Centred (Recepție in Atelier "Etape", docs/DESIGN.md §4): a card in the middle of the window, md and up.
 						centered &&
 							"md:inset-auto md:top-[5vh] md:left-1/2 md:h-auto md:max-h-[90dvh] md:-translate-x-1/2 md:overflow-hidden md:rounded-2xl md:border md:[--tw-enter-translate-x:0] md:[--tw-exit-translate-x:0] md:data-[state=closed]:zoom-out-95 md:data-[state=open]:zoom-in-95",
@@ -196,64 +256,10 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 						className,
 					)}
 				>
-					<div
-						className={cn("shrink-0 touch-pan-y", car ? cn(carClass, "px-5 pt-[calc(0.75rem+var(--safe-top))] pb-5 md:px-6 md:pt-4") : "px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
-						style={car ? { background: makeCover(car), color: makeInk(car) } : undefined}
-						{...swipe.handlers}
-					>
-						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. */}
-						<div className="-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-9">
-							<button
-								type="button"
-								// Reached by walking a visit, Back walks back the way it came; otherwise it closes.
-								onClick={() => (motion.back ? motion.back() : onOpenChange(false))}
-								className={cn(
-									"flex h-11 items-center gap-0.5 rounded-md pr-3 pl-1.5 text-[15px] font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground active:bg-accent md:h-9 md:pl-2 md:text-sm md:gap-1",
-									depth === 0 && !motion.back && "md:hidden",
-								)}
-								aria-label="Înapoi"
-							>
-								<ChevronLeftIcon className="size-6 md:hidden" />
-								<ArrowLeftIcon className="size-4 max-md:hidden" />
-								<span>Înapoi</span>
-							</button>
-							{headerActions}
-							<DialogPrimitive.Close
-								className="ml-auto flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground max-md:hidden md:size-9"
-								aria-label="Închide"
-							>
-								<XIcon className="size-4" />
-							</DialogPrimitive.Close>
-						</div>
-						{car ? (
-							<CarHead car={car} cover={cover} title={title} description={description} state={state} footer={footer} bar={bar} />
-						) : (
-						<div className="mt-1 min-w-0">
-							{bar && <div className="-mx-1 mt-2 mb-4">{bar}</div>}
-							{bar ? (
-								<div className="flex min-w-0 items-start gap-2.5">
-									<MakeTile make={make} size={28} className="mt-px" />
-									<DialogPrimitive.Title className="min-w-0 flex-1 text-heading break-words text-foreground">{title}</DialogPrimitive.Title>
-									{state && (
-										<span className="mt-px flex shrink-0 items-center rounded-full border bg-card px-2.5 py-1">
-											<StateTag state={state} size="sm" />
-										</span>
-									)}
-								</div>
-							) : (
-								<div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1">
-									{tint ? <MakeTile make={tint} size={28} /> : kind && <KindMark kind={kind} size="sm" />}
-									<DialogPrimitive.Title className={cn("text-heading", kind && kindText(kind))}>{title}</DialogPrimitive.Title>
-									{state && <StateTag state={state} size="md" />}
-								</div>
-							)}
-							<DialogPrimitive.Description className={description ? "mt-0.5 text-sm text-muted-foreground" : "sr-only"}>
-								{description ?? title}
-							</DialogPrimitive.Description>
-						</div>
-						)}
-					</div>
+					{!car && head}
 					<div ref={bounceThroughScrollLock} className="min-h-0 flex-1 overflow-y-scroll overscroll-contain">
+						{/* A car's head scrolls away with its body (owner, 20 Nov 2026); other sheets keep theirs fixed. */}
+						{car && head}
 						{/* 1px taller than the viewport: short content still scrolls, so WebKit rubber-bands it. */}
 						<div className={cn("min-h-[calc(100%+1px)]", car ? "sheet-a-body px-4 pt-2 pb-10 md:px-6" : "px-10 pb-10")}>
 							<SheetDepth.Provider value={depth + 1}>{children}</SheetDepth.Provider>
@@ -273,9 +279,9 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 /**
  * The head of a car's sheet (sheet "A", the owner's pick, 19 Nov 2026), as its card: on the car's colour, the logo box
  * at the left (its number at the top, "car • plate" at the bottom), beside it the state, the title and a few lines;
- * under them the main button and the round ones (`footer`), then the visit bar.
+ * under them the main button and the round ones (`footer`). No visit bar: the record's "…" reaches the others (20 Nov 2026).
  */
-function CarHead({ car, cover, title, description, state, footer, bar }) {
+function CarHead({ car, cover, title, description, state, footer }) {
 	const lines = (cover?.lines ?? []).filter(Boolean);
 	return (
 		<div className="mt-2 min-w-0">
@@ -303,7 +309,6 @@ function CarHead({ car, cover, title, description, state, footer, bar }) {
 				</div>
 			</div>
 			{footer && <div data-sheet-actions className="mt-4 flex flex-wrap items-center gap-2 [&>:first-child]:flex-1 [&>:first-child]:justify-center [&_p]:basis-full [&_p]:text-xs">{footer}</div>}
-			{bar && <div className="-mx-1 mt-4">{bar}</div>}
 		</div>
 	);
 }

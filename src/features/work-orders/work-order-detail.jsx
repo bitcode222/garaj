@@ -377,11 +377,6 @@ function WorkOrder({ order, embedded = false }) {
 						{mechanic ? ` · ${mechanic.name}` : ""}
 						{bay ? ` · ${bay.name}` : ""}
 					</p>
-					{order.status === "estimate" && !order.invoiceId && (
-						<button type="button" onClick={remove} className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-[14px] bg-card text-[16px] text-destructive">
-							<Trash2 className="size-[18px]" aria-hidden /> Șterge devizul
-						</button>
-					)}
 				</SheetGroup>
 
 				<Sheet
