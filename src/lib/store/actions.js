@@ -21,7 +21,7 @@ import { formatPlate, normalizePlate, addReading } from "@/domain/vehicle";
 import { defaultInspection, invoiceLinesFromOrder, toInvoiceDraft, transition } from "@/domain/work-order";
 import { saveReception } from "@/domain/reception";
 import { dropLastRequest, logRequest, markReceived, newReview, noteCustomer } from "@/domain/review";
-import { setLineDone as markLineDone, startWork as startClock, stopClock } from "@/domain/work-clock";
+import { setEntrySpan, setLineDone as markLineDone, startWork as startClock, stopClock } from "@/domain/work-clock";
 import { mergeSettings } from "./defaults";
 import { COLLECTIONS, atomic, commit, getState, replaceAllData, snapshotForBackup } from "./store";
 
@@ -583,6 +583,15 @@ export function startWork(id, { staffId = null } = {}) {
 	if (order.status !== "in_progress") order = setWorkOrderStatus(id, "in_progress");
 	const { order: next, stopped } = startClock(order, { staffId, now: now(), orders: values("workOrders") });
 	commit({ workOrders: { put: [next, ...stopped] } });
+	return next;
+}
+
+/** New ends for a stretch of logged work (src/domain/work-clock.js setEntrySpan); a closed job keeps its log. */
+export function setWorkEntrySpan(id, entryId, span) {
+	const order = mustGet("workOrders", id, "Lucrarea");
+	if (order.status === "delivered" || order.status === "cancelled") throw new DomainError("locked", "Lucrarea este închisă și nu mai poate fi modificată.");
+	const next = setEntrySpan(order, entryId, span, { now: now() });
+	commit({ workOrders: { put: [next] } });
 	return next;
 }
 

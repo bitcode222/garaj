@@ -1,26 +1,32 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { GripVertical, Plus } from "lucide-react";
 import { MakeTile } from "@/components/ds/car";
-import { SectionHeader } from "@/components/ds/blocks";
 import { Segmented } from "@/components/ds/inputs";
 import { InlineText } from "@/components/ds/inline-text";
 import { fmtTime } from "@/lib/format";
 import { formatPlate } from "@/domain/vehicle";
 import { makeCover, makeInk } from "@/lib/colors";
 import { openSheet } from "@/lib/sheets";
-import { useLocalPreference } from "@/lib/hooks";
-import { assignToLane, reorderTeam, saveBay, saveStaff } from "@/lib/store/actions";
+import { useLocalPreference, useNowMinute } from "@/lib/hooks";
+import { canReschedule } from "@/domain/appointment";
+import { addDaysISO } from "@/domain/dates";
+import { assignToLane, moveAppointment, reorderTeam, saveBay, saveStaff, setWorkEntrySpan } from "@/lib/store/actions";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
-import { toMinutes } from "@/features/calendar/utils";
+import { atMinute, toMinutes } from "./utils";
 import { jobHeadline } from "@/features/work-orders/job-text";
-import { LANE_KINDS, dayLanes, moveLane } from "./azi-data";
+import { LANE_KINDS, dayLanes, moveLane } from "@/features/dashboard/azi-data";
 
 const BLOCK = "application/x-garaj-block";
 const LANE = "application/x-garaj-lane";
 const LABEL = 124; // px, the rows' names
+const SNAP = 15; // minutes: a stretched card's ends land on the quarter hour
+const minuteOf = (iso) => {
+	const d = new Date(iso);
+	return d.getHours() * 60 + d.getMinutes();
+};
 const BY = [
 	{ value: "bay", label: LANE_KINDS.bay.label },
 	{ value: "staff", label: LANE_KINDS.staff.label },
@@ -39,29 +45,39 @@ const clock = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
 const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).join(" ");
 
 /**
- * Azi's "Ziua în atelier" (owner, 20 Nov 2026): the day by lift or by mechanic. Rows are renamed in place, dragged by
- * their handle into a new order, and added at the bottom; a booking or a job is dragged onto another row to go to that
- * lift or mechanic (its time stays). The body pans with click and drag or a sideways scroll, and shows 2, 4 or 8 hours
- * at a time, or the whole day.
+ * Agendă → Zi on a desktop (owner, 20 Nov 2026; first built as Azi's "Ziua în atelier"): one day by lift or by mechanic.
+ * Rows are renamed in place, dragged by their handle into a new order, and added at the bottom; a booking or a job is
+ * dragged onto another row to go to that lift or mechanic (its time stays), and stretched by either end to a new start
+ * or end (a job: the stretch of work logged). The body pans with click and drag or a sideways scroll, and shows 2, 4 or
+ * 8 hours at a time, or the whole day. `ref` takes the page's ‹ Azi › as the other views do (today, step, goTo).
  */
-export function DaySection({ bays, staff, appointments, workOrders, vehicles, settings, today, minute }) {
+export function DayBoard({ ref, initialDay, today, bays, staff, appointments, workOrders, vehicles, settings, onView, onReschedule }) {
 	const [by, setBy] = useLocalPreference("garaj.azi.lanes", "bay", ["bay", "staff"]);
 	const [span, setSpan] = useLocalPreference("garaj.azi.span", "all", SPANS.map((s) => s.value));
-	const kind = LANE_KINDS[by];
+	const [day, setDay] = useState(initialDay);
+	const minute = useNowMinute();
+	useImperativeHandle(ref, () => ({ today: () => setDay(today), step: (dir) => setDay((d) => addDaysISO(d, dir)), goTo: (d) => setDay(d) }), [today]);
+	const notify = useRef(onView);
+	useEffect(() => {
+		notify.current = onView;
+	});
+	useEffect(() => {
+		notify.current?.({ day, from: day, to: day, month: day.slice(0, 7), settled: true });
+	}, [day]);
 	const rows = by === "staff" ? Object.fromEntries(Object.entries(staff).filter(([, p]) => ON_CARS(p))) : bays;
-	const lanes = dayLanes({ by, rows, appointments, workOrders, today, now: new Date().toISOString() });
+	const lanes = dayLanes({ by, rows, appointments, workOrders, today: day, now: new Date().toISOString() });
 	return (
-		<section className="space-y-3" aria-label="Ziua în atelier">
-			<SectionHeader title="Ziua în atelier" subtitle={`Ce e pe fiecare ${kind.one}; punctat, ce urmează din agendă`} href="/calendar/">
+		<div className="flex min-h-0 flex-1 flex-col gap-3 px-6 pb-4">
+			<div className="flex items-center justify-end gap-2">
 				<Segmented value={span} onValueChange={setSpan} options={SPANS} aria-label="Cât se vede" />
 				<Segmented value={by} onValueChange={setBy} options={BY} aria-label="Rânduri" />
-			</SectionHeader>
-			<DayLanes by={by} lanes={lanes} vehicles={vehicles} settings={settings} minute={minute} span={span} />
-		</section>
+			</div>
+			<DayLanes by={by} day={day} today={today} lanes={lanes} vehicles={vehicles} settings={settings} minute={minute} span={span} onReschedule={onReschedule} />
+		</div>
 	);
 }
 
-function DayLanes({ by, lanes, vehicles, settings, minute, span }) {
+function DayLanes({ by, day, today, lanes, vehicles, settings, minute, span, onReschedule }) {
 	const kind = LANE_KINDS[by];
 	const scroller = useRef(null);
 	const pan = useRef(null);
@@ -71,13 +87,9 @@ function DayLanes({ by, lanes, vehicles, settings, minute, span }) {
 	const to = Math.ceil(toMinutes(settings.hours?.close ?? "18:00") / 60) * 60;
 	const total = Math.max(60, to - from);
 	const visible = span === "all" ? total : Math.min(total, Number(span) * 60);
-	const at = (iso) => {
-		const d = new Date(iso);
-		return Math.min(100, Math.max(0, ((d.getHours() * 60 + d.getMinutes() - from) / total) * 100));
-	};
 	const hours = [];
 	for (let m = from; m <= to; m += 60) hours.push(m);
-	const now = ((minute - from) / total) * 100;
+	const now = day === today && minute != null ? ((minute - from) / total) * 100 : -1;
 	const named = lanes.filter((lane) => lane.id);
 
 	// A new window starts on now (or the opening hour), so the hours that matter are in view.
@@ -85,11 +97,11 @@ function DayLanes({ by, lanes, vehicles, settings, minute, span }) {
 		const el = scroller.current;
 		if (!el) return;
 		const track = el.scrollWidth - LABEL;
-		const left = Math.min(Math.max(now, 0), 100) / 100;
+		const left = now < 0 ? 0 : Math.min(now, 100) / 100;
 		el.scrollLeft = Math.max(0, track * left - (el.clientWidth - LABEL) / 3);
 		showRange();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [span]);
+	}, [span, day]);
 
 	// The hours in view, in the top-left corner (owner, 20 Nov 2026): follows the scroll and the window's width.
 	const [range, setRange] = useState(null);
@@ -124,6 +136,32 @@ function DayLanes({ by, lanes, vehicles, settings, minute, span }) {
 		try {
 			const row = save({ name: kind.newName });
 			setFresh(row.id);
+		} catch (error) {
+			toast.error(error.message);
+		}
+	};
+
+	// A card stretched by an end: a booking takes the new hours (the calendar's own confirm and undo), a job the new ends
+	// of the work it logged.
+	const stretch = (block, startMin, endMin) => {
+		const start = atMinute(day, startMin);
+		const end = atMinute(day, endMin);
+		if (block.kind === "booking") {
+			if (onReschedule) onReschedule(block.appointment, { start, end });
+			else {
+				try {
+					moveAppointment(block.appointment.id, start, end);
+				} catch (error) {
+					toast.error(error.message);
+				}
+			}
+			return;
+		}
+		const entry = block.order.timeLog.find((e) => e.id === block.entryId);
+		const previous = { start: entry.start, end: entry.end };
+		try {
+			setWorkEntrySpan(block.order.id, block.entryId, { start, end });
+			toast.success(`Lucrat: ${fmtTime(start)}–${entry.end ? fmtTime(end) : "acum"}`, { action: { label: "Anulează", onClick: () => setWorkEntrySpan(block.order.id, block.entryId, previous) } });
 		} catch (error) {
 			toast.error(error.message);
 		}
@@ -233,11 +271,12 @@ function DayLanes({ by, lanes, vehicles, settings, minute, span }) {
 								onDragOver={dragOver(lane)}
 								onDragLeave={() => setOver((current) => (current === key ? null : current))}
 								onDrop={dropOn(lane)}
+								data-track
 								className={cn("relative h-16 border-t border-l transition-colors", over === key && "bg-accent/60")}
 								style={{ backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(60 / total) * 100}% - 1px), var(--border) calc(${(60 / total) * 100}% - 1px), var(--border) ${(60 / total) * 100}%)` }}
 							>
 								{lane.blocks.map((block) => (
-									<Block key={block.key} block={block} lane={lane} vehicle={vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId]} left={at(block.start)} right={at(block.end)} />
+									<Block key={block.key} block={block} lane={lane} vehicle={vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId]} from={from} to={to} total={total} onStretch={stretch} />
 								))}
 								{now >= 0 && now <= 100 && <span aria-hidden className="pointer-events-none absolute inset-y-0 z-10 w-0.5 bg-[#ff3b30]" style={{ left: `${now}%` }} />}
 							</div>
@@ -255,21 +294,74 @@ function DayLanes({ by, lanes, vehicles, settings, minute, span }) {
 	);
 }
 
-function Block({ block, lane, vehicle, left, right }) {
-	const width = Math.max(4, right - left);
+function Block({ block, lane, vehicle, from, to, total, onStretch }) {
+	const [draft, setDraft] = useState(null); // { start, end } in minutes while an end is dragged
+	const grab = useRef(null);
+	const quiet = useRef(false); // the click that ends a stretch does not open the card
+	const closed = block.order && ["delivered", "cancelled"].includes(block.order.status);
+	const canStart = block.kind === "booking" ? canReschedule(block.appointment) : Boolean(block.entryId) && !closed;
+	const canEnd = canStart && !(block.kind === "work" && block.running);
+	const startMin = draft?.start ?? minuteOf(block.start);
+	const endMin = draft?.end ?? Math.max(minuteOf(block.end), startMin + 1);
+	const pct = (m) => Math.min(100, Math.max(0, ((m - from) / total) * 100));
+	const left = pct(startMin);
+	const width = Math.max(4, pct(endMin) - left);
 	const title = block.appointment ? [carName(vehicle), block.appointment.title].filter(Boolean).join(" · ") : jobHeadline(block.order);
-	const open = () => (block.order ? openSheet("work-order-view", { id: block.order.id }) : openSheet("appointment-view", { id: block.appointment.id }));
+	const open = () => {
+		if (quiet.current) return;
+		if (block.order) openSheet("work-order-view", { id: block.order.id });
+		else openSheet("appointment-view", { id: block.appointment.id });
+	};
+
+	const down = (edge) => (event) => {
+		if (event.button !== 0) return;
+		event.preventDefault();
+		event.stopPropagation();
+		const track = event.currentTarget.closest("[data-track]").clientWidth;
+		grab.current = { edge, x: event.clientX, start: minuteOf(block.start), end: Math.max(minuteOf(block.end), minuteOf(block.start) + SNAP), track };
+		event.currentTarget.setPointerCapture(event.pointerId);
+	};
+	const move = (event) => {
+		const g = grab.current;
+		if (!g) return;
+		const delta = Math.round((((event.clientX - g.x) / g.track) * total) / SNAP) * SNAP;
+		if (g.edge === "start") setDraft({ start: Math.min(Math.max(from, g.start + delta), g.end - SNAP), end: g.end });
+		else setDraft({ start: g.start, end: Math.max(Math.min(to, g.end + delta), g.start + SNAP) });
+	};
+	const up = () => {
+		const g = grab.current;
+		grab.current = null;
+		if (!g) return;
+		quiet.current = true;
+		setTimeout(() => (quiet.current = false), 0);
+		const next = draft;
+		setDraft(null);
+		if (next && (next.start !== g.start || next.end !== g.end)) onStretch(block, next.start, next.end);
+	};
+	const handle = (edge) => (
+		<span
+			aria-hidden
+			onPointerDown={down(edge)}
+			onPointerMove={move}
+			onPointerUp={up}
+			onPointerCancel={up}
+			onClick={(event) => event.stopPropagation()}
+			className={cn("absolute inset-y-0 z-10 w-2 cursor-ew-resize after:absolute after:inset-y-2 after:w-0.5 after:rounded-full after:bg-current after:opacity-0 hover:after:opacity-40", edge === "start" ? "left-0 after:left-0.5" : "right-0 after:right-0.5")}
+		/>
+	);
+
 	return (
 		<button
 			type="button"
-			draggable
+			draggable={!draft}
 			onDragStart={(event) => {
+				if (grab.current) return event.preventDefault();
 				event.dataTransfer.setData(BLOCK, JSON.stringify({ appointmentId: block.appointment?.id ?? null, workOrderId: block.appointment ? null : block.order?.id, laneId: lane.id }));
 				event.dataTransfer.effectAllowed = "move";
 			}}
 			onClick={open}
-			title="Trage pe alt rând ca să o muți"
-			className={cn("absolute top-2 bottom-2 flex min-w-0 cursor-pointer items-center gap-2 overflow-hidden rounded-[7px] px-2 text-left text-xs active:cursor-grabbing", block.planned && "border border-dashed border-foreground/25")}
+			title={canStart ? "Trage pe alt rând ca să o muți; trage de capete ca să schimbi ora" : "Trage pe alt rând ca să o muți"}
+			className={cn("absolute top-2 bottom-2 flex min-w-0 cursor-pointer items-center gap-2 overflow-hidden rounded-[7px] px-2 text-left text-xs active:cursor-grabbing", block.planned && "border border-dashed border-foreground/25", draft && "z-20 ring-2 ring-ring")}
 			style={{
 				left: `calc(${left}% + 2px)`,
 				width: `calc(${width}% - 4px)`,
@@ -277,13 +369,15 @@ function Block({ block, lane, vehicle, left, right }) {
 				...(block.planned ? {} : { background: makeCover(vehicle?.make), color: makeInk(vehicle?.make) }),
 			}}
 		>
+			{canStart && handle("start")}
 			<MakeTile make={vehicle?.make} size={22} reverse={!block.planned} />
 			<span className="min-w-0">
 				<span className="block truncate font-semibold">{title}</span>
-				<span className={cn("block truncate", block.planned ? "text-muted-foreground" : "opacity-75")}>
-					{[vehicle?.plate && formatPlate(vehicle.plate), block.running ? "în lucru acum" : `${fmtTime(block.start)}–${fmtTime(block.end)}`].filter(Boolean).join(" · ")}
+				<span className={cn("block truncate tabular-nums", block.planned ? "text-muted-foreground" : "opacity-75")}>
+					{[vehicle?.plate && formatPlate(vehicle.plate), draft ? `${clock(draft.start)}–${clock(draft.end)}` : block.running ? "în lucru acum" : `${fmtTime(block.start)}–${fmtTime(block.end)}`].filter(Boolean).join(" · ")}
 				</span>
 			</span>
+			{canEnd && handle("end")}
 		</button>
 	);
 }

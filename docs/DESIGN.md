@@ -41,7 +41,7 @@ choice on that device. A detail page follows the view it was opened from.
 
 | Group | Pick | The switch | Screens |
 |---|---|---|---|
-| Azi | A + B | Coperți · Ziua | A (desktop, 18 Nov 2026): **De acceptat** (bookings still to accept as outlined covers — dashed border, no fill, the make tile in the car's colour — with an amber "De confirmat" label, in day order, each naming its day (no day labels in the row, so the covers sit on the În atelier grid), one-tap Confirmă with undo; no section when none), **În atelier** (the jobs as covers), the **money row** (Încasat azi by method · Mai poate intra azi: ready cars + invoices due today · the month so far against the month before, cumulative), then **Ziua în atelier** (the day by the hour; 20 Nov 2026: rows by lift or by mechanic (**Elevatoare / Mecanici**), a window of 2 h · 4 h · 8 h · the whole day panned by click-and-drag or a sideways scroll, rows renamed in place, dragged by their handle into a new order and added at the bottom; a card dragged onto another row goes to that lift or mechanic, its time unchanged; jobs on a lift on the car's cover, bookings a grey dashed outline with the make tile). B: the day as a timeline per lift, dashed for what is still to come. |
+| Azi | A + B | Coperți · Ziua | A (desktop, 18 Nov 2026): **De acceptat** (bookings still to accept as outlined covers — dashed border, no fill, the make tile in the car's colour — with an amber "De confirmat" label, in day order, each naming its day (no day labels in the row, so the covers sit on the În atelier grid), one-tap Confirmă with undo; no section when none), **În atelier** (the jobs as covers), the **money row** (Încasat azi by method · Mai poate intra azi: ready cars + invoices due today · the month so far against the month before, cumulative), (20 Nov 2026: "Ziua în atelier" moved to Agendă → Zi). B: the numbers and the lists. |
 | Atelier | A + B | Etape · Tablă | A: job cards grouped by stage; Lucrare and Deviz open as a full page with the car-coloured header; Recepție is a centred sheet. B: a board with a column per stage, drag to move; Lucrare, Deviz and Recepție open in a panel on the right. |
 | Agendă | A | none | The week by the hour with blocks tinted by the car, the list grouped by day, a booking as a centred sheet in the car's colour. |
 | Bani | A + B | Tabel · Plăci | A: invoices as a table under the month's numbers; the invoice as the printed page with its status beside it; reports as simple charts. B: invoices as cards with the amount first, grouped (to collect, drafts, paid); the invoice with the amount in a car-coloured header; reports as a dashboard. |
@@ -113,11 +113,16 @@ pick E). Bookings still to confirm: a dotted white outline (and an amber dot in 
 
 ### Agendă, Zi (owner's pick C, 16 Nov 2026, board https://claude.ai/artifact/2mZRpiUQRqgMNNrqcxgMgX)
 
-**Zi** has its own switch beside the views ("Linie · Mecanici", kept on the device, `garaj.agenda.day`). **Linie** (pick C,
-the default): the day alone as one wide line on the white sheet, overlapping bookings side by side, and beside it
-"Ziua pe scurt" (`features/calendar/day-summary.jsx`): how many bookings, the ones still to confirm (open them), each
-mechanic's first free hour from now on (book it), each mechanic's load, and "Programare nouă". The free time and the load
-are rules in `src/domain/day-summary.js`. Linie always moves through the days sideways (the hours scroll down), whatever the "Derulare" setting; the ⇄/⇅ button hides there. **Mecanici**: the column per mechanic, as before (drag between mechanics).
+**Zi on a desktop is the day board** (owner, 20 Nov 2026; replaces Linie · Mecanici and "Ziua pe scurt",
+`features/calendar/day-board.jsx`): one day, ‹ › and Azi move it, the mini month picks it. Rows by lift or by mechanic
+(**Elevatoare / Mecanici**, `garaj.azi.lanes`; Mecanici leaves out the front desk), a window of 2 h · 4 h · 8 h · the whole
+day (`garaj.azi.span`) panned by click-and-drag or a sideways scroll, the hours in view in the top-left corner. Rows are
+renamed in place, dragged by their handle into a new order and added at the bottom (a new lift or mechanic). A card dragged
+onto another row goes to that lift or mechanic, its time unchanged (a booking's job follows it); dragged by an end it takes
+a new start or end on the quarter hour — a booking through the calendar's reschedule (confirm setting, overlap warning,
+undo), a job's logged work through `setEntrySpan` (`src/domain/work-clock.js`: no overlap with the job's other stretches,
+a running one keeps running). Jobs on a lift on the car's cover; bookings a grey dashed outline with the make tile. A
+tablet and the phone keep their own day.
 
 ### Telefon ca iPhone (owner, 17 Nov 2026, board https://claude.ai/artifact/XZjoSBj5YhRWmdHKBATf8d)
 

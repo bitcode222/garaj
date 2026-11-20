@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 
-import { isRunning, runningJobs, setLineDone, startWork, steps, stopClock, workedMs } from "./work-clock.js";
+import { isRunning, runningJobs, setEntrySpan, setLineDone, startWork, steps, stopClock, workedMs } from "./work-clock.js";
 
 const job = (over = {}) => ({ id: "w1", number: 1, status: "approved", lines: [], dates: {}, activity: [], timeLog: [], ...over });
 const T0 = "2026-11-16T08:00:00.000Z";
@@ -63,5 +63,25 @@ describe("work clock", () => {
 		const b = job({ id: "b", status: "in_progress", timeLog: [{ start: T1, end: null }] });
 		const c = job({ id: "c", status: "delivered", timeLog: [{ start: T1, end: null }] });
 		assert.deepEqual(runningJobs([a, b, c, job()]).map((o) => o.id), ["b", "a"]);
+	});
+});
+
+describe("stretching logged work", () => {
+	const at = (h) => `2026-11-16T${h}:00.000Z`;
+	const order = job({ timeLog: [{ id: "a", start: at("08:00"), end: at("09:00") }, { id: "b", start: at("10:00"), end: null }] });
+	test("a done entry takes both ends", () => {
+		const next = setEntrySpan(order, "a", { start: at("07:30"), end: at("09:30") }, { now: at("11:00") });
+		assert.deepEqual(next.timeLog[0], { id: "a", start: at("07:30"), end: at("09:30") });
+	});
+	test("a running entry keeps running; only its start moves", () => {
+		const next = setEntrySpan(order, "b", { start: at("09:45"), end: at("12:00") }, { now: at("11:00") });
+		assert.equal(next.timeLog[1].end, null);
+		assert.equal(next.timeLog[1].start, at("09:45"));
+	});
+	test("refuses reversed ends, overlaps and work in the future", () => {
+		assert.throws(() => setEntrySpan(order, "a", { start: at("09:00"), end: at("08:00") }, { now: at("11:00") }), /înaintea/);
+		assert.throws(() => setEntrySpan(order, "a", { start: at("08:00"), end: at("10:30") }, { now: at("11:00") }), /suprapune/);
+		assert.throws(() => setEntrySpan(order, "b", { start: at("11:30"), end: null }, { now: at("11:00") }), /înaintea|viitor/);
+		assert.throws(() => setEntrySpan(order, "z", { start: at("08:00"), end: at("09:00") }, { now: at("11:00") }), /nu mai există/);
 	});
 });

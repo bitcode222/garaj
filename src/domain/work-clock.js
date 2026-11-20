@@ -17,6 +17,22 @@ export function workedMs(order, now) {
 	return (order.timeLog ?? []).reduce((sum, e) => sum + Math.max(0, Date.parse(e.end ?? now) - Date.parse(e.start)), 0);
 }
 
+/**
+ * A stretch of logged work with new ends (dragged on the Agendă's day). `end` null keeps a running entry running; the
+ * start must come before the end (and before `now` while running), and the entry must not overlap the job's others.
+ */
+export function setEntrySpan(order, entryId, { start, end }, { now }) {
+	const entry = (order.timeLog ?? []).find((e) => e.id === entryId);
+	if (!entry) throw new DomainError("not_found", "Intervalul de lucru nu mai există.");
+	const nextEnd = entry.end ? end : null;
+	if (!start || Number.isNaN(Date.parse(start))) throw new DomainError("invalid", "Ora de început nu e validă.");
+	if (Date.parse(start) >= Date.parse(nextEnd ?? now)) throw new DomainError("invalid", "Începutul trebuie să fie înaintea sfârșitului.");
+	if (Date.parse(start) > Date.parse(now)) throw new DomainError("invalid", "Lucrul nu poate începe în viitor.");
+	const clash = order.timeLog.some((e) => e.id !== entryId && Date.parse(e.start) < Date.parse(nextEnd ?? now) && Date.parse(start) < Date.parse(e.end ?? now));
+	if (clash) throw new DomainError("overlap", "Se suprapune cu alt interval lucrat la aceeași lucrare.");
+	return { ...order, timeLog: order.timeLog.map((e) => (e.id === entryId ? { ...e, start, end: nextEnd } : e)), updatedAt: now };
+}
+
 /** Stops a job's clock at `now`; a job that is not running comes back unchanged. */
 export function stopClock(order, { now }) {
 	if (!isRunning(order)) return order;
