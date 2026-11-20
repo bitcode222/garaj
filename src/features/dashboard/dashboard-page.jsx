@@ -13,17 +13,18 @@ import { useAccount } from "@/components/shell/account-menu";
 import { fmtDate, fmtTime, formatMoney, plural } from "@/lib/format";
 import { dayOfInstant } from "@/domain/dates";
 import { formatPlate } from "@/domain/vehicle";
-import { AREA, STATE, TONE_COLOR, makeColor, makeCover, makeInk } from "@/lib/colors";
+import { AREA, STATE, TONE_COLOR, makeInk } from "@/lib/colors";
 import { APPOINTMENT_STATUS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
 import { selectAziMoney, selectToCollect, selectToConfirm } from "@/lib/store/selectors";
 import { useNowMinute } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
-import { atMinute, toMinutes } from "@/features/calendar/utils";
+import { atMinute } from "@/features/calendar/utils";
 import { primaryAction } from "@/features/work-orders/job-action";
 import { jobHeadline, jobSummary } from "@/features/work-orders/job-text";
-import { JOB_FILTERS, dayLanes, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data";
+import { JOB_FILTERS, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data";
+import { DaySection } from "./day-lanes";
 import { MoneyRow } from "./money-row";
 import { PhoneAzi } from "./phone-azi";
 import { ToAccept } from "./to-accept";
@@ -238,75 +239,6 @@ function MoneyRows({ collect, vehicles, customers, currency }) {
 }
 
 /** Azi B: the lifts as lanes across the opening hours, the cars as blocks tinted with their colour. */
-function DayLanes({ lanes, vehicles, settings, minute }) {
-	const router = useRouter();
-	const from = Math.floor(toMinutes(settings.hours?.open ?? "08:00") / 60) * 60;
-	const to = Math.ceil(toMinutes(settings.hours?.close ?? "18:00") / 60) * 60;
-	const span = Math.max(60, to - from);
-	const at = (iso) => {
-		const d = new Date(iso);
-		return Math.min(100, Math.max(0, ((d.getHours() * 60 + d.getMinutes() - from) / span) * 100));
-	};
-	const hours = [];
-	for (let m = from; m <= to; m += 60) hours.push(m);
-	const now = ((minute - from) / span) * 100;
-	if (!lanes.length) return <p className="rounded-xl border bg-card px-4 py-6 text-center text-sm text-muted-foreground">Adaugă elevatoarele în Setări → Service ca să vezi ziua pe fiecare.</p>;
-	return (
-		<div className="overflow-x-auto rounded-xl border bg-card">
-			<div className="grid min-w-[720px] grid-cols-[124px_minmax(0,1fr)]">
-				<div />
-				<div className="relative h-8 border-l">
-					{hours.map((m) => (
-						<span key={m} className="absolute top-2 -translate-x-1/2 text-[11px] text-muted-foreground tabular-nums first:translate-x-0" style={{ left: `${((m - from) / span) * 100}%` }}>
-							{`${Math.floor(m / 60)}:00`}
-						</span>
-					))}
-				</div>
-				{lanes.map((lane) => (
-					<div key={lane.id ?? "loose"} className="contents">
-						<div className="flex h-16 items-center border-t px-3.5 text-[13px] font-medium">{lane.name}</div>
-						<div
-							className="relative h-16 border-t border-l"
-							style={{ backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(60 / span) * 100}% - 1px), var(--border) calc(${(60 / span) * 100}% - 1px), var(--border) ${(60 / span) * 100}%)` }}
-						>
-							{lane.blocks.map((block) => {
-								const vehicle = vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId];
-								const left = at(block.start);
-								const width = Math.max(4, at(block.end) - left);
-								const title = block.appointment ? [carName(vehicle), block.appointment.title].filter(Boolean).join(" · ") : jobHeadline(block.order);
-								const open = () => (block.order ? openSheet("work-order-view", { id: block.order.id }) : openSheet("appointment-view", { id: block.appointment.id }));
-								return (
-									<button
-										key={block.key}
-										type="button"
-										onClick={open}
-										className={cn("absolute top-2 bottom-2 flex min-w-0 items-center gap-2 overflow-hidden rounded-[7px] px-2 text-left text-xs", block.planned && "border border-dashed border-foreground/25")}
-										style={{
-											left: `calc(${left}% + 2px)`,
-											width: `calc(${width}% - 4px)`,
-											// Planned: one grey dashed outline for every car; on the lift: the car's cover, as the atelier's cards (owner, 20 Nov 2026).
-											...(block.planned ? {} : { background: makeCover(vehicle?.make), color: makeInk(vehicle?.make) }),
-										}}
-									>
-										<MakeTile make={vehicle?.make} size={22} reverse={!block.planned} />
-										<span className="min-w-0">
-											<span className="block truncate font-semibold">{title}</span>
-											<span className={cn("block truncate", block.planned ? "text-muted-foreground" : "opacity-75")}>
-												{[vehicle?.plate && formatPlate(vehicle.plate), block.running ? "în lucru acum" : `${fmtTime(block.start)}–${fmtTime(block.end)}`].filter(Boolean).join(" · ")}
-											</span>
-										</span>
-									</button>
-								);
-							})}
-							{now >= 0 && now <= 100 && <span aria-hidden className="absolute inset-y-0 w-0.5 bg-[#ff3b30]" style={{ left: `${now}%` }} />}
-						</div>
-					</div>
-				))}
-			</div>
-		</div>
-	);
-}
-
 export function DashboardPage() {
 	const ready = useIsReady();
 	const today = useToday();
@@ -336,12 +268,7 @@ export function DashboardPage() {
 	const collect = selectToCollect(invoices, payments, today);
 	const hours = hoursToday(workOrders, today, new Date().toISOString());
 	const numbers = <Numbers collect={collect} jobs={jobs} bookings={bookings} hours={hours} staff={staff} currency={currency} />;
-	const lanes = (
-		<section className="space-y-3" aria-label="Ziua în atelier">
-			<SectionHeader title="Ziua în atelier" subtitle="Ce e pe fiecare elevator; punctat, ce urmează din agendă" href="/calendar/" />
-			<DayLanes lanes={dayLanes({ bays, appointments, workOrders, today, now: new Date().toISOString() })} vehicles={vehicles} settings={settings} minute={minute} />
-		</section>
-	);
+	const lanes = <DaySection bays={bays} staff={staff} appointments={appointments} workOrders={workOrders} vehicles={vehicles} settings={settings} today={today} minute={minute} />;
 	const money = (
 		<section className="space-y-3" aria-label="De încasat">
 			<SectionHeader title="De încasat" subtitle={`${formatMoney(collect.due, currency)} · ${plural(collect.groups.filter((g) => g.key !== "draft").reduce((n, g) => n + g.items.length, 0), "factură", "facturi")}`} href="/invoices/" />

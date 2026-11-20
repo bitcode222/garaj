@@ -193,6 +193,35 @@ export const saveService = (input) =>
 export const savePart = (input) =>
 	saveSimple("parts", input, "denumirea piesei", { code: "", brand: "", unit: "buc", cost: 0, price: 0, stock: 0, minStock: 0, location: "" });
 
+/** New order for the lifts or the team (dragged on Azi's day): `ids` in their new order. */
+export function reorderTeam(collection, ids) {
+	if (collection !== "bays" && collection !== "staff") throw new DomainError("invalid", "Nu se pot ordona.");
+	const state = getState()[collection];
+	const t = now();
+	const put = ids.filter((id) => state[id]).map((id, order) => ({ ...state[id], order, updatedAt: t }));
+	commit({ [collection]: { put } });
+}
+
+/**
+ * A booking or a job dragged onto another lane of Azi's day: it goes to that lift or mechanic (`field` is "bayId" or
+ * "staffId"; `laneId` null takes it off). A booking's job, when it has one, follows it.
+ */
+export function assignToLane({ appointmentId, workOrderId }, field, laneId) {
+	if (field !== "bayId" && field !== "staffId") throw new DomainError("invalid", "Nu se poate muta aici.");
+	const t = now();
+	const changes = {};
+	const appointment = appointmentId ? mustGet("appointments", appointmentId, "Programarea") : null;
+	if (appointment) changes.appointments = { put: [{ ...appointment, [field]: laneId, updatedAt: t }] };
+	const orderId = workOrderId ?? appointment?.workOrderId;
+	const order = orderId ? getState().workOrders[orderId] : null;
+	if (order) {
+		if (order.status === "delivered" || order.status === "cancelled") {
+			if (!appointment) throw new DomainError("locked", "Lucrarea este închisă și nu mai poate fi mutată.");
+		} else changes.workOrders = { put: [{ ...order, [field]: laneId, updatedAt: t }] };
+	}
+	commit(changes);
+}
+
 export function deleteCatalogItem(collection, id) {
 	// Documents keep copies of their lines, so catalog items can always go.
 	commit({ [collection]: { del: [id] } });

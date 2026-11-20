@@ -7,10 +7,11 @@ import { cn } from "@/lib/utils";
 /**
  * Text edited in place (docs/VISIT-FLOW.md D6): it reads as text with a pencil; a click or
  * tap turns it into a field. Enter or leaving the field saves, Esc gives up (before the
- * sheet around it hears it). `onSave(text)` gets the trimmed text, only when it changed.
+ * sheet around it hears it). `onSave(text)` gets the trimmed text, only when it changed. `autoEdit` opens it as a
+ * field at once (a row just added).
  */
-export function InlineText({ value, placeholder, label, onSave, className }) {
-	const [draft, setDraft] = useState(null); // null: not editing
+export function InlineText({ value, placeholder, label, onSave, autoEdit = false, className }) {
+	const [draft, setDraft] = useState(autoEdit ? (value ?? "") : null); // null: not editing
 	const field = useRef(null);
 	const editing = draft !== null;
 
