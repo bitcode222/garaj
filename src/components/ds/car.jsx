@@ -13,13 +13,15 @@ export function makeArt(make) {
 	return `radial-gradient(circle at 100% 0, ${makeColor(make)}, color-mix(in srgb, ${makeCover(make)} 75%, #000) 80%)`;
 }
 
-/** A square of the make's colour with its logo, for list rows and cards. */
-export function MakeTile({ make, size = 40, className }) {
+/** A square of the make's colour with its logo, for list rows and cards. `reverse` turns the gradient round (dark
+ * corner first), so the tile still stands out when it sits on the car's own cover. */
+export function MakeTile({ make, size = 40, reverse = false, className }) {
+	const [a, b] = reverse ? [makeCover(make), makeColor(make)] : [makeColor(make), makeCover(make)];
 	return (
 		<span
 			aria-hidden
 			className={cn("inline-flex shrink-0 items-center justify-center", className)}
-			style={{ width: size, height: size, borderRadius: size * 0.26, background: `linear-gradient(135deg, ${makeColor(make)}, ${makeCover(make)})`, color: makeInk(make) }}
+			style={{ width: size, height: size, borderRadius: size * 0.26, background: `linear-gradient(135deg, ${a}, ${b})`, color: makeInk(make) }}
 		>
 			<MakeLogo make={make} className="text-current" style={{ width: size * 0.56, height: size * 0.56 }} />
 		</span>

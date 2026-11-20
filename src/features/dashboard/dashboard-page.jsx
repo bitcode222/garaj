@@ -13,7 +13,7 @@ import { useAccount } from "@/components/shell/account-menu";
 import { fmtDate, fmtTime, formatMoney, plural } from "@/lib/format";
 import { dayOfInstant } from "@/domain/dates";
 import { formatPlate } from "@/domain/vehicle";
-import { AREA, STATE, TONE_COLOR, makeColor, makeInk, makeTint } from "@/lib/colors";
+import { AREA, STATE, TONE_COLOR, makeColor, makeCover, makeInk } from "@/lib/colors";
 import { APPOINTMENT_STATUS, WORK_ORDER_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
@@ -284,13 +284,14 @@ function DayLanes({ lanes, vehicles, settings, minute }) {
 										style={{
 											left: `calc(${left}% + 2px)`,
 											width: `calc(${width}% - 4px)`,
-											...(block.planned ? { borderColor: `color-mix(in srgb, ${makeColor(vehicle?.make)} 60%, transparent)` } : { background: makeTint(vehicle?.make), boxShadow: `inset 3px 0 0 ${makeColor(vehicle?.make)}` }),
+											// Planned: a dashed outline; on the lift: the car's cover, as the atelier's cards (owner, 20 Nov 2026).
+											...(block.planned ? { borderColor: `color-mix(in srgb, ${makeColor(vehicle?.make)} 60%, transparent)` } : { background: makeCover(vehicle?.make), color: makeInk(vehicle?.make) }),
 										}}
 									>
-										{!block.planned && <MakeTile make={vehicle?.make} size={22} />}
+										{!block.planned && <MakeTile make={vehicle?.make} size={22} reverse />}
 										<span className="min-w-0">
 											<span className="block truncate font-semibold">{title}</span>
-											<span className="block truncate text-muted-foreground">
+											<span className={cn("block truncate", block.planned ? "text-muted-foreground" : "opacity-75")}>
 												{[vehicle?.plate && formatPlate(vehicle.plate), block.running ? "în lucru acum" : `${fmtTime(block.start)}–${fmtTime(block.end)}`].filter(Boolean).join(" · ")}
 											</span>
 										</span>
