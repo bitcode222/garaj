@@ -75,7 +75,15 @@ inspection), De făcut la mașină, Deviz, Factură, Note interne (yellow tint),
 20 Nov 2026 (owner): the head scrolls away with the body; a car's sheet is 34 rem (544 px) wide, other sheets keep
 42 rem; no visit bar in the head. A job's "…" (`JobMenu`, as on its card) holds every move of its state, the visit's
 booking, invoice and review, the full page, writing to the client and deleting it; a booking's "…" (`BookingMenu`)
-reaches its job and invoice and its edit form. Next on the board: the reception flow when the car arrives (R1–R3).
+reaches its job and invoice and its edit form.
+
+Receiving the car (owner, 20 Nov 2026: "the whole flow in a separate modal"; flow R1 "Pas cu pas"): `ReceptionFlow`
+is a window of its own (full screen on a phone, 28 rem centred from md up) with five steps (Bord: km and fuel;
+Martori aprinși; Caroserie: tap the car drawn from above, then the kind of mark; Problema and what was left in the car;
+Confirmare: the summary and the client's word), saved on the last one (`src/domain/reception.js`,
+`saveWorkOrderReception`). The job's sheet shows only `ReceptionCard`: "Începe recepția" before, then what was filled
+in one line, the marks on a small drawing and whether the client confirmed; tapping it opens the window again. The
+inspection checklist is its own section, after the work. Web only for now; the iPhone app gets it later.
 
 ### Sheets (owner's pick, 16 Nov 2026, board https://claude.ai/artifact/1yjxRSfQoMKsYEa6BPdeqJ: A)
 
