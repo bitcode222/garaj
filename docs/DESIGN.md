@@ -72,7 +72,10 @@ button (`CoverButton`, stretched) and the round glass ones (`CoverIconButton`), 
 (`.sheet-a`, dark #1c1c1e), its sections grey rounded groups under big 20 px bold titles (`.sheet-a-body`, groups
 #f2f2f7 / #2c2c2e). The job's sheet orders them as the desk asks: alert, Ce reclamă clientul, Recepția (km, fuel,
 inspection), De făcut la mașină, Deviz, Factură, Note interne (yellow tint), Mai multe (mechanic, bay, stages, history).
-Next on the board: the reception flow when the car arrives (R1–R3), then the fields it adds.
+20 Nov 2026 (owner): the head scrolls away with the body; a car's sheet is 34 rem (544 px) wide, other sheets keep
+42 rem; no visit bar in the head. A job's "…" (`JobMenu`, as on its card) holds every move of its state, the visit's
+booking, invoice and review, the full page, writing to the client and deleting it; a booking's "…" (`BookingMenu`)
+reaches its job and invoice and its edit form. Next on the board: the reception flow when the car arrives (R1–R3).
 
 ### Sheets (owner's pick, 16 Nov 2026, board https://claude.ai/artifact/1yjxRSfQoMKsYEa6BPdeqJ: A)
 
