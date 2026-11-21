@@ -2,43 +2,34 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { CalendarClock, ExternalLink, GalleryHorizontal, MoreHorizontal, Phone } from "lucide-react";
+import { ExternalLink, MoreHorizontal, Phone } from "lucide-react";
 import { GlassPill } from "@/components/ds/glass";
-import { COVER_HEIGHT, COVER_WIDTH, CarCover, CoverButton, CoverIconButton, MakeTile } from "@/components/ds/car";
-import { PageTitle, SectionHeader, StatCard, StatusDot, useViewSwitch } from "@/components/ds/blocks";
+import { COVER_HEIGHT, COVER_WIDTH, CarCover, CoverButton, CoverIconButton } from "@/components/ds/car";
+import { PageTitle, SectionHeader } from "@/components/ds/blocks";
 import { Page } from "@/components/ds/page";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAccount } from "@/components/shell/account-menu";
-import { fmtDate, fmtTime, formatMoney, plural } from "@/lib/format";
-import { dayOfInstant } from "@/domain/dates";
-import { formatPlate } from "@/domain/vehicle";
-import { AREA, STATE, TONE_COLOR, makeInk } from "@/lib/colors";
-import { APPOINTMENT_STATUS, WORK_ORDER_STATUS } from "@/lib/labels";
+import { fmtDate, plural } from "@/lib/format";
+import { makeInk } from "@/lib/colors";
+import { WORK_ORDER_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
 import { useCollection, useIsReady, useSettings, useToday } from "@/lib/store/hooks";
-import { selectAziMoney, selectToCollect, selectToConfirm } from "@/lib/store/selectors";
+import { selectAziMoney, selectToConfirm } from "@/lib/store/selectors";
 import { useNowMinute } from "@/lib/hooks";
-import { cn } from "@/lib/utils";
 import { atMinute } from "@/features/calendar/utils";
 import { primaryAction } from "@/features/work-orders/job-action";
 import { jobHeadline, jobSummary } from "@/features/work-orders/job-text";
 import { DayBoard } from "@/features/calendar/day-board";
-import { JOB_FILTERS, hoursText, hoursToday, shopJobs, todaysBookings } from "./azi-data";
+import { JOB_FILTERS, shopJobs } from "./azi-data";
 import { MoneyRow } from "./money-row";
 import { PhoneAzi } from "./phone-azi";
 import { ToAccept } from "./to-accept";
 import { PHONE } from "@/components/ds/nav-bar";
 import { useMediaQuery } from "@/lib/hooks";
 
-// Azi (docs/DESIGN.md §4): the owner kept two looks, switched at the top right and remembered on this device.
-// A, "Coperți": the bookings still to accept and the cars in the shop as covers, then the money (today, still to come
-// today, the month so far) and the day per lift.
-// B, "Ziua": the numbers, the day as a timeline per lift, then what waits for a call and the money.
-const LOOKS = [
-	{ value: "covers", label: "Coperți", icon: GalleryHorizontal },
-	{ value: "day", label: "Ziua", icon: CalendarClock },
-];
+// Azi (docs/DESIGN.md §4): one page. The day per lift, the bookings still to accept, the cars in the shop as covers,
+// then the money (today, still to come today, the month so far).
 
 const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).join(" ") || "Mașină";
 
@@ -60,27 +51,6 @@ function AziSkeleton() {
 				))}
 			</div>
 		</Page>
-	);
-}
-
-/** The day's four numbers. */
-function Numbers({ collect, jobs, bookings, hours, staff, currency }) {
-	const due = collect.groups.filter((g) => g.key !== "draft").flatMap((g) => g.items);
-	const late = collect.groups.find((g) => g.key === "overdue")?.items.length ?? 0;
-	const working = jobs.filter((o) => o.status === "in_progress").length;
-	const arrived = bookings.filter((a) => a.status === "arrived").length;
-	const who = hours.byStaff
-		.filter(([id, ms]) => staff[id]?.name && ms >= 60_000)
-		.slice(0, 2)
-		.map(([id, ms]) => `${staff[id].name.split(" ")[0]} ${hoursText(ms)}`)
-		.join(" · ");
-	return (
-		<div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-			<StatCard label="De încasat" value={formatMoney(collect.due, currency, { decimals: 0 })} note={late ? `${plural(late, "factură restantă", "facturi restante")}` : plural(due.length, "factură", "facturi")} color={late ? STATE.late : AREA.factura} />
-			<StatCard label="Lucrări deschise" value={jobs.length} note={`${working} în lucru acum`} color={AREA.lucrare} />
-			<StatCard label="Programări azi" value={bookings.length} note={arrived ? `${plural(arrived, "sosită", "sosite")}` : "nicio mașină sosită"} color={AREA.programare} />
-			<StatCard label="Ore lucrate azi" value={hoursText(hours.total)} note={who || "niciun cronometru azi"} color={AREA.rapoarte} />
-		</div>
 	);
 }
 
@@ -176,69 +146,7 @@ function InShop({ jobs, vehicles, customers, staffId, filter, setFilter, section
 	);
 }
 
-function Row({ children, onClick, label }) {
-	return (
-		<li>
-			<button type="button" onClick={onClick} aria-label={label} className="flex min-h-[52px] w-full items-center gap-2.5 px-3.5 py-2 text-left transition-colors hover:bg-accent/50">
-				{children}
-			</button>
-		</li>
-	);
-}
-
-function BookingRows({ bookings, vehicles, customers, empty, today }) {
-	if (!bookings.length) return <p className="rounded-xl border bg-card px-4 py-6 text-center text-sm text-muted-foreground">{empty}</p>;
-	return (
-		<ul className="divide-y overflow-hidden rounded-xl border bg-card">
-			{bookings.map((a) => {
-				const vehicle = vehicles[a.vehicleId];
-				const status = APPOINTMENT_STATUS[a.status];
-				return (
-					<Row key={a.id} onClick={() => openSheet("appointment-view", { id: a.id })} label={`Programarea de la ${fmtTime(a.start)}`}>
-						<span className="w-11 shrink-0 text-[13px] font-semibold tabular-nums">
-							{fmtTime(a.start)}
-							{today && dayOfInstant(a.start) !== today && <span className="block text-[11px] font-normal text-muted-foreground">{fmtDate(a.start, "d MMM")}</span>}
-						</span>
-						<MakeTile make={vehicle?.make} size={32} />
-						<span className="min-w-0 flex-1">
-							<span className="block truncate text-[13.5px] font-medium">{[carName(vehicle), a.title].filter(Boolean).join(" · ")}</span>
-							<span className="block truncate text-xs text-muted-foreground">{[customers[a.customerId]?.name, vehicle?.plate && formatPlate(vehicle.plate)].filter(Boolean).join(" · ")}</span>
-						</span>
-						{status && <StatusDot color={TONE_COLOR[status.tone]}>{status.label}</StatusDot>}
-					</Row>
-				);
-			})}
-		</ul>
-	);
-}
-
-function MoneyRows({ collect, vehicles, customers, currency }) {
-	const router = useRouter();
-	const items = collect.groups.filter((g) => g.key !== "draft").flatMap((g) => g.items).slice(0, 5);
-	if (!items.length) return <p className="rounded-xl border bg-card px-4 py-6 text-center text-sm text-muted-foreground">Nimic de încasat. Toate facturile sunt plătite.</p>;
-	return (
-		<ul className="divide-y overflow-hidden rounded-xl border bg-card">
-			{items.map(({ invoice, balance, overdueDays, dueIn }) => {
-				const vehicle = vehicles[invoice.vehicleId];
-				const late = overdueDays > 0;
-				return (
-					<Row key={invoice.id} onClick={() => router.push(`/invoices/detail/?id=${invoice.id}`)} label={`Factura ${invoice.number ?? ""}`}>
-						<MakeTile make={vehicle?.make} size={32} />
-						<span className="min-w-0 flex-1">
-							<span className="block truncate text-[13.5px] font-medium">{customers[invoice.customerId]?.name ?? "Client"}</span>
-							<span className={cn("block truncate text-xs", late ? "text-[#ff3b30]" : "text-muted-foreground")}>
-								{late ? `întârziată ${plural(overdueDays, "zi", "zile")}` : dueIn === 0 ? "scadentă azi" : dueIn != null ? `scadentă ${fmtDate(invoice.dueDate, "d MMM")}` : "de încasat"}
-							</span>
-						</span>
-						<span className="text-[13.5px] font-semibold tabular-nums">{formatMoney(balance, currency)}</span>
-					</Row>
-				);
-			})}
-		</ul>
-	);
-}
-
-/** Azi B: the lifts as lanes across the opening hours, the cars as blocks tinted with their colour. */
+/** Azi on tablet and desktop; a phone gets its own. */
 export function DashboardPage() {
 	const ready = useIsReady();
 	const today = useToday();
@@ -253,7 +161,6 @@ export function DashboardPage() {
 	const staff = useCollection("staff");
 	const bays = useCollection("bays");
 	const { member } = useAccount();
-	const [look, lookSwitch] = useViewSwitch("garaj.azi.look", LOOKS);
 	const [shopFilter, setShopFilter] = useState("all");
 	const shopRef = useRef(null);
 	const phone = useMediaQuery(PHONE);
@@ -264,58 +171,22 @@ export function DashboardPage() {
 	if (phone) return <PhoneAzi today={today} now={now} />;
 	const currency = settings.currency;
 	const jobs = shopJobs(workOrders);
-	const bookings = todaysBookings(appointments, today);
-	const collect = selectToCollect(invoices, payments, today);
-	const hours = hoursToday(workOrders, today, new Date().toISOString());
-	const numbers = <Numbers collect={collect} jobs={jobs} bookings={bookings} hours={hours} staff={staff} currency={currency} />;
-	const lanes = <DayBoard section initialDay={today} today={today} bays={bays} staff={staff} appointments={appointments} workOrders={workOrders} vehicles={vehicles} settings={settings} />;
-	const money = (
-		<section className="space-y-3" aria-label="De încasat">
-			<SectionHeader title="De încasat" subtitle={`${formatMoney(collect.due, currency)} · ${plural(collect.groups.filter((g) => g.key !== "draft").reduce((n, g) => n + g.items.length, 0), "factură", "facturi")}`} href="/invoices/" />
-			<MoneyRows collect={collect} vehicles={vehicles} customers={customers} currency={currency} />
-		</section>
-	);
 
 	return (
 		<Page width="wide" className="space-y-7">
-			<PageTitle title="Azi" subtitle={`${fmtDate(today, "EEEE, d MMMM")} · ${settings.shop.name}`}>
-				{lookSwitch}
-			</PageTitle>
-			{look === "covers" ? (
-				<>
-					{lanes}
-					<ToAccept groups={selectToConfirm(appointments, now).groups} today={today} vehicles={vehicles} customers={customers} staff={staff} bays={bays} />
-					<InShop jobs={jobs} vehicles={vehicles} customers={customers} staffId={member?.id ?? null} filter={shopFilter} setFilter={setShopFilter} sectionRef={shopRef} />
-					<MoneyRow
-						{...selectAziMoney(payments, workOrders, invoices, settings, today)}
-						today={today}
-						currency={currency}
-						onShowReady={() => {
-							setShopFilter("ready");
-							shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-						}}
-					/>
-				</>
-			) : (
-				<>
-					{lanes}
-					{numbers}
-					<div className="grid gap-7 lg:grid-cols-2">
-						<section className="space-y-3" aria-label="De confirmat">
-							{(() => {
-								const waiting = selectToConfirm(appointments, now).groups.filter((g) => g.key !== "past").flatMap((g) => g.items).slice(0, 5);
-								return (
-									<>
-										<SectionHeader title="De confirmat" subtitle={plural(waiting.length, "programare", "programări")} href="/appointments/" />
-										<BookingRows bookings={waiting} vehicles={vehicles} customers={customers} today={today} empty="Toate programările sunt confirmate." />
-									</>
-								);
-							})()}
-						</section>
-						{money}
-					</div>
-				</>
-			)}
+			<PageTitle title="Azi" subtitle={`${fmtDate(today, "EEEE, d MMMM")} · ${settings.shop.name}`} />
+			<DayBoard section initialDay={today} today={today} bays={bays} staff={staff} appointments={appointments} workOrders={workOrders} vehicles={vehicles} settings={settings} />
+			<ToAccept groups={selectToConfirm(appointments, now).groups} today={today} vehicles={vehicles} customers={customers} staff={staff} bays={bays} />
+			<InShop jobs={jobs} vehicles={vehicles} customers={customers} staffId={member?.id ?? null} filter={shopFilter} setFilter={setShopFilter} sectionRef={shopRef} />
+			<MoneyRow
+				{...selectAziMoney(payments, workOrders, invoices, settings, today)}
+				today={today}
+				currency={currency}
+				onShowReady={() => {
+					setShopFilter("ready");
+					shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+				}}
+			/>
 		</Page>
 	);
 }

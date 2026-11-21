@@ -41,18 +41,18 @@ choice on that device. A detail page follows the view it was opened from.
 
 | Group | Pick | The switch | Screens |
 |---|---|---|---|
-| Azi | A + B | Coperți · Ziua | First in both looks (owner, 21 Nov 2026): **Ziua în atelier** (the day board of Agendă → Zi, for today, under its own title). A (desktop, 18 Nov 2026): **De acceptat** (bookings still to accept as outlined covers — dashed border, no fill, the make tile in the car's colour — with an amber "De confirmat" label, in day order, each naming its day (no day labels in the row, so the covers sit on the În atelier grid), one-tap Confirmă with undo; no section when none), **În atelier** (the jobs as covers), the **money row** (Încasat azi by method · Mai poate intra azi: ready cars + invoices due today · the month so far against the month before, cumulative). B: the numbers and the lists. |
+| Azi | one page | none | One page, no look switch (owner, 21 Nov 2026; the "Ziua" look is gone). First **Ziua în atelier** (the day board of Agendă → Zi, for today, under its own title), then (desktop, 18 Nov 2026): **De acceptat** (bookings still to accept as outlined covers — dashed border, no fill, the make tile in the car's colour — with an amber "De confirmat" label, in day order, each naming its day (no day labels in the row, so the covers sit on the În atelier grid), one-tap Confirmă with undo; no section when none), **În atelier** (the jobs as covers), the **money row** (Încasat azi by method · Mai poate intra azi: ready cars + invoices due today · the month so far against the month before, cumulative). |
 | Atelier | A + B | Etape · Tablă | A: job cards grouped by stage; Lucrare and Deviz open as a full page with the car-coloured header; Recepție is a centred sheet. B: a board with a column per stage, drag to move; Lucrare, Deviz and Recepție open in a panel on the right. |
 | Agendă | A | none | The week by the hour with blocks tinted by the car, the list grouped by day, a booking as a centred sheet in the car's colour. |
 | Bani | A + B | Tabel · Plăci | A: invoices as a table under the month's numbers; the invoice as the printed page with its status beside it; reports as simple charts. B: invoices as cards with the amount first, grouped (to collect, drafts, paid); the invoice with the amount in a car-coloured header; reports as a dashboard. |
 | Oameni și mașini | A + B | Listă · Galerie | A: dense tables; a plain client header. B: clients as cards, cars as a shelf of covers, the client page in their car's colour, De contactat with the message ready to send. Mașină is the same page in both. |
 | Catalog, setări, căutare | A + B | Listă · File | A: catalog as a table, settings as the iPhone's grouped list, search as a floating ⌘K window, Nou as a menu of tiles under the button. B: catalog and settings with tabs on the left, search as a results page, Nou as a centred sheet. ⌘K always opens the window; "Vezi toate" opens the page. |
 
-The current home (hero search, day ruler, stage sections) is replaced by Azi A/B; its analytics move into Rapoarte.
+The current home (hero search, day ruler, stage sections) is replaced by Azi; its analytics move into Rapoarte.
 
-Azi A was reworked on 18 Nov 2026 from the round-2 board (https://claude.ai/artifact/Fm5Xv1Xbzte3UzS36iW8QD): the owner
+Azi was reworked on 18 Nov 2026 from the round-2 board (https://claude.ai/artifact/Fm5Xv1Xbzte3UzS36iW8QD): the owner
 kept the covers, asked for the bookings to accept above them, and picked the lifts by the hour and three money blocks for
-the area below. The day's four numbers, "Agendă azi" and "De încasat" left Azi A (they stay on Azi B). The money comes
+the area below. The day's four numbers, "Agendă azi" and "De încasat" left Azi. The money comes
 from `src/domain/analytics.js` (`takingsToday`, `stillToCollectToday`, `monthToDate`), ported to `Analytics.swift`.
 
 ### Agendă, second pass (owner, 16 Nov 2026)

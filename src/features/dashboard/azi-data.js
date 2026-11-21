@@ -29,32 +29,6 @@ export function todaysBookings(appointments, today) {
 		.sort((a, b) => a.start.localeCompare(b.start));
 }
 
-/** Milliseconds each mechanic worked today (the time logs, clipped to today; a running entry counts to `now`). */
-export function hoursToday(workOrders, today, now) {
-	const dayStart = new Date(`${today}T00:00:00`).getTime();
-	const dayEnd = dayStart + 86_400_000;
-	const byStaff = new Map();
-	for (const order of Object.values(workOrders)) {
-		for (const entry of order.timeLog ?? []) {
-			const from = Math.max(Date.parse(entry.start), dayStart);
-			const to = Math.min(Date.parse(entry.end ?? now), dayEnd, Date.parse(now));
-			if (to <= from) continue;
-			byStaff.set(entry.staffId ?? null, (byStaff.get(entry.staffId ?? null) ?? 0) + (to - from));
-		}
-	}
-	const total = [...byStaff.values()].reduce((n, ms) => n + ms, 0);
-	return { total, byStaff: [...byStaff.entries()].sort((a, b) => b[1] - a[1]) };
-}
-
-/** "9 h 40", "35 min". */
-export function hoursText(ms) {
-	const minutes = Math.round(ms / 60000);
-	const h = Math.floor(minutes / 60);
-	const m = minutes % 60;
-	if (!h) return `${m} min`;
-	return m ? `${h} h ${String(m).padStart(2, "0")}` : `${h} h`;
-}
-
 /** What the day's lanes can be: a lane per lift, or a lane per mechanic (owner, 20 Nov 2026). */
 export const LANE_KINDS = {
 	bay: { field: "bayId", collection: "bays", label: "Elevatoare", one: "elevator", loose: "Fără loc", newName: "Elevator nou" },

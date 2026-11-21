@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { dayLanes, dropMinute, hoursText, hoursToday, moveLane, rangeLanes, shopJobs, stackBlocks, todaysBookings } from "./azi-data.js";
+import { dayLanes, dropMinute, moveLane, rangeLanes, shopJobs, stackBlocks, todaysBookings } from "./azi-data.js";
 
 const today = "2026-11-16";
 const at = (hhmm) => new Date(`${today}T${hhmm}:00`).toISOString();
@@ -22,18 +22,6 @@ test("today's bookings, by start, without the called-off ones", () => {
 		today,
 	);
 	assert.deepEqual(list.map((a) => a.id), ["y", "x"]);
-});
-
-test("hours worked today, per mechanic; a running clock counts to now", () => {
-	const orders = {
-		a: { timeLog: [{ staffId: "m", start: at("08:00"), end: at("10:30") }, { staffId: "v", start: at("11:00"), end: null }] },
-		b: { timeLog: [{ staffId: "m", start: "2026-11-15T15:00:00.000Z", end: "2026-11-15T16:00:00.000Z" }] },
-	};
-	const { total, byStaff } = hoursToday(orders, today, at("12:00"));
-	assert.equal(total, 3.5 * 3_600_000);
-	assert.deepEqual(byStaff.map(([id]) => id), ["m", "v"]);
-	assert.equal(hoursText(total), "3 h 30");
-	assert.equal(hoursText(35 * 60_000), "35 min");
 });
 
 test("the day's lanes: bookings on their lift, dashed until the car is in; logged work where the job is", () => {
