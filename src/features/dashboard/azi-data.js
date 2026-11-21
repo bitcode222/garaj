@@ -122,6 +122,13 @@ export function rangeLanes({ days, ...rest }) {
 	return [...all.filter((row) => row.id), ...all.filter((row) => !row.id)];
 }
 
+/** The start (in minutes) of a card of `minutes` dropped `px` into a day `width` wide: on the quarter hour, inside the opening hours. */
+export function dropMinute({ px, width, from, to, minutes, snap = 15 }) {
+	const raw = from + (px / width) * (to - from);
+	const snapped = from + Math.round((raw - from) / snap) * snap;
+	return Math.max(from, Math.min(snapped, Math.max(from, to - minutes)));
+}
+
 const STACK_MIN = 15 * 60000; // a card is at least a quarter hour wide when deciding what overlaps
 
 /**

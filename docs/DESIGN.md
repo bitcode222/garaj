@@ -118,8 +118,10 @@ pick E). Bookings still to confirm: a dotted white outline (and an amber dot in 
 (**Elevatoare / Mecanici**, `garaj.azi.lanes`; Mecanici leaves out the front desk), the days are one carousel (21 Nov 2026):
 click-and-drag or a sideways scroll runs freely through them, ‹ › step, what is in view in the top-left corner. On Azi the
 section has its own ‹ › and Azi and a **Zi / Săptămână** switch (`garaj.azi.range`; a week starts on Monday). Rows are
-renamed in place, dragged by their handle into a new order and added at the bottom (a new lift or mechanic). A card dragged
-onto another row goes to that lift or mechanic, its time unchanged (a booking's job follows it); dragged by an end it takes
+renamed in place, dragged by their handle into a new order and added at the bottom (a new lift or mechanic). A booking dragged
+along the hours, to another day (the board's sides scroll while carrying it) or to another row is rescheduled on the quarter
+hour, with its landing place drawn under the pointer and one undo (21 Nov 2026). A car already in the shop or a job only changes row:
+its time stays. A row change takes the booking's job along; dragged by an end it takes
 a new start or end on the quarter hour — a booking through the calendar's reschedule (confirm setting, overlap warning,
 undo), a job's logged work through `setEntrySpan` (`src/domain/work-clock.js`: no overlap with the job's other stretches,
 a running one keeps running). Jobs on a lift on the car's cover; bookings a grey dashed outline with the make tile. A

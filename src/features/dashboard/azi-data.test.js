@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { dayLanes, hoursText, hoursToday, moveLane, rangeLanes, shopJobs, stackBlocks, todaysBookings } from "./azi-data.js";
+import { dayLanes, dropMinute, hoursText, hoursToday, moveLane, rangeLanes, shopJobs, stackBlocks, todaysBookings } from "./azi-data.js";
 
 const today = "2026-11-16";
 const at = (hhmm) => new Date(`${today}T${hhmm}:00`).toISOString();
@@ -103,4 +103,12 @@ test("rangeLanes: one row per lift across the days, blocks by day, levels of the
 	assert.deepEqual(lanes[0].days["2026-11-21"].map((b) => b.key), ["a"]);
 	assert.equal(lanes[0].days["2026-11-22"].length, 2);
 	assert.equal(lanes[0].levels, 2);
+});
+
+test("dropMinute: snaps to the quarter hour and keeps the whole card inside the opening hours", () => {
+	const day = { width: 1000, from: 480, to: 1080, minutes: 120 };
+	assert.equal(dropMinute({ ...day, px: 504 }), 780); // 12:58 → 13:00
+	assert.equal(dropMinute({ ...day, px: -40 }), 480);
+	assert.equal(dropMinute({ ...day, px: 990 }), 960); // ends at closing time
+	assert.equal(dropMinute({ ...day, px: 500, minutes: 900 }), 480); // longer than the day: from the opening
 });

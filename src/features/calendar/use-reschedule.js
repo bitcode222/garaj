@@ -11,18 +11,19 @@ import { toast } from "@/lib/toast";
  * Saves a booking that was dragged to a new time (and maybe onto another mechanic), the
  * same way in Programări and on the dashboard: the optional confirmation from the
  * calendar's settings, a toast that says where it went and warns about an overlap, and
- * one tap to put it back. `staffId` left out keeps the mechanic. Resolves to true when
+ * one tap to put it back. `staffId` left out keeps the mechanic. `row` also moves it to
+ * another lift or mechanic of the day board ({ name, apply, undo }). Resolves to true when
  * the booking was changed.
  */
 export function useReschedule() {
 	const confirm = useConfirm();
 	const { calendar } = useSettings();
-	return async (appointment, { start, end, staffId }) => {
+	return async (appointment, { start, end, staffId }, row = null) => {
 		const previous = { start: appointment.start, end: appointment.end, staffId: appointment.staffId };
 		const nextStaff = staffId === undefined ? appointment.staffId : staffId;
 		// Stretched: it starts or ends at another time, on the same day. Anything else is a move.
 		const stretched = minutesBetween(start, end) !== minutesBetween(appointment.start, appointment.end);
-		const where = `${fmtDate(start, "EEE d MMM")}, ${fmtTime(start)}–${fmtTime(end)}`;
+		const where = `${fmtDate(start, "EEE d MMM")}, ${fmtTime(start)}–${fmtTime(end)}${row?.name ? ` · ${row.name}` : ""}`;
 		if (calendar.confirmDrop) {
 			const ok = await confirm({
 				title: stretched ? "Schimbi intervalul programării?" : "Muți programarea?",
@@ -33,9 +34,16 @@ export function useReschedule() {
 		}
 		try {
 			const { conflicts } = nextStaff !== appointment.staffId ? saveAppointment({ ...appointment, start, end, staffId: nextStaff }) : moveAppointment(appointment.id, start, end);
+			row?.apply();
 			toast.success(`${stretched ? "Interval nou" : "Mutată"}: ${where}`, {
 				description: conflicts.length ? "Atenție: se suprapune cu altă programare." : undefined,
-				action: { label: "Anulează", onClick: () => saveAppointment({ ...appointment, ...previous }) },
+				action: {
+					label: "Anulează",
+					onClick: () => {
+						saveAppointment({ ...appointment, ...previous });
+						row?.undo();
+					},
+				},
 			});
 			return true;
 		} catch (error) {

@@ -14,12 +14,13 @@ import { openSheet } from "@/lib/sheets";
 import { useLocalPreference, useNowMinute } from "@/lib/hooks";
 import { canReschedule } from "@/domain/appointment";
 import { addDaysISO, dayOfInstant, diffDaysISO, parseISODate } from "@/domain/dates";
-import { assignToLane, moveAppointment, reorderTeam, saveBay, saveStaff, setWorkEntrySpan } from "@/lib/store/actions";
+import { assignToLane, reorderTeam, saveBay, saveStaff, setWorkEntrySpan } from "@/lib/store/actions";
 import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import { atMinute, toMinutes } from "./utils";
+import { useReschedule } from "./use-reschedule";
 import { jobHeadline } from "@/features/work-orders/job-text";
-import { LANE_KINDS, moveLane, rangeLanes } from "@/features/dashboard/azi-data";
+import { LANE_KINDS, dropMinute, moveLane, rangeLanes } from "@/features/dashboard/azi-data";
 
 const BLOCK = "application/x-garaj-block";
 const LANE = "application/x-garaj-lane";
@@ -33,6 +34,8 @@ const rowHeight = (levels) => PAD * 2 + levels * CARD + (levels - 1) * GAP;
 const HOUR_MIN = 56; // px: one day in view never squeezes an hour narrower than this
 const WEEK_DAY_MIN = 140; // px: a day in the week view
 const REACH = 14; // days drawn on each side; the rail grows by as many when the scroll nears an end
+const EDGE_PX = 56; // a card carried this close to the board's side scrolls it to the next days
+const EDGE_STEP = 24; // px per drag event
 const EDGE = 4; // days from an end of the rail at which it grows
 const minuteOf = (iso) => {
 	const d = new Date(iso);
@@ -57,7 +60,8 @@ const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).joi
 /**
  * Agendă → Zi on a desktop (owner, 20 Nov 2026; first built as Azi's "Ziua în atelier"): one day by lift or by mechanic.
  * Rows are renamed in place, dragged by their handle into a new order, and added at the bottom; a booking or a job is
- * dragged onto another row to go to that lift or mechanic (its time stays), and stretched by either end to a new start
+ * dragged onto another row to go to that lift or mechanic; a booking dragged along the hours or to another day is
+ * rescheduled (owner, 21 Nov 2026; a car already in the shop or a job keeps its time). Either is stretched by its ends to a new start
  * or end (a job: the stretch of work logged). The days are one carousel (owner, 21 Nov 2026): click and drag or a sideways
  * scroll runs freely through them, ‹ › step a day or a week. `ref` takes the page's ‹ Azi › as the other views do (today,
  * step, goTo). With `section`, it is Azi's "Ziua în atelier", with its own ‹ Azi › and a Zi / Săptămână switch.
@@ -123,6 +127,10 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const place = useRef({ pos: 0, aim: null, jump: null, shift: 0, growing: false, week: perView === 7 });
 	const [span, setSpan] = useState(() => ({ first: addDaysISO(day, -REACH), count: REACH * 2 + 7 }));
 	const [between, setBetween] = useState(0); // a neighbour day partly in view: -1 before, 1 after
+	const carried = useRef(null); // the card being dragged: { block, offset, minutes, movable }
+	const [ghost, setGhost] = useState(null); // where a carried booking would land: { lane, day, start }
+	const ownReschedule = useReschedule();
+	const reschedule = onReschedule ?? ownReschedule;
 	const [over, setOver] = useState(null); // the lane a card or a row is dragged over
 	const [fresh, setFresh] = useState(null); // a row just added: its name opens as a field
 	const from = Math.floor(toMinutes(settings.hours?.open ?? "08:00") / 60) * 60;
@@ -265,14 +273,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		const start = atMinute(on, startMin);
 		const end = atMinute(on, endMin);
 		if (block.kind === "booking") {
-			if (onReschedule) onReschedule(block.appointment, { start, end });
-			else {
-				try {
-					moveAppointment(block.appointment.id, start, end);
-				} catch (error) {
-					toast.error(error.message);
-				}
-			}
+			reschedule(block.appointment, { start, end });
 			return;
 		}
 		const entry = block.order.timeLog.find((e) => e.id === block.entryId);
@@ -283,6 +284,24 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		} catch (error) {
 			toast.error(error.message);
 		}
+	};
+
+	const spotAt = (event, lane) => {
+		const c = carried.current;
+		const cell = event.target.closest?.("[data-track]");
+		if (!c?.movable || !cell) return null;
+		const box = cell.getBoundingClientRect();
+		const start = dropMinute({ px: event.clientX - c.offset - box.left, width: box.width, from, to, minutes: c.minutes });
+		return { lane: lane.id ?? "loose", day: cell.dataset.date, start, minutes: c.minutes };
+	};
+	const endCarry = () => {
+		carried.current = null;
+		setGhost(null);
+		setOver(null);
+	};
+	const carry = (next) => {
+		carried.current = next;
+		place.current.aim = null;
 	};
 
 	const dropOn = (lane) => (event) => {
@@ -296,6 +315,21 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		const raw = event.dataTransfer.getData(BLOCK);
 		if (!raw) return;
 		const block = JSON.parse(raw);
+		const spot = carried.current?.movable ? spotAt(event, lane) : null;
+		const minutes = carried.current?.minutes;
+		endCarry();
+		const appointment = spot && appointments[block.appointmentId];
+		if (appointment) {
+			const start = atMinute(spot.day, spot.start);
+			const sameTime = Date.parse(start) === Date.parse(appointment.start);
+			if (!sameTime) {
+				const end = new Date(Date.parse(start) + minutes * 60000).toISOString();
+				const ids = { appointmentId: block.appointmentId, workOrderId: null };
+				const row = block.laneId === lane.id ? null : { name: lane.id ? lane.name : kind.loose, apply: () => assignToLane(ids, kind.field, lane.id), undo: () => assignToLane(ids, kind.field, block.laneId) };
+				reschedule(appointment, { start, end }, row);
+				return;
+			}
+		}
 		if (block.laneId === lane.id) return;
 		try {
 			assignToLane({ appointmentId: block.appointmentId, workOrderId: block.workOrderId }, kind.field, lane.id);
@@ -310,6 +344,14 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		event.preventDefault();
 		event.dataTransfer.dropEffect = "move";
 		if (over !== (lane.id ?? "loose")) setOver(lane.id ?? "loose");
+		if (!types.includes(BLOCK)) return;
+		const spot = spotAt(event, lane);
+		if (spot?.lane !== ghost?.lane || spot?.day !== ghost?.day || spot?.start !== ghost?.start) setGhost(spot);
+		// At the board's sides the carried card takes the days along, to reach another day.
+		const el = scroller.current;
+		const box = el.getBoundingClientRect();
+		if (event.clientX > box.right - EDGE_PX) el.scrollLeft += EDGE_STEP;
+		else if (event.clientX < box.left + LABEL + EDGE_PX && event.clientX > box.left + LABEL) el.scrollLeft -= EDGE_STEP;
 	};
 
 	// Click and drag on the empty body pans it sideways (a mouse; touch and trackpads scroll on their own).
@@ -339,6 +381,9 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 			onPointerUp={endPan}
 			onScroll={onScroll}
 			onWheel={() => (place.current.aim = null)}
+			onDragLeave={(event) => {
+				if (!event.currentTarget.contains(event.relatedTarget)) setGhost(null);
+			}}
 			onPointerCancel={endPan}
 			className="overflow-x-auto overscroll-x-contain rounded-xl border bg-card select-none [scrollbar-width:thin]"
 		>
@@ -402,12 +447,22 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 									<div
 										key={d}
 										data-track
+										data-date={d}
 										className="relative h-full shrink-0 overflow-clip border-l"
 										style={{ width: cellWidth, backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(tick / total) * 100}% - 1px), var(--border) calc(${(tick / total) * 100}% - 1px), var(--border) ${(tick / total) * 100}%)` }}
 									>
 										{(lane.days[d] ?? []).map((block) => (
-											<Block key={block.key} block={block} lane={lane} day={d} compact={week} vehicle={vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId]} from={from} to={to} total={total} onStretch={stretch} />
+											<Block key={block.key} block={block} lane={lane} day={d} compact={week} vehicle={vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId]} from={from} to={to} total={total} onStretch={stretch} onCarry={carry} onCarryEnd={endCarry} />
 										))}
+										{ghost?.lane === key && ghost.day === d && (
+											<span
+												aria-hidden
+												className="pointer-events-none absolute z-30 flex items-center overflow-visible rounded-[7px] border-2 border-ring bg-accent/70 px-1.5 text-[11px] font-semibold whitespace-nowrap tabular-nums"
+												style={{ top: PAD, height: CARD, left: `calc(${((ghost.start - from) / total) * 100}% + 2px)`, width: `calc(${(Math.min(ghost.minutes, to - ghost.start) / total) * 100}% - 4px)` }}
+											>
+												{`${clock(ghost.start)}–${clock(ghost.start + ghost.minutes)}`}
+											</span>
+										)}
 										{d === today && nowAt >= 0 && nowAt <= 100 && <span aria-hidden className="pointer-events-none absolute inset-y-0 z-10 w-0.5 bg-[#ff3b30]" style={{ left: `${nowAt}%` }} />}
 									</div>
 								))}
@@ -426,7 +481,8 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	);
 }
 
-function Block({ block, lane, day, compact, vehicle, from, to, total, onStretch }) {
+function Block({ block, lane, day, compact, vehicle, from, to, total, onStretch, onCarry, onCarryEnd }) {
+	const [lifted, setLifted] = useState(false); // being carried: its place stays, faded
 	const [draft, setDraft] = useState(null); // { start, end } in minutes while an end is dragged
 	const grab = useRef(null);
 	const quiet = useRef(false); // the click that ends a stretch does not open the card
@@ -496,11 +552,18 @@ function Block({ block, lane, day, compact, vehicle, from, to, total, onStretch 
 				if (grab.current) return event.preventDefault();
 				event.dataTransfer.setData(BLOCK, JSON.stringify({ appointmentId: block.appointment?.id ?? null, workOrderId: block.appointment ? null : block.order?.id, laneId: lane.id }));
 				event.dataTransfer.effectAllowed = "move";
+				const minutes = Math.max(SNAP, Math.round((Date.parse(block.end) - Date.parse(block.start)) / 60000));
+				onCarry({ block, offset: event.clientX - event.currentTarget.getBoundingClientRect().left, minutes, movable: block.kind === "booking" && block.planned && canStart });
+				requestAnimationFrame(() => setLifted(true));
+			}}
+			onDragEnd={() => {
+				setLifted(false);
+				onCarryEnd();
 			}}
 			onClick={open}
 			aria-label={`${title}, ${detail}`}
-			title={compact ? `${title}, ${detail}` : canStart ? "Trage pe alt rând ca să o muți; trage de capete ca să schimbi ora" : "Trage pe alt rând ca să o muți"}
-			className={cn("@container absolute flex min-w-0 cursor-pointer items-center overflow-clip rounded-[7px] text-left text-xs active:cursor-grabbing", compact ? "px-0.5" : "px-2", block.planned && "border border-dashed border-foreground/25", draft && "z-20 ring-2 ring-ring")}
+			title={compact ? `${title}, ${detail}` : canStart ? block.kind === "booking" && block.planned ? "Trage ca să o reprogramezi; trage de capete ca să schimbi ora" : "Trage pe alt rând ca să o muți; trage de capete ca să schimbi ora" : "Trage pe alt rând ca să o muți"}
+			className={cn("@container absolute flex min-w-0 cursor-pointer items-center overflow-clip rounded-[7px] text-left text-xs active:cursor-grabbing", compact ? "px-0.5" : "px-2", block.planned && "border border-dashed border-foreground/25", draft && "z-20 ring-2 ring-ring", lifted && "opacity-40")}
 			style={{
 				top: PAD + (block.level ?? 0) * (CARD + GAP),
 				height: CARD,
