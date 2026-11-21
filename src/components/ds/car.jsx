@@ -75,7 +75,7 @@ export function CarCover({ make, car, plate, code, status, statusColor, eyebrow,
 					<CarLine car={car} plate={plate} className="absolute right-2.5 bottom-2.5 left-2.5 text-[12.5px]" />
 				</span>
 				{eyebrow && <span className="truncate text-[11px] font-semibold tracking-[0.05em] uppercase opacity-70">{eyebrow}</span>}
-				<span className="line-clamp-2 text-[15px] leading-tight font-semibold">{title}</span>
+				<span className="cover-title line-clamp-2 text-[15px] leading-tight font-semibold">{title}</span>
 				{detail && <span className="truncate text-[12.5px] opacity-70">{detail}</span>}
 			</button>
 			{(action || menu) && (
