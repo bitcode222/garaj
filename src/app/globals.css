@@ -279,11 +279,44 @@
 
 /* ── Scrim ───────────────────────────────────────────────────────────────────
    The one backdrop behind every sheet, dialog and palette. No tint of its own
-   (no blur): it catches taps outside the panel; the first sheet tints it. */
+   (no blur): it catches taps outside the panel; the first sheet blurs it. */
 @utility scrim {
 	position: fixed;
 	inset: 0;
 	z-index: 50;
+}
+
+/* The page behind the first sheet, blurred instead of darkened (owner, 22 Nov 2026). Kept cheap: one layer, a fixed small
+   radius, and only its opacity animates, on the compositor. Never the radius, which would repaint the window each frame.
+   Tablet and up only: on a phone the sheet covers the whole screen, so a blur would cost frames and show nothing. */
+@utility sheet-blur {
+	@media (min-width: 48rem) {
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
+		will-change: opacity;
+		animation: sheet-blur-in 300ms ease-out both;
+		&[data-state="closed"] {
+			animation: sheet-blur-out 300ms ease-in both;
+		}
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+			&[data-state="closed"] {
+				animation: none;
+			}
+		}
+	}
+}
+
+@keyframes sheet-blur-in {
+	from {
+		opacity: 0;
+	}
+}
+
+@keyframes sheet-blur-out {
+	to {
+		opacity: 0;
+	}
 }
 
 /* ── Action sheets ───────────────────────────────────────────────────────────

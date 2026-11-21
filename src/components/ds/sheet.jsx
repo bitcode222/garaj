@@ -223,9 +223,9 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 	return (
 		<DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
 			<DialogPrimitive.Portal>
-				{/* Radix mounts its scroll lock in the Overlay, so stacked sheets need one too (untinted) or they cannot scroll. */}
+				{/* Radix mounts its scroll lock in the Overlay, so stacked sheets need one too (unblurred) or they cannot scroll. */}
 					{/* Walking keeps one scrim: the arriving record's shows at once, the leaving one's goes at once. */}
-					<DialogPrimitive.Overlay className={cn("scrim", depth === 0 && "bg-black/10 dark:bg-black/35", motion.enter && "data-[state=open]:animate-none", motion.leave && "data-[state=closed]:hidden")} />
+					<DialogPrimitive.Overlay className={cn("scrim", depth === 0 && "sheet-blur", motion.enter && "data-[state=open]:animate-none", motion.leave && "data-[state=closed]:hidden")} />
 				<DialogPrimitive.Content
 					ref={contentRef}
 					tabIndex={-1}
