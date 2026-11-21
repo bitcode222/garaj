@@ -346,8 +346,8 @@ export function CalendarPage() {
 		if (order && marks.get(appointment.id) !== "booking") openSheet("work-order-view", { id: order.id });
 		else openDetail("appointment", appointment.id);
 	};
-	const move = async (appointment, change) => {
-		if (await reschedule(appointment, change)) setSelected(appointment.id);
+	const move = async (appointment, change, row) => {
+		if (await reschedule(appointment, change, row)) setSelected(appointment.id);
 	};
 	const toggleIn = (text, set, key, on) => {
 		const list = parseList(text).filter((k) => k !== key);
