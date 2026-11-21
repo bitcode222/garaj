@@ -126,6 +126,7 @@ a new start or end on the quarter hour — a booking through the calendar's resc
 undo), a job's logged work through `setEntrySpan` (`src/domain/work-clock.js`: no overlap with the job's other stretches,
 a running one keeps running). Jobs on a lift on the car's cover; bookings a grey dashed outline with the make tile. A
 tablet and the phone keep their own day. Cards that overlap on one row stack in levels and the row grows (20 Nov 2026); a card half under the row names keeps its logo and text in view; a narrow card shows only the logo; one day in view keeps every hour at 56 px or more.
+**Overlaps** (21 Nov 2026, `src/domain/board-clashes.js`): only those still ahead, on a lift or mechanic. The shared time is hatched amber, the cards get an amber edge, a ⚠ marks the spot, and a line above the board names each one. Either opens the quick fixes for the last booking still to come: another free row at the same time, the nearest free time on this row or, on a full day, the next open day. Each fix has an undo; a car already in the shop is never moved.
 
 ### Telefon ca iPhone (owner, 17 Nov 2026, board https://claude.ai/artifact/XZjoSBj5YhRWmdHKBATf8d)
 

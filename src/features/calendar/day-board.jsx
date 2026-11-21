@@ -1,18 +1,20 @@
 "use client";
 
 import { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, GripVertical, Plus } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, GripVertical, Plus, TriangleAlert } from "lucide-react";
 import { SectionHeader } from "@/components/ds/blocks";
 import { MakeTile } from "@/components/ds/car";
 import { Segmented } from "@/components/ds/inputs";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { InlineText } from "@/components/ds/inline-text";
-import { fmtDate, fmtTime } from "@/lib/format";
+import { fmtDate, fmtTime, plural } from "@/lib/format";
 import { formatPlate } from "@/domain/vehicle";
-import { makeCover, makeInk } from "@/lib/colors";
+import { STATE, makeCover, makeInk } from "@/lib/colors";
 import { openSheet } from "@/lib/sheets";
 import { useLocalPreference, useNowMinute } from "@/lib/hooks";
 import { canReschedule } from "@/domain/appointment";
+import { boardClashes } from "@/domain/board-clashes";
 import { addDaysISO, dayOfInstant, diffDaysISO, parseISODate } from "@/domain/dates";
 import { assignToLane, reorderTeam, saveBay, saveStaff, setWorkEntrySpan } from "@/lib/store/actions";
 import { toast } from "@/lib/toast";
@@ -148,6 +150,24 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const cellWidth = `${100 / span.count}%`;
 	// A row is as tall as the days in view need, so a busy day elsewhere doesn't leave it half empty.
 	const inViewDays = Array.from({ length: perView + Math.abs(between) }, (_, i) => addDaysISO(day, i + Math.min(between, 0)));
+	const clashesByDay = useMemo(() => new Map(days.map((d) => [d, boardClashes({ lanes, day: d, from, to, now: nowISO, hours: settings.hours })])), [days, lanes, from, to, nowISO, settings.hours]);
+	const clashesInView = inViewDays.flatMap((d) => clashesByDay.get(d) ?? []);
+	const applyFix = (clash, fix) => {
+		const appointment = appointments[clash.mover.appointment.id];
+		if (!appointment) return;
+		if (fix.type !== "row") {
+			reschedule(appointment, { start: atMinute(fix.day, fix.start), end: atMinute(fix.day, fix.end) });
+			return;
+		}
+		const ids = { appointmentId: appointment.id, workOrderId: null };
+		try {
+			assignToLane(ids, kind.field, fix.laneId);
+			toast.success(`Mutat la ${fix.laneName}.`, { action: { label: "Anulează", onClick: () => assignToLane(ids, kind.field, clash.laneId) } });
+		} catch (error) {
+			toast.error(error.message);
+		}
+	};
+	const clashCard = (clash) => <ClashCard clash={clash} vehicles={vehicles} onFix={(fix) => applyFix(clash, fix)} />;
 	const levelsOf = (lane) => Math.max(1, ...inViewDays.flatMap((d) => (lane.days[d] ?? []).map((block) => block.level + 1)));
 
 	const dayWidth = () => scroller.current?.querySelector("[data-day]")?.getBoundingClientRect().width || 1;
@@ -357,6 +377,8 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	// Click and drag on the empty body pans it sideways (a mouse; touch and trackpads scroll on their own).
 	const onPointerDown = (event) => {
 		place.current.aim = null;
+		// A clash's popover sits in a portal, but its events still bubble here through React.
+		if (!event.currentTarget.contains(event.target)) return;
 		if (event.pointerType !== "mouse" || event.button !== 0 || event.target.closest("button, input, a, [draggable='true']")) return;
 		pan.current = { x: event.clientX, left: scroller.current.scrollLeft, id: event.pointerId };
 		// Held from the press: rows change height with the days in view, and the pointer mustn't fall off the board.
@@ -374,6 +396,28 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	};
 
 	return (
+		<>
+			{clashesInView.length > 0 && (
+				<div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none]" role="group" aria-label="Suprapuneri">
+					<span className="flex shrink-0 items-center gap-1.5 text-[12.5px] font-semibold" style={{ color: STATE.wait }}>
+						<TriangleAlert className="size-3.5" aria-hidden />
+						{plural(clashesInView.length, "suprapunere", "suprapuneri")}
+					</span>
+					{clashesInView.map((clash) => (
+						<Popover key={clash.key}>
+							<PopoverTrigger asChild>
+								<button type="button" className="h-7 shrink-0 rounded-full border px-2.5 text-xs font-medium tabular-nums transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+									{clash.laneName} · {week ? `${sentence(fmtDate(clash.day, "EEE"))} ` : ""}
+									{clock(clash.start)}–{clock(clash.end)}
+								</button>
+							</PopoverTrigger>
+							<PopoverContent align="start" className="w-80 p-3">
+								{clashCard(clash)}
+							</PopoverContent>
+						</Popover>
+					))}
+				</div>
+			)}
 		<div
 			ref={scroller}
 			onPointerDown={onPointerDown}
@@ -451,8 +495,31 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 										className="relative h-full shrink-0 overflow-clip border-l"
 										style={{ width: cellWidth, backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(tick / total) * 100}% - 1px), var(--border) calc(${(tick / total) * 100}% - 1px), var(--border) ${(tick / total) * 100}%)` }}
 									>
+										{(clashesByDay.get(d) ?? []).filter((clash) => clash.laneId === lane.id).flatMap((clash) => clash.shared.map(([a, b]) => (
+											<span
+												key={`${clash.key}:${a}`}
+												aria-hidden
+												className="pointer-events-none absolute inset-y-0"
+												style={{ left: `${((a - from) / total) * 100}%`, width: `${((b - a) / total) * 100}%`, background: `repeating-linear-gradient(135deg, color-mix(in srgb, ${STATE.wait} 24%, transparent) 0 4px, transparent 4px 8px)` }}
+											/>
+										)))}
 										{(lane.days[d] ?? []).map((block) => (
-											<Block key={block.key} block={block} lane={lane} day={d} compact={week} vehicle={vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId]} from={from} to={to} total={total} onStretch={stretch} onCarry={carry} onCarryEnd={endCarry} />
+											<Block key={block.key} clashing={(clashesByDay.get(d) ?? []).some((clash) => clash.laneId === lane.id && clash.blocks.some((b) => b.key === block.key))} block={block} lane={lane} day={d} compact={week} vehicle={vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId]} from={from} to={to} total={total} onStretch={stretch} onCarry={carry} onCarryEnd={endCarry} />
+										))}
+										{(clashesByDay.get(d) ?? []).filter((clash) => clash.laneId === lane.id).map((clash) => (
+											<Popover key={clash.key}>
+												<PopoverTrigger asChild>
+													<button
+														type="button"
+														aria-label={`Suprapunere pe ${clash.laneName}, ${clock(clash.start)}–${clock(clash.end)}`}
+														className="absolute z-20 flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-white shadow-sm ring-2 ring-card focus-visible:ring-ring focus-visible:outline-none"
+														style={{ background: STATE.wait, top: PAD + CARD + GAP / 2, left: `${((clash.shared[0][0] + clash.shared[0][1]) / 2 - from) / total * 100}%` }}
+													>
+														<TriangleAlert className="size-3.5" aria-hidden />
+													</button>
+												</PopoverTrigger>
+												<PopoverContent className="w-80 p-3">{clashCard(clash)}</PopoverContent>
+											</Popover>
 										))}
 										{ghost?.lane === key && ghost.day === d && (
 											<span
@@ -478,10 +545,53 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 				<div className="border-t" />
 			</div>
 		</div>
+		</>
 	);
 }
 
-function Block({ block, lane, day, compact, vehicle, from, to, total, onStretch, onCarry, onCarryEnd }) {
+/** One overlap: who is in it, and the quick ways out for the booking best moved. */
+function ClashCard({ clash, vehicles, onFix }) {
+	const carOf = (block) => vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId];
+	const moverName = clash.mover ? carName(carOf(clash.mover)) || "Programarea" : null;
+	const fixLabel = (fix) => (fix.type === "row" ? `Mută pe ${fix.laneName}` : fix.type === "time" ? `Mută la ${clock(fix.start)}–${clock(fix.end)}` : `Mută ${fmtDate(fix.day, "EEE, d MMM")}, ${clock(fix.start)}`);
+	const openBlock = (block) => (block.order ? openSheet("work-order-view", { id: block.order.id }) : openSheet("appointment-view", { id: block.appointment.id }));
+	return (
+		<div className="space-y-2.5">
+			<div>
+				<p className="text-[13px] font-semibold">Suprapunere pe {clash.laneName}</p>
+				<p className="text-xs text-muted-foreground tabular-nums">
+					{sentence(fmtDate(clash.day, "EEE, d MMM"))} · {clock(clash.start)}–{clock(clash.end)}
+				</p>
+			</div>
+			<div className="-mx-1">
+				{clash.blocks.map((block) => (
+					<button key={block.key} type="button" onClick={() => openBlock(block)} className="flex min-h-9 w-full items-center gap-2 rounded-md px-1 text-left text-xs hover:bg-accent">
+						<MakeTile make={carOf(block)?.make} size={22} />
+						<span className="min-w-0 flex-1 truncate font-medium">{carName(carOf(block)) || block.appointment?.title || jobHeadline(block.order)}</span>
+						<span className="shrink-0 text-muted-foreground tabular-nums">
+							{fmtTime(block.start)}–{fmtTime(block.end)}
+						</span>
+					</button>
+				))}
+			</div>
+			{clash.fixes.length > 0 ? (
+				<div className="space-y-1.5 border-t pt-2.5">
+					<p className="text-xs text-muted-foreground">Soluții pentru {moverName}</p>
+					{clash.fixes.map((fix) => (
+						<Button key={`${fix.type}:${fix.laneId ?? fix.day}:${fix.start ?? ""}`} variant="outline" size="sm" className="h-9 w-full justify-between" onClick={() => onFix(fix)}>
+							{fixLabel(fix)}
+							<ArrowRight aria-hidden />
+						</Button>
+					))}
+				</div>
+			) : (
+				<p className="border-t pt-2.5 text-xs text-muted-foreground">{clash.mover ? "Nu e loc liber în zilele vizibile." : "Mașinile sunt deja în service; deschide una ca să o reorganizezi."}</p>
+			)}
+		</div>
+	);
+}
+
+function Block({ clashing, block, lane, day, compact, vehicle, from, to, total, onStretch, onCarry, onCarryEnd }) {
 	const [lifted, setLifted] = useState(false); // being carried: its place stays, faded
 	const [draft, setDraft] = useState(null); // { start, end } in minutes while an end is dragged
 	const grab = useRef(null);
@@ -571,6 +681,7 @@ function Block({ block, lane, day, compact, vehicle, from, to, total, onStretch,
 				width: `calc(${width}% - 4px)`,
 				// Planned: one grey dashed outline for every car; on the lift: the car's cover, as the atelier's cards.
 				...(block.planned ? {} : { background: makeCover(vehicle?.make), color: makeInk(vehicle?.make) }),
+				...(clashing ? { boxShadow: `inset 0 0 0 2px ${STATE.wait}` } : {}),
 			}}
 		>
 			{canStart && handle("start")}
