@@ -528,22 +528,18 @@
 	color: #111111;
 }
 
-/* A car's sheet (sheet "A", owner's picks 16–20 Nov 2026): the head in the car's colour, the body white ("S2 Alb") with
+/* A car's sheet (sheet "A", owner's picks 16–20 Nov 2026): the head in the car's colour, fading into a body on the dashboard's background, with
    each section a grey rounded group of rows under a big title ("T5 Titluri mari"); a field is one row, its label on the
    left and its value on the right, still editable. */
 .sheet-a {
-	--card: #ffffff;
-	background: #ffffff;
+	background: var(--background); /* the dashboard's own background, its groups the dashboard's cards (owner, 21 Nov 2026) */
 }
-.sheet-a-body {
-	--card: #f2f2f7;
-}
-.dark .sheet-a {
-	--card: #1c1c1e;
-	background: #1c1c1e;
-}
-.dark .sheet-a-body {
-	--card: #2c2c2e;
+.sheet-head-fade {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	mask-image: linear-gradient(to bottom, #000 calc(100% - 3.75rem), rgb(0 0 0 / 0.72) calc(100% - 2.75rem), rgb(0 0 0 / 0.32) calc(100% - 1.5rem), rgb(0 0 0 / 0.08) calc(100% - 0.5rem), transparent 100%);
 }
 .sheet-a-body section[aria-label] > :first-child:is(h2, h3, p) {
 	font-size: 1.25rem;

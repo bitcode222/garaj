@@ -160,10 +160,12 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 	// The head: back, the sheet's controls and close, then the title (a car's: CarHead).
 	const head = (
 					<div
-						className={cn("shrink-0 touch-pan-y", car ? cn(carClass, "px-5 pt-[calc(0.75rem+var(--safe-top))] pb-5 md:px-6 md:pt-4") : "px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
-						style={car ? { background: makeCover(car), color: makeInk(car) } : undefined}
+						className={cn("shrink-0 touch-pan-y", car ? cn(carClass, "relative isolate px-5 pt-[calc(0.75rem+var(--safe-top))] pb-16 md:px-6 md:pt-4") : "px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
+						style={car ? { color: makeInk(car) } : undefined}
 						{...swipe.handlers}
 					>
+						{/* The car's colour fades into the sheet below the head's content, which stays on the solid part. */}
+						{car && <span aria-hidden className="sheet-head-fade" style={{ background: makeCover(car) }} />}
 						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. */}
 						<div className="-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-9">
 							<button
@@ -247,8 +249,8 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 							: "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
 						// md and up: a side panel.
 						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:border-l",
-						// One width for every sheet on the web (md and up), so stacked sheets line up exactly (42 rem, 672 px).
-						car ? "md:max-w-[34rem]" : "md:max-w-2xl",
+						// A car's sheet is 40 rem (640 px) wide (owner, 21 Nov 2026); other sheets 42 rem.
+						car ? "md:max-w-[40rem]" : "md:max-w-2xl",
 						// Centred (Recepție in Atelier "Etape", docs/DESIGN.md §4): a card in the middle of the window, md and up.
 						centered &&
 							"md:inset-auto md:top-[5vh] md:left-1/2 md:h-auto md:max-h-[90dvh] md:-translate-x-1/2 md:overflow-hidden md:rounded-2xl md:border md:[--tw-enter-translate-x:0] md:[--tw-exit-translate-x:0] md:data-[state=closed]:zoom-out-95 md:data-[state=open]:zoom-in-95",
