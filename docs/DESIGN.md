@@ -68,11 +68,10 @@ circle and now is a red line, as on Azi.
 Replaces the "car's colour all over" look below. Only the head of a car's sheet is in the car's colour (`.car-sheet-*`
 tokens on the head alone): the logo box at the left as on the cards (`cover.code` at its top left, the plate at its
 bottom), beside it the state pill, the title and a few lines (`cover.car` • plate, `cover.lines`), then the main glass
-button (`CoverButton`, stretched) and the round glass ones (`CoverIconButton`), then the visit bar. The body is white
-(`.sheet-a`, dark #1c1c1e), its sections grey rounded groups under big 20 px bold titles (`.sheet-a-body`, groups
-#f2f2f7 / #2c2c2e). The job's sheet orders them as the desk asks: alert, Ce reclamă clientul, Recepția (km, fuel,
+button (`CoverButton`, stretched) and the round glass ones (`CoverIconButton`), then the visit bar. The head ends in a fade into the body (owner, 21 Nov 2026). The body has the
+dashboard's background (`.sheet-a`), its sections rounded groups in the dashboard's card colour under big 20 px bold titles (`.sheet-a-body`). The job's sheet orders them as the desk asks: alert, Ce reclamă clientul, Recepția (km, fuel,
 inspection), De făcut la mașină, Deviz, Factură, Note interne (yellow tint), Mai multe (mechanic, bay, stages, history).
-20 Nov 2026 (owner): the head scrolls away with the body; a car's sheet is 34 rem (544 px) wide, other sheets keep
+20 Nov 2026 (owner): the head scrolls away with the body; a car's sheet is 40 rem (640 px) wide (widened 21 Nov 2026), other sheets keep
 42 rem; no visit bar in the head. A job's "…" (`JobMenu`, as on its card) holds every move of its state, the visit's
 booking, invoice and review, the full page, writing to the client and deleting it; a booking's "…" (`BookingMenu`)
 reaches its job and invoice and its edit form.
