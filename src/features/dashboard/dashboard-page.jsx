@@ -28,8 +28,8 @@ import { ToAccept } from "./to-accept";
 import { PHONE } from "@/components/ds/nav-bar";
 import { useMediaQuery } from "@/lib/hooks";
 
-// Azi (docs/DESIGN.md §4): one page. The day per lift, the bookings still to accept, the cars in the shop as covers,
-// then the money (today, still to come today, the month so far).
+// Azi (docs/DESIGN.md §4): one page. The bookings still to accept, the cars in the shop as covers, the money (today,
+// still to come today, the month so far), and last the day per lift.
 
 const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).join(" ") || "Mașină";
 
@@ -175,7 +175,6 @@ export function DashboardPage() {
 	return (
 		<Page width="wide" className="space-y-7">
 			<PageTitle title="Azi" subtitle={`${fmtDate(today, "EEEE, d MMMM")} · ${settings.shop.name}`} />
-			<DayBoard section initialDay={today} today={today} bays={bays} staff={staff} appointments={appointments} workOrders={workOrders} vehicles={vehicles} settings={settings} />
 			<ToAccept groups={selectToConfirm(appointments, now).groups} today={today} vehicles={vehicles} customers={customers} staff={staff} bays={bays} />
 			<InShop jobs={jobs} vehicles={vehicles} customers={customers} staffId={member?.id ?? null} filter={shopFilter} setFilter={setShopFilter} sectionRef={shopRef} />
 			<MoneyRow
@@ -187,6 +186,7 @@ export function DashboardPage() {
 					shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 				}}
 			/>
+			<DayBoard section initialDay={today} today={today} bays={bays} staff={staff} appointments={appointments} workOrders={workOrders} vehicles={vehicles} settings={settings} />
 		</Page>
 	);
 }
