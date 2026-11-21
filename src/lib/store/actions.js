@@ -21,6 +21,7 @@ import { formatPlate, normalizePlate, addReading } from "@/domain/vehicle";
 import { defaultInspection, invoiceLinesFromOrder, toInvoiceDraft, transition } from "@/domain/work-order";
 import { saveReception } from "@/domain/reception";
 import { dropLastRequest, logRequest, markReceived, newReview, noteCustomer } from "@/domain/review";
+import { appendJobLog, recordJobChanges } from "@/domain/job-log";
 import { setEntrySpan, setLineDone as markLineDone, startWork as startClock, stopClock } from "@/domain/work-clock";
 import { mergeSettings } from "./defaults";
 import { COLLECTIONS, atomic, commit, getState, replaceAllData, snapshotForBackup } from "./store";
@@ -217,7 +218,7 @@ export function assignToLane({ appointmentId, workOrderId }, field, laneId) {
 	if (order) {
 		if (order.status === "delivered" || order.status === "cancelled") {
 			if (!appointment) throw new DomainError("locked", "Lucrarea este închisă și nu mai poate fi mutată.");
-		} else changes.workOrders = { put: [{ ...order, [field]: laneId, updatedAt: t }] };
+		} else changes.workOrders = { put: [logged(order, { ...order, [field]: laneId, updatedAt: t })] };
 	}
 	commit(changes);
 }
@@ -320,6 +321,30 @@ export function blankLine(kind = "labor") {
 
 // ── appointments ─────────────────────────────────────────────────────────────
 
+/** Who is at this device, for a job's log. */
+function actorName() {
+	try {
+		const id = localStorage.getItem("garaj.account");
+		return (id && getState().staff[id]?.name) || null;
+	} catch {
+		return null;
+	}
+}
+
+/** `next` with what changed since `prev` written in the job's own log (src/domain/job-log.js). */
+function logged(prev, next) {
+	const state = getState();
+	return recordJobChanges(prev, next, { now: next.updatedAt ?? now(), by: actorName(), names: { staff: state.staff, bays: state.bays } });
+}
+
+/** A booking's new time, in the log of the job it became. */
+function jobWithBookingMove(previous, appointment) {
+	const order = appointment.workOrderId ? getState().workOrders[appointment.workOrderId] : null;
+	if (!order || (previous.start === appointment.start && previous.end === appointment.end)) return null;
+	const t = now();
+	return { ...appendJobLog(order, [{ type: "booking_moved", from: { start: previous.start, end: previous.end }, to: { start: appointment.start, end: appointment.end } }], { now: t, by: actorName() }), updatedAt: t };
+}
+
 function conflictsFor(appointment) {
 	const day = dayOfInstant(appointment.start);
 	const sameDay = values("appointments").filter((a) => dayOfInstant(a.start) === day);
@@ -369,22 +394,31 @@ export function saveAppointment(input) {
 	if (problem) throw new DomainError("invalid", problem);
 	const existing = input.id ? getState().appointments[input.id] : null;
 	if (!existing) throw new DomainError("not_found", "Programarea nu mai există.");
-	const appointment = { ...NEW_APPOINTMENT, ...existing, ...input, id: existing.id, createdAt: existing.createdAt, updatedAt: now() };
-	commit({ appointments: { put: [appointment] } });
+	const t = now();
+	const moved = existing.start !== input.start && input.start !== undefined ? true : input.end !== undefined && existing.end !== input.end;
+	// The history is the store's, whatever copy the caller holds: an undo adds to it instead of erasing it.
+	const activity = moved ? [...(existing.activity ?? []), { at: t, type: "rescheduled", from: { start: existing.start, end: existing.end }, to: { start: input.start ?? existing.start, end: input.end ?? existing.end } }] : (existing.activity ?? []);
+	const appointment = { ...NEW_APPOINTMENT, ...existing, ...input, activity, id: existing.id, createdAt: existing.createdAt, updatedAt: t };
+	const job = jobWithBookingMove(existing, appointment);
+	commit({ appointments: { put: [appointment] }, ...(job ? { workOrders: { put: [job] } } : null) });
 	return { appointment, conflicts: conflictsFor(appointment) };
 }
 
 /** Puts a booking back exactly as it was (the undo of a toast). */
 export function restoreAppointment(previous) {
-	if (!getState().appointments[previous.id]) throw new DomainError("not_found", "Programarea nu mai există.");
-	commit({ appointments: { put: [{ ...previous, updatedAt: now() }] } });
+	const current = getState().appointments[previous.id];
+	if (!current) throw new DomainError("not_found", "Programarea nu mai există.");
+	const restored = { ...previous, updatedAt: now() };
+	const job = jobWithBookingMove(current, restored);
+	commit({ appointments: { put: [restored] }, ...(job ? { workOrders: { put: [job] } } : null) });
 }
 
 /** A new time for a booking (docs/VISIT-FLOW.md §6.1); `customerKnows` keeps a confirmed booking confirmed. */
 export function rescheduleAppointmentTo(id, { start, end, customerKnows = false }) {
 	const previous = mustGet("appointments", id, "Programarea");
 	const appointment = rescheduleAppointment(previous, { start, end, customerKnows, now: now() });
-	commit({ appointments: { put: [appointment] } });
+	const job = jobWithBookingMove(previous, appointment);
+	commit({ appointments: { put: [appointment] }, ...(job ? { workOrders: { put: [job] } } : null) });
 	return { appointment, previous, conflicts: conflictsFor(appointment) };
 }
 
@@ -531,7 +565,7 @@ export function updateWorkOrder(id, patch) {
 			throw new DomainError("locked", "Lucrarea este închisă și nu mai poate fi modificată.");
 		}
 	}
-	const next = { ...order, ...patch, updatedAt: now() };
+	const next = logged(order, { ...order, ...patch, updatedAt: now() });
 	commit({ workOrders: { put: [next] } });
 	return next;
 }
@@ -540,7 +574,7 @@ export function updateWorkOrder(id, patch) {
 export function saveWorkOrderReception(id, input) {
 	const order = mustGet("workOrders", id, "Lucrarea");
 	if (order.status === "delivered" || order.status === "cancelled") throw new DomainError("locked", "Lucrarea este închisă și nu mai poate fi modificată.");
-	const next = saveReception(order, input, now());
+	const next = logged(order, saveReception(order, input, now()));
 	commit({ workOrders: { put: [next] } });
 	return next;
 }
@@ -550,9 +584,12 @@ export function saveWorkOrderReception(id, input) {
  * of a status change. Refused when the job was deleted meanwhile.
  */
 export function restoreWorkOrder(previous, previousAppointment = null) {
-	if (!getState().workOrders[previous.id]) throw new DomainError("not_found", "Lucrarea nu mai există.");
+	const current = getState().workOrders[previous.id];
+	if (!current) throw new DomainError("not_found", "Lucrarea nu mai există.");
 	const t = now();
-	const changes = { workOrders: { put: [{ ...previous, updatedAt: t }] } };
+	// The job goes back; its log doesn't: it keeps what happened, and says it was undone.
+	const activity = [...(current.activity ?? []), { at: t, ...(actorName() ? { by: actorName() } : null), type: "undone", from: current.status, to: previous.status }];
+	const changes = { workOrders: { put: [{ ...previous, activity, updatedAt: t }] } };
 	if (previousAppointment && getState().appointments[previousAppointment.id]) changes.appointments = { put: [{ ...previousAppointment, updatedAt: t }] };
 	commit(changes);
 }
@@ -581,8 +618,10 @@ export function setWorkOrderStatus(id, to, { reason = "" } = {}) {
 export function startWork(id, { staffId = null } = {}) {
 	let order = mustGet("workOrders", id, "Lucrarea");
 	if (order.status !== "in_progress") order = setWorkOrderStatus(id, "in_progress");
-	const { order: next, stopped } = startClock(order, { staffId, now: now(), orders: values("workOrders") });
-	commit({ workOrders: { put: [next, ...stopped] } });
+	const { order: started, stopped } = startClock(order, { staffId, now: now(), orders: values("workOrders") });
+	const next = logged(order, started);
+	const others = stopped.map((other) => logged(getState().workOrders[other.id] ?? other, other));
+	commit({ workOrders: { put: [next, ...others] } });
 	return next;
 }
 
@@ -590,7 +629,7 @@ export function startWork(id, { staffId = null } = {}) {
 export function setWorkEntrySpan(id, entryId, span) {
 	const order = mustGet("workOrders", id, "Lucrarea");
 	if (order.status === "delivered" || order.status === "cancelled") throw new DomainError("locked", "Lucrarea este închisă și nu mai poate fi modificată.");
-	const next = setEntrySpan(order, entryId, span, { now: now() });
+	const next = logged(order, setEntrySpan(order, entryId, span, { now: now() }));
 	commit({ workOrders: { put: [next] } });
 	return next;
 }
@@ -598,15 +637,17 @@ export function setWorkEntrySpan(id, entryId, span) {
 /** Pauses a job: its clock stops; it stays in progress. */
 export function stopWork(id) {
 	const order = mustGet("workOrders", id, "Lucrarea");
-	const next = stopClock(order, { now: now() });
-	if (next !== order) commit({ workOrders: { put: [next] } });
+	const stoppedOrder = stopClock(order, { now: now() });
+	if (stoppedOrder === order) return order;
+	const next = logged(order, stoppedOrder);
+	commit({ workOrders: { put: [next] } });
 	return next;
 }
 
 /** Ticks one of a job's lines off as done, or back. */
 export function setLineDone(id, lineId, done) {
 	const order = mustGet("workOrders", id, "Lucrarea");
-	const next = markLineDone(order, lineId, done, { now: now() });
+	const next = logged(order, markLineDone(order, lineId, done, { now: now() }));
 	commit({ workOrders: { put: [next] } });
 	return next;
 }

@@ -5,6 +5,8 @@ import { addDaysISO, dayOfInstant, parseISODate } from "./dates.js";
 
 const STEP = 15;
 const MIN_LENGTH = 15;
+const MIN_KEPT = 30; // a booking isn't shortened below this
+const MAX_FIXES = 6;
 
 const minuteOf = (instant) => {
 	const d = new Date(instant);
@@ -20,7 +22,6 @@ function spanOn(block, day) {
 
 const spansOf = (blocks, day) => (blocks ?? []).map((block) => spanOn(block, day)).sort((a, b) => a.start - b.start || a.end - b.end);
 const isFree = (spans, start, end, except) => spans.every((s) => s.block.key === except || s.end <= start || s.start >= end);
-const movable = (block) => block.kind === "booking" && block.planned;
 
 /** Where two or more cards run at once, merged: [[start, end], …]. */
 function sharedSpans(cluster) {
@@ -42,48 +43,97 @@ function sharedSpans(cluster) {
 	return merged;
 }
 
-/** The free start nearest to the booked one, on the same row and day; null when none fits. */
-function nearestSlot(spans, mover, { from, to, earliest }) {
+const canShift = (block) => block.kind === "booking" && ["scheduled", "confirmed", "arrived"].includes(block.appointment?.status ?? "scheduled");
+const isOpen = (block) => !["delivered", "cancelled"].includes(block.order?.status);
+
+/** The free start closest to the booked one on this row, on one side of it; null when none fits. */
+function nearestSlot(spans, mover, { from, to, earliest }, side) {
 	const length = mover.end - mover.start;
 	let best = null;
 	for (let start = from; start + length <= to; start += STEP) {
-		if (start < earliest || start === mover.start || !isFree(spans, start, start + length, mover.block.key)) continue;
-		const distance = Math.abs(start - mover.start);
-		if (best == null || distance < Math.abs(best - mover.start) || (distance === Math.abs(best - mover.start) && start > best)) best = start;
+		if (start < earliest || (side > 0 ? start <= mover.start : start >= mover.start) || !isFree(spans, start, start + length, mover.block.key)) continue;
+		if (best == null || Math.abs(start - mover.start) < Math.abs(best - mover.start)) best = start;
 	}
 	return best;
 }
 
-function fixesFor(mover, lane, { lanes, day, from, to, earliest, hours }) {
+/** The longest part of the card's own time nobody else is on (at least half an hour); null if it's all or nothing. */
+function freePart(spans, mover) {
+	const others = spans.filter((s) => s.block.key !== mover.block.key && s.end > mover.start && s.start < mover.end);
+	let best = null;
+	let at = mover.start;
+	for (const s of [...others, { start: mover.end, end: mover.end }].sort((a, b) => a.start - b.start)) {
+		if (s.start > at && (!best || s.start - at > best.end - best.start)) best = { start: at, end: s.start };
+		at = Math.max(at, s.end);
+	}
+	return best && best.end - best.start >= MIN_KEPT ? best : null;
+}
+
+/** The first day after this one, open and on the board, with room: at the same hour if it can, else the earliest. */
+function nextDay(lane, mover, { day, from, to, hours }) {
 	const length = mover.end - mover.start;
-	const fixes = [];
-	const other = lanes.find((l) => l.id && l.id !== lane.id && isFree(spansOf(l.days[day], day), mover.start, mover.end));
-	if (other) fixes.push({ type: "row", laneId: other.id, laneName: other.name });
-	const slot = nearestSlot(spansOf(lane.days[day], day), mover, { from, to, earliest });
-	if (slot != null) fixes.push({ type: "time", day, start: slot, end: slot + length });
-	else {
-		// The day is full: the first free start on the next open day that is on the board.
-		const open = hours?.days ?? [0, 1, 2, 3, 4, 5, 6];
-		for (let i = 1; i <= 14; i++) {
-			const next = addDaysISO(day, i);
-			if (!lane.days[next]) break;
-			if (!open.includes(parseISODate(next).getDay())) continue;
-			const spans = spansOf(lane.days[next], next);
-			let found = null;
-			for (let start = from; found == null && start + length <= to; start += STEP) if (isFree(spans, start, start + length)) found = start;
-			if (found != null) {
-				fixes.push({ type: "day", day: next, start: found, end: found + length });
-				break;
+	const open = hours?.days ?? [0, 1, 2, 3, 4, 5, 6];
+	for (let i = 1; i <= 14; i++) {
+		const next = addDaysISO(day, i);
+		if (!lane.days[next]) return null;
+		if (!open.includes(parseISODate(next).getDay())) continue;
+		const spans = spansOf(lane.days[next], next);
+		if (mover.start >= from && mover.end <= to && isFree(spans, mover.start, mover.end)) return { type: "day", day: next, start: mover.start, end: mover.end };
+		for (let start = from; start + length <= to; start += STEP) if (isFree(spans, start, start + length)) return { type: "day", day: next, start, end: start + length };
+	}
+	return null;
+}
+
+/** The ways out for one card, least disruptive first: same time elsewhere, a little later or earlier, shorter, another day. */
+function fixesFor(mover, lane, ctx) {
+	const { lanes, day, from, to } = ctx;
+	const others = lanes.filter((l) => l.id && l.id !== lane.id);
+	const freeRows = others.filter((l) => isFree(spansOf(l.days[day], day), mover.start, mover.end));
+	const fixes = freeRows.slice(0, 2).map((l) => ({ type: "row", laneId: l.id, laneName: l.name }));
+	if (!canShift(mover.block)) return fixes;
+	const spans = spansOf(lane.days[day], day);
+	const length = mover.end - mover.start;
+	const later = nearestSlot(spans, mover, ctx, 1);
+	const earlier = nearestSlot(spans, mover, ctx, -1);
+	if (later != null) fixes.push({ type: "later", day, start: later, end: later + length });
+	if (earlier != null) fixes.push({ type: "earlier", day, start: earlier, end: earlier + length });
+	const part = freePart(spans, mover);
+	if (part && part.end > ctx.earliest) fixes.push({ type: "shorten", day, start: part.start, end: part.end, saved: length - (part.end - part.start) });
+	if (!freeRows.length) {
+		// No row is free at that hour: the nearest hour on another row.
+		let best = null;
+		for (const l of others) {
+			const theirs = spansOf(l.days[day], day);
+			for (let start = from; start + length <= to; start += STEP) {
+				if (start < ctx.earliest || !isFree(theirs, start, start + length)) continue;
+				if (!best || Math.abs(start - mover.start) < Math.abs(best.start - mover.start)) best = { type: "row_time", laneId: l.id, laneName: l.name, day, start, end: start + length };
 			}
 		}
+		if (best) fixes.push(best);
 	}
-	return fixes;
+	if (mover.block.planned) {
+		const tomorrow = nextDay(lane, mover, ctx);
+		if (tomorrow) fixes.push(tomorrow);
+	}
+	return fixes.slice(0, MAX_FIXES);
+}
+
+/** Which cards can give way, best first: bookings still to come (the last one first), then cars in the shop, then logged work. */
+function optionsFor(cluster, lane, ctx) {
+	const rank = (s) => (s.block.kind === "booking" && s.block.planned ? 0 : s.block.kind === "booking" ? 1 : 2);
+	return cluster
+		.filter((s) => isOpen(s.block) && !(s.block.kind === "booking" && s.block.appointment?.status === "done"))
+		.map((s, index) => ({ s, index }))
+		.sort((a, b) => rank(a.s) - rank(b.s) || b.index - a.index)
+		.map(({ s }) => ({ block: s.block, fixes: fixesFor(s, lane, ctx) }))
+		.filter((option) => option.fixes.length);
 }
 
 /**
  * The overlaps of one day across the rows (`lanes`: { id, name, days: { [day]: blocks } }). Each has the cards in it, the
- * stretches they share, the booking best moved (the last one still to come; none if every car is already in) and its
- * `fixes`: another free row at the same time, the nearest free time on this row or, if the day is full, the next open day.
+ * stretches they share, and `options`: for every card that can give way, its fixes (another free row, the nearest time
+ * after or before, only the free part, the nearest time on another row, another day). The first option's first fix is
+ * the one to recommend.
  */
 export function boardClashes({ lanes, day, from, to, now, hours }) {
 	const today = dayOfInstant(now);
@@ -100,7 +150,7 @@ export function boardClashes({ lanes, day, from, to, now, hours }) {
 			if (cluster.length > 1) {
 				const shared = sharedSpans(cluster);
 				if (shared.at(-1)[1] > nowMinute) {
-					const mover = cluster.filter((s) => movable(s.block)).at(-1) ?? null;
+					const options = optionsFor(cluster, lane, { lanes, day, from, to, earliest, hours });
 					clashes.push({
 						key: `${day}:${lane.id}:${cluster[0].block.key}`,
 						day,
@@ -110,8 +160,7 @@ export function boardClashes({ lanes, day, from, to, now, hours }) {
 						end: shared.at(-1)[1],
 						shared,
 						blocks: cluster.map((s) => s.block),
-						mover: mover?.block ?? null,
-						fixes: mover ? fixesFor(mover, lane, { lanes, day, from, to, earliest, hours }) : [],
+						options,
 					});
 				}
 			}
