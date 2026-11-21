@@ -3,7 +3,7 @@
 import { PhoneBooking } from "./phone-booking";
 import { PHONE } from "@/components/ds/nav-bar";
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, ChevronRight, CircleX, Clock, FileText, Mail, MoreHorizontal, Pencil, Phone, Plus, Timer, UserX, Wrench } from "lucide-react";
+import { CalendarClock, ChevronRight, CircleX, Clock, FileText, Mail, MoreHorizontal, Phone, Plus, Timer, UserX, Wrench } from "lucide-react";
 import { Initials, Money } from "@/components/ds/data";
 import { DetailSheet } from "@/components/ds/detail-sheet";
 import { FlowSteps, usePanelEscape } from "@/components/ds/flow-steps";
@@ -37,7 +37,6 @@ import { VisitBarFor, useVisit } from "@/features/flow/visit-bar";
 import { useWalk } from "@/features/flow/visit-links";
 import { CoverIconButton } from "@/components/ds/car";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { makeInk } from "@/lib/colors";
 import { CustomerNote } from "@/features/reviews/customer-note";
 import { AppointmentHistory, CallOffPanel, DelayPanel, ReschedulePanel, undoTo } from "./appointment-state";
 import { FixButton, useBookingWarnings, WarningItems } from "./booking-warnings";
@@ -101,9 +100,6 @@ function BookingMenu({ appointment, light }) {
 						<FileText /> {invoice.number == null ? "Ciorna facturii" : `Factura ${formatInvoiceNumber(invoice.series, invoice.number)}`}
 					</DropdownMenuItem>
 				)}
-				<DropdownMenuItem onSelect={() => openSheet("appointment", { id: appointment.id })}>
-					<Pencil /> Editează programarea
-				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
@@ -158,17 +154,17 @@ function BookingSheet({ open, onOpenChange, id, panel: openOn = null }) {
 			// The visit bar opens it; the title is the car and the booking's number (docs/VISIT-BAR.md).
 			title={a ? <InlineText value={a.title} placeholder={autoTitle(a)} label="Descrierea programării" onSave={rename} /> : "Programare"}
 			cover={a ? { code: a.number != null ? `PRG #${a.number}` : null, car: vehicleName(vehicle), plate: vehicle?.plate, lines: [customer?.name] } : null}
+			outlined
 			kind="appointment"
 			state={a ? bookingLook(a, now) : undefined}
 			bar={a ? <VisitBarFor from="appointment" record={a} /> : null}
 			make={vehicle?.make}
-			onEdit={() => openSheet("appointment", { id: a.id })}
 			// The phone's thumb reach: the next step, the same button as in the Acum card (hidden there on a phone).
 			footer={
 				a ? (
 					<>
 						{primary && <FixButton fix={primary} variant="default" size="default" className="h-11" />}
-						<BookingMenu appointment={a} light={makeInk(vehicle?.make) !== "#ffffff"} />
+						<BookingMenu appointment={a} light="outline" />
 					</>
 				) : null
 			}
