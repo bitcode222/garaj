@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowLeftRight, ArrowRight, CalendarDays, ChevronLeft, ChevronRight, GripVertical, Plus, Scissors, TriangleAlert } from "lucide-react";
+import { ArrowLeft, ArrowLeftRight, ArrowRight, CalendarDays, ChevronLeft, ChevronRight, ChevronsRightLeft, GripVertical, Plus, Scissors, TriangleAlert } from "lucide-react";
 import { SectionHeader } from "@/components/ds/blocks";
 import { MakeTile } from "@/components/ds/car";
 import { Segmented } from "@/components/ds/inputs";
@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import { atMinute, toMinutes } from "./utils";
 import { useReschedule } from "./use-reschedule";
 import { jobHeadline } from "@/features/work-orders/job-text";
-import { LANE_KINDS, dropMinute, moveLane, rangeLanes } from "@/features/dashboard/azi-data";
+import { LANE_KINDS, dropMinute, isFoldedDay, moveLane, railAt, railOffsets, railX, rangeLanes } from "@/features/dashboard/azi-data";
 
 const BLOCK = "application/x-garaj-block";
 const LANE = "application/x-garaj-lane";
@@ -42,6 +42,8 @@ const ROW_SLACK = 28; // px along the hours a card may wander on its way to anot
 const EDGE_STEP = 24; // px per drag event
 const EDGE = 4; // days from an end of the rail at which it grows
 const DAY = 24 * 60;
+const FOLD = 34; // px: a closed day folded to a strip
+const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
 const LAST = DAY - SNAP; // a card ends by 23:45, so it never spills a sliver into the next day
 const minuteOf = (iso) => {
 	const d = new Date(iso);
@@ -142,7 +144,9 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const pan = useRef(null);
 	const place = useRef({ pos: 0, aim: null, jump: null, shift: 0, growing: false, week: perView === 7 });
 	const [span, setSpan] = useState(() => ({ first: addDaysISO(day, -REACH), count: REACH * 2 + 7 }));
-	const [between, setBetween] = useState(0); // a neighbour day partly in view: -1 before, 1 after
+	const [shown, setShown] = useState({ first: day, count: perView }); // the days on screen
+	const [viewWidth, setViewWidth] = useState(0); // px of the hours on screen, past the rows' names
+	const [unfolded, setUnfolded] = useState(() => new Set()); // closed days opened by hand
 	const carried = useRef(null); // the card being dragged: { block, offset, minutes, movable }
 	const [ghost, setGhost] = useState(null); // where a carried booking would land: { lane, day, start }
 	const ownReschedule = useReschedule();
@@ -159,7 +163,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const total = to - from;
 	const home = week ? 0 : opens / DAY; // where a day's view rests, as a part of the day
 	const stretchBy = week ? 1 : DAY / (closes - opens); // how many views wide a day is
-	const openDays = settings.hours?.days ?? [0, 1, 2, 3, 4, 5, 6];
+	const openDays = settings.hours?.days ?? ALL_DAYS;
 	const offHours = (d) => (openDays.includes(parseISODate(d).getDay()) ? [[from, opens], [closes, to]].filter(([a, b]) => b > a) : [[from, to]]);
 	const tick = week ? 240 : 60; // an hour mark every so many minutes
 	const hours = [];
@@ -169,9 +173,15 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const nowISO = atMinute(today, minute ?? 0);
 	const lanes = useMemo(() => rangeLanes({ days, by, rows, appointments, workOrders, now: nowISO }), [days, by, rows, appointments, workOrders, nowISO]);
 	const named = lanes.filter((lane) => lane.id);
-	const cellWidth = `${100 / span.count}%`;
+	const busy = useMemo(() => new Set(lanes.flatMap((lane) => Object.entries(lane.days).filter(([, blocks]) => blocks.length).map(([d]) => d))), [lanes]);
+	const foldedOn = (d) => isFoldedDay(d, { openDays, today, busy, unfolded });
+	const closedInWeek = openDays.length ? 7 - new Set(openDays).size : 0;
+	// The week's open days share what the strips leave; one day is as wide as its working hours fill the view.
+	const dayPx = week ? Math.max(WEEK_DAY_MIN, (viewWidth - closedInWeek * FOLD) / Math.max(1, 7 - closedInWeek)) : Math.max(24 * HOUR_MIN, viewWidth * stretchBy);
+	const widths = useMemo(() => days.map((d) => (isFoldedDay(d, { openDays, today, busy, unfolded }) ? FOLD : dayPx)), [days, openDays, today, busy, unfolded, dayPx]);
+	const offsets = useMemo(() => railOffsets(widths), [widths]);
 	// A row is as tall as the days in view need, so a busy day elsewhere doesn't leave it half empty.
-	const inViewDays = Array.from({ length: perView + Math.abs(between) }, (_, i) => addDaysISO(day, i + Math.min(between, 0)));
+	const inViewDays = Array.from({ length: shown.count }, (_, i) => addDaysISO(shown.first, i));
 	const clashesByDay = useMemo(() => new Map(days.map((d) => [d, boardClashes({ lanes, day: d, from: opens, to: closes, now: nowISO, hours: settings.hours })])), [days, lanes, opens, closes, nowISO, settings.hours]);
 	const clashesInView = inViewDays.flatMap((d) => clashesByDay.get(d) ?? []);
 	const applyFix = (clash, option, fix) => {
@@ -197,13 +207,20 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const clashCard = (clash) => <ClashCard clash={clash} vehicles={vehicles} onFix={(option, fix) => applyFix(clash, option, fix)} />;
 	const levelsOf = (lane) => Math.max(1, ...inViewDays.flatMap((d) => (lane.days[d] ?? []).map((block) => block.level + 1)));
 
-	const dayWidth = () => scroller.current?.querySelector("[data-day]")?.getBoundingClientRect().width || 1;
 	const indexOf = (d) => diffDaysISO(span.first, d);
-	const leftOf = (i, width) => (i + home) * width;
+	// A day rests on its opening hour; a strip has nothing to rest on.
+	const leftOf = (i) => offsets[i] + (widths[i] === FOLD ? 0 : home * dayPx);
 	const glide = (left) => {
 		const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 		scroller.current.scrollTo({ left, behavior: still ? "auto" : "smooth" });
 	};
+	const unfold = (d) => setUnfolded((seen) => new Set(seen).add(d));
+	const fold = (d) =>
+		setUnfolded((seen) => {
+			const next = new Set(seen);
+			next.delete(d);
+			return next;
+		});
 	const jump = (target) => {
 		const p = place.current;
 		p.aim = null;
@@ -213,17 +230,44 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 			setSpan({ first: addDaysISO(target, -REACH), count: REACH * 2 + 7 });
 			return;
 		}
-		scroller.current.scrollLeft = leftOf(i, dayWidth());
-		p.pos = i;
+		scroller.current.scrollLeft = leftOf(i);
+		p.pos = railAt(offsets, leftOf(i));
 	};
 	const go = (target) => {
 		const p = place.current;
+		// Asked for a closed day by its date: open it, once the rail has its new widths.
+		if (!week && foldedOn(target)) {
+			unfold(target);
+			jump(target);
+			p.jump = target;
+			return;
+		}
 		const i = indexOf(target);
 		if (i < 0 || i > span.count - perView) return jump(target);
 		p.aim = target;
-		glide(leftOf(i, dayWidth()));
+		glide(leftOf(i));
 	};
-	useImperativeHandle(rail, () => ({ go, step: (n) => go(addDaysISO(place.current.aim ?? day, n)) }));
+	const stepBy = (n) => {
+		let target = addDaysISO(place.current.aim ?? day, n);
+		// One day at a time walks past the folded ones.
+		if (!week) while (foldedOn(target)) target = addDaysISO(target, Math.sign(n));
+		go(target);
+	};
+	useImperativeHandle(rail, () => ({ go, step: stepBy }));
+
+	// Which day is named and which are on screen (the rows' heights, the overlaps listed above the board).
+	const syncShown = () => {
+		const el = scroller.current;
+		if (!el) return;
+		// The day named is the one in the middle of the view (the week: its first), never a strip when a day is near.
+		let nearest = Math.floor(railAt(offsets, el.scrollLeft + (week ? 1 : (el.clientWidth - LABEL) / 2)));
+		if (!week) while (nearest < span.count - 1 && widths[nearest] === FOLD) nearest += 1;
+		setDay(addDaysISO(span.first, Math.min(nearest, span.count - 1)));
+		const first = Math.floor(railAt(offsets, el.scrollLeft + 0.5));
+		const last = Math.min(span.count - 1, Math.floor(railAt(offsets, el.scrollLeft + el.clientWidth - LABEL - 0.5)));
+		const next = { first: addDaysISO(span.first, first), count: Math.max(1, last - first + 1) };
+		setShown((seen) => (seen.first === next.first && seen.count === next.count ? seen : next));
+	};
 
 	// The week starts on its Monday; back to one day, today if it was in that week.
 	useLayoutEffect(() => {
@@ -236,44 +280,39 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [week, home, stretchBy]);
 
-	// After the rail grew: stay on the same days, and carry on with a pan or a glide under way.
+	// The widths changed (the rail grew, a day folded or opened, a new window width): stay on the same place among the
+	// days, and carry on with a pan or a glide under way.
 	useLayoutEffect(() => {
 		const el = scroller.current;
 		const p = place.current;
 		if (!el) return;
-		const width = dayWidth();
 		if (p.jump) {
 			const i = indexOf(p.jump);
-			el.scrollLeft = leftOf(i, width);
-			p.pos = i;
+			el.scrollLeft = leftOf(i);
+			p.pos = railAt(offsets, leftOf(i));
 			p.jump = null;
-		} else if (p.shift) {
-			const delta = p.shift * width;
-			el.scrollLeft += delta;
-			if (pan.current) pan.current.left += delta;
+		} else {
+			p.pos += p.shift;
 			p.shift = 0;
-			if (p.aim) glide(leftOf(indexOf(p.aim), width));
+			const x = railX(offsets, p.pos);
+			const delta = x - el.scrollLeft;
+			if (Math.abs(delta) > 0.5) {
+				el.scrollLeft = x;
+				if (pan.current) pan.current.left += delta;
+			}
+			if (p.aim) glide(leftOf(indexOf(p.aim)));
 		}
 		p.growing = false;
+		const frame = requestAnimationFrame(syncShown);
+		return () => cancelAnimationFrame(frame);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [span]);
+	}, [offsets]);
 
-	// A new window width keeps the same place among the days.
-	const homeNow = useRef(home);
-	useLayoutEffect(() => {
-		homeNow.current = home;
-	}, [home]);
+	// Only a new width matters: rows growing with the days in view change the height alone.
 	useLayoutEffect(() => {
 		const el = scroller.current;
 		if (!el) return undefined;
-		let seen = el.clientWidth;
-		const observer = new ResizeObserver(() => {
-			// Rows growing with the days in view change the height only: leave a scroll under way alone.
-			if (el.clientWidth === seen) return;
-			seen = el.clientWidth;
-			if (place.current.aim) return;
-			el.scrollLeft = (place.current.pos + homeNow.current) * dayWidth();
-		});
+		const observer = new ResizeObserver(() => setViewWidth(Math.max(0, el.clientWidth - LABEL)));
 		observer.observe(el);
 		return () => observer.disconnect();
 	}, []);
@@ -281,18 +320,10 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const onScroll = () => {
 		const el = scroller.current;
 		const p = place.current;
-		const width = dayWidth();
-		const pos = el.scrollLeft / width - home;
+		const pos = railAt(offsets, el.scrollLeft);
 		p.pos = pos;
-		if (p.aim && Math.abs(el.scrollLeft - leftOf(indexOf(p.aim), width)) < 1) p.aim = null;
-		const nearest = Math.round(pos);
-		const current = addDaysISO(span.first, nearest);
-		if (current !== day) setDay(current);
-		// A neighbour day counts only once its hours are really on screen.
-		const firstShown = Math.floor(el.scrollLeft / width + 0.001);
-		const lastShown = Math.ceil((el.scrollLeft + el.clientWidth - LABEL) / width - 0.001) - 1;
-		const side = firstShown < nearest ? -1 : lastShown > nearest + perView - 1 ? 1 : 0;
-		if (side !== between) setBetween(side);
+		if (p.aim && Math.abs(el.scrollLeft - leftOf(indexOf(p.aim))) < 1) p.aim = null;
+		syncShown();
 		if (p.growing) return;
 		if (pos < EDGE) {
 			p.growing = true;
@@ -344,7 +375,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const spotAt = (event, lane) => {
 		const c = carried.current;
 		const cell = event.target.closest?.("[data-track]");
-		if (!c || !cell) return null;
+		if (!c || !cell || cell.dataset.folded) return null;
 		const box = cell.getBoundingClientRect();
 		const on = cell.dataset.date;
 		// A hand that hardly moved along the hours keeps the exact time (09:10 isn't nudged to 09:15), with more slack when
@@ -412,7 +443,9 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		const block = JSON.parse(raw);
 		const held = carried.current;
 		const spot = held ? spotAt(event, lane) : null;
+		const onStrip = event.target.closest?.("[data-folded]");
 		endCarry();
+		if (onStrip) return;
 		if (spot?.problem) {
 			toast.error(MOVE_PROBLEM[spot.problem][0]);
 			return;
@@ -447,14 +480,28 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		event.dataTransfer.dropEffect = "move";
 		if (over !== (lane.id ?? "loose")) setOver(lane.id ?? "loose");
 		if (!types.includes(BLOCK)) return;
+		// A card carried onto a folded day opens it.
+		const strip = event.target.closest?.("[data-folded]");
+		if (strip) {
+			unfold(strip.dataset.date);
+			if (carried.current) carried.current.holdEdge = true;
+			return;
+		}
 		const spot = spotAt(event, lane);
 		const shown = spot && (spot.moved || spot.lane !== (carried.current?.block && carried.current.laneKey)) ? spot : null;
 		if (shown?.lane !== ghost?.lane || shown?.day !== ghost?.day || shown?.start !== ghost?.start || shown?.problem !== ghost?.problem) setGhost(shown);
 		// At the board's sides the carried card takes the days along, to reach another day.
 		const el = scroller.current;
 		const box = el.getBoundingClientRect();
-		if (event.clientX > box.right - EDGE_PX) el.scrollLeft += EDGE_STEP;
-		else if (event.clientX < box.left + LABEL + EDGE_PX && event.clientX > box.left + LABEL) el.scrollLeft -= EDGE_STEP;
+		const atRight = event.clientX > box.right - EDGE_PX;
+		const atLeft = event.clientX < box.left + LABEL + EDGE_PX && event.clientX > box.left + LABEL;
+		// A day just opened under the hand stays put until the hand leaves the edge, so the card can land on it.
+		if (carried.current?.holdEdge) {
+			if (atRight || atLeft) return;
+			carried.current.holdEdge = false;
+		}
+		if (atRight) el.scrollLeft += EDGE_STEP;
+		else if (atLeft) el.scrollLeft -= EDGE_STEP;
 	};
 
 	// Click and drag on the empty body pans it sideways (a mouse; touch and trackpads scroll on their own).
@@ -516,18 +563,30 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		>
 			<div
 				className="grid cursor-grab grid-cols-[124px_minmax(0,1fr)] active:cursor-grabbing"
-				style={{ width: `calc(${LABEL}px + (100% - ${LABEL}px) * ${(span.count / perView) * stretchBy})`, minWidth: LABEL + span.count * (week ? WEEK_DAY_MIN : 24 * HOUR_MIN) }}
+				style={{ width: LABEL + offsets.at(-1) }}
 			>
 				<div className="sticky left-0 z-20 flex items-center bg-card px-3.5 text-[11px] font-medium text-muted-foreground tabular-nums" aria-live="polite">
 					{inView}
 				</div>
 				<div className="flex">
-					{days.map((d) => (
-						<div key={d} data-day className={cn("relative h-12 shrink-0 border-l", d === today && "bg-accent/40")} style={{ width: cellWidth }}>
+					{days.map((d, i) => widths[i] === FOLD ? (
+						<button key={d} type="button" data-day onClick={() => unfold(d)} aria-label={`Arată ${fmtDate(d, "EEEE, d MMMM")} (închis)`} title="Închis. Apasă ca să vezi ziua" className="flex h-12 shrink-0 flex-col items-center justify-center border-l bg-foreground/[0.05] text-[10.5px] leading-tight font-semibold text-muted-foreground tabular-nums transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset" style={{ width: FOLD }}>
+							<span>{sentence(fmtDate(d, "EEE")).replace(".", "").slice(0, 3)}</span>
+							<span>{fmtDate(d, "d")}</span>
+						</button>
+					) : (
+						<div key={d} data-day className={cn("relative h-12 shrink-0 border-l", d === today && "bg-accent/40")} style={{ width: widths[i] }}>
 							{offHours(d).map(([a, b]) => (
 								<span key={a} aria-hidden className="pointer-events-none absolute inset-y-0 bg-foreground/[0.05]" style={{ left: `${((a - from) / total) * 100}%`, width: `${((b - a) / total) * 100}%` }} />
 							))}
-							<span className={cn("sticky left-[132px] inline-block px-1.5 pt-1 text-[11.5px] font-semibold", d !== today && "text-muted-foreground")}>{sentence(fmtDate(d, "EEE, d MMM"))}</span>
+							<span className={cn("sticky left-[132px] z-10 inline-flex items-center gap-1 px-1.5 pt-1 text-[11.5px] font-semibold", d !== today && "text-muted-foreground")}>
+									{sentence(fmtDate(d, "EEE, d MMM"))}
+									{unfolded.has(d) && !busy.has(d) && d !== today && openDays.length > 0 && !openDays.includes(parseISODate(d).getDay()) && (
+										<button type="button" onClick={() => fold(d)} aria-label={`Restrânge ${fmtDate(d, "EEEE, d MMMM")}`} title="Restrânge ziua" className="flex size-4 items-center justify-center rounded-sm hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+											<ChevronsRightLeft className="size-3" aria-hidden />
+										</button>
+									)}
+								</span>
 							{hours.map((m, i) => (
 								<span key={m} className={cn("absolute bottom-1 text-[11px] text-muted-foreground tabular-nums", i === 0 ? "pl-1.5" : m === to ? "-translate-x-full pr-1.5" : "-translate-x-1/2")} style={{ left: `${((m - from) / total) * 100}%` }}>
 									{`${Math.floor(m / 60)}:00`}
@@ -573,13 +632,15 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 								className={cn("flex border-t transition-[height,background-color] duration-200 motion-reduce:transition-none", over === key && "bg-accent/60")}
 								style={{ height: rowHeight(levelsOf(lane)) }}
 							>
-								{days.map((d) => (
+								{days.map((d, i) => widths[i] === FOLD ? (
+									<div key={d} data-track data-folded data-date={d} aria-hidden className="h-full shrink-0 border-l bg-foreground/[0.05]" style={{ width: FOLD }} />
+								) : (
 									<div
 										key={d}
 										data-track
 										data-date={d}
 										className="relative h-full shrink-0 overflow-clip border-l"
-										style={{ width: cellWidth, backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(tick / total) * 100}% - 1px), var(--border) calc(${(tick / total) * 100}% - 1px), var(--border) ${(tick / total) * 100}%)` }}
+										style={{ width: widths[i], backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(tick / total) * 100}% - 1px), var(--border) calc(${(tick / total) * 100}% - 1px), var(--border) ${(tick / total) * 100}%)` }}
 									>
 										{offHours(d).map(([a, b]) => (
 											<span key={a} aria-hidden className="pointer-events-none absolute inset-y-0 bg-foreground/[0.05]" style={{ left: `${((a - from) / total) * 100}%`, width: `${((b - a) / total) * 100}%` }} />

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { dayLanes, dropMinute, moveLane, rangeLanes, shopJobs, stackBlocks, todaysBookings } from "./azi-data.js";
+import { dayLanes, dropMinute, isFoldedDay, moveLane, railAt, railOffsets, railX, rangeLanes, shopJobs, stackBlocks, todaysBookings } from "./azi-data.js";
 
 const today = "2026-11-16";
 const at = (hhmm) => new Date(`${today}T${hhmm}:00`).toISOString();
@@ -99,4 +99,28 @@ test("dropMinute: snaps to the quarter hour and keeps the whole card inside the 
 	assert.equal(dropMinute({ ...day, px: -40 }), 480);
 	assert.equal(dropMinute({ ...day, px: 990 }), 960); // ends at closing time
 	assert.equal(dropMinute({ ...day, px: 500, minutes: 900 }), 480); // longer than the day: from the opening
+});
+
+test("a closed day folds, unless it is today, holds a card or was opened by hand", () => {
+	const week = { openDays: [1, 2, 3, 4, 5], today: "2026-11-23", busy: new Set(), unfolded: new Set() };
+	assert.equal(isFoldedDay("2026-11-21", week), true); // Saturday
+	assert.equal(isFoldedDay("2026-11-23", week), false); // Monday, open
+	assert.equal(isFoldedDay("2026-11-22", { ...week, today: "2026-11-22" }), false);
+	assert.equal(isFoldedDay("2026-11-22", { ...week, busy: new Set(["2026-11-22"]) }), false);
+	assert.equal(isFoldedDay("2026-11-22", { ...week, unfolded: new Set(["2026-11-22"]) }), false);
+	assert.equal(isFoldedDay("2026-11-22", { ...week, openDays: [] }), false); // no working days set: nothing folds
+});
+
+test("the rail: a place survives days of different widths, and stays inside the rail", () => {
+	const offsets = railOffsets([100, 30, 30, 100]);
+	assert.deepEqual(offsets, [0, 100, 130, 160, 260]);
+	assert.equal(railAt(offsets, 50), 0.5);
+	assert.equal(railAt(offsets, 115), 1.5);
+	assert.equal(railAt(offsets, 160), 3);
+	assert.equal(railAt(offsets, -5), 0);
+	assert.equal(railAt(offsets, 999), 4);
+	assert.equal(railX(offsets, 1.5), 115);
+	assert.equal(railX(offsets, 3.5), 210);
+	assert.equal(railX(offsets, 9), 260);
+	assert.equal(railX(railOffsets([200, 30, 30, 200]), 0.5), 100); // the same place after a resize
 });
