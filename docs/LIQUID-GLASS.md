@@ -46,6 +46,7 @@ unless each changing element is registered, and has no low-power or reduced-moti
 |---|---|---|
 | `bar` | the phone's top bar, tab bar, action bar (`StickyBar`) | 72 % card over 12 px frost, a gentle rim |
 | `float` | the running job's capsule | the ink colour at 72 %: dark glass, light in dark mode |
+| `nav` | the side nav's selected route: one pane over the rows that glides on a spring | a 7 % ink tint, no frost, so the row stays sharp and only its rim bends what it passes |
 | `menu` | menus, submenus, popovers, selects, the ⌘K window, the calendar's mini month | 78 % popover over 18 px frost |
 | `clear` | the dashboard's buttons on a car's colour (cover buttons, the phone cards' Continuă and "…") | the owner's pick C: clear, a 20 % white tint, 2 px frost; the text keeps the car's ink |
 | `pill` | the dashboard's buttons on the page (filters, view switch, quick actions, Perioada, an outlined card's call and "…") | a 7 % ink tint over 6 px frost |

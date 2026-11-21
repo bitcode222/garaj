@@ -24,7 +24,6 @@ import { orderTotals } from "@/domain/work-order";
 import { fmtDate, fmtDays, fmtKm, fmtTime, fmtWorkOrder, formatPhone, plural } from "@/lib/format";
 import { useMediaQuery, useNowMinute } from "@/lib/hooks";
 import { APPOINTMENT_STATUS, CANCEL_REASON, DEADLINE_STATUS } from "@/lib/labels";
-import { useRemember } from "@/lib/recents";
 import { bookingLook, invoiceLook, orderKind, orderLook } from "@/lib/record-state";
 import { openSheet } from "@/lib/sheets";
 import { moveAppointment, saveAppointment } from "@/lib/store/actions";
@@ -115,7 +114,6 @@ function BookingSheet({ open, onOpenChange, id, panel: openOn = null }) {
 	const settings = useSettings();
 	const today = useToday();
 	const a = useEntity("appointments", id);
-	useRemember("appointment", a?.id);
 	const customer = useEntity("customers", a?.customerId);
 	const vehicle = useEntity("vehicles", a?.vehicleId);
 	// A panel opened in place: reschedule, delay (Când); no_show, cancel (the last section).

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CalendarPlus, CarFront, ChevronLeft, EllipsisVertical, FileSearch, Pencil, Plus, ReceiptText, Trash2, UserRound, Wrench } from "lucide-react";
-import { useRemember } from "@/lib/recents";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -60,7 +59,6 @@ export function CustomerEmbedded({ customer }) {
 }
 
 function Customer({ customer, embedded = false }) {
-	useRemember("customer", customer.id);
 	const router = useRouter();
 	const confirm = useConfirm();
 	const today = useToday();

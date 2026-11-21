@@ -23,7 +23,6 @@ import {
 	Trash2,
 	Wrench,
 } from "lucide-react";
-import { useRemember } from "@/lib/recents";
 import { orderKind, orderLook } from "@/lib/record-state";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
@@ -146,7 +145,6 @@ export function WorkOrderEmbedded({ order }) {
 }
 
 function WorkOrder({ order, embedded = false }) {
-	useRemember("work-order", order.id);
 	const router = useRouter();
 	const confirm = useConfirm();
 	const today = useToday();

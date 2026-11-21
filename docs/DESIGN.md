@@ -20,8 +20,9 @@ Status: **built** (16 Nov 2026, PRs #50–#57). Board: round 5, https://claude.a
 
 ## 2. Shell
 
-Sidebar on the left (search ⌘K, Azi, Atelier, Agendă, then Bani · Oameni și mașini · Atelier), grey icons, only the
-current page's icon in its area colour. A thin toolbar over the content (back, page actions, the black "Nou").
+Sidebar on the left, 208 px: the shop, search ⌘K, and one compact list (Azi, Atelier, Agendă, then Bani · Oameni și
+mașini · Atelier, set apart by a gap, with no titles, sub-items or recent records). Phosphor icons, outlined and grey; the
+selected one filled in its area colour, under one pane of liquid glass that glides to the picked route (`shell/nav-glide.jsx`). A thin toolbar over the content (back, page actions, the black "Nou").
 Under 700 px the web looks like the iPhone app: tab bar Azi · Atelier · Agendă · Registru · Caută.
 
 ## 3. Shapes and surfaces
