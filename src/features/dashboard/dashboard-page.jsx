@@ -283,6 +283,7 @@ export function DashboardPage() {
 			</PageTitle>
 			{look === "covers" ? (
 				<>
+					{lanes}
 					<ToAccept groups={selectToConfirm(appointments, now).groups} today={today} vehicles={vehicles} customers={customers} staff={staff} bays={bays} />
 					<InShop jobs={jobs} vehicles={vehicles} customers={customers} staffId={member?.id ?? null} filter={shopFilter} setFilter={setShopFilter} sectionRef={shopRef} />
 					<MoneyRow
@@ -294,12 +295,11 @@ export function DashboardPage() {
 							shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 						}}
 					/>
-					{lanes}
 				</>
 			) : (
 				<>
-					{numbers}
 					{lanes}
+					{numbers}
 					<div className="grid gap-7 lg:grid-cols-2">
 						<section className="space-y-3" aria-label="De confirmat">
 							{(() => {
