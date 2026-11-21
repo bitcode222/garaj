@@ -650,3 +650,12 @@
 		font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
 	}
 }
+
+/* Azi's type (docs/DESIGN.md §4): Manrope, its titles and money heavy and tight. */
+.azi-type {
+	font-family: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.azi-type :is(h1, h2, .cover-title, .azi-figure) {
+	font-weight: 800;
+	letter-spacing: -0.03em;
+}

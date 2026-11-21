@@ -36,7 +36,7 @@ function Card({ label, children, className = "" }) {
 	);
 }
 
-const Big = ({ children }) => <span className="text-[24px] leading-tight font-semibold tracking-tight tabular-nums">{children}</span>;
+const Big = ({ children }) => <span className="azi-figure text-[24px] leading-tight font-semibold tracking-tight tabular-nums">{children}</span>;
 
 function Takings({ takings, today, currency }) {
 	const day = fmtDate(addDaysISO(today, -7), "EEEE");
