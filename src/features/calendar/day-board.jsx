@@ -41,6 +41,8 @@ const EDGE_PX = 56; // a card carried this close to the board's side scrolls it 
 const ROW_SLACK = 28; // px along the hours a card may wander on its way to another row and still keep its time
 const EDGE_STEP = 24; // px per drag event
 const EDGE = 4; // days from an end of the rail at which it grows
+const DAY = 24 * 60;
+const LAST = DAY - SNAP; // a card ends by 23:45, so it never spills a sliver into the next day
 const minuteOf = (iso) => {
 	const d = new Date(iso);
 	return d.getHours() * 60 + d.getMinutes();
@@ -147,13 +149,21 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const reschedule = onReschedule ?? ownReschedule;
 	const [over, setOver] = useState(null); // the lane a card or a row is dragged over
 	const [fresh, setFresh] = useState(null); // a row just added: its name opens as a field
-	const from = Math.floor(toMinutes(settings.hours?.open ?? "08:00") / 60) * 60;
-	const to = Math.ceil(toMinutes(settings.hours?.close ?? "18:00") / 60) * 60;
-	const total = Math.max(60, to - from);
+	const opens = Math.floor(toMinutes(settings.hours?.open ?? "08:00") / 60) * 60;
+	const closes = Math.min(DAY, Math.max(opens + 60, Math.ceil(toMinutes(settings.hours?.close ?? "18:00") / 60) * 60));
 	const week = perView === 7;
+	// One day in view runs the whole 24 hours and rests on the opening hours; the week keeps to the opening hours, or its
+	// cards would be too narrow to read.
+	const from = week ? opens : 0;
+	const to = week ? closes : DAY;
+	const total = to - from;
+	const home = week ? 0 : opens / DAY; // where a day's view rests, as a part of the day
+	const stretchBy = week ? 1 : DAY / (closes - opens); // how many views wide a day is
+	const openDays = settings.hours?.days ?? [0, 1, 2, 3, 4, 5, 6];
+	const offHours = (d) => (openDays.includes(parseISODate(d).getDay()) ? [[from, opens], [closes, to]].filter(([a, b]) => b > a) : [[from, to]]);
 	const tick = week ? 240 : 60; // an hour mark every so many minutes
 	const hours = [];
-	for (let m = from; m <= to; m += tick) hours.push(m);
+	for (let m = from; m < to || (week && m === to); m += tick) hours.push(m);
 	const nowAt = minute != null ? ((minute - from) / total) * 100 : -1;
 	const days = useMemo(() => Array.from({ length: span.count }, (_, i) => addDaysISO(span.first, i)), [span]);
 	const nowISO = atMinute(today, minute ?? 0);
@@ -162,7 +172,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const cellWidth = `${100 / span.count}%`;
 	// A row is as tall as the days in view need, so a busy day elsewhere doesn't leave it half empty.
 	const inViewDays = Array.from({ length: perView + Math.abs(between) }, (_, i) => addDaysISO(day, i + Math.min(between, 0)));
-	const clashesByDay = useMemo(() => new Map(days.map((d) => [d, boardClashes({ lanes, day: d, from, to, now: nowISO, hours: settings.hours })])), [days, lanes, from, to, nowISO, settings.hours]);
+	const clashesByDay = useMemo(() => new Map(days.map((d) => [d, boardClashes({ lanes, day: d, from: opens, to: closes, now: nowISO, hours: settings.hours })])), [days, lanes, opens, closes, nowISO, settings.hours]);
 	const clashesInView = inViewDays.flatMap((d) => clashesByDay.get(d) ?? []);
 	const applyFix = (clash, option, fix) => {
 		const block = option.block;
@@ -189,6 +199,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 
 	const dayWidth = () => scroller.current?.querySelector("[data-day]")?.getBoundingClientRect().width || 1;
 	const indexOf = (d) => diffDaysISO(span.first, d);
+	const leftOf = (i, width) => (i + home) * width;
 	const glide = (left) => {
 		const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 		scroller.current.scrollTo({ left, behavior: still ? "auto" : "smooth" });
@@ -202,7 +213,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 			setSpan({ first: addDaysISO(target, -REACH), count: REACH * 2 + 7 });
 			return;
 		}
-		scroller.current.scrollLeft = i * dayWidth();
+		scroller.current.scrollLeft = leftOf(i, dayWidth());
 		p.pos = i;
 	};
 	const go = (target) => {
@@ -210,7 +221,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		const i = indexOf(target);
 		if (i < 0 || i > span.count - perView) return jump(target);
 		p.aim = target;
-		glide(i * dayWidth());
+		glide(leftOf(i, dayWidth()));
 	};
 	useImperativeHandle(rail, () => ({ go, step: (n) => go(addDaysISO(place.current.aim ?? day, n)) }));
 
@@ -223,7 +234,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		// The rail is only redrawn when the target is off it (a layout step, before paint).
 		jump(week ? mondayOf(day) : inThatWeek ? today : day);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [week]);
+	}, [week, home, stretchBy]);
 
 	// After the rail grew: stay on the same days, and carry on with a pan or a glide under way.
 	useLayoutEffect(() => {
@@ -233,7 +244,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		const width = dayWidth();
 		if (p.jump) {
 			const i = indexOf(p.jump);
-			el.scrollLeft = i * width;
+			el.scrollLeft = leftOf(i, width);
 			p.pos = i;
 			p.jump = null;
 		} else if (p.shift) {
@@ -241,13 +252,17 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 			el.scrollLeft += delta;
 			if (pan.current) pan.current.left += delta;
 			p.shift = 0;
-			if (p.aim) glide(indexOf(p.aim) * width);
+			if (p.aim) glide(leftOf(indexOf(p.aim), width));
 		}
 		p.growing = false;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [span]);
 
 	// A new window width keeps the same place among the days.
+	const homeNow = useRef(home);
+	useLayoutEffect(() => {
+		homeNow.current = home;
+	}, [home]);
 	useLayoutEffect(() => {
 		const el = scroller.current;
 		if (!el) return undefined;
@@ -257,7 +272,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 			if (el.clientWidth === seen) return;
 			seen = el.clientWidth;
 			if (place.current.aim) return;
-			el.scrollLeft = place.current.pos * dayWidth();
+			el.scrollLeft = (place.current.pos + homeNow.current) * dayWidth();
 		});
 		observer.observe(el);
 		return () => observer.disconnect();
@@ -267,13 +282,16 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		const el = scroller.current;
 		const p = place.current;
 		const width = dayWidth();
-		const pos = el.scrollLeft / width;
+		const pos = el.scrollLeft / width - home;
 		p.pos = pos;
-		if (p.aim && Math.abs(el.scrollLeft - indexOf(p.aim) * width) < 1) p.aim = null;
+		if (p.aim && Math.abs(el.scrollLeft - leftOf(indexOf(p.aim), width)) < 1) p.aim = null;
 		const nearest = Math.round(pos);
 		const current = addDaysISO(span.first, nearest);
 		if (current !== day) setDay(current);
-		const side = Math.abs(pos - nearest) < 0.01 ? 0 : Math.sign(pos - nearest);
+		// A neighbour day counts only once its hours are really on screen.
+		const firstShown = Math.floor(el.scrollLeft / width + 0.001);
+		const lastShown = Math.ceil((el.scrollLeft + el.clientWidth - LABEL) / width - 0.001) - 1;
+		const side = firstShown < nearest ? -1 : lastShown > nearest + perView - 1 ? 1 : 0;
 		if (side !== between) setBetween(side);
 		if (p.growing) return;
 		if (pos < EDGE) {
@@ -335,12 +353,14 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		const drift = (Math.abs(pointer - c.grabMinute) / total) * box.width;
 		const slack = (lane.id ?? "loose") !== c.laneKey ? ROW_SLACK : (SNAP / 2 / total) * box.width;
 		const moved = on !== c.day || drift >= slack;
-		const start = moved ? dropMinute({ px: event.clientX - c.offset - box.left, width: box.width, from, to, minutes: c.minutes }) : c.startMinute;
+		const dropped = dropMinute({ px: event.clientX - c.offset - box.left, width: box.width, from, to, minutes: c.minutes });
+		const start = moved ? Math.max(from, Math.min(dropped, LAST - c.minutes)) : c.startMinute;
 		const startISO = atMinute(on, start);
 		const endISO = new Date(Date.parse(startISO) + c.minutes * 60000).toISOString();
 		const problem = moved ? moveProblem(c.block, { start: startISO, end: endISO, now: new Date().toISOString() }) : null;
-		const closedDay = moved && !(settings.hours?.days ?? [0, 1, 2, 3, 4, 5, 6]).includes(parseISODate(on).getDay());
-		return { lane: lane.id ?? "loose", day: on, start, minutes: c.minutes, moved, problem, closedDay, startISO, endISO };
+		const closedDay = moved && !openDays.includes(parseISODate(on).getDay());
+		const afterHours = moved && !closedDay && (start < opens || start + c.minutes > closes);
+		return { lane: lane.id ?? "loose", day: on, start, minutes: c.minutes, moved, problem, closedDay, afterHours, startISO, endISO };
 	};
 	// A job's logged work to a new time (and maybe a new row): both or neither, with one undo; the job's log has it all.
 	const moveWork = (block, spot, lane) => {
@@ -496,7 +516,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		>
 			<div
 				className="grid cursor-grab grid-cols-[124px_minmax(0,1fr)] active:cursor-grabbing"
-				style={{ width: `calc(${LABEL}px + (100% - ${LABEL}px) * ${span.count / perView})`, minWidth: LABEL + span.count * (week ? WEEK_DAY_MIN : (total / 60) * HOUR_MIN) }}
+				style={{ width: `calc(${LABEL}px + (100% - ${LABEL}px) * ${(span.count / perView) * stretchBy})`, minWidth: LABEL + span.count * (week ? WEEK_DAY_MIN : 24 * HOUR_MIN) }}
 			>
 				<div className="sticky left-0 z-20 flex items-center bg-card px-3.5 text-[11px] font-medium text-muted-foreground tabular-nums" aria-live="polite">
 					{inView}
@@ -504,6 +524,9 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 				<div className="flex">
 					{days.map((d) => (
 						<div key={d} data-day className={cn("relative h-12 shrink-0 border-l", d === today && "bg-accent/40")} style={{ width: cellWidth }}>
+							{offHours(d).map(([a, b]) => (
+								<span key={a} aria-hidden className="pointer-events-none absolute inset-y-0 bg-foreground/[0.05]" style={{ left: `${((a - from) / total) * 100}%`, width: `${((b - a) / total) * 100}%` }} />
+							))}
 							<span className={cn("sticky left-[132px] inline-block px-1.5 pt-1 text-[11.5px] font-semibold", d !== today && "text-muted-foreground")}>{sentence(fmtDate(d, "EEE, d MMM"))}</span>
 							{hours.map((m, i) => (
 								<span key={m} className={cn("absolute bottom-1 text-[11px] text-muted-foreground tabular-nums", i === 0 ? "pl-1.5" : m === to ? "-translate-x-full pr-1.5" : "-translate-x-1/2")} style={{ left: `${((m - from) / total) * 100}%` }}>
@@ -558,6 +581,9 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 										className="relative h-full shrink-0 overflow-clip border-l"
 										style={{ width: cellWidth, backgroundImage: `repeating-linear-gradient(to right, transparent 0, transparent calc(${(tick / total) * 100}% - 1px), var(--border) calc(${(tick / total) * 100}% - 1px), var(--border) ${(tick / total) * 100}%)` }}
 									>
+										{offHours(d).map(([a, b]) => (
+											<span key={a} aria-hidden className="pointer-events-none absolute inset-y-0 bg-foreground/[0.05]" style={{ left: `${((a - from) / total) * 100}%`, width: `${((b - a) / total) * 100}%` }} />
+										))}
 										{(clashesByDay.get(d) ?? []).filter((clash) => clash.laneId === lane.id).flatMap((clash) => clash.shared.map(([a, b]) => (
 											<span
 												key={`${clash.key}:${a}`}
@@ -589,10 +615,10 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 												aria-hidden
 												data-ghost
 												className="pointer-events-none absolute z-30 flex items-center gap-1 overflow-visible rounded-[7px] border-2 bg-accent/70 px-1.5 text-[11px] font-semibold whitespace-nowrap tabular-nums"
-												style={{ top: PAD, height: CARD, borderColor: ghost.problem ? STATE.late : ghost.closedDay ? STATE.wait : "var(--ring)", left: `calc(${((ghost.start - from) / total) * 100}% + 2px)`, width: `calc(${(Math.min(ghost.minutes, to - ghost.start) / total) * 100}% - 4px)` }}
+												style={{ top: PAD, height: CARD, borderColor: ghost.problem ? STATE.late : ghost.closedDay || ghost.afterHours ? STATE.wait : "var(--ring)", left: `calc(${((ghost.start - from) / total) * 100}% + 2px)`, width: `calc(${(Math.min(ghost.minutes, to - ghost.start) / total) * 100}% - 4px)` }}
 											>
 												{`${clock(ghost.start)}–${clock(ghost.start + ghost.minutes)}`}
-												{ghost.problem ? <span style={{ color: STATE.late }}>· {MOVE_PROBLEM[ghost.problem][1]}</span> : ghost.closedDay ? <span style={{ color: STATE.wait }}>· zi închisă</span> : null}
+												{ghost.problem ? <span style={{ color: STATE.late }}>· {MOVE_PROBLEM[ghost.problem][1]}</span> : ghost.closedDay ? <span style={{ color: STATE.wait }}>· zi închisă</span> : ghost.afterHours ? <span style={{ color: STATE.wait }}>· în afara programului</span> : null}
 											</span>
 										)}
 										{d === today && nowAt >= 0 && nowAt <= 100 && <span aria-hidden className="pointer-events-none absolute inset-y-0 z-10 w-0.5 bg-[#ff3b30]" style={{ left: `${nowAt}%` }} />}
@@ -728,7 +754,7 @@ function Block({ clashing, block, lane, day, compact, vehicle, from, to, total, 
 		if (!g) return;
 		const delta = Math.round((((event.clientX - g.x) / g.track) * total) / SNAP) * SNAP;
 		if (g.edge === "start") setDraft({ start: Math.min(Math.max(from, g.start + delta), g.end - SNAP), end: g.end });
-		else setDraft({ start: g.start, end: Math.max(Math.min(to, g.end + delta), g.start + SNAP) });
+		else setDraft({ start: g.start, end: Math.max(Math.min(to, LAST, g.end + delta), g.start + SNAP) });
 	};
 	const up = () => {
 		const g = grab.current;

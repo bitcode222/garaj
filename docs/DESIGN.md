@@ -131,6 +131,8 @@ a running one keeps running). Jobs on a lift on the car's cover; bookings a grey
 tablet and the phone keep their own day. Cards that overlap on one row stack in levels and the row grows (20 Nov 2026); a card half under the row names keeps its logo and text in view; a narrow card shows only the logo; one day in view keeps every hour at 56 px or more.
 **Overlaps** (21 Nov 2026, `src/domain/board-clashes.js`): only those still ahead, on a lift or mechanic. The shared time is hatched amber, the cards get an amber edge, a ⚠ marks the spot, and a line above the board names each one. Either opens the quick fixes, for whichever car you pick (the one still to come first): up to two free rows at the same time, the nearest time after or before, only the free part, the nearest hour on another row, the next open day. Logged work can only change row; each fix has an undo.
 
+**Outside working hours** (owner, 21 Nov 2026): one day in view runs 00:00–24:00, opens on the working hours at their usual scale, and scrolls sideways to the rest. Closed hours and closed days are shaded. A card can be dropped there, and its landing spot says "în afara programului". Quick fixes still suggest working hours only. The week view keeps to the working hours so its cards stay readable.
+
 ### Telefon ca iPhone (owner, 17 Nov 2026, board https://claude.ai/artifact/XZjoSBj5YhRWmdHKBATf8d)
 
 Under 768 px the web is a one-to-one copy of the iPhone app (`ios-native/`, checked side by side with the simulator at
