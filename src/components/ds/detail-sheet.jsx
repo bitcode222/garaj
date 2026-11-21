@@ -16,7 +16,7 @@ import { useIsReady } from "@/lib/store/hooks";
  * the three states every detail needs: loading skeleton, record deleted while
  * open (closes itself), and the footer for primary actions.
  */
-export function DetailSheet({ open, onOpenChange, title, description, kind, state, bar, make, tint, cover, entity, missing = "Elementul a fost șters.", fullPage, onEdit, editLabel = "Editează", footer, footerClassName, children }) {
+export function DetailSheet({ open, onOpenChange, title, description, kind, state, bar, make, tint, cover, outlined, entity, missing = "Elementul a fost șters.", fullPage, onEdit, editLabel = "Editează", footer, footerClassName, children }) {
 	const router = useRouter();
 	const ready = useIsReady();
 	const gone = ready && !entity;
@@ -39,6 +39,7 @@ export function DetailSheet({ open, onOpenChange, title, description, kind, stat
 			make={make}
 			tint={entity ? tint : null}
 			cover={cover}
+			outlined={outlined}
 			headerActions={
 				entity && (
 					<>

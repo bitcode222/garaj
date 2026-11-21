@@ -145,13 +145,14 @@ function bounceThroughScrollLock(el) {
  * in the text colour, and the state is a pill at the right (the sheet look the owner picked, 7 Nov 2026). Without a
  * bar, `kind` and `state` colour and mark the title as before.
  */
-export function Sheet({ open, onOpenChange, title, description, headerActions, kind, state, bar, make, tint, cover, centered = false, footer, footerClassName, className, children }) {
+export function Sheet({ open, onOpenChange, title, description, headerActions, kind, state, bar, make, tint, cover, outlined = false, centered = false, footer, footerClassName, className, children }) {
 	// A sheet about one car takes its colour (docs/DESIGN.md §1): its head is washed with the car's cover colour, fading
 	// into the sheet, and its logo sits on a tile of that colour. `tint` names the car for sheets without a visit bar.
 	const car = tint ?? (bar ? make : null);
 	// Sheets "A" (the owner's picks, 16–20 Nov 2026): the head is in the car's colour, as its card; the body is white with
 	// grey groups under big titles (rounds 5 and 6, "S2 Alb" and "T5 Titluri mari").
-	const carClass = car ? (makeInk(car) === "#ffffff" ? "car-sheet-dark" : "car-sheet-light") : null;
+	// `outlined` (a booking, owner 21 Nov 2026): no colour on the head, only a dashed edge that fades out; the logo box keeps its gradient.
+	const carClass = car && !outlined ? (makeInk(car) === "#ffffff" ? "car-sheet-dark" : "car-sheet-light") : null;
 	const contentRef = useRef(null);
 	const depth = useContext(SheetDepth);
 	const motion = useContext(SheetMotion);
@@ -161,11 +162,11 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 	const head = (
 					<div
 						className={cn("shrink-0 touch-pan-y", car ? cn(carClass, "relative isolate px-5 pt-[calc(0.75rem+var(--safe-top))] pb-16 md:px-[60px] md:pt-[52px]") : "px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
-						style={car ? { color: makeInk(car) } : undefined}
+						style={car && !outlined ? { color: makeInk(car) } : undefined}
 						{...swipe.handlers}
 					>
 						{/* The car's colour fades into the sheet below the head's content, which stays on the solid part. */}
-						{car && <span aria-hidden className="sheet-head-fade" style={{ background: makeCover(car) }} />}
+						{car && <span aria-hidden className={cn("sheet-head-fade", outlined && "sheet-head-dashed")} style={outlined ? undefined : { background: makeCover(car) }} />}
 						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. A car's sheet is inset 36 px more; its close sits in that margin, in the corner. */}
 						<div className="-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-9">
 							<button
@@ -191,7 +192,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 							</DialogPrimitive.Close>
 						</div>
 						{car ? (
-							<CarHead car={car} cover={cover} title={title} description={description} state={state} footer={footer} />
+							<CarHead car={car} cover={cover} outlined={outlined} title={title} description={description} state={state} footer={footer} />
 						) : (
 						<div className="mt-1 min-w-0">
 							{bar && <div className="-mx-1 mt-2 mb-4">{bar}</div>}
@@ -283,19 +284,19 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
  * at the left (its number at the top, "car • plate" at the bottom), beside it the state, the title and a few lines;
  * under them the main button and the round ones (`footer`). No visit bar: the record's "…" reaches the others (20 Nov 2026).
  */
-function CarHead({ car, cover, title, description, state, footer }) {
+function CarHead({ car, cover, outlined, title, description, state, footer }) {
 	const lines = (cover?.lines ?? []).filter(Boolean);
 	return (
 		<div className="mt-2 min-w-0">
 			<div className="flex min-w-0 items-start gap-4">
-				<span aria-hidden className="relative flex size-28 shrink-0 items-center justify-center rounded-[12px] md:size-32" style={{ background: makeArt(car) }}>
+				<span aria-hidden className="relative flex size-28 shrink-0 items-center justify-center rounded-[12px] md:size-32" style={{ background: makeArt(car), color: makeInk(car) }}>
 					<MakeLogo make={car} className="size-12 -translate-y-1.5 text-current md:size-14" />
 					{cover?.code && <span translate="no" className="absolute top-2 left-2 rounded-[5px] bg-black/30 px-1.5 py-0.5 text-[10.5px] font-semibold tracking-[0.04em] whitespace-nowrap text-white tabular-nums">{cover.code}</span>}
 					<CarLine car={null} plate={cover?.plate} className="absolute right-2 bottom-2 left-2 text-[12px]" />
 				</span>
 				<div className="flex min-w-0 flex-1 flex-col gap-1">
 					{state && (
-						<span className="inline-flex items-center gap-1.5 self-start rounded-[6px] bg-black/25 px-2 py-0.5 text-xs font-medium text-white">
+						<span className={cn("inline-flex items-center gap-1.5 self-start rounded-[6px] px-2 py-0.5 text-xs font-medium", outlined ? "bg-foreground/[0.07] text-foreground" : "bg-black/25 text-white")}>
 							<span className="size-1.5 rounded-full" style={{ background: TONE_COLOR[state.tone] ?? TONE_COLOR.neutral }} aria-hidden />
 							{state.text}
 						</span>

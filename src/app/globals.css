@@ -548,6 +548,11 @@
 		border-radius: 14px 14px 0 0;
 	}
 }
+/* A booking's head: no colour, a dashed edge on the left, top and right, fading out at the bottom through the mask above. */
+.sheet-head-dashed {
+	border: 1.5px dashed color-mix(in srgb, var(--foreground) 25%, transparent);
+	border-bottom: 0;
+}
 .sheet-a-body section[aria-label] > :first-child:is(h2, h3, p) {
 	font-size: 1.25rem;
 	line-height: 1.25;
