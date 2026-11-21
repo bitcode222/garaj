@@ -77,12 +77,11 @@ import { JobWarnings } from "@/features/calendar/booking-warnings";
 import { CarHeader, CoverButton, CoverIconButton, coverIconClass } from "@/components/ds/car";
 import { useAccount } from "@/components/shell/account-menu";
 import { makeInk } from "@/lib/colors";
+import { JobHistory } from "./job-history";
 import { primaryAction } from "./job-action";
 import { jobHeadline } from "./job-text";
 import { ClockLine, JobSteps } from "./job-progress";
 import { useWalk } from "@/features/flow/visit-links";
-
-const ACTIVITY_LABEL = { created: "Lucrare deschisă" };
 
 const sheetField = "block w-full resize-none bg-transparent px-4 py-3 outline-none [field-sizing:content] placeholder:text-muted-foreground/70";
 const sheetLink = "flex min-h-12 w-full items-center gap-2.5 border-t px-4 text-left text-[16px] font-medium text-brand hover:bg-foreground/[0.04]";
@@ -235,19 +234,6 @@ function WorkOrder({ order, embedded = false }) {
 	const snapshot = buildSnapshot({ settings, customer, vehicle, mileage: order.mileage });
 	const estimateDoc = { ...draft, series: "", number: order.number, issueDate: todayISO(), dueDate: null, notes: draft.complaint ? `Reclamație: ${draft.complaint}` : "" };
 
-	const timeline = [
-		...Object.entries(order.dates ?? {})
-			.filter(([, at]) => at)
-			.sort((a, b) => (a[1] < b[1] ? 1 : -1))
-			.map(([status, at]) => ({
-				id: status,
-				title: status === "estimate" ? "Deviz deschis" : WORK_ORDER_STATUS[status]?.label,
-				icon: WORK_ORDER_STATUS[status]?.icon,
-				tone: WORK_ORDER_STATUS[status]?.tone,
-				meta: fmtDate(at, "d MMM, HH:mm"),
-			})),
-	];
-
 	// In a sheet: sheet "S" (the owner's pick, 19 Nov 2026). The head (Sheet) carries the car, the title and the
 	// buttons; below it, on white, grey groups under big titles in the order the desk asks: what the client says, how
 	// the car came in, what is to do, the estimate, the invoice, the shop's own notes, then the rest.
@@ -358,7 +344,7 @@ function WorkOrder({ order, embedded = false }) {
 							<JobState order={order} moves={moves} onReview={askReview} />
 						</div>
 						<div className="border-t px-4 py-3">
-							<Timeline items={timeline.length ? timeline : [{ id: "c", title: ACTIVITY_LABEL.created, meta: fmtDate(order.createdAt) }]} />
+							<JobHistory order={order} currency={settings.currency} />
 						</div>
 					</div>
 					<p className="px-1 pt-1.5 text-xs text-muted-foreground">
@@ -650,7 +636,7 @@ function WorkOrder({ order, embedded = false }) {
 						<Card>
 							<CardHeader title="Istoric" />
 							<CardContent className="pt-4">
-								<Timeline items={timeline.length ? timeline : [{ id: "c", title: ACTIVITY_LABEL.created, meta: fmtDate(order.createdAt) }]} />
+								<JobHistory order={order} currency={settings.currency} />
 							</CardContent>
 						</Card>
 					</>

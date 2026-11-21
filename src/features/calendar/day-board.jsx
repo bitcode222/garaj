@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight, GripVertical, Plus, TriangleAlert } from "lucide-react";
+import { ArrowLeft, ArrowLeftRight, ArrowRight, CalendarDays, ChevronLeft, ChevronRight, GripVertical, Plus, Scissors, TriangleAlert } from "lucide-react";
 import { SectionHeader } from "@/components/ds/blocks";
 import { MakeTile } from "@/components/ds/car";
 import { Segmented } from "@/components/ds/inputs";
@@ -15,6 +15,7 @@ import { openSheet } from "@/lib/sheets";
 import { useLocalPreference, useNowMinute } from "@/lib/hooks";
 import { canReschedule } from "@/domain/appointment";
 import { boardClashes } from "@/domain/board-clashes";
+import { moveProblem } from "@/domain/board-move";
 import { addDaysISO, dayOfInstant, diffDaysISO, parseISODate } from "@/domain/dates";
 import { assignToLane, reorderTeam, saveBay, saveStaff, setWorkEntrySpan } from "@/lib/store/actions";
 import { toast } from "@/lib/toast";
@@ -37,6 +38,7 @@ const HOUR_MIN = 56; // px: one day in view never squeezes an hour narrower than
 const WEEK_DAY_MIN = 140; // px: a day in the week view
 const REACH = 14; // days drawn on each side; the rail grows by as many when the scroll nears an end
 const EDGE_PX = 56; // a card carried this close to the board's side scrolls it to the next days
+const ROW_SLACK = 28; // px along the hours a card may wander on its way to another row and still keep its time
 const EDGE_STEP = 24; // px per drag event
 const EDGE = 4; // days from an end of the rail at which it grows
 const minuteOf = (iso) => {
@@ -51,6 +53,16 @@ const RANGES = [
 	{ value: "day", label: "Zi" },
 	{ value: "week", label: "Săptămână" },
 ];
+// Why a card can't go where it was dropped: the toast, and the short word on its landing spot.
+const MOVE_PROBLEM = {
+	closed: ["Lucrarea e închisă: ora nu se mai schimbă.", "închisă"],
+	running: ["Lucrarea e în curs: oprește cronometrul ca să o muți.", "în curs"],
+	split: ["Intervalul trece peste miezul nopții: modifică-l din lucrare.", "peste noapte"],
+	future: ["Timpul lucrat nu poate fi în viitor.", "în viitor"],
+	own_overlap: ["Se suprapune cu alt interval lucrat la aceeași lucrare.", "suprapus"],
+	past: ["Ora a trecut: alege o oră de acum încolo.", "a trecut"],
+	no_entry: ["Acest interval nu poate fi mutat.", "blocat"],
+};
 const sentence = (text) => text.charAt(0).toUpperCase() + text.slice(1);
 const mondayOf = (iso) => addDaysISO(iso, -((parseISODate(iso).getDay() + 6) % 7));
 // Who gets a lane in "Mecanici": the people who work on cars, not the front desk.
@@ -62,8 +74,8 @@ const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).joi
 /**
  * Agendă → Zi on a desktop (owner, 20 Nov 2026; first built as Azi's "Ziua în atelier"): one day by lift or by mechanic.
  * Rows are renamed in place, dragged by their handle into a new order, and added at the bottom; a booking or a job is
- * dragged onto another row to go to that lift or mechanic; a booking dragged along the hours or to another day is
- * rescheduled (owner, 21 Nov 2026; a car already in the shop or a job keeps its time). Either is stretched by its ends to a new start
+ * dragged onto another row to go to that lift or mechanic; a card dragged along the hours or to another day is
+ * rescheduled, and a job's card moves its logged work (owner, 21 Nov 2026; src/domain/board-move.js says what can't go where). Either is stretched by its ends to a new start
  * or end (a job: the stretch of work logged). The days are one carousel (owner, 21 Nov 2026): click and drag or a sideways
  * scroll runs freely through them, ‹ › step a day or a week. `ref` takes the page's ‹ Azi › as the other views do (today,
  * step, goTo). With `section`, it is Azi's "Ziua în atelier", with its own ‹ Azi › and a Zi / Săptămână switch.
@@ -152,22 +164,27 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const inViewDays = Array.from({ length: perView + Math.abs(between) }, (_, i) => addDaysISO(day, i + Math.min(between, 0)));
 	const clashesByDay = useMemo(() => new Map(days.map((d) => [d, boardClashes({ lanes, day: d, from, to, now: nowISO, hours: settings.hours })])), [days, lanes, from, to, nowISO, settings.hours]);
 	const clashesInView = inViewDays.flatMap((d) => clashesByDay.get(d) ?? []);
-	const applyFix = (clash, fix) => {
-		const appointment = appointments[clash.mover.appointment.id];
-		if (!appointment) return;
-		if (fix.type !== "row") {
-			reschedule(appointment, { start: atMinute(fix.day, fix.start), end: atMinute(fix.day, fix.end) });
+	const applyFix = (clash, option, fix) => {
+		const block = option.block;
+		const ids = block.kind === "booking" ? { appointmentId: block.appointment.id, workOrderId: null } : { appointmentId: null, workOrderId: block.order.id };
+		const appointment = block.kind === "booking" ? appointments[block.appointment.id] : null;
+		if (block.kind === "booking" && !appointment) {
+			toast.error("Programarea nu mai există.");
 			return;
 		}
-		const ids = { appointmentId: appointment.id, workOrderId: null };
-		try {
-			assignToLane(ids, kind.field, fix.laneId);
-			toast.success(`Mutat la ${fix.laneName}.`, { action: { label: "Anulează", onClick: () => assignToLane(ids, kind.field, clash.laneId) } });
-		} catch (error) {
-			toast.error(error.message);
+		if (fix.type === "row") {
+			try {
+				assignToLane(ids, kind.field, fix.laneId);
+				toast.success(`Mutat la ${fix.laneName}.`, { action: { label: "Anulează", onClick: () => assignToLane(ids, kind.field, clash.laneId) } });
+			} catch (error) {
+				toast.error(error.message);
+			}
+			return;
 		}
+		const row = fix.type === "row_time" ? { name: fix.laneName, apply: () => assignToLane(ids, kind.field, fix.laneId), undo: () => assignToLane(ids, kind.field, clash.laneId) } : null;
+		reschedule(appointment, { start: atMinute(fix.day, fix.start), end: atMinute(fix.day, fix.end) }, row);
 	};
-	const clashCard = (clash) => <ClashCard clash={clash} vehicles={vehicles} onFix={(fix) => applyFix(clash, fix)} />;
+	const clashCard = (clash) => <ClashCard clash={clash} vehicles={vehicles} onFix={(option, fix) => applyFix(clash, option, fix)} />;
 	const levelsOf = (lane) => Math.max(1, ...inViewDays.flatMap((d) => (lane.days[d] ?? []).map((block) => block.level + 1)));
 
 	const dayWidth = () => scroller.current?.querySelector("[data-day]")?.getBoundingClientRect().width || 1;
@@ -309,10 +326,48 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	const spotAt = (event, lane) => {
 		const c = carried.current;
 		const cell = event.target.closest?.("[data-track]");
-		if (!c?.movable || !cell) return null;
+		if (!c || !cell) return null;
 		const box = cell.getBoundingClientRect();
-		const start = dropMinute({ px: event.clientX - c.offset - box.left, width: box.width, from, to, minutes: c.minutes });
-		return { lane: lane.id ?? "loose", day: cell.dataset.date, start, minutes: c.minutes };
+		const on = cell.dataset.date;
+		// A hand that hardly moved along the hours keeps the exact time (09:10 isn't nudged to 09:15), with more slack when
+		// it is going to another row: a drag downwards is rarely perfectly straight.
+		const pointer = from + ((event.clientX - box.left) / box.width) * total;
+		const drift = (Math.abs(pointer - c.grabMinute) / total) * box.width;
+		const slack = (lane.id ?? "loose") !== c.laneKey ? ROW_SLACK : (SNAP / 2 / total) * box.width;
+		const moved = on !== c.day || drift >= slack;
+		const start = moved ? dropMinute({ px: event.clientX - c.offset - box.left, width: box.width, from, to, minutes: c.minutes }) : c.startMinute;
+		const startISO = atMinute(on, start);
+		const endISO = new Date(Date.parse(startISO) + c.minutes * 60000).toISOString();
+		const problem = moved ? moveProblem(c.block, { start: startISO, end: endISO, now: new Date().toISOString() }) : null;
+		const closedDay = moved && !(settings.hours?.days ?? [0, 1, 2, 3, 4, 5, 6]).includes(parseISODate(on).getDay());
+		return { lane: lane.id ?? "loose", day: on, start, minutes: c.minutes, moved, problem, closedDay, startISO, endISO };
+	};
+	// A job's logged work to a new time (and maybe a new row): both or neither, with one undo; the job's log has it all.
+	const moveWork = (block, spot, lane) => {
+		const entry = block.order.timeLog.find((e) => e.id === block.entryId);
+		const previous = { start: entry.start, end: entry.end };
+		const ids = { appointmentId: null, workOrderId: block.order.id };
+		const newRow = block.laneId !== lane.id;
+		try {
+			setWorkEntrySpan(block.order.id, entry.id, { start: spot.startISO, end: spot.endISO });
+			try {
+				if (newRow) assignToLane(ids, kind.field, lane.id);
+			} catch (error) {
+				setWorkEntrySpan(block.order.id, entry.id, previous);
+				throw error;
+			}
+			toast.success(`Lucrat: ${fmtDate(spot.startISO, "EEE d MMM")}, ${fmtTime(spot.startISO)}–${fmtTime(spot.endISO)}${newRow ? ` · ${lane.name}` : ""}`, {
+				action: {
+					label: "Anulează",
+					onClick: () => {
+						setWorkEntrySpan(block.order.id, entry.id, previous);
+						if (newRow) assignToLane(ids, kind.field, block.laneId);
+					},
+				},
+			});
+		} catch (error) {
+			toast.error(error.message);
+		}
 	};
 	const endCarry = () => {
 		carried.current = null;
@@ -335,20 +390,27 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		const raw = event.dataTransfer.getData(BLOCK);
 		if (!raw) return;
 		const block = JSON.parse(raw);
-		const spot = carried.current?.movable ? spotAt(event, lane) : null;
-		const minutes = carried.current?.minutes;
+		const held = carried.current;
+		const spot = held ? spotAt(event, lane) : null;
 		endCarry();
-		const appointment = spot && appointments[block.appointmentId];
-		if (appointment) {
-			const start = atMinute(spot.day, spot.start);
-			const sameTime = Date.parse(start) === Date.parse(appointment.start);
-			if (!sameTime) {
-				const end = new Date(Date.parse(start) + minutes * 60000).toISOString();
-				const ids = { appointmentId: block.appointmentId, workOrderId: null };
-				const row = block.laneId === lane.id ? null : { name: lane.id ? lane.name : kind.loose, apply: () => assignToLane(ids, kind.field, lane.id), undo: () => assignToLane(ids, kind.field, block.laneId) };
-				reschedule(appointment, { start, end }, row);
+		if (spot?.problem) {
+			toast.error(MOVE_PROBLEM[spot.problem][0]);
+			return;
+		}
+		if (spot?.moved) {
+			if (held.block.kind === "work") {
+				moveWork({ ...held.block, laneId: block.laneId }, spot, lane);
 				return;
 			}
+			const appointment = appointments[block.appointmentId];
+			if (!appointment) {
+				toast.error("Programarea nu mai există.");
+				return;
+			}
+			const ids = { appointmentId: appointment.id, workOrderId: null };
+			const row = block.laneId === lane.id ? null : { name: lane.id ? lane.name : kind.loose, apply: () => assignToLane(ids, kind.field, lane.id), undo: () => assignToLane(ids, kind.field, block.laneId) };
+			reschedule(appointment, { start: spot.startISO, end: spot.endISO }, row);
+			return;
 		}
 		if (block.laneId === lane.id) return;
 		try {
@@ -366,7 +428,8 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 		if (over !== (lane.id ?? "loose")) setOver(lane.id ?? "loose");
 		if (!types.includes(BLOCK)) return;
 		const spot = spotAt(event, lane);
-		if (spot?.lane !== ghost?.lane || spot?.day !== ghost?.day || spot?.start !== ghost?.start) setGhost(spot);
+		const shown = spot && (spot.moved || spot.lane !== (carried.current?.block && carried.current.laneKey)) ? spot : null;
+		if (shown?.lane !== ghost?.lane || shown?.day !== ghost?.day || shown?.start !== ghost?.start || shown?.problem !== ghost?.problem) setGhost(shown);
 		// At the board's sides the carried card takes the days along, to reach another day.
 		const el = scroller.current;
 		const box = el.getBoundingClientRect();
@@ -411,7 +474,7 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 									{clock(clash.start)}–{clock(clash.end)}
 								</button>
 							</PopoverTrigger>
-							<PopoverContent align="start" className="w-80 p-3">
+							<PopoverContent align="start" className="max-h-(--radix-popover-content-available-height) w-80 overflow-y-auto p-3">
 								{clashCard(clash)}
 							</PopoverContent>
 						</Popover>
@@ -518,16 +581,18 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 														<TriangleAlert className="size-3.5" aria-hidden />
 													</button>
 												</PopoverTrigger>
-												<PopoverContent className="w-80 p-3">{clashCard(clash)}</PopoverContent>
+												<PopoverContent className="max-h-(--radix-popover-content-available-height) w-80 overflow-y-auto p-3">{clashCard(clash)}</PopoverContent>
 											</Popover>
 										))}
 										{ghost?.lane === key && ghost.day === d && (
 											<span
 												aria-hidden
-												className="pointer-events-none absolute z-30 flex items-center overflow-visible rounded-[7px] border-2 border-ring bg-accent/70 px-1.5 text-[11px] font-semibold whitespace-nowrap tabular-nums"
-												style={{ top: PAD, height: CARD, left: `calc(${((ghost.start - from) / total) * 100}% + 2px)`, width: `calc(${(Math.min(ghost.minutes, to - ghost.start) / total) * 100}% - 4px)` }}
+												data-ghost
+												className="pointer-events-none absolute z-30 flex items-center gap-1 overflow-visible rounded-[7px] border-2 bg-accent/70 px-1.5 text-[11px] font-semibold whitespace-nowrap tabular-nums"
+												style={{ top: PAD, height: CARD, borderColor: ghost.problem ? STATE.late : ghost.closedDay ? STATE.wait : "var(--ring)", left: `calc(${((ghost.start - from) / total) * 100}% + 2px)`, width: `calc(${(Math.min(ghost.minutes, to - ghost.start) / total) * 100}% - 4px)` }}
 											>
 												{`${clock(ghost.start)}–${clock(ghost.start + ghost.minutes)}`}
+												{ghost.problem ? <span style={{ color: STATE.late }}>· {MOVE_PROBLEM[ghost.problem][1]}</span> : ghost.closedDay ? <span style={{ color: STATE.wait }}>· zi închisă</span> : null}
 											</span>
 										)}
 										{d === today && nowAt >= 0 && nowAt <= 100 && <span aria-hidden className="pointer-events-none absolute inset-y-0 z-10 w-0.5 bg-[#ff3b30]" style={{ left: `${nowAt}%` }} />}
@@ -549,12 +614,25 @@ function DayLanes({ rail, by, rows, day, setDay, inView, perView, today, appoint
 	);
 }
 
-/** One overlap: who is in it, and the quick ways out for the booking best moved. */
+const FIX_ICON = { row: ArrowLeftRight, row_time: ArrowLeftRight, later: ArrowRight, earlier: ArrowLeft, shorten: Scissors, day: CalendarDays };
+
+function fixText(fix) {
+	const hours = `${clock(fix.start ?? 0)}–${clock(fix.end ?? 0)}`;
+	if (fix.type === "row") return { title: `Mută pe ${fix.laneName}`, hint: "aceeași oră" };
+	if (fix.type === "row_time") return { title: `${fix.laneName}, ${hours}`, hint: "alt rând, cea mai apropiată oră" };
+	if (fix.type === "later") return { title: `Mai târziu, ${hours}`, hint: "același rând" };
+	if (fix.type === "earlier") return { title: `Mai devreme, ${hours}`, hint: "același rând" };
+	if (fix.type === "shorten") return { title: `Scurtează la ${hours}`, hint: `cu ${fix.saved} min` };
+	return { title: `${sentence(fmtDate(fix.day, "EEE, d MMM"))}, ${clock(fix.start)}`, hint: "următoarea zi cu loc" };
+}
+
+/** One overlap: who is in it, and for each car that can give way, the ways out (the best one marked). */
 function ClashCard({ clash, vehicles, onFix }) {
+	const [picked, setPicked] = useState(null);
 	const carOf = (block) => vehicles[block.order?.vehicleId ?? block.appointment?.vehicleId];
-	const moverName = clash.mover ? carName(carOf(clash.mover)) || "Programarea" : null;
-	const fixLabel = (fix) => (fix.type === "row" ? `Mută pe ${fix.laneName}` : fix.type === "time" ? `Mută la ${clock(fix.start)}–${clock(fix.end)}` : `Mută ${fmtDate(fix.day, "EEE, d MMM")}, ${clock(fix.start)}`);
+	const nameOf = (block) => carName(carOf(block)) || block.appointment?.title || jobHeadline(block.order);
 	const openBlock = (block) => (block.order ? openSheet("work-order-view", { id: block.order.id }) : openSheet("appointment-view", { id: block.appointment.id }));
+	const option = clash.options.find((o) => o.block.key === picked) ?? clash.options[0];
 	return (
 		<div className="space-y-2.5">
 			<div>
@@ -567,25 +645,45 @@ function ClashCard({ clash, vehicles, onFix }) {
 				{clash.blocks.map((block) => (
 					<button key={block.key} type="button" onClick={() => openBlock(block)} className="flex min-h-9 w-full items-center gap-2 rounded-md px-1 text-left text-xs hover:bg-accent">
 						<MakeTile make={carOf(block)?.make} size={22} />
-						<span className="min-w-0 flex-1 truncate font-medium">{carName(carOf(block)) || block.appointment?.title || jobHeadline(block.order)}</span>
+						<span className="min-w-0 flex-1 truncate font-medium">{nameOf(block)}</span>
 						<span className="shrink-0 text-muted-foreground tabular-nums">
 							{fmtTime(block.start)}–{fmtTime(block.end)}
 						</span>
 					</button>
 				))}
 			</div>
-			{clash.fixes.length > 0 ? (
+			{option ? (
 				<div className="space-y-1.5 border-t pt-2.5">
-					<p className="text-xs text-muted-foreground">Soluții pentru {moverName}</p>
-					{clash.fixes.map((fix) => (
-						<Button key={`${fix.type}:${fix.laneId ?? fix.day}:${fix.start ?? ""}`} variant="outline" size="sm" className="h-9 w-full justify-between" onClick={() => onFix(fix)}>
-							{fixLabel(fix)}
-							<ArrowRight aria-hidden />
-						</Button>
-					))}
+					<p className="text-xs text-muted-foreground">Ce mașină muți?</p>
+					{clash.options.length > 1 && (
+						<div className="flex flex-wrap gap-1" role="radiogroup" aria-label="Ce mașină muți">
+							{clash.options.map((o) => (
+								<button key={o.block.key} type="button" role="radio" aria-checked={o === option} onClick={() => setPicked(o.block.key)} className={cn("h-7 max-w-full truncate rounded-full border px-2.5 text-xs font-medium transition-colors", o === option ? "border-foreground bg-foreground text-background" : "hover:bg-accent")}>
+									{nameOf(o.block)}
+								</button>
+							))}
+						</div>
+					)}
+					{clash.options.length === 1 && <p className="truncate text-xs font-medium">{nameOf(option.block)}</p>}
+					<div className="space-y-1">
+						{option.fixes.map((fix, index) => {
+							const { title, hint } = fixText(fix);
+							const Icon = FIX_ICON[fix.type];
+							return (
+								<button key={`${fix.type}:${fix.laneId ?? fix.day}:${fix.start ?? ""}`} type="button" onClick={() => onFix(option, fix)} className="flex min-h-11 w-full items-center gap-2.5 rounded-lg border px-2.5 py-1.5 text-left transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+									<Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+									<span className="min-w-0 flex-1">
+										<span className="block truncate text-[13px] font-medium tabular-nums">{title}</span>
+										<span className="block truncate text-[11px] text-muted-foreground">{hint}</span>
+									</span>
+									{index === 0 && option === clash.options[0] && <span className="shrink-0 rounded-full bg-accent px-2 py-0.5 text-[10.5px] font-semibold">Recomandat</span>}
+								</button>
+							);
+						})}
+					</div>
 				</div>
 			) : (
-				<p className="border-t pt-2.5 text-xs text-muted-foreground">{clash.mover ? "Nu e loc liber în zilele vizibile." : "Mașinile sunt deja în service; deschide una ca să o reorganizezi."}</p>
+				<p className="border-t pt-2.5 text-xs text-muted-foreground">Nu e loc liber în zilele vizibile; deschide o mașină ca să o reorganizezi.</p>
 			)}
 		</div>
 	);
@@ -655,15 +753,24 @@ function Block({ clashing, block, lane, day, compact, vehicle, from, to, total, 
 	);
 
 	return (
-		<button
-			type="button"
+		// Not a <button>: Firefox won't drag one.
+		<div
+			role="button"
+			tabIndex={0}
+			onKeyDown={(event) => {
+				if (event.target !== event.currentTarget || (event.key !== "Enter" && event.key !== " ")) return;
+				event.preventDefault();
+				open();
+			}}
 			draggable={!draft}
 			onDragStart={(event) => {
 				if (grab.current) return event.preventDefault();
 				event.dataTransfer.setData(BLOCK, JSON.stringify({ appointmentId: block.appointment?.id ?? null, workOrderId: block.appointment ? null : block.order?.id, laneId: lane.id }));
 				event.dataTransfer.effectAllowed = "move";
 				const minutes = Math.max(SNAP, Math.round((Date.parse(block.end) - Date.parse(block.start)) / 60000));
-				onCarry({ block, offset: event.clientX - event.currentTarget.getBoundingClientRect().left, minutes, movable: block.kind === "booking" && block.planned && canStart });
+				const box = event.currentTarget.getBoundingClientRect();
+				const cell = event.currentTarget.closest("[data-track]").getBoundingClientRect();
+				onCarry({ block, day, laneKey: lane.id ?? "loose", offset: event.clientX - box.left, minutes, startMinute: startMin, grabMinute: from + ((event.clientX - cell.left) / cell.width) * total });
 				requestAnimationFrame(() => setLifted(true));
 			}}
 			onDragEnd={() => {
@@ -672,7 +779,7 @@ function Block({ clashing, block, lane, day, compact, vehicle, from, to, total, 
 			}}
 			onClick={open}
 			aria-label={`${title}, ${detail}`}
-			title={compact ? `${title}, ${detail}` : canStart ? block.kind === "booking" && block.planned ? "Trage ca să o reprogramezi; trage de capete ca să schimbi ora" : "Trage pe alt rând ca să o muți; trage de capete ca să schimbi ora" : "Trage pe alt rând ca să o muți"}
+			title={compact ? `${title}, ${detail}` : canStart ? "Trage ca să o muți; trage de capete ca să schimbi ora" : "Trage pe alt rând ca să o muți"}
 			className={cn("@container absolute flex min-w-0 cursor-pointer items-center overflow-clip rounded-[7px] text-left text-xs active:cursor-grabbing", compact ? "px-0.5" : "px-2", block.planned && "border border-dashed border-foreground/25", draft && "z-20 ring-2 ring-ring", lifted && "opacity-40")}
 			style={{
 				top: PAD + (block.level ?? 0) * (CARD + GAP),
@@ -698,6 +805,6 @@ function Block({ clashing, block, lane, day, compact, vehicle, from, to, total, 
 				</span>
 			</span>
 			{canEnd && handle("end")}
-		</button>
+		</div>
 	);
 }

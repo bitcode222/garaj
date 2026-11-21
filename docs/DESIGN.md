@@ -118,15 +118,18 @@ pick E). Bookings still to confirm: a dotted white outline (and an amber dot in 
 (**Elevatoare / Mecanici**, `garaj.azi.lanes`; Mecanici leaves out the front desk), the days are one carousel (21 Nov 2026):
 click-and-drag or a sideways scroll runs freely through them, ‹ › step, what is in view in the top-left corner. On Azi the
 section has its own ‹ › and Azi and a **Zi / Săptămână** switch (`garaj.azi.range`; a week starts on Monday). Rows are
-renamed in place, dragged by their handle into a new order and added at the bottom (a new lift or mechanic). A booking dragged
-along the hours, to another day (the board's sides scroll while carrying it) or to another row is rescheduled on the quarter
-hour, with its landing place drawn under the pointer and one undo (21 Nov 2026). A car already in the shop or a job only changes row:
-its time stays. A row change takes the booking's job along; dragged by an end it takes
+renamed in place, dragged by their handle into a new order and added at the bottom (a new lift or mechanic). Any card dragged
+along the hours, to another day (the board's sides scroll while carrying it) or to another row takes that place on the quarter
+hour, with its landing spot drawn under the pointer and one undo (21 Nov 2026). `src/domain/board-move.js` says what can't go
+where, in red on the spot: a booking still to come into the past, logged work into the future or over the job's other
+stretches, a running stretch, a closed job. A hand that hardly moved along the hours keeps the exact time. **Every change to a job
+is in its Istoric** (`src/domain/job-log.js`): who, when, from what to what, for the booking's time, logged work, lift, mechanic,
+lines and notes; typing folds into one entry, an undo is a new entry. A row change takes the booking's job along; dragged by an end it takes
 a new start or end on the quarter hour — a booking through the calendar's reschedule (confirm setting, overlap warning,
 undo), a job's logged work through `setEntrySpan` (`src/domain/work-clock.js`: no overlap with the job's other stretches,
 a running one keeps running). Jobs on a lift on the car's cover; bookings a grey dashed outline with the make tile. A
 tablet and the phone keep their own day. Cards that overlap on one row stack in levels and the row grows (20 Nov 2026); a card half under the row names keeps its logo and text in view; a narrow card shows only the logo; one day in view keeps every hour at 56 px or more.
-**Overlaps** (21 Nov 2026, `src/domain/board-clashes.js`): only those still ahead, on a lift or mechanic. The shared time is hatched amber, the cards get an amber edge, a ⚠ marks the spot, and a line above the board names each one. Either opens the quick fixes for the last booking still to come: another free row at the same time, the nearest free time on this row or, on a full day, the next open day. Each fix has an undo; a car already in the shop is never moved.
+**Overlaps** (21 Nov 2026, `src/domain/board-clashes.js`): only those still ahead, on a lift or mechanic. The shared time is hatched amber, the cards get an amber edge, a ⚠ marks the spot, and a line above the board names each one. Either opens the quick fixes, for whichever car you pick (the one still to come first): up to two free rows at the same time, the nearest time after or before, only the free part, the nearest hour on another row, the next open day. Logged work can only change row; each fix has an undo.
 
 ### Telefon ca iPhone (owner, 17 Nov 2026, board https://claude.ai/artifact/XZjoSBj5YhRWmdHKBATf8d)
 
