@@ -160,13 +160,13 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 	// The head: back, the sheet's controls and close, then the title (a car's: CarHead).
 	const head = (
 					<div
-						className={cn("shrink-0 touch-pan-y", car ? cn(carClass, "relative isolate px-5 pt-[calc(0.75rem+var(--safe-top))] pb-16 md:px-6 md:pt-4") : "px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
+						className={cn("shrink-0 touch-pan-y", car ? cn(carClass, "relative isolate px-5 pt-[calc(0.75rem+var(--safe-top))] pb-16 md:px-[38px] md:pt-[30px]") : "px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
 						style={car ? { color: makeInk(car) } : undefined}
 						{...swipe.handlers}
 					>
 						{/* The car's colour fades into the sheet below the head's content, which stays on the solid part. */}
 						{car && <span aria-hidden className="sheet-head-fade" style={{ background: makeCover(car) }} />}
-						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. */}
+						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. A car's sheet is inset 14 px more; its close stays in the corner. */}
 						<div className="-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-9">
 							<button
 								type="button"
@@ -184,7 +184,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 							</button>
 							{headerActions}
 							<DialogPrimitive.Close
-								className="ml-auto flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground max-md:hidden md:size-9"
+								className={cn("ml-auto flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground max-md:hidden md:size-9", car && "md:relative md:-top-3.5 md:-right-3.5")}
 								aria-label="Închide"
 							>
 								<XIcon className="size-4" />
@@ -263,7 +263,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 						{/* A car's head scrolls away with its body (owner, 20 Nov 2026); other sheets keep theirs fixed. */}
 						{car && head}
 						{/* 1px taller than the viewport: short content still scrolls, so WebKit rubber-bands it. */}
-						<div className={cn("min-h-[calc(100%+1px)]", car ? "sheet-a-body px-4 pt-2 pb-10 md:px-6" : "px-10 pb-10")}>
+						<div className={cn("min-h-[calc(100%+1px)]", car ? "sheet-a-body px-4 pt-2 pb-10 md:px-[38px] md:pb-[54px]" : "px-10 pb-10")}>
 							<SheetDepth.Provider value={depth + 1}>{children}</SheetDepth.Provider>
 						</div>
 					</div>
