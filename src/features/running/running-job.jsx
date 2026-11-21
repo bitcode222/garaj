@@ -67,7 +67,7 @@ export function RunningJobBar() {
 					"fixed z-30 flex h-[52px] items-center gap-2.5 rounded-[14px] bg-zinc-900/95 pr-2 pl-1.5 text-white shadow-[0_12px_32px_rgb(0_0_0/0.28)] dark:bg-zinc-100/95 dark:text-zinc-900",
 					"max-md:h-14 max-md:rounded-full max-md:border max-md:bg-card/90 max-md:pl-2 max-md:text-foreground max-md:shadow-[0_8px_30px_-12px_rgb(0_0_0/0.3)] max-md:dark:bg-card/90 max-md:dark:text-foreground",
 					"inset-x-3 bottom-[calc(var(--tabbar-h)+var(--safe-bottom)+0.125rem)]",
-					"md:inset-x-auto md:bottom-5 md:left-[calc(50%+2rem)] md:w-[460px] md:-translate-x-1/2 lg:left-[calc(50%+7.5rem)]",
+					"md:inset-x-auto md:bottom-5 md:left-[calc(50%+2rem)] md:w-[460px] md:-translate-x-1/2 lg:left-[calc(50%+6.5rem)]",
 				)}
 			>
 				<button type="button" onClick={() => router.push(`/work-orders/detail/?id=${order.id}`)} className="flex min-w-0 flex-1 items-center gap-2.5 rounded-[10px] py-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-current/40">

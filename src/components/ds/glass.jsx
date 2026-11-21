@@ -25,6 +25,8 @@ const PRESETS = {
 	pill: { strength: 20, frost: 6, saturate: 1.8, tint: "color-mix(in srgb, var(--foreground) 7%, transparent)", solid: "var(--muted)" },
 	// The chosen or main button on the page: dark glass in the light theme, light in the dark one.
 	ink: { strength: 20, frost: 6, saturate: 1.6, tint: "color-mix(in srgb, var(--foreground) 82%, transparent)", solid: "var(--foreground)" },
+	// The side nav's selected route: clear, so the row under it stays sharp; only its rim bends what it passes.
+	nav: { strength: 14, bevel: 7, frost: 0, saturate: 1.5, tint: "color-mix(in srgb, var(--foreground) 7%, transparent)", solid: "color-mix(in srgb, var(--foreground) 10%, transparent)" },
 	menu: { strength: 28, frost: 18, saturate: 1.8, tint: "color-mix(in srgb, var(--popover) 78%, transparent)", solid: "var(--popover)" },
 };
 

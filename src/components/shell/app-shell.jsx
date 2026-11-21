@@ -3,9 +3,9 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { ChevronRight, ChevronsUpDown, Database, History, Palette, PanelLeftClose, PanelLeftOpen, Plus, Search, Store } from "lucide-react";
+import { ChevronRight, ChevronsUpDown, Database, Palette, PanelLeftClose, PanelLeftOpen, Plus, Search, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -22,13 +22,14 @@ import { selectReminders, selectToConfirm } from "@/lib/store/selectors";
 import { OPEN_STATUSES } from "@/domain/work-order";
 import { haptics } from "@/lib/haptics";
 import { useHydrated, useLocalPreference, useNowMinute } from "@/lib/hooks";
+import { AREA } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 import { atMinute } from "@/features/calendar/utils";
 import { LogoMark } from "./logo";
 import { PageTransition } from "./page-transition";
 import { NAV, PROGRAMARI_PAGES, TABS, isActive } from "./nav";
 import { QuickCreate } from "./quick-create";
-import { useRecentRecords } from "./recents";
+import { NavGlide } from "./nav-glide";
 import { openCommandMenu } from "./command-state";
 import { AccountMenu } from "./account-menu";
 import { ThemeToggle } from "./theme-toggle";
@@ -96,16 +97,6 @@ function setSidebar(mode) {
 	applySidebar(mode);
 }
 
-const OPEN_KEY = "garaj.sidebar.open"; // which groups were opened or closed by hand: { [key]: boolean }
-function parseOpen(text) {
-	try {
-		const value = JSON.parse(text);
-		return value && typeof value === "object" ? value : {};
-	} catch {
-		return {};
-	}
-}
-
 // A count at the row's end: plain grey, or a red pill for what is urgent (De contactat).
 const countPill = (count, urgent) =>
 	count > 0 ? (
@@ -119,13 +110,10 @@ function ShopMenu({ shopName, demo }) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<button type="button" className="flex h-11 w-full items-center gap-2.5 rounded-lg px-2 text-left transition-colors hover:bg-accent/60" aria-label={`${shopName}: meniul service-ului`}>
+				<button type="button" className="flex h-9 w-full items-center gap-2 rounded-[8px] px-1.5 text-left transition-colors hover:bg-foreground/[0.04]" aria-label={`${shopName}: meniul service-ului`}>
 					<LogoMark />
-					<span className="min-w-0 flex-1 leading-tight">
-						<span className="block truncate text-sm font-semibold">{shopName}</span>
-						<span className="block text-2xs text-muted-foreground">Garaj · service auto</span>
-					</span>
-					<ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+					<span className="min-w-0 flex-1 truncate text-[13px] font-semibold">{shopName}</span>
+					<ChevronsUpDown className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
 				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="start" className="w-60">
@@ -159,135 +147,73 @@ function ShopMenu({ shopName, demo }) {
 	);
 }
 
-/** Children under a guide line, opening and closing with a short height transition (and out of the tab order while closed). */
-function Children({ open, label, children }) {
-	return (
-		<div className={cn("grid transition-[grid-template-rows] duration-200 ease-(--ease-soft) motion-reduce:transition-none", open ? "grid-rows-[1fr]" : "grid-rows-[0fr]")} inert={!open}>
-			<ul aria-label={label} className="ml-[1.3125rem] space-y-0.5 overflow-hidden border-l pl-2.5 [&>li:first-child]:mt-0.5 [&>li:last-child]:mb-1">
-				{children}
-			</ul>
-		</div>
-	);
+/** The route the glass sits on: the one just picked (it moves at once, before the page arrives), else the current one. */
+function useGlideTarget(pathname) {
+	const [picked, setPicked] = useState(null);
+	const waiting = picked?.from === pathname ? picked.href : null;
+	useEffect(() => {
+		if (!waiting) return;
+		// A navigation that never lands doesn't leave the glass on the wrong row.
+		const timer = setTimeout(() => setPicked(null), 2500);
+		return () => clearTimeout(timer);
+	}, [waiting]);
+	const pick = (event, href) => {
+		if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button) return;
+		setPicked({ href, from: pathname });
+	};
+	return [waiting ?? NAV.find((item) => isActive(item, pathname))?.href ?? null, pick];
 }
 
-const rowClass = (pill) => cn("flex h-8 items-center rounded-[7px] transition-colors pointer-coarse:h-10", pill ? "bg-accent" : "hover:bg-accent/60");
-
-/** A group of items that opens and closes (its parent's chevron, or the whole row when it is not a page). */
-function Chevron({ open }) {
-	return <ChevronRight className={cn("size-4 text-muted-foreground transition-transform duration-200", open && "rotate-90")} aria-hidden />;
-}
-
-function NavItem({ item, pathname, badges, open, onToggle }) {
-	const active = isActive(item, pathname);
-	const count = item.badge ? badges[item.badge] : 0;
-	// A child that is a page of its own carries the pill; the parent keeps only the weight.
-	const childActive = item.children?.find((child) => !child.href.includes("#") && pathname.startsWith(child.href.replace(/\/$/, "")));
-	return (
-		<li>
-			<div className={rowClass(active && !childActive)}>
-				<Link href={item.href} aria-current={active && !childActive ? "page" : undefined} className={cn("flex h-full min-w-0 flex-1 items-center gap-2.5 pl-2.5 text-[13.5px]", item.children ? "pr-1" : "pr-2.5", active && "font-medium")}>
-					{/* Quiet icons; only the current page's takes its area's colour (the owner, 16 Nov 2026). */}
-					<item.icon className={cn("size-4 shrink-0", !active && "text-muted-foreground")} style={active ? { color: item.area } : undefined} aria-hidden />
-					<span className="flex-1 truncate">{item.label}</span>
-					{countPill(count, item.urgent)}
-				</Link>
-				{item.children && (
-					<button type="button" onClick={onToggle} aria-expanded={open} aria-label={`${open ? "Ascunde" : "Arată"} paginile din ${item.label}`} className="mr-0.5 flex size-7 shrink-0 items-center justify-center rounded-md hover:bg-accent">
-						<Chevron open={open} />
-					</button>
-				)}
-			</div>
-			{item.children && (
-				<Children open={open} label={item.label}>
-					{item.children.map((child) => {
-						const here = child === childActive;
-						return (
-							<li key={child.href}>
-								<Link href={child.href} aria-current={here ? "page" : undefined} className={cn("flex h-8 items-center gap-2 rounded-[7px] px-2.5 text-[13px] transition-colors pointer-coarse:h-10", here ? "bg-accent font-medium" : "hover:bg-accent/60")}>
-									<span className="flex-1 truncate">{child.label}</span>
-									{countPill(child.badge ? badges[child.badge] : 0)}
-								</Link>
-							</li>
-						);
-					})}
-				</Children>
-			)}
-		</li>
-	);
-}
-
-/** "Recente" (D3): the records opened last, two lines each, as Cloudflare's. */
-function RecentItems({ open, onToggle }) {
-	const records = useRecentRecords();
-	if (!records.length) return null;
-	return (
-		<li>
-			<button type="button" onClick={onToggle} aria-expanded={open} className={cn(rowClass(false), "w-full gap-2.5 px-2.5 text-left text-[13.5px]")}>
-				<History className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-				<span className="flex-1 truncate">Recente</span>
-				<Chevron open={open} />
-			</button>
-			<Children open={open} label="Recente">
-				{records.map((record) => (
-					<li key={record.key}>
-						<button type="button" onClick={record.open} className="flex w-full flex-col rounded-lg px-3 py-1.5 text-left transition-colors hover:bg-accent/60">
-							<span className="w-full truncate text-sm">{record.title}</span>
-							<span className="w-full truncate text-xs text-muted-foreground">{record.subtitle}</span>
-						</button>
-					</li>
-				))}
-			</Children>
-		</li>
-	);
-}
+/** The selected icon takes its area's colour; Azi's is the ink, so it follows the theme. */
+const glyphColor = (item, selected) => (selected && item.area !== AREA.azi ? { color: item.area } : undefined);
 
 /**
- * The desktop sidebar (docs/APPOINTMENTS-AND-NAV.md D1–D4), in Cloudflare's manner: the shop and
- * its menu, a quick search with + beside it, roomy items with quiet icons and a neutral pill for
- * the open page, groups that open under a guide line (Recente, Programări, Setări), plain group
- * titles, and the button that folds it into the rail.
+ * The desktop side nav: the shop, search, one compact list with its groups set apart by a gap, and one pane of liquid
+ * glass that glides to the route you pick.
  */
 function Sidebar({ pathname, badges, shopName, demo }) {
 	const groups = [...new Set(NAV.map((item) => item.group))];
-	const [openText, setOpenText] = useLocalPreference(OPEN_KEY, "{}");
-	const toggled = parseOpen(openText);
-	// A group is open when its page is (or, for Recente, by default) unless it was closed by hand.
-	const isOpen = (key, fallback) => toggled[key] ?? fallback;
-	const toggle = (key, fallback) => setOpenText(JSON.stringify({ ...toggled, [key]: !isOpen(key, fallback) }));
 	const openSearch = useOpenSearch();
+	const [target, pick] = useGlideTarget(pathname);
 	return (
-		<aside data-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r bg-[color-mix(in_srgb,var(--background)_60%,var(--card))] lg:flex">
-			<div className="border-b px-3 py-2.5">
+		<aside data-shell="sidebar" className="fixed inset-y-0 left-0 z-40 hidden w-52 flex-col border-r bg-[color-mix(in_srgb,var(--background)_60%,var(--card))] lg:flex">
+			<div className="space-y-1.5 px-2 pt-2 pb-2">
 				<ShopMenu shopName={shopName} demo={demo} />
-			</div>
-			<div className="px-3 pt-3 pb-2">
-				<button
-					type="button"
-					onClick={openSearch}
-					className="flex h-8 w-full min-w-0 items-center gap-2 rounded-[7px] border bg-card px-2.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
-				>
-					<Search className="size-3.5 shrink-0" aria-hidden />
+				<button type="button" onClick={openSearch} className="flex h-[30px] w-full min-w-0 items-center gap-2 rounded-[8px] bg-foreground/[0.05] px-2 text-[13px] text-muted-foreground transition-colors hover:text-foreground">
+					<Search className="size-4 shrink-0" aria-hidden />
 					<span className="flex-1 truncate text-left">Caută</span>
 					<KeyHint>⌘K</KeyHint>
 				</button>
 			</div>
-			<nav className="flex-1 overflow-y-auto px-3 pt-1 pb-4" aria-label="Navigare principală">
-				{groups.map((group, index) => (
-					<div key={group} className={cn(index > 0 && "mt-4")}>
-						{/* The first group has no title; later ones a small, quiet one. */}
-						{index > 0 && <p className="px-2.5 pb-1 text-[10.5px] font-medium tracking-[0.07em] text-muted-foreground uppercase">{group}</p>}
-						<ul className="space-y-0.5">
-							{NAV.filter((item) => item.group === group).flatMap((item, i) => {
-								const key = item.href;
-								const row = <NavItem key={key} item={item} pathname={pathname} badges={badges} open={isOpen(key, isActive(item, pathname))} onToggle={() => toggle(key, isActive(item, pathname))} />;
-								// Recente comes right after Azi, as Cloudflare's after "Account home".
-								return index === 0 && i === 0 ? [row, <RecentItems key="recents" open={isOpen("recents", true)} onToggle={() => toggle("recents", true)} />] : [row];
+			<nav className="flex-1 overflow-y-auto px-2 pb-2" aria-label="Navigare principală">
+				<div className="relative space-y-2.5">
+					{groups.map((group) => (
+						<ul key={group} aria-label={group} className="space-y-px">
+							{NAV.filter((item) => item.group === group).map((item) => {
+								const selected = target === item.href;
+								const count = item.badge ? badges[item.badge] : 0;
+								return (
+									<li key={item.href}>
+										<Link
+											href={item.href}
+											data-nav-row={item.href}
+											aria-current={isActive(item, pathname) ? "page" : undefined}
+											onClick={(event) => pick(event, item.href)}
+											className={cn("flex h-[30px] items-center gap-2 rounded-[8px] px-2 text-[13px] transition-colors pointer-coarse:h-10", selected ? "font-semibold text-foreground" : "text-foreground/75 hover:bg-foreground/[0.04] hover:text-foreground")}
+										>
+											<item.glyph weight={selected ? "fill" : "regular"} className={cn("size-[17px] shrink-0", !selected && "text-muted-foreground")} style={glyphColor(item, selected)} aria-hidden />
+											<span className="flex-1 truncate">{item.label}</span>
+											{countPill(count, item.urgent)}
+										</Link>
+									</li>
+								);
 							})}
 						</ul>
-					</div>
-				))}
+					))}
+					<NavGlide target={target} />
+				</div>
 			</nav>
-			<div className="flex items-center gap-1 border-t px-3 py-2.5">
+			<div className="flex items-center gap-1 px-2 py-1.5">
 				<Button variant="ghost" size="icon-sm" className="mr-auto" onClick={() => setSidebar("rail")} aria-label="Restrânge bara laterală" title="Restrânge bara laterală">
 					<PanelLeftClose />
 				</Button>
@@ -303,6 +229,7 @@ function Sidebar({ pathname, badges, shopName, demo }) {
 }
 
 function Rail({ pathname, badges }) {
+	const [target, pick] = useGlideTarget(pathname);
 	return (
 		<aside data-shell="rail" className="fixed inset-y-0 left-0 z-40 hidden w-16 flex-col items-center border-r bg-background pt-3 pb-3 md:flex lg:hidden">
 			<Link href="/" aria-label="Azi" className="mb-3">
@@ -318,27 +245,29 @@ function Rail({ pathname, badges }) {
 					</Button>
 				</QuickCreate>
 			</div>
-			<nav className="flex flex-1 flex-col items-center gap-1 overflow-y-auto" aria-label="Navigare principală">
-				{NAV.map((item) => {
-					const active = isActive(item, pathname);
-					const count = item.badge ? badges[item.badge] : 0;
-					return (
-						<Link
-							key={item.href}
-							href={item.href}
-							title={item.label}
-							aria-current={active ? "page" : undefined}
-							className={cn(
-								"relative flex w-14 flex-col items-center gap-0.5 rounded-lg py-1.5 text-[10px] leading-3 transition-colors",
-								active ? "bg-accent font-medium text-foreground" : "text-muted-foreground hover:text-foreground",
-							)}
-						>
-							<item.icon className="size-[18px]" style={active ? { color: item.area } : undefined} aria-hidden />
-							<span className="max-w-full truncate px-0.5">{item.label}</span>
-							{count > 0 && <span className={cn("absolute top-1 right-2 size-1.5 rounded-full", item.urgent ? "bg-[#ff3b30]" : "bg-muted-foreground")} aria-hidden />}
-						</Link>
-					);
-				})}
+			<nav className="flex min-h-0 flex-1 flex-col overflow-y-auto" aria-label="Navigare principală">
+				<div className="relative flex flex-col items-center gap-1">
+					{NAV.map((item) => {
+						const selected = target === item.href;
+						const count = item.badge ? badges[item.badge] : 0;
+						return (
+							<Link
+								key={item.href}
+								href={item.href}
+								data-nav-row={item.href}
+								title={item.label}
+								aria-current={isActive(item, pathname) ? "page" : undefined}
+								onClick={(event) => pick(event, item.href)}
+								className={cn("relative flex w-14 flex-col items-center gap-0.5 rounded-[8px] py-1.5 text-[10px] leading-3 transition-colors", selected ? "font-semibold text-foreground" : "text-muted-foreground hover:text-foreground")}
+							>
+								<item.glyph weight={selected ? "fill" : "regular"} className="size-[18px]" style={glyphColor(item, selected)} aria-hidden />
+								<span className="max-w-full truncate px-0.5">{item.label}</span>
+								{count > 0 && <span className={cn("absolute top-1 right-2 size-1.5 rounded-full", item.urgent ? "bg-[#ff3b30]" : "bg-muted-foreground")} aria-hidden />}
+							</Link>
+						);
+					})}
+					<NavGlide target={target} />
+				</div>
 			</nav>
 			{/* Folded on a desktop: the way back to the full sidebar (a tablet has no room for it). */}
 			<Button variant="ghost" size="icon-sm" className="mb-1 hidden lg:inline-flex" onClick={() => setSidebar("full")} aria-label="Extinde bara laterală" title="Extinde bara laterală">
@@ -478,7 +407,7 @@ export function AppShell({ children }) {
 			<Rail pathname={pathname} badges={badges} />
 			<main
 				id="main"
-				className="min-h-dvh pt-[var(--safe-top)] pb-[calc(var(--tabbar-h)+var(--safe-bottom))] md:pt-0 md:pb-0 md:pl-16 lg:pl-60"
+				className="min-h-dvh pt-[var(--safe-top)] pb-[calc(var(--tabbar-h)+var(--safe-bottom))] md:pt-0 md:pb-0 md:pl-16 lg:pl-52"
 			>
 				<Toolbar pathname={pathname} />
 				<PageTransition>{children}</PageTransition>

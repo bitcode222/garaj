@@ -22,7 +22,6 @@ import {
 	User,
 	Wrench,
 } from "lucide-react";
-import { useRemember } from "@/lib/recents";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -128,7 +127,6 @@ function AmountHeader({ vehicle, customer, amount, eyebrow, currency }) {
 // ── draft ────────────────────────────────────────────────────────────────────
 
 function DraftInvoice({ invoice, embedded = false }) {
-	useRemember("invoice", invoice.id);
 	const router = useRouter();
 	const confirm = useConfirm();
 	const settings = useSettings();
@@ -336,7 +334,6 @@ const ACTIVITY = {
 };
 
 function IssuedInvoice({ invoice, embedded = false }) {
-	useRemember("invoice", invoice.id);
 	const confirm = useConfirm();
 	const router = useRouter();
 	const settings = useSettings();
