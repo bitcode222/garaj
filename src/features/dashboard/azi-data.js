@@ -106,6 +106,22 @@ export function dayLanes({ by = "bay", rows, bays, appointments, workOrders, tod
 	return all;
 }
 
+/** The same rows across several days: each row has its blocks by day, and as many levels as its busiest day. */
+export function rangeLanes({ days, ...rest }) {
+	const rows = new Map();
+	for (const day of days) {
+		for (const lane of dayLanes({ ...rest, today: day })) {
+			const key = lane.id ?? "loose";
+			if (!rows.has(key)) rows.set(key, { id: lane.id, name: lane.name, levels: 1, days: {} });
+			const row = rows.get(key);
+			row.days[day] = lane.blocks;
+			row.levels = Math.max(row.levels, lane.levels);
+		}
+	}
+	const all = [...rows.values()];
+	return [...all.filter((row) => row.id), ...all.filter((row) => !row.id)];
+}
+
 const STACK_MIN = 15 * 60000; // a card is at least a quarter hour wide when deciding what overlaps
 
 /**

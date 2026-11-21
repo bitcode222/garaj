@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { dayLanes, hoursText, hoursToday, moveLane, shopJobs, stackBlocks, todaysBookings } from "./azi-data.js";
+import { dayLanes, hoursText, hoursToday, moveLane, rangeLanes, shopJobs, stackBlocks, todaysBookings } from "./azi-data.js";
 
 const today = "2026-11-16";
 const at = (hhmm) => new Date(`${today}T${hhmm}:00`).toISOString();
@@ -91,4 +91,16 @@ test("stackBlocks: overlapping cards on one row go on separate levels, the gaps 
 	const level = Object.fromEntries(blocks.map((b) => [b.key, b.level]));
 	assert.deepEqual(level, { a: 0, b: 1, c: 0, d: 1, e: 2 });
 	assert.equal(stackBlocks([]), 1);
+});
+
+test("rangeLanes: one row per lift across the days, blocks by day, levels of the busiest day, no lift last", () => {
+	const at = (d, h) => new Date(2026, 10, d, h).toISOString();
+	const booking = (id, d, h, bayId) => ({ id, bayId, status: "confirmed", start: at(d, h), end: at(d, h + 2) });
+	const appointments = { a: booking("a", 21, 9, "b1"), b: booking("b", 22, 9, "b1"), c: booking("c", 22, 10, "b1"), d: booking("d", 22, 9, null) };
+	const bays = { b1: { id: "b1", name: "Elevator 1", order: 0 }, b2: { id: "b2", name: "Elevator 2", order: 1 } };
+	const lanes = rangeLanes({ days: ["2026-11-21", "2026-11-22"], rows: bays, appointments, workOrders: {}, now: at(22, 12) });
+	assert.deepEqual(lanes.map((l) => l.id), ["b1", "b2", null]);
+	assert.deepEqual(lanes[0].days["2026-11-21"].map((b) => b.key), ["a"]);
+	assert.equal(lanes[0].days["2026-11-22"].length, 2);
+	assert.equal(lanes[0].levels, 2);
 });
