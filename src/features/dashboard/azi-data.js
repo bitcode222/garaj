@@ -1,6 +1,6 @@
 // What Azi shows (docs/DESIGN.md §4, Azi A and B), worked out from the collections. Pure: no store, no React.
 
-import { dayOfInstant } from "../../domain/dates.js";
+import { dayOfInstant, parseISODate } from "../../domain/dates.js";
 import { isRunning, runningEntry } from "../../domain/work-clock.js";
 import { OPEN_STATUSES } from "../../domain/work-order.js";
 
@@ -101,6 +101,46 @@ export function dropMinute({ px, width, from, to, minutes, snap = 15 }) {
 	const raw = from + (px / width) * (to - from);
 	const snapped = from + Math.round((raw - from) / snap) * snap;
 	return Math.max(from, Math.min(snapped, Math.max(from, to - minutes)));
+}
+
+/**
+ * A closed day folds to a strip on the board, unless it is today, holds a card (nothing gets hidden) or was opened by
+ * hand. With no working day set at all, nothing folds.
+ */
+export function isFoldedDay(day, { openDays, today, busy, unfolded }) {
+	if (!openDays.length || openDays.includes(parseISODate(day).getDay())) return false;
+	return day !== today && !busy.has(day) && !unfolded.has(day);
+}
+
+/** Where each day of the rail starts, in px, from their widths; the last value is the rail's whole width. */
+export function railOffsets(widths) {
+	const offsets = [0];
+	for (const width of widths) offsets.push(offsets.at(-1) + width);
+	return offsets;
+}
+
+/** The place at `x` px as a day index plus the part of that day: days of any width, inside the rail. */
+export function railAt(offsets, x) {
+	const days = offsets.length - 1;
+	if (days < 1 || x <= 0) return 0;
+	if (x >= offsets[days]) return days;
+	let low = 0;
+	let high = days - 1;
+	while (low < high) {
+		const middle = Math.ceil((low + high) / 2);
+		if (offsets[middle] <= x) low = middle;
+		else high = middle - 1;
+	}
+	return low + (x - offsets[low]) / (offsets[low + 1] - offsets[low]);
+}
+
+/** The px of a place from `railAt`. */
+export function railX(offsets, pos) {
+	const days = offsets.length - 1;
+	if (pos <= 0) return 0;
+	if (pos >= days) return offsets[days];
+	const i = Math.floor(pos);
+	return offsets[i] + (pos - i) * (offsets[i + 1] - offsets[i]);
 }
 
 const STACK_MIN = 15 * 60000; // a card is at least a quarter hour wide when deciding what overlaps
