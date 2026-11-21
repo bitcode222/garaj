@@ -541,6 +541,13 @@
 	pointer-events: none;
 	mask-image: linear-gradient(to bottom, #000 calc(100% - 3.75rem), rgb(0 0 0 / 0.72) calc(100% - 2.75rem), rgb(0 0 0 / 0.32) calc(100% - 1.5rem), rgb(0 0 0 / 0.08) calc(100% - 0.5rem), transparent 100%);
 }
+/* From tablet up the head's colour keeps the sheet's 14 px padding too; the close button stays in the corner. */
+@media (min-width: 48rem) {
+	.sheet-head-fade {
+		inset: 14px 14px 0;
+		border-radius: 14px 14px 0 0;
+	}
+}
 .sheet-a-body section[aria-label] > :first-child:is(h2, h3, p) {
 	font-size: 1.25rem;
 	line-height: 1.25;
