@@ -115,14 +115,15 @@ pick E). Bookings still to confirm: a dotted white outline (and an amber dot in 
 
 **Zi on a desktop is the day board** (owner, 20 Nov 2026; replaces Linie · Mecanici and "Ziua pe scurt",
 `features/calendar/day-board.jsx`): one day, ‹ › and Azi move it, the mini month picks it. Rows by lift or by mechanic
-(**Elevatoare / Mecanici**, `garaj.azi.lanes`; Mecanici leaves out the front desk), a window of 2 h · 4 h · 8 h · the whole
-day (`garaj.azi.span`) panned by click-and-drag or a sideways scroll, the hours in view in the top-left corner. Rows are
+(**Elevatoare / Mecanici**, `garaj.azi.lanes`; Mecanici leaves out the front desk), the days are one carousel (21 Nov 2026):
+click-and-drag or a sideways scroll runs freely through them, ‹ › step, what is in view in the top-left corner. On Azi the
+section has its own ‹ › and Azi and a **Zi / Săptămână** switch (`garaj.azi.range`; a week starts on Monday). Rows are
 renamed in place, dragged by their handle into a new order and added at the bottom (a new lift or mechanic). A card dragged
 onto another row goes to that lift or mechanic, its time unchanged (a booking's job follows it); dragged by an end it takes
 a new start or end on the quarter hour — a booking through the calendar's reschedule (confirm setting, overlap warning,
 undo), a job's logged work through `setEntrySpan` (`src/domain/work-clock.js`: no overlap with the job's other stretches,
 a running one keeps running). Jobs on a lift on the car's cover; bookings a grey dashed outline with the make tile. A
-tablet and the phone keep their own day. Cards that overlap on one row stack in levels and the row grows (20 Nov 2026); a card half under the row names keeps its logo and text in view; a narrow card shows only the logo; "Toată ziua" never scrolls sideways unless an hour would be under 56 px.
+tablet and the phone keep their own day. Cards that overlap on one row stack in levels and the row grows (20 Nov 2026); a card half under the row names keeps its logo and text in view; a narrow card shows only the logo; one day in view keeps every hour at 56 px or more.
 
 ### Telefon ca iPhone (owner, 17 Nov 2026, board https://claude.ai/artifact/XZjoSBj5YhRWmdHKBATf8d)
 
