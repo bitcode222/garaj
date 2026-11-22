@@ -52,7 +52,7 @@ unless each changing element is registered, and has no low-power or reduced-moti
 | `pill` | the dashboard's buttons on the page (filters, view switch, quick actions, Perioada, an outlined card's call and "…") | a 7 % ink tint over 6 px frost |
 | `ink` | the chosen filter and the main button on the page (Confirmă on a booking, Primește o mașină) | the ink colour at 82 %: dark glass, light in dark mode |
 
-The rim, edge, sheen and shadow per theme are `--lg-*` in `globals.css`. Cards, sheets and pages stay solid; the dashboard's buttons are glass at the owner's request (19 Nov 2026), through `GlassPill`, `CoverButton` and `CoverIconButton`.
+The rim, edge, sheen and shadow per theme are `--lg-*` in `globals.css`. Cards, sheets and pages stay solid; the dashboard's buttons are glass at the owner's request (19 Nov 2026), through `GlassPill`, `CoverButton` and `CoverIconButton`; a sheet's "Toate detaliile" and close are glass too (22 Nov 2026).
 
 Ways back, from the lightest:
 1. Setări › Aspect › **Sticlă lichidă** off: this device gets the plain surfaces (`garaj.glass` = `off`).

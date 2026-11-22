@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Maximize2, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Sheet } from "@/components/ds/sheet";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { useIsReady } from "@/lib/store/hooks";
 
 /**
  * Detail overlay (appointment, customer, vehicle, work order, invoice); `kind` and `state` colour its title (Sheet). The
- * controls live in the top bar: open the full page, edit, close. Also handles
+ * controls live in the top bar: edit, "Toate detaliile" (the full page), close. Also handles
  * the three states every detail needs: loading skeleton, record deleted while
  * open (closes itself), and the footer for primary actions.
  */
@@ -41,21 +41,13 @@ export function DetailSheet({ open, onOpenChange, title, description, kind, stat
 			cover={cover}
 			outlined={outlined}
 			headerActions={
-				entity && (
-					<>
-						{onEdit && (
-							<Button variant="ghost" size="icon" className="size-10 text-muted-foreground md:size-9" onClick={onEdit} aria-label={editLabel} title={editLabel}>
-								<Pencil />
-							</Button>
-						)}
-						{fullPage && (
-							<Button variant="ghost" size="icon" className="size-10 text-muted-foreground md:size-9" onClick={() => navigateFromSheet(router, fullPage)} aria-label="Deschide pagina completă" title="Pagina completă">
-								<Maximize2 />
-							</Button>
-						)}
-					</>
+				entity && onEdit && (
+					<Button variant="ghost" size="icon" className="size-10 text-muted-foreground md:size-9" onClick={onEdit} aria-label={editLabel} title={editLabel}>
+						<Pencil />
+					</Button>
 				)
 			}
+			onFullPage={entity && fullPage ? () => navigateFromSheet(router, fullPage) : undefined}
 			footer={footer}
 			footerClassName={footerClassName}
 		>
