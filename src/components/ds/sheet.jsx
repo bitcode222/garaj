@@ -3,7 +3,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ArrowLeftIcon, ChevronLeftIcon, Maximize2, XIcon } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { CarLine, MakeTile, makeArt } from "@/components/ds/car";
+import { CarLine, MakeTile } from "@/components/ds/car";
 import { Glass } from "@/components/ds/glass";
 import { MakeLogo } from "@/components/ds/make-logo";
 import { TONE_COLOR, makeCover, makeInk } from "@/lib/colors";
@@ -156,7 +156,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, o
 	const car = tint ?? (bar ? make : null);
 	// Sheets "A" (the owner's picks, 16–20 Nov 2026): the head is in the car's colour, as its card; the body is white with
 	// grey groups under big titles (rounds 5 and 6, "S2 Alb" and "T5 Titluri mari").
-	// `outlined` (a booking, owner 21 Nov 2026): no colour on the head, only a dashed edge that fades out; the logo box keeps its gradient.
+	// `outlined` (a booking, owner 21 Nov 2026): no colour on the head, only a dashed edge that fades out.
 	const carClass = car && !outlined ? (makeInk(car) === "#ffffff" ? "car-sheet-dark" : "car-sheet-light") : null;
 	const contentRef = useRef(null);
 	const depth = useContext(SheetDepth);
@@ -294,7 +294,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, o
 
 /**
  * The head of a car's sheet (sheet "A", the owner's pick, 19 Nov 2026), as its card: on the car's colour, the logo box
- * at the left (its number at the top, "car • plate" at the bottom), beside it the state, the title and a few lines;
+ * at the left (a flat fill, the plate at the bottom), beside it the record's number, the state, the title and a few lines;
  * under them the main button and the round ones (`footer`). No visit bar: the record's "…" reaches the others (20 Nov 2026).
  */
 function CarHead({ className, style, car, cover, outlined, title, description, state, footer }) {
@@ -302,12 +302,12 @@ function CarHead({ className, style, car, cover, outlined, title, description, s
 	return (
 		<div className={cn("mt-2 min-w-0", className)} style={style}>
 			<div className="flex min-w-0 items-start gap-4">
-				<span aria-hidden className="relative flex size-28 shrink-0 items-center justify-center rounded-[12px] md:size-32" style={{ background: makeArt(car), color: makeInk(car) }}>
+				<span aria-hidden className="relative flex size-28 shrink-0 items-center justify-center rounded-[12px] bg-foreground/[0.07] text-foreground md:size-32">
 					<MakeLogo make={car} className="size-12 -translate-y-1.5 text-current md:size-14" />
-					{cover?.code && <span translate="no" className="absolute top-2 left-2 rounded-[5px] bg-black/30 px-1.5 py-0.5 text-[10.5px] font-semibold tracking-[0.04em] whitespace-nowrap text-white tabular-nums">{cover.code}</span>}
 					<CarLine car={null} plate={cover?.plate} className="absolute right-2 bottom-2 left-2 text-[12px]" />
 				</span>
 				<div className="flex min-w-0 flex-1 flex-col gap-1">
+					{cover?.code && <span translate="no" className="text-xs font-semibold tracking-[0.04em] whitespace-nowrap tabular-nums opacity-80">{cover.code}</span>}
 					{state && (
 						<span className={cn("inline-flex items-center gap-1.5 self-start rounded-[6px] px-2 py-0.5 text-xs font-medium", outlined ? "bg-foreground/[0.07] text-foreground" : "bg-black/25 text-white")}>
 							<span className="size-1.5 rounded-full" style={{ background: TONE_COLOR[state.tone] ?? TONE_COLOR.neutral }} aria-hidden />
