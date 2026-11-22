@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
-import { Building2, CalendarClock, ChevronRight, Database, Download, FlaskConical, ImagePlus, Monitor, PanelRight, FileText, Moon, Palette, Percent, Plus, ReceiptText, RotateCcw, Star, Sun, Upload, Users, Warehouse } from "lucide-react";
+import { Building2, CalendarClock, Globe, ChevronRight, Database, Download, FlaskConical, ImagePlus, Monitor, PanelRight, FileText, Moon, Palette, Percent, Plus, ReceiptText, RotateCcw, Star, Sun, Upload, Users, Warehouse } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
@@ -93,6 +93,7 @@ const SECTIONS = [
 	{ id: "tarife", title: "Tarife", icon: Percent, color: AREA.catalog },
 	{ id: "recenzii", title: "Recenzii", icon: Star, color: "#e26a8d" },
 	{ id: "program", title: "Program", icon: CalendarClock, color: AREA.programare },
+	{ id: "online", title: "Programări online", icon: Globe, color: AREA.programare },
 	{ id: "echipa", title: "Echipă", icon: Users, color: AREA.clienti },
 	{ id: "posturi", title: "Posturi de lucru", icon: Warehouse, color: AREA.masini },
 	{ id: "aspect", title: "Aspect", icon: Palette, color: AREA.setari },
@@ -218,6 +219,7 @@ function Settings({ settings }) {
 	const shop = draft.shop;
 	const setShop = (patch) => update((d) => ({ ...d, shop: { ...d.shop, ...patch } }));
 	const setInvoicing = (patch) => update((d) => ({ ...d, invoicing: { ...d.invoicing, ...patch } }));
+	const setStorefront = (patch) => update((d) => ({ ...d, storefront: { ...d.storefront, ...patch } }));
 	const setHours = (patch) => update((d) => ({ ...d, hours: { ...d.hours, ...patch } }));
 	const series = draft.invoicing.series;
 	const counterValue = counters.invoices?.[series] ?? draft.invoicing.startNumber ?? 1;
@@ -417,6 +419,21 @@ function Settings({ settings }) {
 								);
 							})}
 						</div>
+					</div>
+				</Section>
+
+				<Section id="online" icon={Globe} title="Programări online" description="Clienții cer o programare pe site, iar cererea apare la De acceptat">
+					<div className="grid gap-4">
+						<label className="flex items-center justify-between gap-4">
+							<span>
+								<span className="block text-sm font-medium">Arată clienților istoricul</span>
+								<span className="block text-xs text-muted-foreground">Vizitele și numerele facturilor apar în contul celor care au programat online.</span>
+							</span>
+							<Switch checked={Boolean(draft.storefront?.shareHistory)} onCheckedChange={(shareHistory) => setStorefront({ shareHistory })} aria-label="Arată clienților istoricul" />
+						</label>
+						<a href="/service/" target="_blank" rel="noreferrer" className="text-sm font-medium underline underline-offset-4">
+							Deschide pagina publică
+						</a>
 					</div>
 				</Section>
 

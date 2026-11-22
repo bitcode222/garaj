@@ -66,7 +66,7 @@ function BookingCover({ appointment: a, vehicle, customer, staff, bay, today }) 
 		<CarCover
 			make={vehicle?.make}
 			car={subject}
-			code={a.number ? `PRG #${a.number}` : "PRG"}
+			code={`${a.number ? `PRG #${a.number}` : "PRG"}${a.source === "online" ? " · Online" : ""}`}
 			plate={vehicle?.plate}
 			status="De confirmat"
 			statusColor={STATE.wait}

@@ -28,6 +28,7 @@ export const DEFAULT_SETTINGS = {
 	partsMarkup: 35,
 	hours: { open: "08:00", close: "18:00", days: [1, 2, 3, 4, 5, 6] },
 	service: { intervalKm: 15000, intervalMonths: 12 },
+	storefront: { shareHistory: false },
 	calendar: {
 		view: "day",
 		colorBy: "status",

@@ -11,3 +11,6 @@ docs
 npm-debug.log*
 Dockerfile
 docker-compose.yml
+
+cloudflare/dist
+cloudflare/.wrangler
