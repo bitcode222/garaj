@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ExternalLink, MoreHorizontal, Phone } from "lucide-react";
+import { CalendarCheck, Check, ExternalLink, MoreHorizontal, Phone } from "lucide-react";
 import { COVER_HEIGHT, COVER_WIDTH, CarCover, CoverButton, CoverIconButton } from "@/components/ds/car";
+import { EmptyState } from "@/components/ds/data";
 import { GlassPill } from "@/components/ds/glass";
 import { SectionHeader } from "@/components/ds/blocks";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -15,7 +16,7 @@ import { toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 
 // Azi A, first section (docs/DESIGN.md §4): the bookings still to accept, as outlined covers in day order, the soonest
-// first, each naming its day. Confirming is one tap, with "Anulează" in the toast. Nothing to accept: no section.
+// first, each naming its day. Confirming is one tap, with "Anulează" in the toast. Nothing to accept: the section stays, with a quiet empty card.
 
 const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).join(" ") || "Mașină";
 const capital = (text) => text.charAt(0).toUpperCase() + text.slice(1);
@@ -108,7 +109,25 @@ export function ToAccept({ groups, today, vehicles, customers, staff, bays }) {
 	const [filter, setFilter] = useState("all");
 	const days = groups.filter((g) => g.day);
 	const total = days.reduce((n, g) => n + g.items.length, 0);
-	if (!total) return null;
+	if (!total) {
+		return (
+			<section className="space-y-3" aria-label="De acceptat">
+				<SectionHeader title="De acceptat" subtitle="Nicio programare de confirmat" href="/appointments/" />
+				<EmptyState
+					compact
+					icon={CalendarCheck}
+					title="Ești la zi cu programările"
+					description="Programările noi apar aici până le confirmi."
+					className="bg-card"
+					action={
+						<GlassPill active onClick={() => openSheet("appointment")} className="h-8 rounded-[8px] px-3 text-[13px]">
+							Programare nouă
+						</GlassPill>
+					}
+				/>
+			</section>
+		);
+	}
 	const counts = Object.fromEntries(FILTERS.map((f) => [f.value, days.filter((g) => f.keep(g.day, today)).reduce((n, g) => n + g.items.length, 0)]));
 	const active = counts[filter] ? filter : "all";
 	const keep = FILTERS.find((f) => f.value === active).keep;
