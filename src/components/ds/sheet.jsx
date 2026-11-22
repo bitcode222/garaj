@@ -3,7 +3,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ArrowLeftIcon, ChevronLeftIcon, Maximize2, XIcon } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { CarLine, MakeTile } from "@/components/ds/car";
+import { MakeTile } from "@/components/ds/car";
 import { Glass } from "@/components/ds/glass";
 import { MakeLogo } from "@/components/ds/make-logo";
 import { TONE_COLOR, makeCover, makeInk } from "@/lib/colors";
@@ -170,7 +170,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, o
 	// The head: back, the sheet's controls and close, then the title (a car's: CarHead).
 	const head = (
 					<div
-						className={cn("shrink-0 touch-pan-y", car ? "relative isolate px-5 pt-[calc(1.25rem+var(--safe-top))] pb-16 md:px-[60px] md:pt-[100px]" : "px-10 pt-[calc(3.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-14", centered && "md:pb-6")}
+						className={cn("shrink-0 touch-pan-y", car ? "relative isolate px-5 pt-[calc(1.25rem+var(--safe-top))] pb-20 md:px-[60px] md:pt-[116px]" : "px-10 pt-[calc(3.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-14", centered && "md:pb-6")}
 						{...swipe.handlers}
 					>
 						{/* The car's colour fades into the sheet below the head's content, which stays on the solid part. */}
@@ -293,38 +293,42 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, o
 }
 
 /**
- * The head of a car's sheet (sheet "A", the owner's pick, 19 Nov 2026), as its card: on the car's colour, the logo box
- * at the left (a flat fill, the plate at the bottom), beside it the record's number, the state, the title and a few lines;
+ * The head of a car's sheet (sheet "A", the owner's pick, 19 Nov 2026), as its card: on the car's colour, the bare logo
+ * at the left, beside it the state and number, the title, the plate and car, and the people;
  * under them the main button and the round ones (`footer`). No visit bar: the record's "…" reaches the others (20 Nov 2026).
  */
 function CarHead({ className, style, car, cover, outlined, title, description, state, footer }) {
 	const lines = (cover?.lines ?? []).filter(Boolean);
 	return (
 		<div className={cn("mt-2 min-w-0", className)} style={style}>
-			<div className="flex min-w-0 items-start gap-4">
-				<span aria-hidden className="relative flex size-28 shrink-0 items-center justify-center rounded-[12px] bg-foreground/[0.07] text-foreground md:size-32">
-					<MakeLogo make={car} className="size-12 -translate-y-1.5 text-current md:size-14" />
-					<CarLine car={null} plate={cover?.plate} className="absolute right-2 bottom-2 left-2 text-[12px]" />
-				</span>
-				<div className="flex min-w-0 flex-1 flex-col gap-1">
-					{cover?.code && <span translate="no" className="text-xs font-semibold tracking-[0.04em] whitespace-nowrap tabular-nums opacity-80">{cover.code}</span>}
-					{state && (
-						<span className={cn("inline-flex items-center gap-1.5 self-start rounded-[6px] px-2 py-0.5 text-xs font-medium", outlined ? "bg-foreground/[0.07] text-foreground" : "bg-black/25 text-white")}>
-							<span className="size-1.5 rounded-full" style={{ background: TONE_COLOR[state.tone] ?? TONE_COLOR.neutral }} aria-hidden />
-							{state.text}
-						</span>
+			{/* By importance: where the job stands, what it is, which car (the plate first, as the shop calls it), then who. The number is reference only. */}
+			<div className="flex min-w-0 items-center gap-4 md:gap-5">
+				<MakeLogo make={car} className="size-14 shrink-0 text-2xl text-foreground md:size-16" />
+				<div className="flex min-w-0 flex-1 flex-col">
+					{(state || cover?.code) && (
+						<div className="mb-2 flex min-w-0 items-center gap-2">
+							{state && (
+								<span className={cn("inline-flex items-center gap-1.5 rounded-[6px] px-2 py-0.5 text-xs font-medium", outlined ? "bg-foreground/[0.07] text-foreground" : "bg-black/25 text-white")}>
+									<span className="size-1.5 rounded-full" style={{ background: TONE_COLOR[state.tone] ?? TONE_COLOR.neutral }} aria-hidden />
+									{state.text}
+								</span>
+							)}
+							{cover?.code && <span translate="no" className="ml-auto text-xs font-medium tracking-[0.04em] whitespace-nowrap tabular-nums opacity-70">{cover.code}</span>}
+						</div>
 					)}
-					<DialogPrimitive.Title className="text-[1.375rem] leading-tight font-bold tracking-tight break-words">{title}</DialogPrimitive.Title>
-					{cover?.car && <p className="truncate text-[13.5px] opacity-80">{[cover.car, cover.plate && formatPlate(cover.plate)].filter(Boolean).join(" • ")}</p>}
-					{lines.map((line, i) => (
-						<p key={i} className="truncate text-[13.5px] opacity-80">
-							{line}
+					<DialogPrimitive.Title className="text-2xl leading-tight font-bold tracking-tight break-words">{title}</DialogPrimitive.Title>
+					{cover?.car && (
+						<p className="mt-1.5 truncate text-[15px] font-medium">
+							{cover.plate && <span translate="no" className="font-bold whitespace-nowrap uppercase">{formatPlate(cover.plate)}</span>}
+							{cover.plate && <span className="opacity-60"> · </span>}
+							{cover.car}
 						</p>
-					))}
-					<DialogPrimitive.Description className={description ? "text-[13.5px] opacity-80" : "sr-only"}>{description ?? title}</DialogPrimitive.Description>
+					)}
+					{lines.length > 0 && <p className="mt-0.5 truncate text-[13.5px] opacity-75">{lines.join(" · ")}</p>}
+					<DialogPrimitive.Description className={description ? "mt-0.5 text-[13.5px] opacity-75" : "sr-only"}>{description ?? title}</DialogPrimitive.Description>
 				</div>
 			</div>
-			{footer && <div data-sheet-actions className="mt-4 flex flex-wrap items-center gap-2 [&>:first-child]:flex-1 [&>:first-child]:justify-center [&_p]:basis-full [&_p]:text-xs">{footer}</div>}
+			{footer && <div data-sheet-actions className="mt-6 flex flex-wrap items-center gap-2 [&>:first-child]:flex-1 [&>:first-child]:justify-center [&_p]:basis-full [&_p]:text-xs">{footer}</div>}
 		</div>
 	);
 }
