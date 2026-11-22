@@ -302,8 +302,8 @@ function CarHead({ className, style, car, cover, outlined, title, description, s
 	return (
 		<div className={cn("mt-2 min-w-0", className)} style={style}>
 			{/* By importance: where the job stands, what it is, which car (the plate first, as the shop calls it), then who. The number is reference only. */}
-			<div className="flex min-w-0 items-center gap-4 md:gap-5">
-				<MakeLogo make={car} className="size-14 shrink-0 text-2xl text-foreground md:size-16" />
+			<div className="flex min-w-0 items-center gap-5 md:gap-8">
+				<MakeLogo make={car} className="ml-1 size-16 shrink-0 text-2xl text-foreground md:ml-3 md:size-20" />
 				<div className="flex min-w-0 flex-1 flex-col">
 					{(state || cover?.code) && (
 						<div className="mb-2 flex min-w-0 items-center gap-2">
