@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { VisitDates } from "@/features/flow/visit-dates";
 import {
 	ChevronRight,
 	FilePlus2,
@@ -258,6 +259,12 @@ function WorkOrder({ order, embedded = false }) {
 		};
 		return (
 			<div className="space-y-7 pt-3">
+				<SheetGroup title="Când">
+					<div className="rounded-[14px] bg-card px-(--sheet-inset) py-3.5">
+						<VisitDates appointment={appointment} order={order} today={today} />
+					</div>
+				</SheetGroup>
+
 				<JobWarnings order={order} />
 
 				<SheetGroup title="Ce reclamă clientul">

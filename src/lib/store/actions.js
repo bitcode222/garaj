@@ -22,6 +22,7 @@ import { defaultInspection, invoiceLinesFromOrder, toInvoiceDraft, transition } 
 import { saveReception } from "@/domain/reception";
 import { dropLastRequest, logRequest, markReceived, newReview, noteCustomer } from "@/domain/review";
 import { appendJobLog, recordJobChanges } from "@/domain/job-log";
+import { setJobDates as correctJobDates } from "@/domain/visit-dates";
 import { setEntrySpan, setLineDone as markLineDone, startWork as startClock, stopClock } from "@/domain/work-clock";
 import { mergeSettings } from "./defaults";
 import { COLLECTIONS, atomic, commit, getState, replaceAllData, snapshotForBackup } from "./store";
@@ -567,6 +568,15 @@ export function updateWorkOrder(id, patch) {
 	}
 	const next = logged(order, { ...order, ...patch, updatedAt: now() });
 	commit({ workOrders: { put: [next] } });
+	return next;
+}
+
+/** Corrects when the car came in, when it was promised, ready or handed over (src/domain/visit-dates.js), also on a closed job. */
+export function setJobDates(id, patch) {
+	const order = mustGet("workOrders", id, "Lucrarea");
+	const appointment = order.appointmentId ? (getState().appointments[order.appointmentId] ?? null) : null;
+	const next = correctJobDates(order, patch, { now: now(), by: actorName(), appointment });
+	if (next !== order) commit({ workOrders: { put: [next] } });
 	return next;
 }
 
