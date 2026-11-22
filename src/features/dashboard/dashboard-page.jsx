@@ -177,6 +177,7 @@ export function DashboardPage() {
 			<PageTitle title="Azi" subtitle={`${fmtDate(today, "EEEE, d MMMM")} · ${settings.shop.name}`} />
 			<ToAccept groups={selectToConfirm(appointments, now).groups} today={today} vehicles={vehicles} customers={customers} staff={staff} bays={bays} />
 			<InShop jobs={jobs} vehicles={vehicles} customers={customers} staffId={member?.id ?? null} filter={shopFilter} setFilter={setShopFilter} sectionRef={shopRef} />
+			<DayBoard section initialDay={today} today={today} bays={bays} staff={staff} appointments={appointments} workOrders={workOrders} vehicles={vehicles} settings={settings} />
 			<MoneyRow
 				{...selectAziMoney(payments, workOrders, invoices, settings, today)}
 				today={today}
@@ -186,7 +187,6 @@ export function DashboardPage() {
 					shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 				}}
 			/>
-			<DayBoard section initialDay={today} today={today} bays={bays} staff={staff} appointments={appointments} workOrders={workOrders} vehicles={vehicles} settings={settings} />
 		</Page>
 	);
 }
