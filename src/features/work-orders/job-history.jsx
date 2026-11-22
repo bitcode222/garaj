@@ -9,6 +9,7 @@ import { fmtDate, fmtTime, formatMoney } from "@/lib/format";
 import { WORK_ORDER_STATUS } from "@/lib/labels";
 
 const FIELD = { complaint: "Ce spune clientul", diagnosis: "Diagnostic", notes: "Note interne", mileage: "Kilometraj", fuelLevel: "Combustibil" };
+const DATE_FIELD = { arrived: "Data intrării", promised: "Termenul", ready: "Data de gata", delivered: "Data predării" };
 const LINE_FIELD = { description: "denumire", qty: "cantitate", unitPrice: "preț", discountPct: "reducere", refused: "refuz" };
 const stageName = (status) => (status === "estimate" ? "Deviz deschis" : (WORK_ORDER_STATUS[status]?.label ?? status));
 const when = (span) => `${fmtDate(span.start, "d MMM")} ${fmtTime(span.start)}–${span.end ? fmtTime(span.end) : "acum"}`;
@@ -33,6 +34,8 @@ function describe(entry, currency) {
 			return { title: "Deviz trimis clientului", icon: Check };
 		case "booking_moved":
 			return { title: "Programare mutată", icon: CalendarClock, content: `${when(entry.from)} → ${when(entry.to)}` };
+		case "date_changed":
+			return { title: `${DATE_FIELD[entry.field] ?? "Data"} modificat${entry.field === "promised" ? "" : "ă"}`, icon: CalendarClock, content: `${entry.from ? fmtDate(entry.from, "d MMM, HH:mm") : "fără"} → ${fmtDate(entry.to, "d MMM, HH:mm")}` };
 		case "assigned":
 			return { title: entry.field === "bayId" ? "Elevator schimbat" : "Mecanic schimbat", icon: ArrowLeftRight, content: `${entry.fromName ?? "fără"} → ${entry.toName ?? "fără"}` };
 		case "work_moved":

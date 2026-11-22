@@ -3,7 +3,7 @@
 import { PhoneBooking } from "./phone-booking";
 import { PHONE } from "@/components/ds/nav-bar";
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, ChevronRight, CircleX, Clock, FileText, Mail, MoreHorizontal, Phone, Plus, Timer, UserX, Wrench } from "lucide-react";
+import { ChevronRight, CircleX, Clock, FileText, Mail, MoreHorizontal, Phone, Plus, Timer, UserX, Wrench } from "lucide-react";
 import { Initials, Money } from "@/components/ds/data";
 import { DetailSheet } from "@/components/ds/detail-sheet";
 import { FlowSteps, usePanelEscape } from "@/components/ds/flow-steps";
@@ -34,6 +34,7 @@ import { tone } from "@/lib/tones";
 import { cn } from "@/lib/utils";
 import { fmtLength } from "@/features/dashboard/visit-ui";
 import { VisitBarFor, useVisit } from "@/features/flow/visit-bar";
+import { VisitDates } from "@/features/flow/visit-dates";
 import { useWalk } from "@/features/flow/visit-links";
 import { CoverIconButton } from "@/components/ds/car";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -171,7 +172,7 @@ function BookingSheet({ open, onOpenChange, id, panel: openOn = null }) {
 		>
 			{a && (
 				<div className="space-y-5">
-					<WhenSection appointment={a} now={now} today={today} flow={flow} card={card} inCard={inCard} panel={panel} setPanel={setPanel} closePanel={closePanel} warnings={placed("time")} sectionRef={timeRef} />
+					<WhenSection appointment={a} order={order} now={now} today={today} flow={flow} card={card} panel={panel} setPanel={setPanel} closePanel={closePanel} warnings={placed("time")} sectionRef={timeRef} />
 
 					<Section title="Acum">
 						<NowCard appointment={a} card={card} flow={flow} items={items} fixOf={fixOf} order={order} now={now} today={today} primary={primary} onJump={jumpTo} />
@@ -207,55 +208,34 @@ function labelled(spec, fix, key, role = "primary") {
 
 // ── Când ────────────────────────────────────────────────────────────────────
 
-function WhenSection({ appointment: a, now, today, flow, card, inCard, panel, setPanel, closePanel, warnings, sectionRef }) {
-	const day = dayOfInstant(a.start);
-	const away = today ? diffDaysISO(today, day) : 0;
-	const near = Math.abs(away) <= 1 ? fmtDays(away) : null;
-	const sameYear = !today || day.slice(0, 4) === today.slice(0, 4);
+function WhenSection({ appointment: a, order, now, today, flow, card, panel, setPanel, closePanel, warnings, sectionRef }) {
 	const where = relativeTo(a.start, a.end, now);
 	const ahead = AHEAD.includes(a.status);
 	const until =
-		a.status === "arrived"
-			? "în service"
-			: a.status === "cancelled" || a.status === "no_show"
-				? null
-				: where.kind === "ahead"
-					? `peste ${span(where.minutes)}`
-					: where.kind === "now"
-						? `a început acum ${span(where.minutes)}`
-						: `acum ${span(where.minutes)}`;
+		a.status === "cancelled" || a.status === "no_show" || a.status === "arrived" || a.status === "done"
+			? null
+			: where.kind === "ahead"
+				? `peste ${span(where.minutes)}`
+				: where.kind === "now"
+					? `a început acum ${span(where.minutes)}`
+					: `acum ${span(where.minutes)}`;
 	const announced = a.expectedAt && ahead && a.expectedAt > a.start;
+	const bookedNote = announced
+		? { text: `anunțat la ${fmtTime(a.expectedAt)}`, className: tone("blue").text }
+		: until
+			? { text: until, className: where.kind === "past" && ahead ? tone("red").text : "text-muted-foreground" }
+			: null;
 	const delay = flow.moves.find((move) => move.id === "delay");
-	const canReschedule = ahead && !inCard.has("reschedule");
 	const canDelay = delay?.allowed && card.key !== "late";
 
 	return (
 		<Section title="Când" sectionRef={sectionRef} plain>
-			<div className="flex items-start justify-between gap-3">
-				<div className="min-w-0">
-					<p className="text-base font-semibold first-letter:uppercase">
-						{near ? `${near} · ` : ""}
-						{fmtDate(a.start, sameYear ? "EEEE, d MMMM" : "EEEE, d MMMM yyyy")}
-					</p>
-					<p className="text-sm text-muted-foreground tabular-nums">
-						{fmtTime(a.start)} – {fmtTime(a.end)} · {fmtLength(minutesBetween(a.start, a.end))}
-					</p>
-					{announced && <p className={cn("text-sm font-medium", tone("blue").text)}>Anunțat: vine la {fmtTime(a.expectedAt)}</p>}
-				</div>
-				{until && <span className={cn("shrink-0 pt-0.5 text-sm whitespace-nowrap", where.kind === "past" && ahead ? tone("red").text : "text-muted-foreground")}>{until}</span>}
-			</div>
-			{(canReschedule || canDelay) && (
+			<VisitDates appointment={a} order={order} today={today} now={now} bookedNote={bookedNote} onEditBooked={ahead ? () => setPanel("reschedule") : undefined} />
+			{canDelay && (
 				<div className="flex flex-wrap gap-2">
-					{canReschedule && (
-						<Button variant="outline" size="sm" className="max-md:h-11" onClick={() => setPanel("reschedule")}>
-							<CalendarClock /> Reprogramează
-						</Button>
-					)}
-					{canDelay && (
-						<Button variant="outline" size="sm" className="max-md:h-11" onClick={() => setPanel("delay")}>
-							<Clock /> Anunță o întârziere
-						</Button>
-					)}
+					<Button variant="outline" size="sm" className="max-md:h-11" onClick={() => setPanel("delay")}>
+						<Clock /> Anunță o întârziere
+					</Button>
 				</div>
 			)}
 			{panel === "reschedule" && <ReschedulePanel appointment={a} onClose={closePanel} />}
