@@ -1,14 +1,16 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { ArrowLeftIcon, ChevronLeftIcon, XIcon } from "lucide-react";
+import { ArrowLeftIcon, ChevronLeftIcon, Maximize2, XIcon } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { CarLine, MakeTile, makeArt } from "@/components/ds/car";
+import { Glass } from "@/components/ds/glass";
 import { MakeLogo } from "@/components/ds/make-logo";
 import { TONE_COLOR, makeCover, makeInk } from "@/lib/colors";
 import { formatPlate } from "@/domain/vehicle";
 import { KindMark, StateTag, kindText } from "@/components/ds/tone";
 import { haptics } from "@/lib/haptics";
+import { useMediaQuery } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 
 /** Position in the global sheet stack. A sheet above another reuses the scrim below it. */
@@ -30,6 +32,9 @@ const LEAVE = {
 	forward: "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-left-12",
 	back: "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-right-12",
 };
+
+// The top bar's round buttons; without glass they keep this faint fill.
+const SHEET_GLASS = "inline-flex shrink-0 items-center justify-center rounded-full bg-foreground/[0.07] text-foreground transition-transform active:scale-[0.97]";
 
 const DISMISS_DISTANCE = 100; // px dragged right
 const DISMISS_VELOCITY = 0.6; // px/ms, a quick flick
@@ -145,7 +150,7 @@ function bounceThroughScrollLock(el) {
  * in the text colour, and the state is a pill at the right (the sheet look the owner picked, 7 Nov 2026). Without a
  * bar, `kind` and `state` colour and mark the title as before.
  */
-export function Sheet({ open, onOpenChange, title, description, headerActions, kind, state, bar, make, tint, cover, outlined = false, centered = false, footer, footerClassName, className, children }) {
+export function Sheet({ open, onOpenChange, title, description, headerActions, onFullPage, kind, state, bar, make, tint, cover, outlined = false, centered = false, footer, footerClassName, className, children }) {
 	// A sheet about one car takes its colour (docs/DESIGN.md §1): its head is washed with the car's cover colour, fading
 	// into the sheet, and its logo sits on a tile of that colour. `tint` names the car for sheets without a visit bar.
 	const car = tint ?? (bar ? make : null);
@@ -158,17 +163,20 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 	const motion = useContext(SheetMotion);
 	const walked = Boolean(motion.enter || motion.leave);
 	const swipe = useSwipeDismiss(open, onOpenChange);
+	// From tablet up a car's top bar sits above its colour, on the sheet; on a phone it stays on the colour and takes its ink.
+	const wide = useMediaQuery("(min-width: 48rem)");
+	const barOnColor = Boolean(carClass) && !wide;
+	const glassPreset = barOnColor ? "clear" : "pill";
 	// The head: back, the sheet's controls and close, then the title (a car's: CarHead).
 	const head = (
 					<div
-						className={cn("shrink-0 touch-pan-y", car ? cn(carClass, "relative isolate px-5 pt-[calc(0.75rem+var(--safe-top))] pb-16 md:px-[60px] md:pt-[52px]") : "px-10 pt-[calc(2.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-10", centered && "md:pb-6")}
-						style={car && !outlined ? { color: makeInk(car) } : undefined}
+						className={cn("shrink-0 touch-pan-y", car ? "relative isolate px-5 pt-[calc(1.25rem+var(--safe-top))] pb-16 md:px-[60px] md:pt-[100px]" : "px-10 pt-[calc(3.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-14", centered && "md:pb-6")}
 						{...swipe.handlers}
 					>
 						{/* The car's colour fades into the sheet below the head's content, which stays on the solid part. */}
 						{car && <span aria-hidden className={cn("sheet-head-fade", outlined && "sheet-head-dashed")} style={outlined ? undefined : { background: makeCover(car) }} />}
-						{/* Top bar: back and the sheet's controls on the left, close (md+) on the right. A car's sheet is inset 36 px more; its close sits in that margin, in the corner. */}
-						<div className="-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-9">
+						{/* Top bar: back and the sheet's controls on the left; "Toate detaliile" and close (md+), round liquid glass, on the right. */}
+						<div className={cn("-mx-2 flex min-h-11 items-center gap-0.5 md:min-h-10", car && "md:absolute md:inset-x-9 md:top-5 md:mx-0", barOnColor && carClass)} style={barOnColor ? { color: makeInk(car) } : undefined}>
 							<button
 								type="button"
 								// Reached by walking a visit, Back walks back the way it came; otherwise it closes.
@@ -184,15 +192,20 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
 								<span>Înapoi</span>
 							</button>
 							{headerActions}
-							<DialogPrimitive.Close
-								className={cn("ml-auto flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground max-md:hidden md:size-9", car && "md:relative md:-top-[52px] md:-right-[52px]")}
-								aria-label="Închide"
-							>
-								<XIcon className="size-4" />
-							</DialogPrimitive.Close>
+							<div className="ml-auto flex shrink-0 items-center gap-2">
+								{onFullPage && (
+									<Glass as="button" preset={glassPreset} type="button" onClick={onFullPage} className={cn(SHEET_GLASS, "h-11 gap-2 px-4 text-[13.5px] font-medium md:h-10")}>
+										<Maximize2 className="size-4" aria-hidden />
+										Toate detaliile
+									</Glass>
+								)}
+								<Glass as={DialogPrimitive.Close} preset={glassPreset} className={cn(SHEET_GLASS, "size-10 max-md:hidden")} aria-label="Închide">
+									<XIcon className="size-4" />
+								</Glass>
+							</div>
 						</div>
 						{car ? (
-							<CarHead car={car} cover={cover} outlined={outlined} title={title} description={description} state={state} footer={footer} />
+							<CarHead className={carClass} style={outlined ? undefined : { color: makeInk(car) }} car={car} cover={cover} outlined={outlined} title={title} description={description} state={state} footer={footer} />
 						) : (
 						<div className="mt-1 min-w-0">
 							{bar && <div className="-mx-1 mt-2 mb-4">{bar}</div>}
@@ -284,10 +297,10 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, k
  * at the left (its number at the top, "car • plate" at the bottom), beside it the state, the title and a few lines;
  * under them the main button and the round ones (`footer`). No visit bar: the record's "…" reaches the others (20 Nov 2026).
  */
-function CarHead({ car, cover, outlined, title, description, state, footer }) {
+function CarHead({ className, style, car, cover, outlined, title, description, state, footer }) {
 	const lines = (cover?.lines ?? []).filter(Boolean);
 	return (
-		<div className="mt-2 min-w-0">
+		<div className={cn("mt-2 min-w-0", className)} style={style}>
 			<div className="flex min-w-0 items-start gap-4">
 				<span aria-hidden className="relative flex size-28 shrink-0 items-center justify-center rounded-[12px] md:size-32" style={{ background: makeArt(car), color: makeInk(car) }}>
 					<MakeLogo make={car} className="size-12 -translate-y-1.5 text-current md:size-14" />
