@@ -255,20 +255,20 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, o
 					onInteractOutside={(event) => event.target?.closest?.("[data-sonner-toaster]") && event.preventDefault()}
 					className={cn(
 						car && "sheet-a",
-						"fixed z-50 flex flex-col bg-card text-card-foreground shadow-[0_0_96px_0_oklch(0_0_0/0.12),0_0_32px_0_oklch(0_0_0/0.06)] outline-none dark:shadow-[0_0_96px_0_rgb(0_0_0),0_0_32px_0_rgb(0_0_0)]",
+						"fixed z-50 flex flex-col bg-card text-card-foreground shadow-[0_0_48px_0_oklch(0_0_0/0.06)] outline-none dark:shadow-[0_0_48px_0_rgb(0_0_0/0.35)]",
 						// Phone: a full-height screen that pushes in from the right, lifted above the keyboard.
 						"inset-x-0 bottom-(--kb) h-(--vvh) max-h-dvh duration-300",
 						walked
 							? cn(motion.enter ? ENTER[motion.enter] : "data-[state=open]:animate-in data-[state=open]:slide-in-from-right", motion.leave ? LEAVE[motion.leave] : "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right")
 							: "data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right",
 						// md and up: a side panel.
-						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:border-l",
+						"md:inset-y-0 md:right-0 md:left-auto md:h-dvh md:max-h-none md:w-full md:border-l dark:border-white/[0.06]",
 						// A car's sheet is 40 rem (640 px) wide (owner, 21 Nov 2026); other sheets 42 rem.
 						car ? "md:max-w-[40rem]" : "md:max-w-2xl",
 						// Centred (Recepție in Atelier "Etape", docs/DESIGN.md §4): a card in the middle of the window, md and up.
 						centered &&
 							"md:inset-auto md:top-[5vh] md:left-1/2 md:h-auto md:max-h-[90dvh] md:-translate-x-1/2 md:overflow-hidden md:rounded-2xl md:border md:[--tw-enter-translate-x:0] md:[--tw-exit-translate-x:0] md:data-[state=closed]:zoom-out-95 md:data-[state=open]:zoom-in-95",
-						depth > 0 && "shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.12)] dark:shadow-[0_0_0_1px_var(--border),-24px_0_48px_-12px_oklch(0_0_0/0.25)]",
+						depth > 0 && "shadow-[0_0_0_1px_var(--border),-16px_0_40px_-12px_oklch(0_0_0/0.06)] dark:shadow-[0_0_0_1px_rgb(255_255_255/0.06),-16px_0_40px_-12px_oklch(0_0_0/0.15)]",
 						className,
 					)}
 				>

@@ -72,6 +72,7 @@ bottom), beside it the state pill, the title and a few lines (`cover.car` • pl
 button (`CoverButton`, stretched) and the round glass ones (`CoverIconButton`), then the visit bar. The head ends in a fade into the body (owner, 21 Nov 2026). The body has the
 dashboard's background (`.sheet-a`), its sections rounded groups in the dashboard's card colour under big 20 px bold titles (`.sheet-a-body`). The job's sheet orders them as the desk asks: alert, Ce reclamă clientul, Recepția (km, fuel,
 inspection), De făcut la mașină, Deviz, Factură, Note interne (yellow tint), Mai multe (mechanic, bay, stages, history).
+22 Nov 2026 (owner): in the dark theme a sheet's edge is a faint 6% white, not the brighter `--border`. The sheet's shadow is one soft 48 px layer in both themes.
 22 Nov 2026 (owner): more room at the top of a sheet; "Toate detaliile" (the full page, with its icon) and close are round liquid glass, in one line at the top right, above a car's colour from tablet up.
 22 Nov 2026 (owner): behind an open sheet the page is blurred, not darkened (`sheet-blur`: 8 px from tablet up, one layer, only its opacity animates; none on a phone, where the sheet covers the screen).
 20 Nov 2026 (owner): the head scrolls away with the body; a car's sheet is 40 rem (640 px) wide (widened 21 Nov 2026), its content and the head's colour inset 36 px from tablet up (21 Nov 2026); a booking's sheet has no colour on its head, only a dashed left, top and right edge fading out at the bottom, and the logo box keeps its gradient (21 Nov 2026), other sheets keep
