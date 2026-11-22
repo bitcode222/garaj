@@ -5,12 +5,12 @@ import { useRef, useState } from "react";
 import { ExternalLink, MoreHorizontal, Phone } from "lucide-react";
 import { GlassPill } from "@/components/ds/glass";
 import { COVER_HEIGHT, COVER_WIDTH, CarCover, CoverButton, CoverIconButton } from "@/components/ds/car";
-import { PageTitle, SectionHeader } from "@/components/ds/blocks";
+import { SectionHeader } from "@/components/ds/blocks";
 import { Page } from "@/components/ds/page";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAccount } from "@/components/shell/account-menu";
-import { fmtDate, plural } from "@/lib/format";
+import { plural } from "@/lib/format";
 import { makeInk } from "@/lib/colors";
 import { WORK_ORDER_STATUS } from "@/lib/labels";
 import { openSheet } from "@/lib/sheets";
@@ -22,13 +22,14 @@ import { primaryAction } from "@/features/work-orders/job-action";
 import { jobHeadline, jobSummary } from "@/features/work-orders/job-text";
 import { DayBoard } from "@/features/calendar/day-board";
 import { JOB_FILTERS, shopJobs } from "./azi-data";
+import { AziHeader } from "./azi-header";
 import { MoneyRow } from "./money-row";
 import { PhoneAzi } from "./phone-azi";
 import { ToAccept } from "./to-accept";
 import { PHONE } from "@/components/ds/nav-bar";
 import { useMediaQuery } from "@/lib/hooks";
 
-// Azi (docs/DESIGN.md §4): one page. The bookings still to accept, the cars in the shop as covers, the money (today,
+// Azi (docs/DESIGN.md §4): one page. The header of layered cards, the bookings still to accept, the cars in the shop as covers, the money (today,
 // still to come today, the month so far), and last the day per lift.
 
 const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).join(" ") || "Mașină";
@@ -36,9 +37,10 @@ const carName = (vehicle) => [vehicle?.make, vehicle?.model].filter(Boolean).joi
 function AziSkeleton() {
 	return (
 		<Page width="wide" className="space-y-7">
-			<div className="space-y-2">
-				<Skeleton className="h-8 w-32" />
-				<Skeleton className="h-4 w-56" />
+			<div className="flex gap-1 overflow-hidden">
+				{Array.from({ length: 5 }, (_, i) => (
+					<Skeleton key={i} className="h-[156px] min-w-[196px] flex-1 rounded-2xl" />
+				))}
 			</div>
 			<div className="flex gap-3.5 overflow-hidden">
 				{Array.from({ length: 4 }, (_, i) => (
@@ -171,21 +173,33 @@ export function DashboardPage() {
 	if (phone) return <PhoneAzi today={today} now={now} />;
 	const currency = settings.currency;
 	const jobs = shopJobs(workOrders);
+	const toConfirm = selectToConfirm(appointments, now).groups;
+	const aziMoney = selectAziMoney(payments, workOrders, invoices, settings, today);
+	const showShop = (filter) => {
+		setShopFilter(filter);
+		shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+	};
 
 	return (
 		<Page width="wide" className="azi-type space-y-7">
-			<PageTitle title="Azi" subtitle={`${fmtDate(today, "EEEE, d MMMM")} · ${settings.shop.name}`} />
-			<ToAccept groups={selectToConfirm(appointments, now).groups} today={today} vehicles={vehicles} customers={customers} staff={staff} bays={bays} />
+			<AziHeader
+				{...aziMoney}
+				today={today}
+				shopName={settings.shop.name}
+				toAccept={toConfirm.filter((group) => group.day).reduce((count, group) => count + group.items.length, 0)}
+				currency={currency}
+				jobs={jobs}
+				onShowShop={() => showShop("all")}
+				onShowReady={() => showShop("ready")}
+			/>
+			<ToAccept groups={toConfirm} today={today} vehicles={vehicles} customers={customers} staff={staff} bays={bays} />
 			<InShop jobs={jobs} vehicles={vehicles} customers={customers} staffId={member?.id ?? null} filter={shopFilter} setFilter={setShopFilter} sectionRef={shopRef} />
 			<DayBoard section initialDay={today} today={today} bays={bays} staff={staff} appointments={appointments} workOrders={workOrders} vehicles={vehicles} settings={settings} />
 			<MoneyRow
-				{...selectAziMoney(payments, workOrders, invoices, settings, today)}
+				{...aziMoney}
 				today={today}
 				currency={currency}
-				onShowReady={() => {
-					setShopFilter("ready");
-					shopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-				}}
+				onShowReady={() => showShop("ready")}
 			/>
 		</Page>
 	);
