@@ -170,7 +170,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, o
 	// The head: back, the sheet's controls and close, then the title (a car's: CarHead).
 	const head = (
 					<div
-						className={cn("shrink-0 touch-pan-y", car ? "relative isolate px-5 pt-[calc(1.25rem+var(--safe-top))] pb-20 md:px-[60px] md:pt-[116px]" : "px-10 pt-[calc(3.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-14", centered && "md:pb-6")}
+						className={cn("shrink-0 touch-pan-y", car ? "relative isolate px-(--sheet-gutter) pt-[calc(1.25rem+var(--safe-top))] pb-20 md:pt-[116px]" : "px-10 pt-[calc(3.5rem+var(--safe-top))] pb-10 md:px-10 md:pt-14", centered && "md:pb-6")}
 						{...swipe.handlers}
 					>
 						{/* The car's colour fades into the sheet below the head's content, which stays on the solid part. */}
@@ -277,7 +277,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, o
 						{/* A car's head scrolls away with its body (owner, 20 Nov 2026); other sheets keep theirs fixed. */}
 						{car && head}
 						{/* 1px taller than the viewport: short content still scrolls, so WebKit rubber-bands it. */}
-						<div className={cn("min-h-[calc(100%+1px)]", car ? "sheet-a-body px-4 pt-2 pb-10 md:px-[60px] md:pb-[76px]" : "px-10 pb-10")}>
+						<div className={cn("min-h-[calc(100%+1px)]", car ? "sheet-a-body px-(--sheet-gutter) pt-2 pb-10 md:pb-[76px]" : "px-10 pb-10")}>
 							<SheetDepth.Provider value={depth + 1}>{children}</SheetDepth.Provider>
 						</div>
 					</div>
@@ -303,7 +303,7 @@ function CarHead({ className, style, car, cover, outlined, title, description, s
 		<div className={cn("mt-2 min-w-0", className)} style={style}>
 			{/* By importance: where the job stands, what it is, which car (the plate first, as the shop calls it), then who. The number is reference only. */}
 			<div className="flex min-w-0 items-center gap-5 md:gap-8">
-				<MakeLogo make={car} className="ml-1 size-16 shrink-0 text-2xl text-foreground md:ml-3 md:size-20" />
+				<MakeLogo make={car} className="ml-(--sheet-inset) size-16 shrink-0 text-2xl text-foreground md:size-20" />
 				<div className="flex min-w-0 flex-1 flex-col">
 					{(state || cover?.code) && (
 						<div className="mb-2 flex min-w-0 items-center gap-2">
@@ -313,7 +313,7 @@ function CarHead({ className, style, car, cover, outlined, title, description, s
 									{state.text}
 								</span>
 							)}
-							{cover?.code && <span translate="no" className="ml-auto text-xs font-medium tracking-[0.04em] whitespace-nowrap tabular-nums opacity-70">{cover.code}</span>}
+							{cover?.code && <span translate="no" className="mr-(--sheet-inset) ml-auto text-xs font-medium tracking-[0.04em] whitespace-nowrap tabular-nums opacity-70">{cover.code}</span>}
 						</div>
 					)}
 					<DialogPrimitive.Title className="text-2xl leading-tight font-bold tracking-tight break-words">{title}</DialogPrimitive.Title>

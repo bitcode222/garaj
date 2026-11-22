@@ -566,6 +566,19 @@
    left and its value on the right, still editable. */
 .sheet-a {
 	background: var(--background); /* the dashboard's own background, its groups the dashboard's cards (owner, 21 Nov 2026) */
+	/* One alignment for the whole sheet (owner, 22 Nov 2026): the head and the body share the gutter; the logo, the
+	   section titles and the text inside the cards all start one inset in from it. Change these two, everything follows. */
+	--sheet-gutter: calc(var(--spacing) * 4);
+	--sheet-inset: calc(var(--spacing) * 4);
+}
+@media (min-width: 48rem) {
+	.sheet-a {
+		--sheet-gutter: calc(var(--spacing) * 15);
+	}
+}
+/* A section's title, alone or in a row with its count, lines up with the text inside its card. */
+.sheet-a-body section[aria-label]:not(section section) > :first-child:is(h2, h3, p, :has(> :is(h2, h3))) {
+	padding-inline: var(--sheet-inset);
 }
 .sheet-head-fade {
 	position: absolute;
@@ -601,7 +614,7 @@
 .sheet-a-body section[aria-label]:not([data-group]) > :not(:first-child):not(:has([data-field])) {
 	background: var(--card);
 	border-radius: 0.75rem;
-	padding: 0.75rem 0.875rem;
+	padding: 0.75rem var(--sheet-inset);
 }
 .sheet-a-body fieldset {
 	border-top: 0;
@@ -632,7 +645,7 @@
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 0.25rem 0.75rem;
-	padding: 0.4rem 0.75rem;
+	padding: 0.4rem var(--sheet-inset);
 	min-height: 2.75rem;
 }
 .sheet-a-body form [data-field] + [data-field] {
