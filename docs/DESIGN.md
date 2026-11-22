@@ -72,6 +72,7 @@ bottom), beside it the state pill, the title and a few lines (`cover.car` • pl
 button (`CoverButton`, stretched) and the round glass ones (`CoverIconButton`), then the visit bar. The head ends in a fade into the body (owner, 21 Nov 2026). The body has the
 dashboard's background (`.sheet-a`), its sections rounded groups in the dashboard's card colour under big 20 px bold titles (`.sheet-a-body`). The job's sheet orders them as the desk asks: alert, Ce reclamă clientul, Recepția (km, fuel,
 inspection), De făcut la mașină, Deviz, Factură, Note interne (yellow tint), Mai multe (mechanic, bay, stages, history).
+22 Nov 2026 (owner): a car's sheet has one left alignment: the logo, the section titles and the text inside the cards start `--sheet-inset` in from `--sheet-gutter` (`.sheet-a`), so changing either moves them together.
 22 Nov 2026 (owner): a car's sheet head is taller and ordered by importance: the bare make logo (no box, no plate; 80 px from tablet up, with room around it) at the left; at the right the state with the record's number at the far end, the title, the plate and car, then the people.
 22 Nov 2026 (owner): in the dark theme a sheet's edge is a faint 6% white, not the brighter `--border`. The sheet's shadow is one soft 48 px layer in both themes.
 22 Nov 2026 (owner): more room at the top of a sheet; "Toate detaliile" (the full page, with its icon) and close are round liquid glass, in one line at the top right, above a car's colour from tablet up.
