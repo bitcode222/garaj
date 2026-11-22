@@ -12,12 +12,17 @@ import { PAYMENT_METHODS } from "@/lib/labels";
 // far against the month before. The numbers come from src/domain/analytics.js; this file only draws them.
 
 // Payment methods are categories, not states or areas: shades of ink, the largest darkest.
-const METHOD_SHADE = { card: "var(--foreground)", cash: "color-mix(in srgb, var(--foreground) 55%, var(--card))", transfer: "color-mix(in srgb, var(--foreground) 30%, var(--card))", other: "color-mix(in srgb, var(--foreground) 15%, var(--card))" };
+export const METHOD_SHADE = { card: "var(--foreground)", cash: "color-mix(in srgb, var(--foreground) 55%, var(--card))", transfer: "color-mix(in srgb, var(--foreground) 30%, var(--card))", other: "color-mix(in srgb, var(--foreground) 15%, var(--card))" };
 // "miercurea trecută": the weekday with its article.
 const LAST = { luni: "lunea", marți: "marțea", miercuri: "miercurea", joi: "joia", vineri: "vinerea", sâmbătă: "sâmbăta", duminică: "duminica" };
+/** "vinerea trecută": the same weekday a week before `today`. */
+export function lastWeekday(today) {
+	const day = fmtDate(addDaysISO(today, -7), "EEEE");
+	return `${LAST[day] ?? day} trecută`;
+}
 const methodLabel = (method) => (method === "transfer" ? "Transfer" : (PAYMENT_METHODS[method]?.label ?? "Altele"));
 
-function Change({ change, against }) {
+export function Change({ change, against }) {
 	if (!change || change.direction === "flat") return <span className="text-xs text-muted-foreground">{against ? `la fel ca ${against}` : " "}</span>;
 	const pct = `${Math.abs(change.pct).toLocaleString("ro-RO", { maximumFractionDigits: 0 })}%`;
 	return (
@@ -39,8 +44,7 @@ function Card({ label, children, className = "" }) {
 const Big = ({ children }) => <span className="azi-figure text-[24px] leading-tight font-semibold tracking-tight tabular-nums">{children}</span>;
 
 function Takings({ takings, today, currency }) {
-	const day = fmtDate(addDaysISO(today, -7), "EEEE");
-	const weekday = `${LAST[day] ?? day} trecută`;
+	const weekday = lastWeekday(today);
 	return (
 		<Card label="Încasat azi">
 			<Big>{formatMoney(takings.total, currency, { decimals: 0 })}</Big>
