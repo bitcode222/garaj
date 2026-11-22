@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ro">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+	<title>Programare online · Service auto</title>
+	<meta name="description" content="Alege serviciul, vezi orele libere și trimite cererea de programare în câteva minute.">
+	<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f8">
+	<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0f11">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+	<link rel="stylesheet" href="/service/style.css">
+</head>
+<body>
+	<a class="skip" href="#app">Sari la conținut</a>
+	<header class="top">
+		<div class="wrap top-row">
+			<a class="brand" href="#/" id="brand">Service auto</a>
+			<nav aria-label="Principal">
+				<a href="#/programare" class="nav-book">Programează</a>
+				<a href="#/cont" id="nav-account">Contul meu</a>
+			</nav>
+		</div>
+	</header>
+	<div id="demo" class="demo" hidden>Mod demonstrativ: nu se trimit SMS-uri, iar codul este completat automat.</div>
+	<main id="app" class="wrap" tabindex="-1"><p class="muted loading">Se încarcă…</p></main>
+	<footer class="wrap foot" id="foot"></footer>
+	<div id="toast" class="toast" role="status" hidden></div>
+	<script type="module" src="/service/app.js"></script>
+</body>
+</html>

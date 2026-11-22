@@ -1,0 +1,24 @@
+{
+	"name": "garaj",
+	"main": "worker/index.js",
+	"compatibility_date": "2026-11-01",
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS",
+		"run_worker_first": true,
+		"not_found_handling": "404-page"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "garaj",
+			// Replace with the id printed by `npx wrangler d1 create garaj` before the first deploy.
+			"database_id": "00000000-0000-0000-0000-000000000000",
+			"migrations_dir": "migrations"
+		}
+	],
+	"vars": {
+		// "demo" accepts the fixed code 123456 and works only on localhost. Real SMS is not connected yet.
+		"AUTH_MODE": "demo"
+	}
+}

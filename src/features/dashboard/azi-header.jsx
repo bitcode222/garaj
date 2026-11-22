@@ -77,7 +77,7 @@ export function AziHeader({ today, shopName, toAccept, takings, still, month, cu
 	const stillTarget = still.cars.count > 0 ? { onClick: onShowReady } : { href: "/invoices/" };
 
 	return (
-		<header className="no-scrollbar -mx-4 -my-5 flex overflow-x-auto px-4 py-7">
+		<header className="no-scrollbar -mx-4 -mt-5 mb-0! flex overflow-x-auto px-4 pt-7 pb-5">
 			<div className="relative z-10 flex h-[156px] min-w-[204px] flex-1 basis-0 rotate-[-0.6deg] flex-col rounded-2xl bg-foreground px-4 py-3.5 text-background shadow-[0_1px_2px_rgb(0_0_0/0.05),0_8px_22px_rgb(0_0_0/0.07)]">
 				<h1 className="text-[28px] leading-tight">Azi</h1>
 				<p className="truncate text-[13px] opacity-70 first-letter:uppercase">{fmtDate(today, "EEEE, d MMMM")}</p>

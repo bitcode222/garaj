@@ -6,6 +6,7 @@ import { toast } from "@/lib/toast";
 import { ConfirmProvider } from "@/components/ds/confirm";
 import { Toaster } from "@/components/ui/sonner";
 import { useKeyboardInset } from "@/lib/keyboard";
+import { startOnlineSync } from "@/lib/online-sync";
 import { ensureAppointmentNumbers } from "@/lib/store/actions";
 import { initStore } from "@/lib/store/store";
 import { useStoreValue } from "@/lib/store/hooks";
@@ -16,9 +17,18 @@ function StoreBoot() {
 
 	useEffect(() => {
 		// Data saved before bookings had numbers gets them once, as soon as it is loaded.
+		let stopSync = null;
+		let gone = false;
 		initStore()
 			.then(ensureAppointmentNumbers)
-			.catch((error) => console.warn("[garaj] numbering bookings failed", error));
+			.catch((error) => console.warn("[garaj] numbering bookings failed", error))
+			.then(() => {
+				if (!gone) stopSync = startOnlineSync();
+			});
+		return () => {
+			gone = true;
+			stopSync?.();
+		};
 	}, []);
 
 	useEffect(() => {

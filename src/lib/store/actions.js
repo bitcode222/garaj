@@ -11,6 +11,7 @@ import {
 	setAppointmentStatus as nextAppointmentStatus,
 	statusBeforeCheckIn,
 } from "@/domain/appointment";
+import { normalizePhone } from "@/domain/customer";
 import { addDaysISO, dayOfInstant, todayISO } from "@/domain/dates";
 import { DomainError } from "@/domain/errors";
 import { uid } from "@/domain/ids";
@@ -376,6 +377,48 @@ export async function createAppointment(input) {
 		return created;
 	});
 	return { appointment, conflicts: conflictsFor(appointment) };
+}
+
+/**
+ * A booking from the storefront becomes a normal booking waiting in De acceptat (docs/STOREFRONT.md). The customer is
+ * matched by phone. A plate that belongs to someone else is never attached: the shop gets a note to check it.
+ */
+export async function importOnlineBooking(booking) {
+	const already = values("appointments").find((a) => a.onlineBookingId === booking.id);
+	if (already) return already;
+	const phone = normalizePhone(booking.customer.phone);
+	const customer = values("customers").find((c) => c.phone && normalizePhone(c.phone) === phone) ?? saveCustomer({ name: booking.customer.name || booking.customer.phone, phone, email: booking.customer.email ?? "" });
+	const plate = booking.vehicle?.plate ?? "";
+	const known = plate ? values("vehicles").find((v) => normalizePlate(v.plate) === normalizePlate(plate)) : null;
+	let vehicleId = null;
+	let plateNote = "";
+	if (known?.customerId === customer.id) vehicleId = known.id;
+	else if (known) plateNote = `Atenție: numărul ${plate} e pe alt client. Verifică înainte de confirmare.`;
+	else if (plate) vehicleId = saveVehicle({ customerId: customer.id, plate, make: booking.vehicle.make ?? "", model: booking.vehicle.model ?? "", year: booking.vehicle.year ?? null }).id;
+	const serviceIds = booking.services.map((service) => service.id).filter((id) => getState().services[id]);
+	const notes = [`Online ${booking.ref}`, booking.complaint, plateNote].filter(Boolean).join("\n");
+	const { appointment } = await createAppointment({ customerId: customer.id, vehicleId, serviceIds, title: booking.services.map((service) => service.name).join(", "), notes, start: booking.start, end: booking.end, status: booking.status === "confirmed" ? "confirmed" : "scheduled", source: "online", onlineBookingId: booking.id, onlineSynced: { status: booking.status, start: booking.start, end: booking.end } });
+	return appointment;
+}
+
+/** Remembers what the storefront last heard about a booking. */
+export function markOnlineSynced(id, onlineSynced) {
+	const appointment = getState().appointments[id];
+	if (appointment) commit({ appointments: { put: [{ ...appointment, onlineSynced }] } });
+}
+
+/** The customer cancelled online. A car already in the shop keeps its booking; returns whether anything changed. */
+export function applyOnlineCancellation(id) {
+	const appointment = getState().appointments[id];
+	if (!appointment || appointment.onlineSynced?.status === "cancelled") return false;
+	const synced = { status: "cancelled", start: appointment.start, end: appointment.end };
+	if (!["scheduled", "confirmed"].includes(appointment.status)) {
+		commit({ appointments: { put: [{ ...appointment, onlineSynced: synced }] } });
+		return false;
+	}
+	const cancelled = callOffAppointment(appointment, { to: "cancelled", reason: "client", note: "Anulată online de client", now: now() });
+	commit({ appointments: { put: [{ ...cancelled, onlineSynced: synced }] } });
+	return true;
 }
 
 /** Bookings saved before numbering arrived get their numbers, once (called when the data is loaded). */
