@@ -10,6 +10,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "ios-native/**",
+    "cloudflare/dist/**",
+    "cloudflare/.wrangler/**",
     "next-env.d.ts",
   ]),
 ]);
