@@ -205,7 +205,7 @@ export function Sheet({ open, onOpenChange, title, description, headerActions, o
 							</div>
 						</div>
 						{car ? (
-							<CarHead className={carClass} style={outlined ? undefined : { color: makeInk(car) }} car={car} cover={cover} outlined={outlined} title={title} description={description} state={state} footer={footer} />
+							<CarHead className={carClass} style={outlined ? undefined : { color: makeInk(car), "--sheet-car": makeCover(car) }} car={car} cover={cover} outlined={outlined} title={title} description={description} state={state} footer={footer} />
 						) : (
 						<div className="mt-1 min-w-0">
 							{bar && <div className="-mx-1 mt-2 mb-4">{bar}</div>}

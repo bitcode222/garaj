@@ -697,6 +697,12 @@
 	-webkit-backdrop-filter: none !important;
 	backdrop-filter: none !important;
 }
+/* On the car's colour the filter also deepened that colour: the same result, computed once from the colour itself. */
+@supports (color: oklch(from red l c h)) {
+	.sheet-a [data-sheet-actions] .lg-pane {
+		background-color: oklch(from var(--sheet-car) calc(l + 0.12) calc(c * 1.45) h) !important;
+	}
+}
 
 /* The phone is the iPhone app (owner, 17 Nov 2026; docs/DESIGN.md "Telefon ca iPhone"): its grouped grey, its system
    font, the floating tab bar's height. Under 768 px only; the desktop keeps its own look. */
