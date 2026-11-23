@@ -124,7 +124,10 @@ export function VisitBarFor({ from, record, inSheet = true, className }) {
 		else if (key === "review") walk({ kind: "review", id: order.id, direction, props: { workOrderId: order.id } });
 		else walk({ kind: "work-order", id: order.id, direction });
 	};
-	const showLines = () => document.getElementById(`job-lines-${order.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+	const showLines = () => {
+		window.dispatchEvent(new CustomEvent("garaj:show-job-lines", { detail: order.id }));
+		document.getElementById(`job-lines-${order.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+	};
 	const fixes = {
 		reschedule: { label: "Reprogramează", onClick: () => openSheet("appointment", { id: appointment.id }) },
 		reactivate: {
