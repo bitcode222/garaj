@@ -65,3 +65,7 @@ Ways back, from the lightest:
 `scripts/glass-bench/`: `index.html` (the list page, `?mode=none|css|lite&n=300&ab=1`), `lab.html` (grid lines behind
 a large pane, to see the bend), `run.mjs` (fresh Chrome per run: CPU throttling, idle and touch-scroll frame times,
 main-thread time, the page growing; a weak GPU with SwiftShader). Usage is at the top of `run.mjs`.
+
+## Inside a car's sheet
+
+A pane inside `.sheet-a` scrolls together with its background, so it has no live backdrop to read. It keeps its tint, rim and sheen, without `backdrop-filter`, because that filter made the first scroll glitch (owner, 23 Nov 2026).
