@@ -691,6 +691,13 @@
 	--lg-shadow: 0 10px 28px -12px rgb(0 0 0 / 0.6);
 }
 
+/* Inside a car's sheet the glass scrolls with what is behind it, so reading the backdrop live shows nothing new and made
+   the first scroll glitch (owner, 23 Nov 2026). It keeps its tint, rim and sheen. Menus are portalled outside the sheet. */
+.sheet-a .lg-pane {
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
+}
+
 /* The phone is the iPhone app (owner, 17 Nov 2026; docs/DESIGN.md "Telefon ca iPhone"): its grouped grey, its system
    font, the floating tab bar's height. Under 768 px only; the desktop keeps its own look. */
 @media (max-width: 767px) {
