@@ -1,15 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CalendarDays, ExternalLink, FilePlus2, FileText, MessageCircle, MessageSquareText, MoreHorizontal, Star, Trash2 } from "lucide-react";
+import { CalendarDays, CircleX, ExternalLink, FilePlus2, FileText, MessageCircle, MessageSquareText, MoreHorizontal, PackageSearch, RotateCcw, Star, Trash2 } from "lucide-react";
 import { CoverIconButton } from "@/components/ds/car";
 import { useConfirm } from "@/components/ds/confirm";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { smsHref, whatsappHref } from "@/domain/customer";
 import { formatInvoiceNumber } from "@/domain/invoice";
-import { WO_TRANSITIONS } from "@/domain/work-order";
 import { fmtWorkOrder } from "@/lib/format";
-import { WORK_ORDER_ACTIONS, WORK_ORDER_STATUS } from "@/lib/labels";
+import { WORK_ORDER_STATUS } from "@/lib/labels";
 import { flushEdits } from "@/lib/pending-edits";
 import { closeSheet, navigateFromSheet } from "@/lib/sheets";
 import { deleteWorkOrder, invoiceForWorkOrder } from "@/lib/store/actions";
@@ -17,11 +17,12 @@ import { toast } from "@/lib/toast";
 import { useVisit } from "@/features/flow/visit-bar";
 import { useWalk } from "@/features/flow/visit-links";
 import { detailHref } from "@/lib/detail-mode";
-import { moveWorkOrder } from "./status";
+import { JobReasonPanel, nextLabel, useJobMoves } from "./job-state";
 
 /**
  * The "…" on a job's sheet (owner, 20 Nov 2026), as on its card: everything about this job in one menu. Its state
- * (every move the job allows), the visit's other records (booking, invoice, review), writing to the client, the full
+ * (every move the job allows, the next step first and cancelling last, 23 Nov 2026; they ask, name a reason and undo
+ * as the job page's do), the visit's other records (booking, invoice, review), writing to the client, the full
  * page, and deleting it while it is still an estimate.
  */
 export function JobMenu({ order, customer, message, light }) {
@@ -29,15 +30,23 @@ export function JobMenu({ order, customer, message, light }) {
 	const confirm = useConfirm();
 	const walk = useWalk(true);
 	const visit = useVisit("work-order", order);
-	const moves = (WO_TRANSITIONS[order.status] ?? []).filter((to) => WORK_ORDER_STATUS[to]);
+	const jobMoves = useJobMoves({ order, invoice: visit?.invoice ?? null, appointment: visit?.appointment ?? null, beforeMove: flushEdits });
+	const { flow, perform, apply, panel, setPanel } = jobMoves;
+	const rank = { next: 0, pause: 1, skip: 2, back: 3 };
+	const items = flow.moves
+		.map((move, index) => ({ move, index }))
+		// Going back, the nearest step first.
+		.sort((a, b) => (rank[a.move.kind] ?? 4) - (rank[b.move.kind] ?? 4) || (a.move.kind === "back" ? b.index - a.index : a.index - b.index))
+		.map(({ move }) => {
+			const special = { pause: ["Așteaptă piese", PackageSearch], cancel: ["Anulează lucrarea", CircleX], reopen: ["Redeschide", RotateCcw] }[move.id];
+			const text = special?.[0] ?? (move.kind === "back" ? `Înapoi la ${WORK_ORDER_STATUS[move.to].label}` : nextLabel(move));
+			return { key: move.id, text, Icon: special?.[1] ?? WORK_ORDER_STATUS[move.to].icon, destructive: move.id === "cancel", muted: !move.allowed, run: () => perform(move) };
+		});
+	// A refused estimate has no flow of its own: it can only go back to being an estimate.
+	if (order.status === "declined") items.push({ key: "estimate", text: "Înapoi la deviz", Icon: WORK_ORDER_STATUS.estimate.icon, run: () => apply("estimate") });
 	const deletable = ["estimate", "cancelled", "declined"].includes(order.status) && !order.invoiceId;
 	const phone = customer?.phone;
 
-	const move = async (to) => {
-		if (to === "cancelled" && !(await confirm({ title: `Anulezi lucrarea ${fmtWorkOrder(order.number)}?`, description: "O poți reactiva mai târziu.", confirmLabel: "Anulează lucrarea", destructive: true }))) return;
-		flushEdits();
-		moveWorkOrder(order, to);
-	};
 	const makeInvoice = () => {
 		flushEdits();
 		try {
@@ -58,22 +67,20 @@ export function JobMenu({ order, customer, message, light }) {
 	};
 
 	return (
+		<>
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<CoverIconButton icon={MoreHorizontal} label="Mai multe" light={light} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-64" data-sheet-menu>
-				{moves.length > 0 && (
+				{items.length > 0 && (
 					<>
 						<DropdownMenuLabel>Schimbă starea</DropdownMenuLabel>
-						{moves.map((to) => {
-							const Icon = WORK_ORDER_STATUS[to].icon;
-							return (
-								<DropdownMenuItem key={to} variant={to === "cancelled" ? "destructive" : undefined} onSelect={() => move(to)}>
-									<Icon /> {WORK_ORDER_ACTIONS[to] ?? WORK_ORDER_STATUS[to].label}
-								</DropdownMenuItem>
-							);
-						})}
+						{items.map(({ key, text, Icon, destructive, muted, run }) => (
+							<DropdownMenuItem key={key} variant={destructive ? "destructive" : undefined} className={muted ? "opacity-60" : undefined} onSelect={run}>
+								<Icon /> {text}
+							</DropdownMenuItem>
+						))}
 						<DropdownMenuSeparator />
 					</>
 				)}
@@ -126,5 +133,12 @@ export function JobMenu({ order, customer, message, light }) {
 				)}
 			</DropdownMenuContent>
 		</DropdownMenu>
+		<Dialog open={Boolean(panel)} onOpenChange={(open) => !open && setPanel(null)}>
+			<DialogContent showCloseButton={false} className="border-0 bg-transparent p-0 shadow-none sm:max-w-md [&>div]:bg-popover">
+				<DialogTitle className="sr-only">{{ cancel: "Anulează lucrarea", pause: "Așteaptă piese", reopen: "Redeschide lucrarea" }[panel] ?? "Lucrare"}</DialogTitle>
+				<JobReasonPanel moves={jobMoves} />
+			</DialogContent>
+		</Dialog>
+		</>
 	);
 }

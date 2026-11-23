@@ -281,21 +281,15 @@ function WorkOrder({ order, embedded = false }) {
 					<FilterChips label="Secțiunile lucrării" value={tab} onChange={setTab} options={JOB_TABS} />
 				</div>
 				<div hidden={tab !== "detalii"} className="space-y-7">
-					<SheetGroup title="Stadiu">
-						<div className="overflow-hidden rounded-[14px] bg-card">
+					<SheetGroup title="Când">
+						<div className="rounded-[14px] bg-card">
 							<div className="px-(--sheet-inset) py-3.5">
-								<JobState compact order={order} moves={moves} onReview={askReview} />
+								<VisitDates appointment={appointment} order={order} today={today} />
 							</div>
 							<div className="grid grid-cols-2 divide-x border-t">
 								<SheetSelect label="Mecanic" value={draft.staffId} options={staff} disabled={locked} onChange={(staffId) => update({ staffId })} />
 								<SheetSelect label="Post" value={draft.bayId} options={bays} disabled={locked} onChange={(bayId) => update({ bayId })} />
 							</div>
-						</div>
-					</SheetGroup>
-
-					<SheetGroup title="Când">
-						<div className="rounded-[14px] bg-card px-(--sheet-inset) py-3.5">
-							<VisitDates appointment={appointment} order={order} today={today} />
 						</div>
 					</SheetGroup>
 
