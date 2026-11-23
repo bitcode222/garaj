@@ -445,10 +445,28 @@ async function publish(env, input) {
 	return json({ ok: true });
 }
 
+function feedItem(row) {
+	const vehicle = JSON.parse(row.vehicle);
+	return { id: row.id, ref: row.ref, status: row.status, start: row.start, version: row.version, updatedAt: row.updated_at, plate: vehicle.plate ?? "", car: [vehicle.make, vehicle.model].filter(Boolean).join(" "), customer: row.customer_name, services: JSON.parse(row.services).map((service) => service.name) };
+}
+
+/** Read-only view for a second device: unlike the inbox it acknowledges nothing, so the web app still imports every booking. */
+async function shopFeed(env, url) {
+	const since = url.searchParams.get("since");
+	const now = nowISO();
+	const columns = "b.id, b.ref, b.status, b.start, b.version, b.updated_at, b.vehicle, b.services, c.name AS customer_name";
+	const [changed, open] = await env.DB.batch([
+		env.DB.prepare(`SELECT ${columns} FROM bookings b JOIN customers c ON c.id = b.customer_id WHERE ? IS NOT NULL AND b.updated_at >= ? ORDER BY b.updated_at LIMIT 100`).bind(since, since),
+		env.DB.prepare(`SELECT ${columns} FROM bookings b JOIN customers c ON c.id = b.customer_id WHERE b.status IN ('requested','confirmed') AND b.end > ? ORDER BY b.start LIMIT 100`).bind(now),
+	]);
+	return json({ changed: changed.results.map(feedItem), open: open.results.map(feedItem), cursor: changed.results.at(-1)?.updated_at ?? since ?? now });
+}
+
 async function shopApi(request, env, url, path) {
 	if (!(await isShop(request, env, url))) throw new HttpError(401, "shop_signed_out", "Intră în contul service-ului.");
 	const method = request.method;
 	if (path === "/api/shop/live" && method === "GET") return openLive(request, env, url, SHOP_TAG);
+	if (path === "/api/shop/feed" && method === "GET") return shopFeed(env, url);
 	if (path === "/api/shop/inbox" && method === "GET") {
 		const [changed, open] = await env.DB.batch([
 			env.DB.prepare("SELECT b.*, c.name AS customer_name, c.phone AS customer_phone, c.email AS customer_email FROM bookings b JOIN customers c ON c.id = b.customer_id WHERE b.shop_version < b.version ORDER BY b.created_at LIMIT 100"),

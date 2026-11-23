@@ -75,7 +75,7 @@ A missed message is harmless: each client catches up when it reconnects or retur
 - One device should run the shop's app against the storefront, because each browser keeps its own IndexedDB. Moving the shop's data into D1 is the next step for several devices.
 - Busy times refresh when the shop's app is open.
 - A customer sees a confirmation live while the page is open. There is no SMS or push when it is closed.
-- The native iPhone app is left for later.
+- The iPhone app follows requests only while it is open (Setări → Programări online). It reads a separate feed, so it never takes a booking from the web app, and confirming stays on the web. Notifications with the app closed need a public deployment and an Apple push key.
 
 ## Run it locally
 

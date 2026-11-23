@@ -6,6 +6,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(AppStore.self) private var store
     @Environment(UndoCenter.self) private var undo
+    @Environment(OnlineBookings.self) private var online
     @State private var editingStaff: Staff?
     @State private var editingBay: Bay?
     @State private var logoItem: PhotosPickerItem?
@@ -180,6 +181,8 @@ struct SettingsView: View {
             }
 
             Section {
+                NavigationLink { OnlineBookingsView() } label: { Label("Programări online", systemImage: "globe") }
+                    .badge(online.waitingCount)
                 NavigationLink { DataView() } label: { Label("Date și backup", systemImage: "externaldrive") }
             } footer: {
                 Text("Totul stă pe acest iPhone, fără cont. Fă un backup săptămânal.\n\nGaraj \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")")
