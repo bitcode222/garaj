@@ -12,6 +12,7 @@ import { JOB_STEPS, jobFlow, skippedSteps } from "@/domain/flow";
 import { fmtDate } from "@/lib/format";
 import { WORK_ORDER_STATUS } from "@/lib/labels";
 import { restoreWorkOrder, setWorkOrderStatus } from "@/lib/store/actions";
+import { cn } from "@/lib/utils";
 
 const STEPS = JOB_STEPS.map((key) => ({ key, label: WORK_ORDER_STATUS[key].label, tone: WORK_ORDER_STATUS[key].tone }));
 const label = (status) => WORK_ORDER_STATUS[status].label;
@@ -92,9 +93,11 @@ export function useJobMoves({ order, invoice, appointment, beforeMove }) {
 /**
  * The job's state section: the stepper as it always looked (every step can be clicked: back,
  * next, or a jump that names what it skips), one next step with a sentence, the moves that are
- * not steps (wait for parts, cancel, reopen), and their reason panels.
+ * not steps (wait for parts, cancel, reopen), and their reason panels. `compact` (the Lucrare sheet's Stadiu): one
+ * line under the steps. The sheet's head already has the main button, so the next step shows here only while the head's
+ * button runs the clock instead (În lucru: Pauză / Continuă, and here Marchează gata).
  */
-export function JobState({ order, moves, onReview }) {
+export function JobState({ order, moves, onReview, compact = false }) {
 	const { flow, perform, apply, panel, setPanel } = moves;
 	const lastReason = (to) => [...(order.activity ?? [])].reverse().find((entry) => entry.type === "status" && entry.to === to)?.reason ?? "";
 
@@ -161,8 +164,32 @@ export function JobState({ order, moves, onReview }) {
 		panelNode = <ReasonPanel title="Ce piesă așteptați?" placeholder="ex. plăcuțe frână, vin joi" saveLabel="Așteaptă piese" onSave={(reason) => apply("waiting_parts", reason)} onClose={() => setPanel(null)} optional />;
 
 	const skipped = skippedSteps(order);
+	const compactLine =
+		compact && !flow.off && order.status !== "delivered" ? (
+			<div className="flex min-h-9 flex-wrap items-center justify-between gap-x-3 gap-y-2">
+				<p className="min-w-0 flex-1 basis-40 text-[13px] text-muted-foreground">{HINT[order.status]}</p>
+				{next && order.status === "in_progress" && (
+					<Button size="sm" className="max-md:h-11" onClick={next.onClick}>
+						{next.icon && <next.icon />}
+						{next.label}
+					</Button>
+				)}
+			</div>
+		) : null;
+	const compactMoves =
+		compact && others.length > 0 ? (
+			<div className="-mb-1.5 flex flex-wrap justify-between gap-x-4">
+				{others.map((move) => (
+					<button key={move.id} type="button" aria-disabled={move.disabled || undefined} title={move.disabled ? move.reason : undefined} onClick={move.onClick} className={cn("inline-flex min-h-11 items-center gap-1.5 text-[13px] font-semibold", move.destructive ? "text-destructive" : "text-foreground", move.disabled && "opacity-50")}>
+						<move.icon className="size-3.5" aria-hidden />
+						{move.label}
+					</button>
+				))}
+			</div>
+		) : null;
 	return (
 		<FlowSteps
+			inCard={compact}
 			label="Etapele lucrării"
 			steps={STEPS}
 			current={flow.current}
@@ -170,11 +197,12 @@ export function JobState({ order, moves, onReview }) {
 			pause={flow.paused ? { label: label("waiting_parts"), tone: WORK_ORDER_STATUS.waiting_parts.tone } : null}
 			mark={flow.paused && waitingFor ? { label: waitingFor, tone: WORK_ORDER_STATUS.waiting_parts.tone } : null}
 			onStep={flow.off || order.status === "delivered" ? null : onStep}
-			help={order.status === "delivered" || flow.off ? null : "Atinge o etapă ca să revii la ea sau să sari direct acolo."}
+			help={compact || order.status === "delivered" || flow.off ? null : "Atinge o etapă ca să revii la ea sau să sari direct acolo."}
 			off={off}
-			notice={notice}
-			next={next}
-			moves={flow.off ? [] : others}
+			notice={notice ?? compactLine}
+			next={compact ? null : next}
+			afterNext={compactMoves}
+			moves={compact || flow.off ? [] : others}
 			panel={panelNode}
 			onPanelClose={() => setPanel(null)}
 		/>
