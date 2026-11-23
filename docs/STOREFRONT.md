@@ -7,7 +7,7 @@ Customers open a public page, sign in with their phone, ask for a time, and foll
 ```
 Customer ──► /service/ ──► Worker /api ──► D1 (customers, cars, bookings, busy times)
                                  ▲
-Shop's app (behind a password) ──┘  every 30 s: pull requests · push decisions · publish services, hours, busy times
+Shop's app (behind a password) ──┘  live socket, plus every 30 s: pull requests · push decisions · publish services, hours, busy times
       │
       └── IndexedDB stays the shop's own record
 ```
@@ -16,11 +16,17 @@ Shop's app (behind a password) ──┘  every 30 s: pull requests · push deci
 | --- | --- | --- |
 | `/service/` | Everyone | Site, booking flow, customer account |
 | `/api/*` | Customers | Profile, free times, login, cars, bookings |
-| `/api/shop/*` | Shop session | Inbox, acknowledgements, decisions, publishing |
+| `/api/shop/*` | Shop session | Inbox, acknowledgements, decisions, publishing, live socket |
 | `/shop-login` | Shop | Password page |
 | Everything else | Shop session | The existing Garaj app |
 
 The code is in `cloudflare/`. Booking rules are pure and tested in `src/domain/online-booking.js`.
+
+## Live updates
+
+The `LiveHub` Durable Object holds one WebSocket per open shop app or signed-in customer page. After a booking changes, it sends a bare "look again" message to the shop and to that customer only. The data still comes from the normal API behind its login, so a socket carries no personal data.
+
+A missed message is harmless: each client catches up when it reconnects or returns to the foreground, and the shop's 30-second sync stays as the safety net. The socket refuses foreign origins.
 
 ## What leaves the shop's device
 
@@ -68,7 +74,7 @@ The code is in `cloudflare/`. Booking rules are pure and tested in `src/domain/o
 
 - One device should run the shop's app against the storefront, because each browser keeps its own IndexedDB. Moving the shop's data into D1 is the next step for several devices.
 - Busy times refresh when the shop's app is open.
-- Customers are not notified of a confirmation yet. They see it in their account.
+- A customer sees a confirmation live while the page is open. There is no SMS or push when it is closed.
 - The native iPhone app is left for later.
 
 ## Run it locally

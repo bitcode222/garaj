@@ -17,6 +17,11 @@
 			"migrations_dir": "migrations"
 		}
 	],
+	// Open sockets for live booking updates (docs/STOREFRONT.md).
+	"durable_objects": {
+		"bindings": [{ "name": "LIVE", "class_name": "LiveHub" }]
+	},
+	"migrations": [{ "tag": "live-v1", "new_sqlite_classes": ["LiveHub"] }],
 	"vars": {
 		// "demo" accepts the fixed code 123456 and works only on localhost. Real SMS is not connected yet.
 		"AUTH_MODE": "demo"

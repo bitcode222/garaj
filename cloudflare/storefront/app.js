@@ -455,7 +455,107 @@ function renderAccount() {
 
 function paintNav() {
 	document.getElementById("nav-account").textContent = state.me?.customer ? "Contul meu" : "Intră";
+	syncLive();
 }
+
+// ── live updates: the socket only says "look again"; the account is re-read from the API ──
+
+const live = { socket: null, ping: null, retry: null, retryMs: 1000, refreshing: false, again: false };
+
+function changeNotice(before, after) {
+	if (before.status !== after.status) {
+		if (after.status === "confirmed") return `Programarea ${after.ref} a fost confirmată.`;
+		if (after.status === "declined") return `Programarea ${after.ref} a fost refuzată.`;
+		if (after.status === "in_shop") return "Mașina ta a ajuns în service.";
+		if (after.status === "done") return "Vizita ta în service s-a încheiat.";
+	}
+	if (before.start !== after.start) return `Programarea ${after.ref} s-a mutat pe ${longDay(after.start)}, ${time(after.start)}.`;
+	return null;
+}
+
+/** Repaints only where nothing is being typed or confirmed. */
+function repaintLive() {
+	const hash = location.hash || "#/";
+	const isHome = !hash.startsWith("#/programare") && !hash.startsWith("#/cont");
+	if (isHome) renderHome();
+	else if (hash.startsWith("#/cont") && state.tab === "bookings" && !app.querySelector("#yes, #delete-yes")) {
+		const top = scrollY;
+		renderAccount();
+		scrollTo(0, top);
+	}
+}
+
+async function refreshLive() {
+	if (!state.me?.customer) return;
+	if (live.refreshing) {
+		live.again = true;
+		return;
+	}
+	live.refreshing = true;
+	try {
+		const before = new Map((state.me.bookings ?? []).map((booking) => [booking.id, booking]));
+		const me = await api("/me");
+		if (!state.me?.customer) return;
+		state.me = me;
+		paintNav();
+		if (!me.customer) return route();
+		const notices = (me.bookings ?? []).flatMap((booking) => (before.has(booking.id) ? (changeNotice(before.get(booking.id), booking) ?? []) : []));
+		repaintLive();
+		if (notices.length) toast(notices.join(" "));
+	} catch {
+		// the next notice or reconnect tries again
+	} finally {
+		live.refreshing = false;
+		if (live.again) {
+			live.again = false;
+			refreshLive();
+		}
+	}
+}
+
+function connectLive() {
+	if (live.socket || live.retry || !state.me?.customer) return;
+	const socket = new WebSocket(`${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/live`);
+	let heardAt = Date.now();
+	live.socket = socket;
+	socket.onopen = () => {
+		live.retryMs = 1000;
+		refreshLive();
+		live.ping = setInterval(() => {
+			if (Date.now() - heardAt > 60_000) socket.close();
+			else if (socket.readyState === WebSocket.OPEN) socket.send("ping");
+		}, 25_000);
+	};
+	socket.onmessage = (event) => {
+		heardAt = Date.now();
+		if (event.data !== "pong") refreshLive();
+	};
+	socket.onclose = () => {
+		clearInterval(live.ping);
+		if (live.socket === socket) live.socket = null;
+		if (!state.me?.customer) return;
+		live.retry = setTimeout(() => {
+			live.retry = null;
+			connectLive();
+		}, live.retryMs);
+		live.retryMs = Math.min(live.retryMs * 2, 30_000);
+	};
+}
+
+function syncLive() {
+	if (state.me?.customer) return connectLive();
+	clearTimeout(live.retry);
+	live.retry = null;
+	live.socket?.close();
+}
+
+// Phones suspend sockets in the background, so coming back always catches up.
+addEventListener("focus", refreshLive);
+document.addEventListener("visibilitychange", () => {
+	if (document.hidden) return;
+	connectLive();
+	refreshLive();
+});
 
 async function loadProfile() {
 	state.profile = await api("/profile");
