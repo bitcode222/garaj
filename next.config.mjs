@@ -20,4 +20,6 @@ const devConfig = {
   rewrites: async () => [{ source: "/api/shop/:path*/", destination: "http://localhost:8787/api/shop/:path*" }],
 };
 
-export default (phase) => (phase === PHASE_DEVELOPMENT_SERVER ? devConfig : nextConfig);
+const configFor = (phase) => (phase === PHASE_DEVELOPMENT_SERVER ? devConfig : nextConfig);
+
+export default configFor;
