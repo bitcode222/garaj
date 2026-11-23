@@ -13,6 +13,10 @@ const OTP_ATTEMPTS = 5;
 const OTP_RESEND_SECONDS = 30;
 const DEMO_CODE = "123456";
 const HOLDS_A_SLOT = "('requested','confirmed','in_shop')";
+const SHOP_TAG = "shop";
+const customerTag = (id) => `customer:${id}`;
+const LIVE_LIMIT = { shop: 20, customer: 5 };
+const DEV_SHOP_ORIGIN = "http://localhost:3000";
 
 const DEMO_PROFILE = {
 	shop: { name: "Garaj Auto Pro", phone: "+40722000111", address: "Str. Atelierului 12", city: "Cluj-Napoca" },
@@ -192,6 +196,72 @@ async function verifyLogin(request, env, url) {
 	return json(await account(env, customer), 200, { "Set-Cookie": setCookie(url, CUSTOMER_COOKIE, token, CUSTOMER_DAYS * 86_400) });
 }
 
+// ── live updates ─────────────────────────────────────────────────────────────
+
+/** Holds the open sockets. A message only says "look again"; the data still comes from the API, behind its login. */
+export class LiveHub {
+	constructor(state) {
+		this.state = state;
+		state.setWebSocketAutoResponse(new WebSocketRequestResponsePair("ping", "pong"));
+	}
+
+	async fetch(request) {
+		const url = new URL(request.url);
+		if (url.pathname === "/connect") {
+			const tag = url.searchParams.get("tag");
+			const open = this.state.getWebSockets(tag);
+			const limit = tag === SHOP_TAG ? LIVE_LIMIT.shop : LIVE_LIMIT.customer;
+			for (const socket of open.slice(0, Math.max(0, open.length - limit + 1))) socket.close(4000, "replaced");
+			const [client, server] = Object.values(new WebSocketPair());
+			this.state.acceptWebSocket(server, [tag]);
+			return new Response(null, { status: 101, webSocket: client });
+		}
+		const { tags } = await request.json();
+		for (const tag of tags) {
+			for (const socket of this.state.getWebSockets(tag)) {
+				try {
+					socket.send(JSON.stringify({ type: "bookings" }));
+				} catch {
+					// a dead socket is dropped by the runtime, and its client reconnects
+				}
+			}
+		}
+		return new Response(null, { status: 204 });
+	}
+
+	webSocketMessage() {}
+
+	webSocketClose(socket, code) {
+		try {
+			socket.close(code === 1005 || code === 1006 ? 1000 : code);
+		} catch {
+			// already closed
+		}
+	}
+
+	webSocketError() {}
+}
+
+const liveHub = (env) => env.LIVE.get(env.LIVE.idFromName("shop"));
+
+/** A failed notice never fails the write: the 30-second sync and each reconnect still catch up. */
+async function tell(env, tags) {
+	try {
+		await liveHub(env).fetch("https://live/notify", { method: "POST", body: JSON.stringify({ tags }) });
+	} catch (error) {
+		console.warn("[garaj] live notice", error);
+	}
+}
+
+function openLive(request, env, url, tag) {
+	if ((request.headers.get("Upgrade") ?? "").toLowerCase() !== "websocket") throw new HttpError(426, "upgrade", "Conexiune nepermisă.");
+	const origin = request.headers.get("Origin");
+	const isDevShop = tag === SHOP_TAG && demoAllowed(env, url) && origin === DEV_SHOP_ORIGIN;
+	// Browsers don't apply the same-origin rule to sockets, so a foreign page must be refused here.
+	if (origin !== url.origin && !isDevShop) throw new HttpError(403, "origin", "Cerere refuzată.");
+	return liveHub(env).fetch(`https://live/connect?tag=${encodeURIComponent(tag)}`, { headers: { Upgrade: "websocket" } });
+}
+
 async function deleteAccount(env, customer, url) {
 	const now = nowISO();
 	await env.DB.batch([
@@ -203,6 +273,7 @@ async function deleteAccount(env, customer, url) {
 		env.DB.prepare("DELETE FROM otp_challenges WHERE phone = ?").bind(customer.phone),
 		env.DB.prepare("UPDATE customers SET phone = 'deleted:' || id, name = '', email = '', updated_at = ? WHERE id = ?").bind(now, customer.id),
 	]);
+	await tell(env, [SHOP_TAG]);
 	return json({ ok: true }, 200, { "Set-Cookie": setCookie(url, CUSTOMER_COOKIE, "", 0) });
 }
 
@@ -268,6 +339,7 @@ async function createBooking(request, env, url, customer) {
 		if (same) return json(publicBooking(same, nowISO()));
 		throw error;
 	}
+	await tell(env, [SHOP_TAG, customerTag(customer.id)]);
 	return json(publicBooking(await again(), now), 201);
 }
 
@@ -279,6 +351,7 @@ async function cancelBooking(env, customer, id) {
 	if (!canCustomerCancel(booking, now)) throw new HttpError(409, "too_late", "Programarea nu mai poate fi anulată online. Sună-ne.");
 	const changed = await env.DB.prepare("UPDATE bookings SET status = 'cancelled', reason = 'client', version = version + 1, updated_at = ? WHERE id = ? AND version = ?").bind(now, id, booking.version).run();
 	if (!changed.meta.changes) throw new HttpError(409, "changed", "Programarea tocmai s-a schimbat. Reîncarcă pagina.");
+	await tell(env, [SHOP_TAG, customerTag(customer.id)]);
 	return json(publicBooking(await env.DB.prepare("SELECT * FROM bookings WHERE id = ?").bind(id).first(), now));
 }
 
@@ -310,6 +383,7 @@ async function publicApi(request, env, url, path) {
 		return json(customer ? await account(env, customer) : { customer: null });
 	}
 	const customer = await mustCustomer(request, env);
+	if (path === "/api/live" && method === "GET") return openLive(request, env, url, customerTag(customer.id));
 	if (path === "/api/me" && method === "PATCH") {
 		const input = await body(request);
 		const name = text(input.name, 80);
@@ -374,6 +448,7 @@ async function publish(env, input) {
 async function shopApi(request, env, url, path) {
 	if (!(await isShop(request, env, url))) throw new HttpError(401, "shop_signed_out", "Intră în contul service-ului.");
 	const method = request.method;
+	if (path === "/api/shop/live" && method === "GET") return openLive(request, env, url, SHOP_TAG);
 	if (path === "/api/shop/inbox" && method === "GET") {
 		const [changed, open] = await env.DB.batch([
 			env.DB.prepare("SELECT b.*, c.name AS customer_name, c.phone AS customer_phone, c.email AS customer_email FROM bookings b JOIN customers c ON c.id = b.customer_id WHERE b.shop_version < b.version ORDER BY b.created_at LIMIT 100"),
@@ -402,7 +477,9 @@ async function shopApi(request, env, url, path) {
 		const end = input.end && !Number.isNaN(Date.parse(input.end)) ? input.end : booking.end;
 		if (start >= end) throw new HttpError(400, "times", "Ore invalide.");
 		const changed = await env.DB.prepare("UPDATE bookings SET status = ?, start = ?, end = ?, reason = ?, version = version + 1, shop_version = CASE WHEN shop_version = version THEN version + 1 ELSE shop_version END, updated_at = ? WHERE id = ? AND status != 'cancelled' RETURNING status, version").bind(input.status, start, end, input.reason ? text(input.reason, 200) : null, nowISO(), booking.id).first();
-		return changed ? json(changed) : json({ status: "cancelled" }, 409);
+		if (!changed) return json({ status: "cancelled" }, 409);
+		await tell(env, [SHOP_TAG, customerTag(booking.customer_id)]);
+		return json(changed);
 	}
 	throw new HttpError(404, "not_found", "Nu există.");
 }
@@ -450,7 +527,7 @@ const worker = {
 			if (path.startsWith("/api/")) {
 				const origin = request.headers.get("Origin");
 				// In local demo mode the Next dev server on :3000 proxies the shop's API here.
-				const devShop = path.startsWith("/api/shop/") && demoAllowed(env, url) && origin === "http://localhost:3000";
+				const devShop = path.startsWith("/api/shop/") && demoAllowed(env, url) && origin === DEV_SHOP_ORIGIN;
 				if (!["GET", "HEAD"].includes(request.method) && origin && origin !== url.origin && !devShop) throw new HttpError(403, "origin", "Cerere refuzată.");
 				return path.startsWith("/api/shop/") ? await shopApi(request, env, url, path) : await publicApi(request, env, url, path);
 			}

@@ -6,12 +6,16 @@ import { formatInvoiceNumber } from "@/domain/invoice";
 import { HORIZON_DAYS, onlineStatusOf } from "@/domain/online-booking";
 import { SERVICE_CATEGORIES } from "@/lib/labels";
 import { applyOnlineCancellation, importOnlineBooking, markOnlineSynced } from "@/lib/store/actions";
-import { getState } from "@/lib/store/store";
+import { getState, subscribe } from "@/lib/store/store";
 import { toast } from "@/lib/toast";
 
 const EVERY_MS = 30_000;
 const LOCK = "garaj-online-sync";
 const IS_DEV = process.env.NODE_ENV === "development";
+const PING_MS = 25_000;
+const SILENT_MS = 60_000;
+const RETRY_MAX_MS = 30_000;
+const CHANGE_DELAY_MS = 150;
 let lastPublished = null;
 
 async function shop(path, { method = "GET", data } = {}) {
@@ -38,14 +42,21 @@ async function pullBookings(bookings) {
 	if (items.length) await shop("/ack", { method: "POST", data: { items } });
 }
 
+const onlineNow = (appointment) => ({ status: onlineStatusOf(appointment), start: appointment.start, end: appointment.end });
+
+function isUnsent(appointment) {
+	const synced = appointment.onlineSynced;
+	if (synced?.status === "cancelled") return false;
+	const next = onlineNow(appointment);
+	return !synced || synced.status !== next.status || synced.start !== next.start || synced.end !== next.end;
+}
+
 async function pushChanges(open) {
 	const { appointments } = getState();
 	for (const { id } of IS_DEV ? [] : open.filter((row) => !appointments[row.appointmentId])) await shop(`/bookings/${id}`, { method: "POST", data: { status: "declined", reason: "Programarea a fost ștearsă de service." } });
 	for (const appointment of onlineAppointments()) {
-		const synced = appointment.onlineSynced;
-		if (synced?.status === "cancelled") continue;
-		const next = { status: onlineStatusOf(appointment), start: appointment.start, end: appointment.end };
-		if (synced && synced.status === next.status && synced.start === next.start && synced.end === next.end) continue;
+		if (!isUnsent(appointment)) continue;
+		const next = onlineNow(appointment);
 		const answer = await shop(`/bookings/${appointment.onlineBookingId}`, { method: "POST", data: next });
 		if (answer.ok) markOnlineSynced(appointment.id, next);
 		else if (answer.status === 409 && answer.data?.status === "cancelled" && applyOnlineCancellation(appointment.id)) toast.info("Clientul a anulat între timp programarea.");
@@ -95,40 +106,108 @@ async function publish() {
 
 async function syncOnce() {
 	const inbox = await shop("/inbox");
-	if (!inbox.ok || !inbox.isJson) return inbox.status === 503 || inbox.status >= 500;
+	if (!inbox.ok || !inbox.isJson) return { reachable: false, keep: inbox.status === 503 || inbox.status >= 500 };
 	await pullBookings(inbox.data.bookings);
 	await pushChanges(inbox.data.open);
 	await publish();
-	return true;
+	return { reachable: true, keep: true };
 }
+
+const liveUrl = () => (IS_DEV ? "ws://localhost:8787/api/shop/live" : `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/shop/live`);
 
 /** Starts the sync once the store is loaded; returns a stop function. */
 export function startOnlineSync() {
 	let timer = null;
 	let stopped = false;
 	let busy = false;
-	const run = async () => {
-		if (stopped || busy || document.hidden) return;
+	let again = false;
+	let reachable = false;
+	let socket = null;
+	let pingTimer = null;
+	let retryTimer = null;
+	let changeTimer = null;
+	let retryMs = 1000;
+
+	function connect() {
+		if (stopped || socket || !reachable || retryTimer) return;
+		const live = new WebSocket(liveUrl());
+		let heardAt = Date.now();
+		socket = live;
+		live.onopen = () => {
+			retryMs = 1000;
+			// Anything that happened while the socket was down.
+			run({ live: true });
+			pingTimer = setInterval(() => {
+				if (Date.now() - heardAt > SILENT_MS) live.close();
+				else if (live.readyState === WebSocket.OPEN) live.send("ping");
+			}, PING_MS);
+		};
+		live.onmessage = (event) => {
+			heardAt = Date.now();
+			if (event.data !== "pong") run({ live: true });
+		};
+		live.onclose = () => {
+			clearInterval(pingTimer);
+			if (socket === live) socket = null;
+			if (stopped) return;
+			retryTimer = setTimeout(() => {
+				retryTimer = null;
+				run({ live: true });
+			}, retryMs);
+			retryMs = Math.min(retryMs * 2, RETRY_MAX_MS);
+		};
+	}
+
+	const round = async () => {
+		const answer = await syncOnce();
+		reachable = answer.reachable;
+		return answer.keep;
+	};
+
+	async function run({ live = false } = {}) {
+		if (stopped || (document.hidden && !live)) return;
+		if (busy) {
+			again = true;
+			return;
+		}
 		busy = true;
+		let keep = true;
 		try {
-			const go = () => syncOnce();
-			const keep = navigator.locks ? await navigator.locks.request(LOCK, { ifAvailable: true }, (lock) => (lock ? go() : true)) : await go();
-			if (!keep) stop();
+			keep = navigator.locks ? await navigator.locks.request(LOCK, { ifAvailable: true }, (lock) => (lock ? round() : true)) : await round();
 		} catch (error) {
 			// A failed round (no connection) is tried again on the next one; nothing was acknowledged.
+			reachable = false;
 			console.warn("[garaj] online sync", error);
 		} finally {
 			busy = false;
 		}
-	};
+		if (!keep) return stop();
+		connect();
+		if (again) {
+			again = false;
+			run({ live: true });
+		}
+	}
+
 	const onVisible = () => run();
+	const unsubscribe = subscribe("appointments", () => {
+		// The shop's decision goes out at once, so the customer sees it live.
+		if (!reachable || !onlineAppointments().some(isUnsent)) return;
+		clearTimeout(changeTimer);
+		changeTimer = setTimeout(() => run({ live: true }), CHANGE_DELAY_MS);
+	});
 	function stop() {
 		stopped = true;
 		clearInterval(timer);
+		clearInterval(pingTimer);
+		clearTimeout(retryTimer);
+		clearTimeout(changeTimer);
+		unsubscribe();
+		socket?.close();
 		document.removeEventListener("visibilitychange", onVisible);
 		window.removeEventListener("focus", onVisible);
 	}
-	timer = setInterval(run, EVERY_MS);
+	timer = setInterval(() => run(), EVERY_MS);
 	document.addEventListener("visibilitychange", onVisible);
 	window.addEventListener("focus", onVisible);
 	run();
