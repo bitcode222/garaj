@@ -449,7 +449,9 @@ const worker = {
 		try {
 			if (path.startsWith("/api/")) {
 				const origin = request.headers.get("Origin");
-				if (!["GET", "HEAD"].includes(request.method) && origin && origin !== url.origin) throw new HttpError(403, "origin", "Cerere refuzată.");
+				// In local demo mode the Next dev server on :3000 proxies the shop's API here.
+				const devShop = path.startsWith("/api/shop/") && demoAllowed(env, url) && origin === "http://localhost:3000";
+				if (!["GET", "HEAD"].includes(request.method) && origin && origin !== url.origin && !devShop) throw new HttpError(403, "origin", "Cerere refuzată.");
 				return path.startsWith("/api/shop/") ? await shopApi(request, env, url, path) : await publicApi(request, env, url, path);
 			}
 			if (path === "/shop-login") {
