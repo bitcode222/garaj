@@ -30,16 +30,15 @@ const HATCH = "repeating-linear-gradient(135deg, color-mix(in oklch, var(--foreg
  *   moves     [{ id, label, icon, onClick, disabled, reason, destructive }]
  *   panel     a node opened under the moves (reschedule, delay, a reason to give)
  *   onPanelClose  closes it; Esc does too, before the sheet around hears Esc
- *   inCard    already inside a card of a sheet: no section padding of its own, tighter rows
  *
  * A blocked move is never just greyed out: it stays a button, looks muted, and says why when
  * pressed (a toast), which works on a phone, where tooltips do not.
  */
-export function FlowSteps({ label, steps, current, skipped = [], pause, progress, mark, onStep, help, off, notice, next, afterNext, moves = [], panel, onPanelClose, inCard = false, className }) {
+export function FlowSteps({ label, steps, current, skipped = [], pause, progress, mark, onStep, help, off, notice, next, afterNext, moves = [], panel, onPanelClose, className }) {
 	usePanelEscape(Boolean(panel && onPanelClose), onPanelClose);
 
 	return (
-		<section aria-label={label} data-group={inCard ? "" : undefined} className={cn("space-y-4", inCard && "space-y-2.5", className)}>
+		<section aria-label={label} className={cn("space-y-4", className)}>
 			{off ? <OffBanner {...off} /> : <Bars label={label} steps={steps} current={current} skipped={skipped} pause={pause} progress={progress} mark={mark} onStep={onStep} />}
 			{!off && help && <p className="-mt-2 text-2xs text-muted-foreground">{help}</p>}
 			{notice ?? (next && <NextLine next={next} />)}
