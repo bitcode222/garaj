@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import { VisitDates } from "@/features/flow/visit-dates";
 import {
 	ChevronRight,
@@ -30,7 +31,7 @@ import { Card, CardContent, CardHeader } from "@/components/ds/card";
 import { useConfirm } from "@/components/ds/confirm";
 import { ContactActions } from "@/components/ds/contact";
 import { EmptyState, KeyValue, KeyValueGrid, Money, Timeline } from "@/components/ds/data";
-import { Field } from "@/components/ds/inputs";
+import { Field, FilterChips } from "@/components/ds/inputs";
 import { Page, PageHeader, SplitView, StickyBar } from "@/components/ds/page";
 import { Plate } from "@/components/ds/plate";
 import { Sheet } from "@/components/ds/sheet";
@@ -86,13 +87,22 @@ import { useWalk } from "@/features/flow/visit-links";
 const sheetField = "block w-full resize-none bg-transparent px-4 py-3 outline-none [field-sizing:content] placeholder:text-muted-foreground/70";
 const sheetLink = "flex min-h-12 w-full items-center gap-2.5 border-t px-4 text-left text-[16px] font-medium text-brand hover:bg-foreground/[0.04]";
 
+// The Lucrare sheet's content, one tab at a time (owner, 23 Nov 2026).
+const JOB_TABS = [
+	{ value: "detalii", label: "Detalii" },
+	{ value: "documente", label: "Documente" },
+	{ value: "receptie", label: "Recepție" },
+	{ value: "inspectie", label: "Inspecție" },
+];
+
 /** A section of a car's sheet: a big title (and a quiet note at its right), then its grey group. */
-function SheetGroup({ title, aside, children }) {
+function SheetGroup({ title, aside, quiet = false, children }) {
 	return (
 		<section data-group aria-label={title}>
-			<div className="flex items-baseline justify-between gap-3 px-1 pb-2">
-				<h2 className="text-[20px] leading-tight font-bold tracking-[-0.01em]">{title}</h2>
-				{aside && <span className="text-[13px] text-muted-foreground tabular-nums">{aside}</span>}
+			{/* `quiet`: its tab already says the title, so only the note stays in view. */}
+			<div className={cn("flex items-baseline justify-between gap-3 px-1", quiet && !aside ? "sr-only" : "pb-2")}>
+				<h2 className={quiet ? "sr-only" : "text-[20px] leading-tight font-bold tracking-[-0.01em]"}>{title}</h2>
+				{aside && <span className="ml-auto text-[13px] text-muted-foreground tabular-nums">{aside}</span>}
 			</div>
 			{children}
 		</section>
@@ -142,7 +152,7 @@ export function WorkOrderDetail() {
 
 /** The whole work order (lines, inspection, activity, estimate…) for the overlay. */
 export function WorkOrderEmbedded({ order }) {
-	return <WorkOrder order={order} embedded />;
+	return <WorkOrder key={order.id} order={order} embedded />;
 }
 
 function WorkOrder({ order, embedded = false }) {
@@ -159,6 +169,15 @@ function WorkOrder({ order, embedded = false }) {
 	const bays = selectActive(useCollection("bays"));
 	const [estimateOpen, setEstimateOpen] = useState(false);
 	const [receptionOpen, setReceptionOpen] = useState(false);
+	const [tab, setTab] = useState("detalii");
+	// The visit bar's "Adaugă" points at the lines, which live on Detalii: show that tab before it scrolls there.
+	useEffect(() => {
+		const onShowLines = (event) => {
+			if (event.detail === order.id) flushSync(() => setTab("detalii"));
+		};
+		window.addEventListener("garaj:show-job-lines", onShowLines);
+		return () => window.removeEventListener("garaj:show-job-lines", onShowLines);
+	}, [order.id]);
 	const [draft, update, flush] = useDraft(order, (next) =>
 		updateWorkOrder(order.id, {
 			complaint: next.complaint,
@@ -235,7 +254,8 @@ function WorkOrder({ order, embedded = false }) {
 
 	// In a sheet: sheet "S" (the owner's pick, 19 Nov 2026). The head (Sheet) carries the car, the title and the
 	// buttons; below it, on white, grey groups under big titles in the order the desk asks: what the client says, how
-	// the car came in, what is to do, the estimate, the invoice, the shop's own notes, then the rest.
+	// the car came in, what is to do, the estimate, the invoice, the shop's own notes, then the rest. Tabs keep every
+	// panel mounted, so a line being added or a half-typed note survives a switch.
 	if (embedded) {
 		const reception = receptionSummary(order);
 		const todo = draft.lines.filter((l) => !l.refused && !l.done).length;
@@ -258,106 +278,114 @@ function WorkOrder({ order, embedded = false }) {
 			}
 		};
 		return (
-			<div className="space-y-7 pt-3">
-				<SheetGroup title="Când">
-					<div className="rounded-[14px] bg-card px-(--sheet-inset) py-3.5">
-						<VisitDates appointment={appointment} order={order} today={today} />
-					</div>
-				</SheetGroup>
+			<div className="space-y-5 pt-3">
+				<div>
+					<FilterChips label="Secțiunile lucrării" value={tab} onChange={setTab} options={JOB_TABS} />
+				</div>
+				<div hidden={tab !== "detalii"} className="space-y-7">
+					<SheetGroup title="Când">
+						<div className="rounded-[14px] bg-card px-(--sheet-inset) py-3.5">
+							<VisitDates appointment={appointment} order={order} today={today} />
+						</div>
+					</SheetGroup>
 
-				<JobWarnings order={order} />
+					<JobWarnings order={order} />
 
-				<SheetGroup title="Ce reclamă clientul">
-					<div className="overflow-hidden rounded-[14px] bg-card">
-						<textarea value={draft.complaint ?? ""} readOnly={locked} onChange={(e) => update({ complaint: e.target.value })} placeholder="Ce spune clientul, cu vorbele lui" aria-label="Ce reclamă clientul" className={cn(sheetField, "text-[16px]")} rows={1} />
-						<div className="ml-4 h-px bg-border" />
-						<textarea value={draft.diagnosis ?? ""} readOnly={locked} onChange={(e) => update({ diagnosis: e.target.value })} placeholder="Diagnostic: ce a găsit mecanicul" aria-label="Diagnostic" className={cn(sheetField, "text-[15px] text-muted-foreground")} rows={1} />
-					</div>
-				</SheetGroup>
+					<SheetGroup title="Ce reclamă clientul">
+						<div className="overflow-hidden rounded-[14px] bg-card">
+							<textarea value={draft.complaint ?? ""} readOnly={locked} onChange={(e) => update({ complaint: e.target.value })} placeholder="Ce spune clientul, cu vorbele lui" aria-label="Ce reclamă clientul" className={cn(sheetField, "text-[16px]")} rows={1} />
+							<div className="ml-4 h-px bg-border" />
+							<textarea value={draft.diagnosis ?? ""} readOnly={locked} onChange={(e) => update({ diagnosis: e.target.value })} placeholder="Diagnostic: ce a găsit mecanicul" aria-label="Diagnostic" className={cn(sheetField, "text-[15px] text-muted-foreground")} rows={1} />
+						</div>
+					</SheetGroup>
 
-				<SheetGroup title="Recepția" aside={reception.done ? `${reception.filled} din ${reception.of} pași` : null}>
-					<ReceptionCard order={order} summary={reception} locked={locked} onOpen={() => setReceptionOpen(true)} />
-				</SheetGroup>
+					<SheetGroup title="De făcut la mașină" aside={work ? (todo ? `${todo} din ${work} rămase` : "toate gata") : null}>
+						<ul id={`job-lines-${order.id}`} className="scroll-mt-24 overflow-hidden rounded-[14px] bg-card [&>li+li]:border-t">
+							<IosLines lines={draft.lines} onChange={(lines) => update({ lines })} staff={staff} vatPayer={vatPayer} readOnly={locked || Boolean(invoice && invoice.status !== "draft" && invoice.status !== "cancelled")} defaultStaffId={draft.staffId ?? member?.id ?? null} currency={settings.currency} onToggleDone={toggleDone} hideTotal />
+						</ul>
+					</SheetGroup>
 
-				<SheetGroup title="De făcut la mașină" aside={work ? (todo ? `${todo} din ${work} rămase` : "toate gata") : null}>
-					<ul id={`job-lines-${order.id}`} className="scroll-mt-24 overflow-hidden rounded-[14px] bg-card [&>li+li]:border-t">
-						<IosLines lines={draft.lines} onChange={(lines) => update({ lines })} staff={staff} vatPayer={vatPayer} readOnly={locked || Boolean(invoice && invoice.status !== "draft" && invoice.status !== "cancelled")} defaultStaffId={draft.staffId ?? member?.id ?? null} currency={settings.currency} onToggleDone={toggleDone} hideTotal />
-					</ul>
-				</SheetGroup>
+					<SheetGroup title="Note interne" aside="doar pentru atelier">
+						<div className="overflow-hidden rounded-[14px] bg-[color-mix(in_srgb,#ffd60a_16%,var(--card))]">
+							<textarea value={draft.notes ?? ""} onChange={(e) => update({ notes: e.target.value })} placeholder="ex. clientul așteaptă în service, a cerut piesele vechi" aria-label="Note interne" className={cn(sheetField, "text-[16px]")} rows={2} />
+						</div>
+					</SheetGroup>
 
-				<SheetGroup title="Inspecție" aside={summary.urgent + summary.attention > 0 ? [summary.urgent && `${summary.urgent} urgent`, summary.attention && `${summary.attention} atenție`].filter(Boolean).join(" · ") : null}>
-					<div className="overflow-hidden rounded-[14px] bg-card px-4 py-3">
-						<p className="mb-2 text-[13px] text-muted-foreground">Ce a verificat mecanicul; recomandările ajung în mesajul către client.</p>
-						<InspectionChecklist items={draft.inspection} onChange={(inspection) => update({ inspection })} readOnly={locked} />
-					</div>
-				</SheetGroup>
-
-				<SheetGroup title="Deviz" aside={draft.lines.length ? <Money value={totals.gross} /> : null}>
-					<div className="overflow-hidden rounded-[14px] bg-card">
-						{draft.lines.length > 0 && (
-							<div className="px-4 py-3">
-								<TotalsBlock totals={totals} vatPayer={vatPayer} currency={settings.currency} />
+					<SheetGroup title="Mai multe">
+						<div className="overflow-hidden rounded-[14px] bg-card">
+							<SheetSelect label="Mecanic" value={draft.staffId} options={staff} disabled={locked} onChange={(staffId) => update({ staffId })} />
+							<SheetSelect label="Post" value={draft.bayId} options={bays} disabled={locked} onChange={(bayId) => update({ bayId })} />
+							<div className="border-t px-4 py-3">
+								<JobState order={order} moves={moves} onReview={askReview} />
 							</div>
-						)}
-						{customer?.phone && (
-							<a href={whatsappHref(customer.phone, message)} target="_blank" rel="noreferrer" className={sheetLink}>
-								<MessageCircle className="size-[18px]" aria-hidden /> Trimite devizul pe WhatsApp
-							</a>
-						)}
-						{customer?.phone && (
-							<a href={smsHref(customer.phone, message)} className={sheetLink}>
-								<MessageSquareText className="size-[18px]" aria-hidden /> Trimite prin SMS
-							</a>
-						)}
-						<button type="button" onClick={() => setEstimateOpen(true)} className={sheetLink}>
-							<Printer className="size-[18px]" aria-hidden /> Vezi devizul (PDF)
-						</button>
-					</div>
-				</SheetGroup>
-
-				<SheetGroup title="Factură">
-					<div className="overflow-hidden rounded-[14px] bg-card">
-						{invoice ? (
-							<button type="button" onClick={() => walk({ kind: "invoice", id: invoice.id, direction: "forward" })} className="flex min-h-12 w-full items-center gap-3 px-4 text-left hover:bg-foreground/[0.04]">
-								<FileText className="size-[18px] text-muted-foreground" aria-hidden />
-								<span className="flex-1 text-[16px]">{invoice.number == null ? "Ciornă" : formatInvoiceNumber(invoice.series, invoice.number)}</span>
-								<Money value={invoice.totals?.gross ?? totals.gross} className="text-muted-foreground" />
-								<ChevronRight className="size-4 text-muted-foreground/60" aria-hidden />
+							<div className="border-t px-4 py-3">
+								<JobHistory order={order} currency={settings.currency} />
+							</div>
+						</div>
+						<p className="px-1 pt-1.5 text-xs text-muted-foreground">
+							Deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}
+							{mechanic ? ` · ${mechanic.name}` : ""}
+							{bay ? ` · ${bay.name}` : ""}
+						</p>
+					</SheetGroup>
+				</div>
+				<div hidden={tab !== "documente"} className="space-y-7">
+					<SheetGroup title="Deviz" aside={draft.lines.length ? <Money value={totals.gross} /> : null}>
+						<div className="overflow-hidden rounded-[14px] bg-card">
+							{draft.lines.length > 0 && (
+								<div className="px-4 py-3">
+									<TotalsBlock totals={totals} vatPayer={vatPayer} currency={settings.currency} />
+								</div>
+							)}
+							{customer?.phone && (
+								<a href={whatsappHref(customer.phone, message)} target="_blank" rel="noreferrer" className={sheetLink}>
+									<MessageCircle className="size-[18px]" aria-hidden /> Trimite devizul pe WhatsApp
+								</a>
+							)}
+							{customer?.phone && (
+								<a href={smsHref(customer.phone, message)} className={sheetLink}>
+									<MessageSquareText className="size-[18px]" aria-hidden /> Trimite prin SMS
+								</a>
+							)}
+							<button type="button" onClick={() => setEstimateOpen(true)} className={sheetLink}>
+								<Printer className="size-[18px]" aria-hidden /> Vezi devizul (PDF)
 							</button>
-						) : (
-							<>
-								<p className="px-4 pt-3 text-[15px] text-muted-foreground">Nu e făcută încă. Se face când lucrarea e gata, înainte de predare.</p>
-								<button type="button" disabled={!draft.lines.length} onClick={makeInvoice} className={cn(sheetLink, "border-t-0 disabled:text-muted-foreground")}>
-									<FilePlus2 className="size-[18px]" aria-hidden /> Fă factura din deviz
+						</div>
+					</SheetGroup>
+
+					<SheetGroup title="Factură">
+						<div className="overflow-hidden rounded-[14px] bg-card">
+							{invoice ? (
+								<button type="button" onClick={() => walk({ kind: "invoice", id: invoice.id, direction: "forward" })} className="flex min-h-12 w-full items-center gap-3 px-4 text-left hover:bg-foreground/[0.04]">
+									<FileText className="size-[18px] text-muted-foreground" aria-hidden />
+									<span className="flex-1 text-[16px]">{invoice.number == null ? "Ciornă" : formatInvoiceNumber(invoice.series, invoice.number)}</span>
+									<Money value={invoice.totals?.gross ?? totals.gross} className="text-muted-foreground" />
+									<ChevronRight className="size-4 text-muted-foreground/60" aria-hidden />
 								</button>
-							</>
-						)}
-					</div>
-				</SheetGroup>
-
-				<SheetGroup title="Note interne" aside="doar pentru atelier">
-					<div className="overflow-hidden rounded-[14px] bg-[color-mix(in_srgb,#ffd60a_16%,var(--card))]">
-						<textarea value={draft.notes ?? ""} onChange={(e) => update({ notes: e.target.value })} placeholder="ex. clientul așteaptă în service, a cerut piesele vechi" aria-label="Note interne" className={cn(sheetField, "text-[16px]")} rows={2} />
-					</div>
-				</SheetGroup>
-
-				<SheetGroup title="Mai multe">
-					<div className="overflow-hidden rounded-[14px] bg-card">
-						<SheetSelect label="Mecanic" value={draft.staffId} options={staff} disabled={locked} onChange={(staffId) => update({ staffId })} />
-						<SheetSelect label="Post" value={draft.bayId} options={bays} disabled={locked} onChange={(bayId) => update({ bayId })} />
-						<div className="border-t px-4 py-3">
-							<JobState order={order} moves={moves} onReview={askReview} />
+							) : (
+								<>
+									<p className="px-4 pt-3 text-[15px] text-muted-foreground">Nu e făcută încă. Se face când lucrarea e gata, înainte de predare.</p>
+									<button type="button" disabled={!draft.lines.length} onClick={makeInvoice} className={cn(sheetLink, "border-t-0 disabled:text-muted-foreground")}>
+										<FilePlus2 className="size-[18px]" aria-hidden /> Fă factura din deviz
+									</button>
+								</>
+							)}
 						</div>
-						<div className="border-t px-4 py-3">
-							<JobHistory order={order} currency={settings.currency} />
+					</SheetGroup>
+				</div>
+				<div hidden={tab !== "receptie"} className="space-y-7">
+					<SheetGroup quiet title="Recepția" aside={reception.done ? `${reception.filled} din ${reception.of} pași` : null}>
+						<ReceptionCard order={order} summary={reception} locked={locked} onOpen={() => setReceptionOpen(true)} />
+					</SheetGroup>
+				</div>
+				<div hidden={tab !== "inspectie"} className="space-y-7">
+					<SheetGroup quiet title="Inspecție" aside={summary.urgent + summary.attention > 0 ? [summary.urgent && `${summary.urgent} urgent`, summary.attention && `${summary.attention} atenție`].filter(Boolean).join(" · ") : null}>
+						<div className="overflow-hidden rounded-[14px] bg-card px-4 py-3">
+							<p className="mb-2 text-[13px] text-muted-foreground">Ce a verificat mecanicul; recomandările ajung în mesajul către client.</p>
+							<InspectionChecklist items={draft.inspection} onChange={(inspection) => update({ inspection })} readOnly={locked} />
 						</div>
-					</div>
-					<p className="px-1 pt-1.5 text-xs text-muted-foreground">
-						Deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}
-						{mechanic ? ` · ${mechanic.name}` : ""}
-						{bay ? ` · ${bay.name}` : ""}
-					</p>
-				</SheetGroup>
+					</SheetGroup>
+				</div>
 
 				<ReceptionFlow open={receptionOpen} onOpenChange={setReceptionOpen} order={order} vehicle={vehicle} customer={customer} />
 				<Sheet
