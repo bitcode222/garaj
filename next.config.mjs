@@ -1,3 +1,5 @@
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants.js";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Static export: the same `out/` folder is the website and the iOS app bundle.
@@ -10,4 +12,14 @@ const nextConfig = {
   devIndicators: { position: "bottom-right" },
 };
 
-export default nextConfig;
+// The dev server reaches the local storefront (`npm run cf:dev`) so its bookings show up on :3000. Rewrites need a server,
+// so only this phase drops the static export.
+const devConfig = {
+  ...nextConfig,
+  output: undefined,
+  rewrites: async () => [{ source: "/api/shop/:path*/", destination: "http://localhost:8787/api/shop/:path*" }],
+};
+
+const configFor = (phase) => (phase === PHASE_DEVELOPMENT_SERVER ? devConfig : nextConfig);
+
+export default configFor;

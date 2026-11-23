@@ -11,6 +11,7 @@ import { toast } from "@/lib/toast";
 
 const EVERY_MS = 30_000;
 const LOCK = "garaj-online-sync";
+const IS_DEV = process.env.NODE_ENV === "development";
 let lastPublished = null;
 
 async function shop(path, { method = "GET", data } = {}) {
@@ -31,14 +32,15 @@ async function pullBookings(bookings) {
 		} else if (appointment && booking.status === "cancelled" && applyOnlineCancellation(appointment.id)) {
 			toast.info(`Clientul a anulat programarea ${booking.ref}.`);
 		}
-		items.push({ id: booking.id, version: booking.version, appointmentId: appointment?.id ?? null });
+		// The dev server is a second copy of the shop: it must not claim a booking, or the other copy would read it as deleted.
+		items.push({ id: booking.id, version: booking.version, appointmentId: IS_DEV ? null : (appointment?.id ?? null) });
 	}
 	if (items.length) await shop("/ack", { method: "POST", data: { items } });
 }
 
 async function pushChanges(open) {
 	const { appointments } = getState();
-	for (const { id } of open.filter((row) => !appointments[row.appointmentId])) await shop(`/bookings/${id}`, { method: "POST", data: { status: "declined", reason: "Programarea a fost ștearsă de service." } });
+	for (const { id } of IS_DEV ? [] : open.filter((row) => !appointments[row.appointmentId])) await shop(`/bookings/${id}`, { method: "POST", data: { status: "declined", reason: "Programarea a fost ștearsă de service." } });
 	for (const appointment of onlineAppointments()) {
 		const synced = appointment.onlineSynced;
 		if (synced?.status === "cancelled") continue;
