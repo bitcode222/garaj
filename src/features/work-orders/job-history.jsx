@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeftRight, CalendarClock, Check, CirclePlus, Clock, Pencil, Play, Square, Trash2, Undo2, Wrench } from "lucide-react";
+import { ArrowLeftRight, CalendarClock, Check, ChevronDown, CirclePlus, Clock, Pencil, Play, Square, Trash2, Undo2, Wrench } from "lucide-react";
 import { Timeline } from "@/components/ds/data";
 import { Button } from "@/components/ui/button";
 import { jobTimeline } from "@/domain/job-log";
-import { fmtDate, fmtTime, formatMoney } from "@/lib/format";
+import { fmtDate, fmtTime, formatMoney, plural } from "@/lib/format";
 import { WORK_ORDER_STATUS } from "@/lib/labels";
+import { cn } from "@/lib/utils";
 
 const FIELD = { complaint: "Ce spune clientul", diagnosis: "Diagnostic", notes: "Note interne", mileage: "Kilometraj", fuelLevel: "Combustibil" };
 const DATE_FIELD = { arrived: "Data intrării", promised: "Termenul", ready: "Data de gata", delivered: "Data predării" };
@@ -76,5 +77,29 @@ export function JobHistory({ order, currency, limit = 6 }) {
 				</Button>
 			)}
 		</div>
+	);
+}
+
+/** The history folded into one row at the end of a job's sheet: when it opened and how much happened, the list on a tap. */
+export function JobHistoryRow({ order, currency }) {
+	const [open, setOpen] = useState(false);
+	const count = jobTimeline(order).length;
+	return (
+		<section data-group aria-label="Istoric" className="overflow-hidden rounded-[14px] bg-card">
+			<button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex min-h-14 w-full items-center gap-3 px-(--sheet-inset) py-2 text-left hover:bg-foreground/[0.04]">
+				<span className="min-w-0 flex-1">
+					<span className="block text-[16px] font-semibold">Istoric</span>
+					<span className="block truncate text-[13px] text-muted-foreground">
+						Deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")} · {plural(count, "eveniment", "evenimente")}
+					</span>
+				</span>
+				<ChevronDown className={cn("size-4 shrink-0 text-muted-foreground transition-transform motion-reduce:transition-none", open && "rotate-180")} aria-hidden />
+			</button>
+			{open && (
+				<div className="border-t px-(--sheet-inset) py-3">
+					<JobHistory order={order} currency={currency} />
+				</div>
+			)}
+		</section>
 	);
 }

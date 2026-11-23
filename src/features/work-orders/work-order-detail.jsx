@@ -78,7 +78,7 @@ import { JobWarnings } from "@/features/calendar/booking-warnings";
 import { CarHeader, CoverButton, CoverIconButton, coverIconClass } from "@/components/ds/car";
 import { useAccount } from "@/components/shell/account-menu";
 import { makeInk } from "@/lib/colors";
-import { JobHistory } from "./job-history";
+import { JobHistory, JobHistoryRow } from "./job-history";
 import { primaryAction } from "./job-action";
 import { jobHeadline } from "./job-text";
 import { ClockLine, JobSteps } from "./job-progress";
@@ -109,13 +109,13 @@ function SheetGroup({ title, aside, quiet = false, children }) {
 	);
 }
 
-/** A choice in a group (mechanic, bay): the label at the left, a quiet select at the right. */
+/** Who or where (mechanic, lift): its label over its value, half a row each. Nobody on it reads as something to do. */
 function SheetSelect({ label, value, options, disabled, onChange }) {
 	return (
-		<div className="flex min-h-12 items-center gap-3 px-4 [&+&]:border-t">
-			<span className="flex-1 text-[16px]">{label}</span>
+		<div className="min-w-0 px-(--sheet-inset) pt-2 pb-1">
+			<span className="block text-[13px] text-muted-foreground">{label}</span>
 			<Select value={value ?? "none"} disabled={disabled} onValueChange={(v) => onChange(v === "none" ? null : v)}>
-				<SelectTrigger size="sm" aria-label={label} className="w-auto min-w-36 justify-end border-0 bg-transparent text-[15px] text-muted-foreground shadow-none dark:bg-transparent">
+				<SelectTrigger aria-label={label} className={cn("h-11! w-full justify-between border-0 bg-transparent px-0 text-[16px] font-semibold shadow-none dark:bg-transparent dark:hover:bg-transparent", !value && "text-brand")}>
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent>
@@ -260,8 +260,6 @@ function WorkOrder({ order, embedded = false }) {
 		const reception = receptionSummary(order);
 		const todo = draft.lines.filter((l) => !l.refused && !l.done).length;
 		const work = draft.lines.filter((l) => !l.refused).length;
-		const mechanic = staff.find((m) => m.id === draft.staffId);
-		const bay = bays.find((b) => b.id === draft.bayId);
 		const toggleDone = (line) => {
 			try {
 				setLineDone(order.id, line.id, !line.done);
@@ -283,6 +281,18 @@ function WorkOrder({ order, embedded = false }) {
 					<FilterChips label="Secțiunile lucrării" value={tab} onChange={setTab} options={JOB_TABS} />
 				</div>
 				<div hidden={tab !== "detalii"} className="space-y-7">
+					<SheetGroup title="Stadiu">
+						<div className="overflow-hidden rounded-[14px] bg-card">
+							<div className="px-(--sheet-inset) py-3.5">
+								<JobState compact order={order} moves={moves} onReview={askReview} />
+							</div>
+							<div className="grid grid-cols-2 divide-x border-t">
+								<SheetSelect label="Mecanic" value={draft.staffId} options={staff} disabled={locked} onChange={(staffId) => update({ staffId })} />
+								<SheetSelect label="Post" value={draft.bayId} options={bays} disabled={locked} onChange={(bayId) => update({ bayId })} />
+							</div>
+						</div>
+					</SheetGroup>
+
 					<SheetGroup title="Când">
 						<div className="rounded-[14px] bg-card px-(--sheet-inset) py-3.5">
 							<VisitDates appointment={appointment} order={order} today={today} />
@@ -311,23 +321,7 @@ function WorkOrder({ order, embedded = false }) {
 						</div>
 					</SheetGroup>
 
-					<SheetGroup title="Mai multe">
-						<div className="overflow-hidden rounded-[14px] bg-card">
-							<SheetSelect label="Mecanic" value={draft.staffId} options={staff} disabled={locked} onChange={(staffId) => update({ staffId })} />
-							<SheetSelect label="Post" value={draft.bayId} options={bays} disabled={locked} onChange={(bayId) => update({ bayId })} />
-							<div className="border-t px-4 py-3">
-								<JobState order={order} moves={moves} onReview={askReview} />
-							</div>
-							<div className="border-t px-4 py-3">
-								<JobHistory order={order} currency={settings.currency} />
-							</div>
-						</div>
-						<p className="px-1 pt-1.5 text-xs text-muted-foreground">
-							Deschisă {fmtDate(order.createdAt, "d MMM, HH:mm")}
-							{mechanic ? ` · ${mechanic.name}` : ""}
-							{bay ? ` · ${bay.name}` : ""}
-						</p>
-					</SheetGroup>
+					<JobHistoryRow order={order} currency={settings.currency} />
 				</div>
 				<div hidden={tab !== "documente"} className="space-y-7">
 					<SheetGroup title="Deviz" aside={draft.lines.length ? <Money value={totals.gross} /> : null}>
