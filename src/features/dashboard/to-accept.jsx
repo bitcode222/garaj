@@ -39,7 +39,7 @@ function BookingCover({ appointment: a, vehicle, customer, staff, bay, today }) 
 	const day = dayOfInstant(a.start);
 	const when = `${dayLabel(day, today).toLowerCase()} ${fmtTime(a.start)}`;
 	const subject = carName(vehicle);
-	// Outlined (dashed, no fill): not yet in the shop, unlike the jobs' covers below. The art tile keeps the car's colour.
+	// Outlined (dashed, on the card colour): not yet in the shop, unlike the jobs' covers below. The art tile keeps the car's colour.
 	const light = "outline";
 	const open = () => openSheet("appointment-view", { id: a.id });
 	const confirm = () => {
